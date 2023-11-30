@@ -1,0 +1,54 @@
+name: docs
+
+# declare default permissions
+permissions: read-all
+
+on:
+  # enable manual run via GitHub UI
+  workflow_dispatch:
+  
+  # enable trigger via remote call webhook
+  repository_dispatch:
+    types: update-docs
+
+  # enable run on "standard" updates to main branch
+  push:
+    branches: ["main"]
+
+  pull_request:
+    branches: ["main"]
+
+
+jobs:
+  
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: defenseunicorns/pepr-docs
+          path: docs
+
+      - uses: actions/checkout@v4
+        with:
+          repository: defenseunicorns/pepr
+          path: core
+          # fetch-tags: true
+
+      - name: Get current defenseunicorns/pepr Release
+        id: get_current_pepr_release_version
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: defenseunicorns/pepr
+          excludes: prerelease, draft
+
+      - name: Run a multi-line script
+        run: |
+          cd docs
+          ls -la
+          cd ../core
+          ls -la
+          echo "${{ steps.get_current_pepr_release_version.outputs.token }}"
+          # figure out if new release
+          # if so...
+          # else ...
