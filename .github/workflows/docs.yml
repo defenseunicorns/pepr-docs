@@ -48,7 +48,7 @@ jobs:
           ls -la
           cd ../core
           ls -la
-          echo "${{ steps.get_current_pepr_release_version.outputs.token }}"
+          echo "${{ steps.get_current_pepr_release_version.outputs.release }}"
           # figure out if new release
           # if so...
           # else ...
