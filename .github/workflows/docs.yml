@@ -43,5 +43,7 @@ jobs:
 
       - name: Run a multi-line script
         run: |
-          echo "${{ steps.get_current_pepr_release_version.outputs.release }}"
-          ./docs/build.sh ./docs ./core
+          ./docs/build.sh \
+            ./docs \
+            ./core \
+            "${{ steps.get_current_pepr_release_version.outputs.release }}" \
