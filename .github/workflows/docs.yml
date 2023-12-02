@@ -33,7 +33,6 @@ jobs:
         with:
           repository: defenseunicorns/pepr
           path: core
-          # fetch-tags: true
 
       - name: Get current defenseunicorns/pepr Release
         id: get_current_pepr_release_version
@@ -44,11 +43,5 @@ jobs:
 
       - name: Run a multi-line script
         run: |
-          cd docs
-          ls -la
-          cd ../core
-          ls -la
           echo "${{ steps.get_current_pepr_release_version.outputs.release }}"
-          # figure out if new release
-          # if so...
-          # else ...
+          ./docs/build.sh
