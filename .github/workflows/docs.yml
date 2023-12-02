@@ -46,4 +46,4 @@ jobs:
           ./docs/build.sh \
             ./docs \
             ./core \
-            "${{ steps.get_current_pepr_release_version.outputs.release }}" \
+            "${{ steps.get_current_pepr_release_version.outputs.release }}"
