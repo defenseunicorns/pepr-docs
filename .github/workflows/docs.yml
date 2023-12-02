@@ -34,14 +34,14 @@ jobs:
           repository: defenseunicorns/pepr
           path: core
 
-      - name: Get current defenseunicorns/pepr Release
+      - name: Get current defenseunicorns/pepr release
         id: get_current_pepr_release_version
         uses: pozetroninc/github-action-get-latest-release@master
         with:
           repository: defenseunicorns/pepr
           excludes: prerelease, draft
 
-      - name: Run a multi-line script
+      - name: Build the docs!
         run: |
           ./docs/build.sh \
             ./docs \
