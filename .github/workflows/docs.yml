@@ -28,13 +28,13 @@ jobs:
         with:
           repository: defenseunicorns/pepr-docs
           path: docs
-          fetch-depth: 0
-          fetch-tags: true
+          # fetch-depth: 0
 
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr
           path: core
+          fetch-tags: true
 
       - name: Get current defenseunicorns/pepr release
         id: get_current_pepr_release_version
