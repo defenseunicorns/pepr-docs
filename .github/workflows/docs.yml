@@ -46,4 +46,5 @@ jobs:
           SITE=$(realpath ./docs)
           CORE=$(realpath ./core)
           cd ./docs
+          npm ci
           npm --workspace build run now -- --site "$SITE" --core "$CORE"
