@@ -43,5 +43,7 @@ jobs:
 
       - name: Build the docs!
         run: |
-          ls -la
-          npm --workspace build run now -- --site ./docs --core ./core
+          SITE=$(realpath ./docs)
+          CORE=$(realpath ./core)
+          cd ./docs
+          npm --workspace build run now -- --site "$SITE" --core "$CORE"
