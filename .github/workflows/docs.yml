@@ -32,21 +32,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: defenseunicorns/pepr-docs
-          path: $DOCS
+          repository: defenseunicorns/pepr
+          path: ./core
+          fetch-depth: 0  # pull history to get version tags
 
       - uses: actions/checkout@v4
         with:
-          repository: defenseunicorns/pepr
-          path: $CORE
-          fetch-depth: 0  # pull history to get version tags
-
-      - name: Get current defenseunicorns/pepr release
-        id: get_current_pepr_release_version
-        uses: pozetroninc/github-action-get-latest-release@master
-        with:
-          repository: defenseunicorns/pepr
-          excludes: prerelease, draft
+          repository: defenseunicorns/pepr-docs
+          path: ./docs
 
       - name: Build the docs!
         run: |
