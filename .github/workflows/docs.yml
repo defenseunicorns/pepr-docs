@@ -47,12 +47,11 @@ jobs:
           DOCS=$(realpath ./docs)
           SITE=$(realpath "$DOCS"/site)
           CORE=$(realpath ./core)
-
           cd "$DOCS"
-
           npm ci
           npm --workspace build run now -- --site "$SITE" --core "$CORE"
 
       - name: test
         run: |
-          ls -la
+          DIST=$(realpath ./docs/dist)
+          ls -la "$DIST"
