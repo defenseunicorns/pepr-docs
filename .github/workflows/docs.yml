@@ -28,6 +28,7 @@ jobs:
         with:
           repository: defenseunicorns/pepr-docs
           path: docs
+          fetch-tags: true
 
       - uses: actions/checkout@v4
         with:
