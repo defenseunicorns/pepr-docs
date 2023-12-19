@@ -34,7 +34,7 @@ jobs:
           repository: defenseunicorns/pepr
           path: core
           fetch-depth: 0
-          fetch-tags: true
+          # fetch-tags: true
 
       - name: Get current defenseunicorns/pepr release
         id: get_current_pepr_release_version
