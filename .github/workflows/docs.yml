@@ -68,8 +68,11 @@ jobs:
           git config user.name "docs.yml"
           git config user.email "<>"
           git add --all
-          git commit -m "docs.yml"
-          git push origin main
+
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "docs.yml"
+            git push origin main
+          fi
 
       # - name: Publish the site!
       #   run: |
