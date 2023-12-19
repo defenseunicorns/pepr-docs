@@ -62,6 +62,8 @@ jobs:
           rm --recursive --force "$CONT_OLD"
           cp --recursive "$CONT_NEW" "$CONT_OLD"
 
+          pwd
+          ls -la
           git diff
 
       # - name: Publish the site!
