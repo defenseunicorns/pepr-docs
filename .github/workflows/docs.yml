@@ -18,6 +18,12 @@ on:
   pull_request:
     branches: ["main"]
 
+env:
+  CORE: ./core
+  DOCS: ./docs
+  DIST: ${{DOCS}}/dist
+  SITE: ${{DOCS}}/site
+  WORK: ${{DOCS}}/build/work
 
 jobs:
   
@@ -27,12 +33,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr-docs
-          path: docs
+          path: ${{DOCS}}
 
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr
-          path: core
+          path: ${{CORE}}
           fetch-depth: 0  # pull history to get version tags
 
       - name: Get current defenseunicorns/pepr release
@@ -44,14 +50,17 @@ jobs:
 
       - name: Build the docs!
         run: |
-          DOCS=$(realpath ./docs)
-          SITE=$(realpath "$DOCS"/site)
-          CORE=$(realpath ./core)
+          SITE=$(realpath "$SITE")
+          CORE=$(realpath "$CORE")
           cd "$DOCS"
           npm ci
           npm --workspace build run now -- --site "$SITE" --core "$CORE"
 
-      - name: test
+      - name: Commit new docs back to source!
         run: |
-          DIST=$(realpath ./docs/dist)
           ls -la "$DIST"
+
+      # - name: Publish the site!
+      #   run: |
+      #     DIST=$(realpath ./docs/dist)
+      #     ls -la "$DIST"
