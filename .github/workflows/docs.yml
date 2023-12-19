@@ -51,7 +51,7 @@ jobs:
           npm ci
           npm --workspace build run now -- --site "$SITE" --core "$CORE"
 
-      - name: Commit to source!
+      - name: Commit changes to source!
         run: |
           HUGO_OLD=$(realpath "$SITE/hugo.yaml")
           HUGO_NEW=$(realpath "$WORK/hugo.yaml")
