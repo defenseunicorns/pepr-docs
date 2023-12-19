@@ -1,0 +1,4 @@
+{
+  "name": "pepr-docs",
+  "workspaces": [ "build", "site" ]
+}
