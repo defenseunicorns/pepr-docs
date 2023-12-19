@@ -49,7 +49,9 @@ jobs:
           npm ci
           npm --workspace build run now -- --site "$SITE" --core "$CORE"
 
-      - name: Commit new docs back to source!
+      - name: Commit to source!
+        permissions:
+          contents: write
         run: |
           HUGO_OLD=$(realpath "$SITE/hugo.yaml")
           HUGO_NEW=$(realpath "$WORK/hugo.yaml")
