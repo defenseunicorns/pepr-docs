@@ -63,8 +63,11 @@ jobs:
           cp --recursive "$CONT_NEW" "$CONT_OLD"
 
           cd "$DOCS"
-          git diff
-          ls -la "$CONT_NEW/main"
+          git config user.name "docs.yml"
+          git config user.email "<>"
+          git add --all
+          git commit -m "docs.yml"
+          git push origin master
 
       # - name: Publish the site!
       #   run: |
