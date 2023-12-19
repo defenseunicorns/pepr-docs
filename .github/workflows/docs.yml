@@ -43,7 +43,4 @@ jobs:
 
       - name: Build the docs!
         run: |
-          ./docs/build.sh \
-            ./docs \
-            ./core \
-            "${{ steps.get_current_pepr_release_version.outputs.release }}"
+          npm --workspace build run now -- --site /docs --core /core
