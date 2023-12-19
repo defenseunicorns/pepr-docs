@@ -67,7 +67,7 @@ jobs:
           git config user.email "<>"
           git add --all
           git commit -m "docs.yml"
-          git push origin master
+          git push origin main
 
       # - name: Publish the site!
       #   run: |
