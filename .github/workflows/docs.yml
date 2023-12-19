@@ -64,6 +64,7 @@ jobs:
 
           cd "$DOCS"
           git diff
+          ls -la "$CONT_NEW/main"
 
       # - name: Publish the site!
       #   run: |
