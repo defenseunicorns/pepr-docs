@@ -43,4 +43,5 @@ jobs:
 
       - name: Build the docs!
         run: |
+          ls -la
           npm --workspace build run now -- --site ./docs --core ./core
