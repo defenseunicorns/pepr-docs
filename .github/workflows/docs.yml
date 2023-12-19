@@ -21,9 +21,9 @@ on:
 env:
   CORE: ./core
   DOCS: ./docs
-  DIST: $DOCS/dist
-  SITE: $DOCS/site
-  WORK: $DOCS/build/work
+  DIST: ./docs/dist
+  SITE: ./docs/site
+  WORK: ./docs/build/work
 
 jobs:
   
