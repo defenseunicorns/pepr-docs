@@ -33,8 +33,7 @@ jobs:
         with:
           repository: defenseunicorns/pepr
           path: core
-          fetch-depth: 0
-          # fetch-tags: true
+          fetch-depth: 0  # pull history to get version tags
 
       - name: Get current defenseunicorns/pepr release
         id: get_current_pepr_release_version
@@ -53,3 +52,9 @@ jobs:
 
           npm ci
           npm --workspace build run now -- --site "$SITE" --core "$CORE"
+
+            - name: Build the docs!
+
+      - name: test
+        run: |
+          ls -la
