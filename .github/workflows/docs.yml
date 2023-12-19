@@ -33,12 +33,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr-docs
-          path: ${{DOCS}}
+          path: $DOCS
 
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr
-          path: ${{CORE}}
+          path: $CORE
           fetch-depth: 0  # pull history to get version tags
 
       - name: Get current defenseunicorns/pepr release
