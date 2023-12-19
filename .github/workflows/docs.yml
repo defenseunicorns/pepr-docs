@@ -51,7 +51,18 @@ jobs:
 
       - name: Commit new docs back to source!
         run: |
-          ls -la "$DIST"
+          HUGO_OLD=$(realpath "$SITE/hugo.yaml")
+          HUGO_NEW=$(realpath "$WORK/hugo.yaml")
+          CONT_OLD=$(realpath "$SITE/content/en")
+          CONT_NEW=$(realpath "$WORK/content/en")
+
+          rm "$HUGO_OLD"
+          cp "$HUGO_NEW" "$HUGO_OLD"
+
+          rm --recursive --force "$CONT_OLD"
+          cp --recursive "$CONT_NEW" "$CONT_OLD"
+
+          git diff
 
       # - name: Publish the site!
       #   run: |
