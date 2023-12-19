@@ -329,21 +329,21 @@ await activity(`Set '/current' version alias`, async (log) => {
   log.push(['current', current])
 })
 
-await activity(`Clean dist dir`, async (log) => {
-  RUN.dist = path.resolve(`${RUN.site}/../dist`)
-  await fs.rm(RUN.dist, {recursive: true, force: true})
-  await fs.mkdir(RUN.dist)
+// await activity(`Clean dist dir`, async (log) => {
+//   RUN.dist = path.resolve(`${RUN.site}/../dist`)
+//   await fs.rm(RUN.dist, {recursive: true, force: true})
+//   await fs.mkdir(RUN.dist)
 
-  log.push(['dist', RUN.dist])
-})
+//   log.push(['dist', RUN.dist])
+// })
 
-await activity(`Build site into dist dir`, async () => {
-  await exec(`
-    cd ${RUN.work}
-    npm ci
-    npm run build:production -- --destination ${RUN.dist}
-  `);
-})
+// await activity(`Build site into dist dir`, async () => {
+//   await exec(`
+//     cd ${RUN.work}
+//     npm ci
+//     npm run build:production -- --destination ${RUN.dist}
+//   `);
+// })
 
 console.timeEnd(TOTAL)
 console.log("")
