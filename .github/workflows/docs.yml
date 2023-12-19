@@ -43,12 +43,11 @@ jobs:
 
       - name: Build the docs!
         run: |
-          SITE=$(realpath ./docs)
+          DOCS=$(realpath ./docs)
+          SITE=$(realpath "$DOCS"/docs)
           CORE=$(realpath ./core)
-          BUILD=$(realpath ./build)
 
-          cp -R "$SITE" "$BUILD"
-          cd "$BUILD"
+          cd "$DOCS"
 
           npm ci
           npm --workspace build run now -- --site "$SITE" --core "$CORE"
