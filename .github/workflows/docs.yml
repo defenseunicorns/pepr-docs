@@ -44,7 +44,7 @@ jobs:
       - name: Build the docs!
         run: |
           DOCS=$(realpath ./docs)
-          SITE=$(realpath "$DOCS"/docs)
+          SITE=$(realpath "$DOCS"/site)
           CORE=$(realpath ./core)
 
           cd "$DOCS"
