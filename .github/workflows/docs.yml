@@ -53,8 +53,6 @@ jobs:
           npm ci
           npm --workspace build run now -- --site "$SITE" --core "$CORE"
 
-            - name: Build the docs!
-
       - name: test
         run: |
           ls -la

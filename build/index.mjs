@@ -341,7 +341,7 @@ await activity(`Build site into dist dir`, async () => {
   await exec(`
     cd ${RUN.work}
     npm ci
-    npx hugo --destination ${RUN.dist}
+    npm run build:production -- --destination ${RUN.dist}
   `);
 })
 
