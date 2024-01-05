@@ -6,6 +6,7 @@ import * as util from 'node:util'
 import * as child_process from 'node:child_process';
 import * as semver from 'semver';
 import * as yaml from 'yaml';
+import { glob } from 'glob';
 import { heredoc } from './heredoc.mjs';
 
 const exec = util.promisify(child_process.exec);
@@ -103,8 +104,8 @@ await activity(`Search core repo versions`, async (log) => {
       return list
     }, [])
 
-  const ongoing = majmins.slice(0, RUN.cutoff)
-  const retired = majmins.slice(RUN.cutoff)
+  let ongoing = majmins.slice(0, RUN.cutoff)
+  RUN.retired = majmins.slice(RUN.cutoff)
 
   RUN.versions = sort.reduce((list, ver) => {
     const mm = majmin(ver)
@@ -114,10 +115,29 @@ await activity(`Search core repo versions`, async (log) => {
   RUN.versions.push("main")
 
   log.push(['ongoing', ongoing])
-  log.push(['retired', retired])
+  log.push(['retired', RUN.retired])
   log.push(['versions', RUN.versions])
 })
 
+await activity(`Nuke retired version content`, async (log) => {
+  for (const majmin of RUN.retired) {
+    const contentGlob = `${RUN.work}/content/en/v${majmin}.*`
+    const staticGlob = `${RUN.work}/static/v${majmin}.*`
+    
+    const contentDirs = await glob(contentGlob)
+    const staticDirs = await glob(staticGlob)
+
+    contentDirs.forEach(async (path) => {
+      await fs.rm(path, {recursive: true, force: true})
+      log.push([majmin, path])
+    })
+
+    staticDirs.forEach(async (path) => {
+      await fs.rm(path, {recursive: true, force: true})
+      log.push([majmin, path])
+    })
+  }
+})
 
 for (const version of RUN.versions) {
   RUN.version = version
