@@ -82,7 +82,7 @@ jobs:
           path: ./docs/dist
 
   deploy:
-    nees: build
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
