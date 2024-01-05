@@ -74,7 +74,7 @@ jobs:
             git push origin main
           fi
 
-      - name: Upload dist/ Artifact!
+      - name: Upload Artifacts!
         uses: actions/upload-artifact@v4
         with:
           name: dist
@@ -87,19 +87,20 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: ./dist
-
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr-docs
+          ref: deploy
           path: ./docs
 
-      - name: Extract /dist contents!
+      - name: Clear previously deployed content!
         run: |
-          cp --archive ./dist/. "$DOCS"/
+          rm -rf "$DIST"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./docs/dist
 
       - name: Deploy the docs!
         run: |
@@ -112,5 +113,5 @@ jobs:
           git add --all
           git commit -m "docs.yml"
 
-          git checkout "$BRANCH"
-          git push "$BRANCH"
+          # git push
+          git branch -v
