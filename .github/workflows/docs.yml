@@ -113,5 +113,4 @@ jobs:
           git add --all
           git commit -m "docs.yml"
 
-          # git push
-          git branch -v
+          git push origin "$BRANCH"
