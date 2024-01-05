@@ -74,16 +74,32 @@ jobs:
             git push origin main
           fi
 
+      - name: Upload dist/ Artifact!
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          retention-days: 1
+          path: ./docs/dist
+
   deploy:
     nees: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./dist
+
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr-docs
           path: ./docs
+
+      - name: Extract /dist contents!
+        run: |
+          cp --archive ./dist/. "$DOCS"/
 
       - name: Deploy the docs!
         run: |
@@ -92,6 +108,9 @@ jobs:
           cd "$DOCS"
           git config user.name "docs.yml"
           git config user.email "<>"
+
+          git add --all
+          git commit -m "docs.yml"
 
           git checkout "$BRANCH"
           git push "$BRANCH"
