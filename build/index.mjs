@@ -209,8 +209,8 @@ for (const version of RUN.versions) {
   })
 
   await activity(`Copy repo images`, async (log) => {
-    const srcimgs = `${RUN.core}/.images`
-    const dstimgs = `${RUN.work}/static/${RUN.version}/.images`
+    const srcimgs = `${RUN.core}/_images`
+    const dstimgs = `${RUN.work}/static/${RUN.version}/_images`
     await fs.cp(srcimgs, dstimgs, {recursive: true})
     
     log.push(['src', srcimgs])
