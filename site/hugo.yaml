@@ -1,4 +1,4 @@
-baseURL: https://pepr.dev/
+# baseURL: https://pepr.dev/
 enableGitInfo: true
 enableRobotsTXT: true
 relativeURLs: false
