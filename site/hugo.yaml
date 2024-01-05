@@ -1,4 +1,3 @@
-# baseURL: "https://pepr-docs.netlify.app/"
 enableGitInfo: true
 enableRobotsTXT: true
 relativeURLs: false
