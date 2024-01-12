@@ -1,8 +1,8 @@
 ---
-title: v0.19.0
+title: v0.22.0
 cascade:
   type: docs
-aliases: []
+aliases: ["/current/"]
 ---
 # Pepr
 
@@ -33,7 +33,7 @@ Pepr is on a mission to save Kubernetes from the tyranny of YAML, intimidating g
 - Entire NPM ecosystem available for advanced operations
 - Realtime K8s debugging system for testing/reacting to cluster changes
 - Controller network isolation and tamper-resistent module execution
-- Automatic least-privilege RBAC generation [soon](https://github.com/defenseunicorns/pepr/issues/31)
+- Least-privilege [RBAC](https://github.com/defenseunicorns/pepr/blob/main/docs/rbac/) generation
 - AMD64 and ARM64 support
 
 ## Example Pepr Action
@@ -140,8 +140,18 @@ See [actions](./actions/) for more details.
 ## Logical Pepr Flow
 
 ![Arch Diagram](./_images/pepr-arch.svg)
-[Source Diagram](./_images/pepr-arch.svg)
+[Source Diagram](_images/pepr-arch.svg)
 
 ## TypeScript
 
 [TypeScript](https://www.typescriptlang.org/) is a strongly typed, object-oriented programming language built on top of JavaScript. It provides optional static typing and a rich type system, allowing developers to write more robust code. TypeScript is transpiled to JavaScript, enabling it to run in any environment that supports JavaScript. Pepr allows you to use JavaScript or TypeScript to write capabilities, but TypeScript is recommended for its type safety and rich type system. You can learn more about TypeScript [here](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html).
+
+## Community
+
+To join our channel go to [Kubernetes Slack](https://communityinviter.com/apps/kubernetes/community) and join the `#pepr` channel.
+
+<a href="https://github.com/defenseunicorns/pepr/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=defenseunicorns/pepr" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
