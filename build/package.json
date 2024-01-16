@@ -7,8 +7,8 @@
   "main": "index.mjs",
   "type": "module",
   "scripts": {
-    "now": "node index.mjs",
-    "built": "cd work ; npm run start",
+    "dev": "node index.mjs",
+    "serve": "cd work ; npm run start",
     "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
     "test-comment": "https://github.com/jestjs/jest/issues/9430#issuecomment-1854016938"
   },
