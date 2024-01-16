@@ -2,7 +2,7 @@
 title: v0.22.2
 cascade:
   type: docs
-aliases: []
+aliases: ["/current/"]
 ---
 # Pepr
 
