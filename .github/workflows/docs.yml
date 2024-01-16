@@ -49,7 +49,7 @@ jobs:
           CORE=$(realpath "$CORE")
           cd "$DOCS"
           npm ci
-          npm --workspace build run now -- --site "$SITE" --core "$CORE"
+          npm --workspace build run dev -- --site "$SITE" --core "$CORE"
 
       - name: Commit changes to source!
         run: |
