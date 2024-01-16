@@ -341,10 +341,13 @@ await activity(`Update version dropdown options`, async (log) => {
   const hugoConf = yaml.parse(hugoYaml)
 
   const uniques = {}
-  RUN.versions.filter(v => v !== 'main').forEach(version => {
-    const mm = majmin(version)
-    if (!uniques.hasOwnProperty(mm)) { uniques[mm] = version }
-  })
+  RUN.versions
+    .filter(v => v !== 'main')
+    .filter(v => semver.prerelease(v) === null)
+    .forEach(version => {
+      const mm = majmin(version)
+      if (!uniques.hasOwnProperty(mm)) { uniques[mm] = version }
+    })
 
   const opts = Object.entries(uniques).map(([majmin, version]) => ({
     version: `v${majmin}`,
@@ -370,7 +373,7 @@ await activity(`Clear '/current' version alias`, async () => {
 })
 
 await activity(`Set '/current' version alias`, async (log) => {
-  const current = RUN.versions[0]
+  const current = RUN.versions.filter(v => semver.prerelease(v) === null)[0]
   const verPath = `${RUN.work}/content/en/${current}/_index.md`
   let content = await fs.readFile(verPath, { encoding: 'utf8' })
 
