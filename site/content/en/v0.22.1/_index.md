@@ -1,5 +1,5 @@
 ---
-title: v0.22.0
+title: v0.22.1
 cascade:
   type: docs
 aliases: []
