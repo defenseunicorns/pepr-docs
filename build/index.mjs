@@ -8,6 +8,7 @@ import * as semver from 'semver';
 import * as yaml from 'yaml';
 import { glob } from 'glob';
 import { heredoc } from './heredoc.mjs';
+import { dir } from 'node:console';
 
 const exec = util.promisify(child_process.exec);
 
@@ -15,6 +16,7 @@ program
   .version('0.0.0', '-v, --version')
   .requiredOption('-c, --core <path>', 'path to core project folder')
   .requiredOption('-s, --site <path>', 'path to docs site folder')
+  .option('-n, --no-dist', 'do not generate /dist output')
   .parse(process.argv);
 const opts = program.opts();
 
@@ -23,7 +25,7 @@ const RUN = { cutoff: 3 } // global state bucket!
 async function activity(label, func) {
   let log = []
   let err = ""
-  
+
   try {
     console.time(label)
     await func(log)
@@ -123,7 +125,7 @@ await activity(`Nuke retired version content`, async (log) => {
   for (const majmin of RUN.retired) {
     const contentGlob = `${RUN.work}/content/en/v${majmin}.*`
     const staticGlob = `${RUN.work}/static/v${majmin}.*`
-    
+
     const contentDirs = await glob(contentGlob)
     const staticDirs = await glob(staticGlob)
 
@@ -200,7 +202,7 @@ for (const version of RUN.versions) {
     RUN.srcmds = sources.filter(f => f.endsWith('.md'))
 
     // ...but not non-root README.md (they're just sub-menus for GH UI)
-    RUN.srcmds = RUN.srcmds.filter(f => !f.endsWith('README.md'))
+    RUN.srcmds = RUN.srcmds.filter(f => !(f === 'README.md'))
 
     const srcign = sources.filter(s => !RUN.srcmds.includes(s))
 
@@ -220,20 +222,46 @@ for (const version of RUN.versions) {
 
   for (const srcmd of RUN.srcmds) {
     RUN.srcmd = { file: srcmd, content: "" }
-    
+
     await activity(`Read source file`, async (log) => {
       const src = `${RUN.coredocs}/${RUN.srcmd.file}`
       RUN.srcmd.content = await fs.readFile(src, { encoding: 'utf8' })
       log.push(['src', src])
     })
 
+    await activity(`Gen weight and new file name`, async (log) => {
+      const dirname = path.dirname(RUN.srcmd.file)
+      const dnames = dirname.split("_")
+      const basename = path.basename(RUN.srcmd.file)
+      const fnames = basename.split("_")
+
+      const hasWeight = (name) => Number.isInteger(Number(name))
+
+      const dWeight = hasWeight(dnames[0]) ? Number.parseInt(dnames[0]) : null
+      let newdir = hasWeight(dnames[0])
+        ? dnames.slice(1).join('_').trim()
+        : dirname.trim()
+
+      let weight = hasWeight(fnames[0]) ? Number.parseInt(fnames[0]) : null
+      let newfile = hasWeight(fnames[0])
+        ? fnames.slice(1).join('_').trim()
+        : basename.trim()
+
+      if (newfile === "README.md") {
+        newfile = newfile.replace("README.md", "_index.md")
+        weight = dWeight
+      }
+
+      newfile = newdir === '.' ? newfile : `${newdir}/${newfile}`
+
+      RUN.srcmd.weight = weight
+      RUN.srcmd.newfile = newfile
+
+      log.push(['weight', weight])
+      log.push(['newfile', newfile])
+    })
+
     await activity(`Inject Hugo front matter`, async () => {
-      // // title as filename sans extension
-      // const title = path.basename(RUN.srcmd.file, '.md')
-
-      // // title as filename with extension
-      // const title = path.basename(RUN.srcmd.file)
-
       // title as sanitized content from first heading
       const heading = RUN.srcmd.content.match(/#[\s]+(.*)/)
       const title = heading[1]
@@ -244,6 +272,7 @@ for (const version of RUN.versions) {
       const front = heredoc`
         ---
         title: ${title}
+        weight: ${RUN.srcmd.weight}
         ---
       `
       RUN.srcmd.content = [front, RUN.srcmd.content].join("\n")
@@ -266,7 +295,10 @@ for (const version of RUN.versions) {
     })
 
     await activity(`Write result file`, async (log) => {
-      const dst = `${RUN.verdir}/${RUN.srcmd.file}`
+      const dirname = path.dirname(RUN.srcmd.newfile)
+      await fs.mkdir(`${RUN.verdir}/${dirname}`, {recursive: true})
+
+      const dst = `${RUN.verdir}/${RUN.srcmd.newfile}`
       await fs.writeFile(dst, RUN.srcmd.content, { encoding: 'utf8' })
       log.push(['dst', dst])
     })
@@ -349,21 +381,23 @@ await activity(`Set '/current' version alias`, async (log) => {
   log.push(['current', current])
 })
 
-await activity(`Clean dist dir`, async (log) => {
-  RUN.dist = path.resolve(`${RUN.site}/../dist`)
-  await fs.rm(RUN.dist, {recursive: true, force: true})
-  await fs.mkdir(RUN.dist)
+if (opts.dist) {
+  await activity(`Clean dist dir`, async (log) => {
+    RUN.dist = path.resolve(`${RUN.site}/../dist`)
+    await fs.rm(RUN.dist, {recursive: true, force: true})
+    await fs.mkdir(RUN.dist)
 
-  log.push(['dist', RUN.dist])
-})
+    log.push(['dist', RUN.dist])
+  })
 
-await activity(`Build site into dist dir`, async () => {
-  await exec(`
-    cd ${RUN.work}
-    npm ci
-    npm run build:production -- --destination ${RUN.dist}
-  `);
-})
+  await activity(`Build site into dist dir`, async () => {
+    await exec(`
+      cd ${RUN.work}
+      npm ci
+      npm run build:production -- --destination ${RUN.dist}
+    `);
+  })
+}
 
 console.timeEnd(TOTAL)
 console.log("")
