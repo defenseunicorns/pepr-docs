@@ -58,6 +58,11 @@ function rewriteRemoteVideoLinks(content) {
   )
 }
 
+function isInt(str) {
+  return Number.isInteger(Number(str))
+}
+
+
 const TOTAL = 'Total build time'
 console.time(TOTAL)
 
@@ -230,29 +235,36 @@ for (const version of RUN.versions) {
     })
 
     await activity(`Gen weight and new file name`, async (log) => {
-      const dirname = path.dirname(RUN.srcmd.file)
-      const dnames = dirname.split("_")
-      const basename = path.basename(RUN.srcmd.file)
-      const fnames = basename.split("_")
+      const filename = path.basename(RUN.srcmd.file)
+      let ancestors = path.dirname(RUN.srcmd.file).split("/")
+      let parent = ancestors.pop()
 
-      const hasWeight = (name) => Number.isInteger(Number(name))
+      ancestors = ancestors.map(a => {
+        const [prefix, ...rest] = a.split("_")
+        return isInt(prefix)
+          ? rest.join("_")
+          : [prefix, ...rest].join("_")
+      })
+      ancestors = ancestors.join("/")
 
-      const dWeight = hasWeight(dnames[0]) ? Number.parseInt(dnames[0]) : null
-      let newdir = hasWeight(dnames[0])
-        ? dnames.slice(1).join('_').trim()
-        : dirname.trim()
+      const pParts = parent.split("_")
+      const pWeight = isInt(pParts[0]) ? Number.parseInt(pParts[0]) : null
+      let newdir = pWeight !== null
+        ? [ancestors, pParts.slice(1).join('_').trim()].filter(f => f).join("/")
+        : [ancestors, pParts.join('_').trim()].filter(f => f).join("/")
 
-      let weight = hasWeight(fnames[0]) ? Number.parseInt(fnames[0]) : null
-      let newfile = hasWeight(fnames[0])
-        ? fnames.slice(1).join('_').trim()
-        : basename.trim()
+      const fParts = filename.split("_")
+      let weight = isInt(fParts[0]) ? Number.parseInt(fParts[0]) : null
+      let newfile = weight !== null
+        ? fParts.slice(1).join('_').trim()
+        : filename.trim()
 
       if (newfile === "README.md") {
         newfile = newfile.replace("README.md", "_index.md")
-        weight = dWeight
+        weight = pWeight
       }
 
-      newfile = newdir === '.' ? newfile : `${newdir}/${newfile}`
+      newfile = newdir === '.' ? newfile : [newdir, newfile].join("/")
 
       RUN.srcmd.weight = weight
       RUN.srcmd.newfile = newfile
@@ -283,6 +295,18 @@ for (const version of RUN.versions) {
 
       // rewrite relative .md link paths to compensate Hugo-gen'd pretty path
       RUN.srcmd.content = RUN.srcmd.content.replaceAll('](./', '](../')
+
+      // rewrite .md link paths to strip filename number prefixes
+      Array.from(RUN.srcmd.content.matchAll(/\]\(\.\.\/[^)]*\)/g), m => m[0]).forEach(mdLink => {
+        let parts = mdLink.replace("](", "").replace(")", "").split("/")
+        parts = parts.map(part => {
+          const [prefix, ...rest] = part.split("_")
+          return isInt(prefix) ? rest.join("_") : part
+        })
+        let newLink = `](${parts.join("/")})`
+        RUN.srcmd.content = RUN.srcmd.content.replaceAll(mdLink, newLink)
+      })
+
 
       // rewrite .md link paths to match Hugo's pretty link format
       RUN.srcmd.content = RUN.srcmd.content.replaceAll('.md)', '/)')
