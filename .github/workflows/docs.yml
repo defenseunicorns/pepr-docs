@@ -116,7 +116,9 @@ jobs:
           git config user.email "<>"
 
           git add --all
+          echo "before"
           git commit -m "docs.yml"
+          echo "after"
 
           # suppress error exit code & return if nothing to commit
           retVal=$?
