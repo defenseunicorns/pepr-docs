@@ -62,6 +62,40 @@ function isInt(str) {
   return Number.isInteger(Number(str))
 }
 
+function rewriteNumberedFileLinks(content) {
+  Array.from(content.matchAll(/\]\([^)]*\)/g), m => m[0]).forEach(mdLink => {
+    let parts = mdLink.replace("](", "").replace(")", "").split("/")
+    if (parts[0].startsWith("http")) { return }
+
+    parts = parts.map(part => {
+      const [prefix, ...rest] = part.split("_")
+      return isInt(prefix) ? rest.join("_") : part
+    })
+    let newLink = `](${parts.join("/")})`
+    content = content.replaceAll(mdLink, newLink)
+  })
+  return content
+}
+
+function rewriteReadmeFileLinks(content) {
+  Array.from(content.matchAll(/\]\([^)]*\)/g), m => m[0]).forEach(mdLink => {
+    let parts = mdLink.replace("](", "").replace(")", "").split("/")
+    if (parts.at(-1) === "README.md") { parts.pop() }
+
+    let newLink = `](${parts.join("/")})`
+    content = content.replaceAll(mdLink, newLink)
+  })
+  return content
+}
+
+function rewriteFileLinksAsLowerCase(content) {
+  Array.from(content.matchAll(/\]\([^)]*\)/g), m => m[0]).forEach(mdLink => {
+    let newLink = mdLink.toLowerCase()
+    content = content.replaceAll(mdLink, newLink)
+  })
+  return content
+}
+
 
 const TOTAL = 'Total build time'
 console.time(TOTAL)
@@ -296,17 +330,11 @@ for (const version of RUN.versions) {
       // rewrite relative .md link paths to compensate Hugo-gen'd pretty path
       RUN.srcmd.content = RUN.srcmd.content.replaceAll('](./', '](../')
 
-      // rewrite .md link paths to strip filename number prefixes
-      Array.from(RUN.srcmd.content.matchAll(/\]\(\.\.\/[^)]*\)/g), m => m[0]).forEach(mdLink => {
-        let parts = mdLink.replace("](", "").replace(")", "").split("/")
-        parts = parts.map(part => {
-          const [prefix, ...rest] = part.split("_")
-          return isInt(prefix) ? rest.join("_") : part
-        })
-        let newLink = `](${parts.join("/")})`
-        RUN.srcmd.content = RUN.srcmd.content.replaceAll(mdLink, newLink)
-      })
+      RUN.srcmd.content = rewriteNumberedFileLinks(RUN.srcmd.content)
 
+      RUN.srcmd.content = rewriteReadmeFileLinks(RUN.srcmd.content)
+
+      RUN.srcmd.content = rewriteFileLinksAsLowerCase(RUN.srcmd.content)
 
       // rewrite .md link paths to match Hugo's pretty link format
       RUN.srcmd.content = RUN.srcmd.content.replaceAll('.md)', '/)')
@@ -345,11 +373,18 @@ for (const version of RUN.versions) {
     // trim 'docs' out of link paths
     idxBody = idxBody.replaceAll('](./docs/', '](./')
 
+    idxBody = rewriteReadmeFileLinks(idxBody)
+
+    idxBody = rewriteFileLinksAsLowerCase(idxBody)
+
     // rewrite .md link paths to match Hugo's pretty link format
     idxBody = idxBody.replaceAll('.md)', '/)')
 
     // rewrite raw githubusercontent video links into video tags
     idxBody = rewriteRemoteVideoLinks(idxBody)
+
+    // rewrite numbered file links
+    idxBody = rewriteNumberedFileLinks(idxBody)
 
     const idxContent = [idxFront, idxBody].join("\n")
     await fs.writeFile(idxMd, idxContent, { encoding: 'utf8' })
