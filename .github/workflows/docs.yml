@@ -116,13 +116,7 @@ jobs:
           git config user.email "<>"
 
           git add --all
-          echo "before"
-          git commit -m "docs.yml"
-          echo "after"
-
-          # suppress error exit code & return if nothing to commit
-          retVal=$?
-          echo "$retVal"
-          if [ $retVal -eq 1 ]; then exit 0 ; fi
-
-          git push origin "$BRANCH"
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "docs.yml"
+            git push origin "$BRANCH"
+          fi
