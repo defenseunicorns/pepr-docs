@@ -219,7 +219,7 @@ for (const version of RUN.versions) {
     const srcimgs = `${RUN.core}/_images`
     const dstimgs = `${RUN.work}/static/${RUN.version}/_images`
     await fs.cp(srcimgs, dstimgs, {recursive: true})
-    
+
     log.push(['src', srcimgs])
     log.push(['dst', dstimgs])
   })
@@ -294,7 +294,7 @@ for (const version of RUN.versions) {
       RUN.srcmd.content = rewriteRemoteVideoLinks(RUN.srcmd.content)
 
       // rewrite relative .md link paths to compensate Hugo-gen'd pretty path
-      RUN.srcmd.content = RUN.srcmd.content.replaceAll('](./', '](../')
+      RUN.srcmd.content = RUN.srcmd.content.replaceAll('](../', '](../../').replaceAll('](./', '](../')
 
       // rewrite .md link paths to strip filename number prefixes
       Array.from(RUN.srcmd.content.matchAll(/\]\(\.\.\/[^)]*\)/g), m => m[0]).forEach(mdLink => {
@@ -354,7 +354,7 @@ for (const version of RUN.versions) {
     const idxContent = [idxFront, idxBody].join("\n")
     await fs.writeFile(idxMd, idxContent, { encoding: 'utf8' })
 
-    log.push(['dst', idxMd]) 
+    log.push(['dst', idxMd])
   })
 
 }
