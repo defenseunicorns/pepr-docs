@@ -361,7 +361,8 @@ for (const version of RUN.versions) {
     const idxMd = `${RUN.verdir}/_index.md`
     const idxFront = heredoc`
       ---
-      title: ${RUN.version}
+      title: Pepr
+      linkTitle: ${RUN.version}
       cascade:
         type: docs
       aliases: []
@@ -369,6 +370,10 @@ for (const version of RUN.versions) {
     `
     const rootMd = `${RUN.core}/README.md`
     let idxBody = await fs.readFile(rootMd, { encoding: 'utf8' })
+
+    // strip first heading
+    const headings = idxBody.match(/#[\s]+(.*)/)
+    idxBody = idxBody.replaceAll(headings[0], '')
 
     // trim 'docs' out of link paths
     idxBody = idxBody.replaceAll('](./docs/', '](./')
