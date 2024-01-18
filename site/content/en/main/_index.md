@@ -1,10 +1,11 @@
 ---
-title: main
+title: Pepr
+linkTitle: main
 cascade:
   type: docs
 aliases: []
 ---
-# Pepr
+
 
 [![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](.)
 [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr)
