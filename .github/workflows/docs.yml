@@ -120,6 +120,7 @@ jobs:
 
           # suppress error exit code & return if nothing to commit
           retVal=$?
+          echo "$retVal"
           if [ $retVal -eq 1 ]; then exit 0 ; fi
 
           git push origin "$BRANCH"
