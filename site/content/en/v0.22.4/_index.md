@@ -1,12 +1,13 @@
 ---
-title: v0.22.2
+title: Pepr
+linkTitle: v0.22.4
 cascade:
   type: docs
-aliases: []
+aliases: ["/current/"]
 ---
-# Pepr
 
-[![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](./README/)
+
+[![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](.)
 [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr)
 [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr)
 [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr)
@@ -139,8 +140,8 @@ See [actions](./actions/) for more details.
 
 ## Logical Pepr Flow
 
-![Arch Diagram](./_images/pepr-arch.svg)
-[Source Diagram](_images/pepr-arch.svg)
+![Arch Diagram](./images/pepr-arch.svg)
+[Source Diagram](images/pepr-arch.svg)
 
 ## TypeScript
 
