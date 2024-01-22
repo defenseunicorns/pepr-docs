@@ -1,6 +1,6 @@
 ---
 title: RBAC Modes
-weight: 
+weight: 90
 ---
 
 
@@ -8,7 +8,7 @@ During the build phase of Pepr (`npx pepr build --rbac-mode [admin|scoped]`), yo
 
 ## Modes
 
-**admin**   
+### admin
 
 ```bash
 npx pepr build --rbac-mode admin
@@ -16,7 +16,7 @@ npx pepr build --rbac-mode admin
 
 **Description:** The service account is given cluster-admin permissions, granting it full, unrestricted access across the entire cluster. This can be useful for administrative tasks where broad permissions are necessary. However, use this mode with caution, as it can pose security risks if misused. This is the default mode.
 
-**scoped**
+### scoped
 
 ```bash
 npx pepr build --rbac-mode scoped
@@ -59,7 +59,7 @@ kubectl logs -n pepr-system  -l app | jq
 }
 ```
 
-2. Verify ServiceAccount Permissions with `kubectl auth can-i`
+1. Verify ServiceAccount Permissions with `kubectl auth can-i`
 
 ```bash
 SA=$(kubectl get deploy -n pepr-system -o=jsonpath='{range .items[0]}{.spec.template.spec.serviceAccountName}{"\n"}{end}')
@@ -70,7 +70,7 @@ kubectl auth can-i create cm --as=system:serviceaccount:pepr-system:$SA -n pepr-
 # example output: no
 ```
 
-3. Describe the ClusterRole
+1. Describe the ClusterRole
 
 ```bash
 SA=$(kubectl get deploy -n pepr-system -o=jsonpath='{range .items[0]}{.spec.template.spec.serviceAccountName}{"\n"}{end}')

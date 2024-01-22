@@ -1,16 +1,22 @@
 ---
-title: Pepr Module
-weight: 
+title: Tutorial - Create a Tutorial - Create a Pepr Module
+weight: 10
 ---
 
 
-Each Pepr Module is it's own Typescript project, produced by [`pepr init`](../cli#pepr-init). Typically a module is maintained by a unique group or system. For example, a module for internal [Zarf](https://zarf.dev/) mutations would be different from a module for [Big Bang](https://p1.dso.mil/products/big-bang). An important idea with modules is that they are _wholly independent of one another_. This means that 2 different modules can be on completely different versions of Pepr and any other dependencies; their only interaction is through the standard K8s interfaces like any other webhook or controller.
+## Introduction
 
-## Module development lifecycle
+This tutorial will walk you through the process of creating a Pepr module.
+
+Each Pepr Module is it's own Typescript project, produced by [`pepr init`](../../user-guide/pepr-cli#pepr-init). Typically a module is maintained by a unique group or system. For example, a module for internal [Zarf](https://zarf.dev/) mutations would be different from a module for [Big Bang](https://p1.dso.mil/products/big-bang). An important idea with modules is that they are _wholly independent of one another_. This means that 2 different modules can be on completely different versions of Pepr and any other dependencies; their only interaction is through the standard K8s interfaces like any other webhook or controller.
+
+## Prerequisites
+
+## Steps
 
 1. **Create the module**:
 
-   Use [`pepr init`](../cli#pepr-init) to generate a new module.
+   Use [`pepr init`](../../user-guide/pepr-cli#pepr-init) to generate a new module.
 
 1. **Quickly validate system setup**:
 
@@ -38,7 +44,7 @@ Each Pepr Module is it's own Typescript project, produced by [`pepr init`](../cl
 
 1. **Create your custom Pepr Capabilities**
 
-   Now that you have confirmed Pepr is working, you can now create new [capabilities](../capabilities/). You'll also want to disable the `HelloPepr` capability in your module (`pepr.ts`) before pushing to production. You can disable by commenting out or deleting the `HelloPepr` variable below:
+   Now that you have confirmed Pepr is working, you can now create new [capabilities](../../user-guide/capabilities/). You'll also want to disable the `HelloPepr` capability in your module (`pepr.ts`) before pushing to production. You can disable by commenting out or deleting the `HelloPepr` variable below:
 
    ```typescript
    new PeprModule(cfg, [
@@ -49,16 +55,16 @@ Each Pepr Module is it's own Typescript project, produced by [`pepr init`](../cl
    ]);
    ```
 
-   _Note: if you also delete the `capabilities/hello-pepr.ts` file, it will be added again on the next [`pepr update`](../cli#pepr-update) so you have the latest examples usages from the Pepr SDK. Therefore, it is sufficient to remove the entry from your `pepr.ts` module
+   _Note: if you also delete the `capabilities/hello-pepr.ts` file, it will be added again on the next [`pepr update`](../../user-guide/pepr-cli#pepr-update) so you have the latest examples usages from the Pepr SDK. Therefore, it is sufficient to remove the entry from your `pepr.ts` module
    config._
 
 1. **Build and deploy the Pepr Module**
 
    Most of the time, you'll likely be iterating on a module with `pepr dev` for real-time feedback and validation Once you are ready to move beyond the local dev environment, Pepr provides deployment and build tools you can use.
 
-   `pepr deploy` - you can use this command to build your module and deploy it into any K8s cluster your current `kubecontext` has access to. This setup is ideal for CI systems during testing, but is not recommended for production use. See [`pepr deploy`](../cli#pepr-deploy) for more info.
+   `pepr deploy` - you can use this command to build your module and deploy it into any K8s cluster your current `kubecontext` has access to. This setup is ideal for CI systems during testing, but is not recommended for production use. See [`pepr deploy`](../../user-guide/pepr-cli#pepr-deploy) for more info.
 
-## Advanced Module Configuration
+## Additional Information
 
 By default, when you run `pepr init`, the module is not configured with any additional options. Currently, there are 3 options you can configure:
 
@@ -92,3 +98,7 @@ const module = new PeprModule(
 // Do any additional setup before starting the controller
 module.start();
 ```
+
+## Summary
+
+## What's next?
