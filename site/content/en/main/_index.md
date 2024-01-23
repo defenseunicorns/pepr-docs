@@ -140,7 +140,7 @@ See [actions](./user-guide/actions/) for more details.
 
 ## Logical Pepr Flow
 
-![Arch Diagram](./images/pepr-arch.svg)
+![Arch Diagram](images/pepr-arch.svg)
 [Source Diagram](images/pepr-arch.svg)
 
 ## TypeScript
