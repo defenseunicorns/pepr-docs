@@ -81,7 +81,9 @@ function rewriteReadmeFileLinks(content) {
   Array.from(content.matchAll(/\]\([^)]*\)/g), m => m[0]).forEach(mdLink => {
     let parts = mdLink.replace("](", "").replace(")", "").split("/")
     if (parts.at(-1) === "README.md") { parts.pop() }
-
+    if (parts[0].startsWith("_images")) {
+      parts[0] = "__images"
+    }
     let newLink = `](${parts.join("/")})`
     content = content.replaceAll(mdLink, newLink)
   })
