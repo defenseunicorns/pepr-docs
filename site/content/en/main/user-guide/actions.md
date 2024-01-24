@@ -10,7 +10,7 @@ For example, an action could be responsible for adding a specific label to a Kub
 
 Actions are `Mutate()`, `Validate()`, or `Watch()`. Both Mutate and Validate actions run during the admission controller lifecycle, while Watch actions run in a separate controller that tracks changes to resources, including existing resources.
 
-Let's look at some example actions that are included in the `HelloPepr` capability that is created for you when you [`pepr init`](../pepr-cli#pepr-init):
+Let's look at some example actions that are included in the `HelloPepr` capability that is created for you when you [`npx pepr init`](../pepr-cli#pepr-init):
 
 ---
 
@@ -68,4 +68,4 @@ When(a.ConfigMap)
   });
 ```
 
-There are many more examples in the `HelloPepr` capability that you can use as a reference when creating your own actions. Note that each time you run [`pepr update`](../pepr-cli#pepr-update), Pepr will automatically update the `HelloPepr` capability with the latest examples and best practices for you to reference and test directly in your Pepr Module.
+There are many more examples in the `HelloPepr` capability that you can use as a reference when creating your own actions. Note that each time you run [`npx pepr update`](../pepr-cli#pepr-update), Pepr will automatically update the `HelloPepr` capability with the latest examples and best practices for you to reference and test directly in your Pepr Module.
