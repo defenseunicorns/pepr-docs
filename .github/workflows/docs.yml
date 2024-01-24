@@ -52,7 +52,7 @@ jobs:
           npm --workspace build run dev -- --site "$SITE" --core "$CORE"
 
       - name: Commit changes to source!
-        if: github.head_ref == 'refs/heads/main'
+        if: github.ref_name == 'main'
         run: |
           HUGO_OLD=$(realpath "$SITE/hugo.yaml")
           HUGO_NEW=$(realpath "$WORK/hugo.yaml")
@@ -81,7 +81,7 @@ jobs:
           fi
 
       - name: Upload Artifacts!
-        if: github.head_ref == 'refs/heads/main'
+        if: github.ref_name == 'main'
         uses: actions/upload-artifact@v4
         with:
           name: dist
@@ -90,7 +90,7 @@ jobs:
 
 
   deploy:
-    if: github.head_ref == 'refs/heads/main'
+    if: github.ref_name == 'main'
     needs: build
     runs-on: ubuntu-latest
     permissions:
