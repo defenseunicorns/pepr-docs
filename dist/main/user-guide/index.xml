@@ -1,5 +1,5 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>– User Guide</title><link>/main/user-guide/</link><description>Recent content in User Guide on</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="/main/user-guide/index.xml" rel="self" type="application/rss+xml"/><item><title>Main: Pepr CLI</title><link>/main/user-guide/pepr-cli/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-cli/</guid><description>
-&lt;h2 id="pepr-init">&lt;code>pepr init&lt;/code>&lt;/h2>
+&lt;h2 id="npx-pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/h2>
 &lt;p>Initialize a new Pepr Module.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
@@ -7,7 +7,7 @@
 &lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init and VSCode launch&lt;/li>
 &lt;/ul>
 &lt;hr>
-&lt;h2 id="pepr-update">&lt;code>pepr update&lt;/code>&lt;/h2>
+&lt;h2 id="npx-pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/h2>
 &lt;p>Update the current Pepr Module to the latest SDK version and update the global Pepr CLI to the same version.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
@@ -15,8 +15,8 @@
 &lt;li>&lt;code>--skip-template-update&lt;/code> - Skip updating the template files&lt;/li>
 &lt;/ul>
 &lt;hr>
-&lt;h2 id="pepr-dev">&lt;code>pepr dev&lt;/code>&lt;/h2>
-&lt;p>Connect a local cluster to a local version of the Pepr Controller to do real-time debugging of your module. Note the &lt;code>pepr dev&lt;/code> assumes a K3d cluster is running by default. If you are working with Kind or another docker-based K8s distro, you will need to pass the &lt;code>--host host.docker.internal&lt;/code> option to &lt;code>pepr dev&lt;/code>. If working with a remote cluster you will have to give Pepr a host path to your machine that is reachable from the K8s cluster.&lt;/p>
+&lt;h2 id="npx-pepr-dev">&lt;code>npx pepr dev&lt;/code>&lt;/h2>
+&lt;p>Connect a local cluster to a local version of the Pepr Controller to do real-time debugging of your module. Note the &lt;code>npx pepr dev&lt;/code> assumes a K3d cluster is running by default. If you are working with Kind or another docker-based K8s distro, you will need to pass the &lt;code>--host host.docker.internal&lt;/code> option to &lt;code>npx pepr dev&lt;/code>. If working with a remote cluster you will have to give Pepr a host path to your machine that is reachable from the K8s cluster.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
 &lt;li>&lt;code>-l, --log-level [level]&lt;/code> - Log level: debug, info, warn, error (default: &amp;ldquo;info&amp;rdquo;)&lt;/li>
@@ -24,7 +24,7 @@
 &lt;li>&lt;code>--confirm&lt;/code> - Skip confirmation prompt&lt;/li>
 &lt;/ul>
 &lt;hr>
-&lt;h2 id="pepr-deploy">&lt;code>pepr deploy&lt;/code>&lt;/h2>
+&lt;h2 id="npx-pepr-deploy">&lt;code>npx pepr deploy&lt;/code>&lt;/h2>
 &lt;p>Deploy the current module into a Kubernetes cluster, useful for CI systems. Not recommended for production use.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
@@ -33,17 +33,17 @@
 &lt;li>&lt;code>--confirm&lt;/code> - Skip confirmation prompt&lt;/li>
 &lt;/ul>
 &lt;hr>
-&lt;h2 id="pepr-monitor">&lt;code>pepr monitor&lt;/code>&lt;/h2>
-&lt;p>Monitor Validations for a given Pepr Module.&lt;/p>
+&lt;h2 id="npx-pepr-monitor">&lt;code>npx pepr monitor&lt;/code>&lt;/h2>
+&lt;p>Monitor Validations for a given Pepr Module or all Pepr Modules.&lt;/p>
 &lt;p>Usage:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr monitor &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &amp;lt;module-uuid&amp;gt;
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr monitor &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>module-uuid&lt;span style="color:#ff79c6">]&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
 &lt;li>&lt;code>-l, --log-level [level]&lt;/code> - Log level: debug, info, warn, error (default: &amp;ldquo;info&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-h, --help&lt;/code> - Display help for command&lt;/li>
 &lt;/ul>
 &lt;hr>
-&lt;h2 id="pepr-build">&lt;code>pepr build&lt;/code>&lt;/h2>
+&lt;h2 id="npx-pepr-build">&lt;code>npx pepr build&lt;/code>&lt;/h2>
 &lt;p>Create a &lt;a href="https://zarf.dev">zarf.yaml&lt;/a> and K8s manifest for the current module. This includes everything needed to deploy Pepr and the current module into production environments.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
@@ -55,11 +55,11 @@
 &lt;li>&lt;code>--rbac-mode [admin|scoped]&lt;/code> - Rbac Mode: admin, scoped (default: admin) (choices: &amp;ldquo;admin&amp;rdquo;, &amp;ldquo;scoped&amp;rdquo;, default: &amp;ldquo;admin&amp;rdquo;)&lt;/li>
 &lt;/ul></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
 &lt;h2 id="what-is-a-pepr-module">What is a Pepr Module?&lt;/h2>
-&lt;p>A Pepr Module is a collection of files that can be used to create a new Pepr Project. A Pepr Module can be used to create a new Pepr Project by using the &lt;code>pepr init&lt;/code> command. A Pepr Module can also be used to create a new Pepr Module by using the &lt;code>pepr create-module&lt;/code> command.&lt;/p></description></item><item><title>Main: Actions</title><link>/main/user-guide/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/actions/</guid><description>
+&lt;p>A Pepr Module is a collection of files that can be used to create a new Pepr Project. A Pepr Module can be used to create a new Pepr Project by using the &lt;code>npx pepr init&lt;/code> command.&lt;/p></description></item><item><title>Main: Actions</title><link>/main/user-guide/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/actions/</guid><description>
 &lt;p>An action is a discrete set of behaviors defined in a single function that acts on a given Kubernetes GroupVersionKind (GVK) passed in during the admission controller lifecycle. Actions are the atomic operations that are performed on Kubernetes resources by Pepr.&lt;/p>
 &lt;p>For example, an action could be responsible for adding a specific label to a Kubernetes resource, or for modifying a specific field in a resource&amp;rsquo;s metadata. Actions can be grouped together within a Capability to provide a more comprehensive set of operations that can be performed on Kubernetes resources.&lt;/p>
 &lt;p>Actions are &lt;code>Mutate()&lt;/code>, &lt;code>Validate()&lt;/code>, or &lt;code>Watch()&lt;/code>. Both Mutate and Validate actions run during the admission controller lifecycle, while Watch actions run in a separate controller that tracks changes to resources, including existing resources.&lt;/p>
-&lt;p>Let&amp;rsquo;s look at some example actions that are included in the &lt;code>HelloPepr&lt;/code> capability that is created for you when you &lt;a href="../pepr-cli#pepr-init">&lt;code>pepr init&lt;/code>&lt;/a>:&lt;/p>
+&lt;p>Let&amp;rsquo;s look at some example actions that are included in the &lt;code>HelloPepr&lt;/code> capability that is created for you when you &lt;a href="../pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>:&lt;/p>
 &lt;hr>
 &lt;p>In this first example, Pepr is adding a label and annotation to a ConfigMap with tne name &lt;code>example-1&lt;/code> when it is created. Comments are added to each line to explain in more detail what is happening.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// When(a.&amp;lt;Kind&amp;gt;) filters which GroupVersionKind (GVK) this action should act on.
@@ -101,11 +101,11 @@
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .Watch((cm, phase) &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(cm, &lt;span style="color:#f1fa8c">`ConfigMap &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>cm.metadata.name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c"> was &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>phase&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>There are many more examples in the &lt;code>HelloPepr&lt;/code> capability that you can use as a reference when creating your own actions. Note that each time you run &lt;a href="../pepr-cli#pepr-update">&lt;code>pepr update&lt;/code>&lt;/a>, Pepr will automatically update the &lt;code>HelloPepr&lt;/code> capability with the latest examples and best practices for you to reference and test directly in your Pepr Module.&lt;/p></description></item><item><title>Main: Pepr Capabilities</title><link>/main/user-guide/capabilities/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/capabilities/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>There are many more examples in the &lt;code>HelloPepr&lt;/code> capability that you can use as a reference when creating your own actions. Note that each time you run &lt;a href="../pepr-cli#pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/a>, Pepr will automatically update the &lt;code>HelloPepr&lt;/code> capability with the latest examples and best practices for you to reference and test directly in your Pepr Module.&lt;/p></description></item><item><title>Main: Pepr Capabilities</title><link>/main/user-guide/capabilities/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/capabilities/</guid><description>
 &lt;p>A capability is set of related &lt;a href="../actions/">actions&lt;/a> that work together to achieve a specific transformation or operation on Kubernetes resources. Capabilities are user-defined and can include one or more actions. They are defined within a Pepr module and can be used in both MutatingWebhookConfigurations and ValidatingWebhookConfigurations. A Capability can have a specific scope, such as mutating or validating, and can be reused in multiple Pepr modules.&lt;/p>
-&lt;p>When you &lt;a href="../pepr-cli#pepr-init">&lt;code>pepr init&lt;/code>&lt;/a>, a &lt;code>capabilities&lt;/code> directory is created for you. This directory is where you will define your capabilities. You can create as many capabilities as you need, and each capability can contain one or more actions. Pepr also automatically creates a &lt;code>HelloPepr&lt;/code> capability with a number of example actions to help you get started.&lt;/p>
+&lt;p>When you &lt;a href="../pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>, a &lt;code>capabilities&lt;/code> directory is created for you. This directory is where you will define your capabilities. You can create as many capabilities as you need, and each capability can contain one or more actions. Pepr also automatically creates a &lt;code>HelloPepr&lt;/code> capability with a number of example actions to help you get started.&lt;/p>
 &lt;h2 id="creating-a-capability">Creating a Capability&lt;/h2>
-&lt;p>Defining a new capability can be done via a &lt;a href="https://code.visualstudio.com/docs/editor/userdefinedsnippets">VSCode Snippet&lt;/a> generated during &lt;a href="../pepr-cli#pepr-init">&lt;code>pepr init&lt;/code>&lt;/a>.&lt;/p>
+&lt;p>Defining a new capability can be done via a &lt;a href="https://code.visualstudio.com/docs/editor/userdefinedsnippets">VSCode Snippet&lt;/a> generated during &lt;a href="../pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>.&lt;/p>
 &lt;ol>
 &lt;li>
 &lt;p>Create a new file in the &lt;code>capabilities&lt;/code> directory with the name of your capability. For example, &lt;code>capabilities/my-capability.ts&lt;/code>.&lt;/p>
