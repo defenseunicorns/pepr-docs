@@ -3,7 +3,7 @@ title: Pepr
 linkTitle: main
 cascade:
   type: docs
-aliases: [ ]
+aliases: []
 ---
 
 
