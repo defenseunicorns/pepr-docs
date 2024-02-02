@@ -13,7 +13,8 @@
 <a href=#pg-06c2729db2a1390eaaa4066f8a474422>Metrics Endpoints</a></li><li>1.10:
 <a href=#pg-e7b6d1b8c4128f9cbfde49b6521b3dfd>WASM Support</a></li></ul><li>2:
 <a href=#pg-4e651230eae8ca724b2e896690e29bcb>Pepr Tutorials</a></li><ul><li>2.1:
-<a href=#pg-47596fc426929b2e22743d22d53b6f8c>Tutorial - Create a Pepr Module</a></li></ul><li>3:
+<a href=#pg-47596fc426929b2e22743d22d53b6f8c>Tutorial - Create a Pepr Module</a></li><li>2.2:
+<a href=#pg-a2c4dcb156359b4ebd4dd0a9533b1917>Tutorial - Create a Pepr Dashboard</a></li></ul><li>3:
 <a href=#pg-f63c3cab96388a165f1baeacc322672f>Module Examples</a></li><ul></ul><li>4:
 <a href=#pg-eab9b22a15939e59eb6663351bc50ec6>Pepr Best Practices</a></li><ul></ul><li>5:
 <a href=#pg-d449864d1b06324a5dc78f74e6d06739>Frequently Asked Questions</a></li><ul></ul><li>6:
@@ -585,7 +586,7 @@ that after <code>npx pepr init</code>:</p><div class=highlight><pre tabindex=0 s
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#6272a4># Launch pepr dev mode</span>
 </span></span><span style=display:flex><span><span style=color:#6272a4># If using another local K8s distro instead of k3d, use `npx pepr dev --host host.docker.internal`</span>
-</span></span><span style=display:flex><span>pepr dev
+</span></span><span style=display:flex><span>npx pepr dev
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#6272a4># From another terminal, apply the sample yaml</span>
 </span></span><span style=display:flex><span>kubectl apply -f capabilities/hello-pepr.samples.yaml
@@ -618,7 +619,772 @@ config.</em></p></li><li><p><strong>Build and deploy the Pepr Module</strong></p
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#6272a4>// Do any additional setup before starting the controller
 </span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#ff79c6>module</span>.start();
-</span></span></code></pre></div><h2 id=summary>Summary</h2><p>Checkout some examples of Pepr modules in the <a href=https://github.com/defenseunicorns/pepr-excellent-examples>excellent examples repo</a>. If you have questions after that, please reach out to us on <a href=https://kubernetes.slack.com/archives/c06dgh40ucb>Slack</a> or <a href=https://github.com/defenseunicorns/pepr/issues>GitHub Issues</a></p></div><div class=td-content style=page-break-before:always><h1 id=pg-f63c3cab96388a165f1baeacc322672f>3 -
+</span></span></code></pre></div><h2 id=summary>Summary</h2><p>Checkout some examples of Pepr modules in the <a href=https://github.com/defenseunicorns/pepr-excellent-examples>excellent examples repo</a>. If you have questions after that, please reach out to us on <a href=https://kubernetes.slack.com/archives/c06dgh40ucb>Slack</a> or <a href=https://github.com/defenseunicorns/pepr/issues>GitHub Issues</a></p></div><div class=td-content style=page-break-before:always><h1 id=pg-a2c4dcb156359b4ebd4dd0a9533b1917>2.2 -
+Tutorial - Create a Pepr Dashboard</h1><h2 id=introduction>Introduction</h2><p>This tutorial will walk you through the process of creating a dashboard to display your Pepr metrics. This dashboard will present data such as the number of validation requests processed, the number of mutation requests that were allowed, the number of errors that were processed, the number of alerts that were processed, the status of the Pepr pods, and the scrape duration of the Pepr pods. This dashboard will be created using <a href=https://grafana.com/>Grafana</a>. The dashboard will display data from <a href=https://prometheus.io/>Prometheus</a>, which is a monitoring system that Pepr uses to collect metrics.</p><p>This tutorial is not intended for production, but instead is intended to show how to quickly scrape Pepr metrics. The <a href=https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack>Kube Prometheus Stack</a> provides a starting point for a more production suitable way of deploying Prometheus in prod.</p><p>An example of what the dashboard will look like is shown below:</p><p><img src=../../../images/pepr-dashboard-screenshot.png alt="Pepr Dashboard"></p><p><em><strong>Note:</strong></em> <em>The dashboard shown above is an example of what the dashboard will look like. The dashboard will be populated with data from your Pepr instance.</em></p><h2 id=steps>Steps</h2><h3 id=step-1-get-cluster-running-with-your-pepr-module-deployed>Step 1. Get Cluster Running With Your Pepr Module Deployed</h3><p>You can learn more about how to create a Pepr module and deploy it in the <a href=create-pepr-module/>Create a Pepr Module</a> tutorial. The short version is:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#6272a4>#Create your cluster</span>
+</span></span><span style=display:flex><span>k3d cluster create
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>#Create your module</span>
+</span></span><span style=display:flex><span>npx pepr init
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>#Change directory to your module that was created using `npx pepr init`</span>
+</span></span><span style=display:flex><span>npx pepr  dev
+</span></span><span style=display:flex><span>kubectl apply -f capabilities/hello-pepr.samples.yaml
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>#Deploy your module to the cluster</span>
+</span></span><span style=display:flex><span>npx pepr deploy
+</span></span></code></pre></div><h3 id=step-2-create-and-apply-our-pepr-dashboard-to-the-cluster>Step 2: Create and Apply Our Pepr Dashboard to the Cluster</h3><p>Create a new file called grafana-dashboard.yaml and add the following content:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: v1
+</span></span><span style=display:flex><span><span style=color:#ff79c6>kind</span>: ConfigMap
+</span></span><span style=display:flex><span><span style=color:#ff79c6>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>name</span>: pepr-dashboard
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>namespace</span>: default
+</span></span><span style=display:flex><span><span style=color:#ff79c6>data</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>pepr-dashboard.json</span>: |<span style=color:#f1fa8c>
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;__inputs&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;name&#34;: &#34;DS_PROMETHEUS&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;label&#34;: &#34;Prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;description&#34;: &#34;&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;datasource&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;pluginId&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;pluginName&#34;: &#34;Prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;__elements&#34;: {},
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;__requires&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;grafana&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: &#34;grafana&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;name&#34;: &#34;Grafana&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;version&#34;: &#34;9.1.6&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;datasource&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;name&#34;: &#34;Prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;version&#34;: &#34;1.0.0&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;panel&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: &#34;stat&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;name&#34;: &#34;Stat&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;version&#34;: &#34;&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;panel&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: &#34;timeseries&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;name&#34;: &#34;Time series&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;version&#34;: &#34;&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;annotations&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      &#34;list&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;builtIn&#34;: 1,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;type&#34;: &#34;grafana&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;uid&#34;: &#34;-- Grafana --&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;enable&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;hide&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;iconColor&#34;: &#34;rgba(0, 211, 255, 1)&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;name&#34;: &#34;Annotations &amp; Alerts&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;target&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;limit&#34;: 100,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;matchAny&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;tags&#34;: [],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;type&#34;: &#34;dashboard&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;type&#34;: &#34;dashboard&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      ]
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;editable&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;fiscalYearStartMonth&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;graphTooltip&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;id&#34;: null,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;links&#34;: [],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;liveNow&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;panels&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;collapsed&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;gridPos&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;h&#34;: 1,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;w&#34;: 24,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;x&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;y&#34;: 0
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: 18,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;panels&#34;: [],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;title&#34;: &#34;Pepr Status&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;row&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;description&#34;: &#34;Pepr pod status by pod&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;fieldConfig&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;defaults&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;color&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;thresholds&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;mappings&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &#34;options&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;0&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                    &#34;color&#34;: &#34;red&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                    &#34;index&#34;: 1,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                    &#34;text&#34;: &#34;Down&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;1&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                    &#34;color&#34;: &#34;green&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                    &#34;index&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                    &#34;text&#34;: &#34;Up&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &#34;type&#34;: &#34;value&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &#34;options&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;match&#34;: &#34;empty&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;result&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                    &#34;color&#34;: &#34;blue&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                    &#34;index&#34;: 2,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                    &#34;text&#34;: &#34;?&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &#34;type&#34;: &#34;special&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;min&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;thresholds&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;absolute&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;steps&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;green&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: null
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;red&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: 80
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              ]
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;overrides&#34;: []
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;gridPos&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;h&#34;: 8,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;w&#34;: 12,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;x&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;y&#34;: 1
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: 14,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;options&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;colorMode&#34;: &#34;value&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;graphMode&#34;: &#34;none&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;justifyMode&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;orientation&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;reduceOptions&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;calcs&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;last&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;fields&#34;: &#34;&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;values&#34;: false
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;text&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;titleSize&#34;: 16,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;valueSize&#34;: 70
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;textMode&#34;: &#34;auto&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;pluginVersion&#34;: &#34;9.1.6&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;targets&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;up{container=\&#34;server\&#34;}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;A&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;up{container=\&#34;watcher\&#34;}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;hide&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;B&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;title&#34;: &#34;Pepr Status&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;stat&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;fieldConfig&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;defaults&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;color&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;palette-classic&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;custom&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;axisCenteredZero&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;axisColorMode&#34;: &#34;text&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;axisLabel&#34;: &#34;&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;axisPlacement&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;barAlignment&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;drawStyle&#34;: &#34;line&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;fillOpacity&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;gradientMode&#34;: &#34;none&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;hideFrom&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &#34;legend&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &#34;tooltip&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &#34;viz&#34;: false
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;lineInterpolation&#34;: &#34;linear&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;lineWidth&#34;: 1,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;pointSize&#34;: 5,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;scaleDistribution&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &#34;type&#34;: &#34;linear&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;showPoints&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;spanNulls&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;stacking&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &#34;group&#34;: &#34;A&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &#34;mode&#34;: &#34;none&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;thresholdsStyle&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &#34;mode&#34;: &#34;off&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;mappings&#34;: [],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;thresholds&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;absolute&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;steps&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;green&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: null
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;red&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: 80
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              ]
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;overrides&#34;: []
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;gridPos&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;h&#34;: 8,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;w&#34;: 12,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;x&#34;: 12,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;y&#34;: 1
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: 12,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;options&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;legend&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;calcs&#34;: [],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;displayMode&#34;: &#34;list&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;placement&#34;: &#34;bottom&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;showLegend&#34;: true
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;tooltip&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;mode&#34;: &#34;single&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;sort&#34;: &#34;none&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;targets&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;scrape_duration_seconds{container=\&#34;server\&#34;}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;A&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;scrape_duration_seconds{container=\&#34;watcher\&#34;}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;hide&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;B&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;title&#34;: &#34;Scrape Duration Seconds&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;timeseries&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;collapsed&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;gridPos&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;h&#34;: 1,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;w&#34;: 24,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;x&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;y&#34;: 9
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: 6,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;panels&#34;: [],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;title&#34;: &#34;Error, Alert, Validate and Mutate Counts&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;row&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;fieldConfig&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;defaults&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;color&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;fixedColor&#34;: &#34;dark-red&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;fixed&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;mappings&#34;: [],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;min&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;thresholds&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;absolute&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;steps&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;green&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: null
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;red&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: 80
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              ]
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;overrides&#34;: []
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;gridPos&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;h&#34;: 8,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;w&#34;: 6,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;x&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;y&#34;: 10
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: 16,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;options&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;colorMode&#34;: &#34;value&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;graphMode&#34;: &#34;area&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;justifyMode&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;orientation&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;reduceOptions&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;calcs&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;last&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;fields&#34;: &#34;&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;values&#34;: false
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;text&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;titleSize&#34;: 16,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;valueSize&#34;: 70
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;textMode&#34;: &#34;auto&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;pluginVersion&#34;: &#34;9.1.6&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;targets&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;count by(instance) (rate(pepr_errors{container=\&#34;server\&#34;}[$__rate_interval]))&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;A&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;count by(instance) (rate(pepr_errors{container=\&#34;watcher\&#34;}[$__rate_interval]))&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;hide&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;B&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;title&#34;: &#34;Pepr: Error Count&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;stat&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;description&#34;: &#34;Count of Pepr Alerts by pod&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;fieldConfig&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;defaults&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;color&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;fixedColor&#34;: &#34;dark-yellow&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;fixed&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;mappings&#34;: [],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;min&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;thresholds&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;absolute&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;steps&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;green&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: null
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;red&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: 80
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              ]
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;overrides&#34;: []
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;gridPos&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;h&#34;: 8,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;w&#34;: 6,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;x&#34;: 6,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;y&#34;: 10
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: 10,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;options&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;colorMode&#34;: &#34;value&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;graphMode&#34;: &#34;area&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;justifyMode&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;orientation&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;reduceOptions&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;calcs&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;last&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;fields&#34;: &#34;&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;values&#34;: false
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;text&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;titleSize&#34;: 16,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;valueSize&#34;: 70
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;textMode&#34;: &#34;auto&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;pluginVersion&#34;: &#34;9.1.6&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;targets&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;pepr_alerts{container=\&#34;server\&#34;}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;A&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;pepr_alerts{container=\&#34;watcher\&#34;}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;hide&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;B&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;title&#34;: &#34;Pepr: Alert Count&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;stat&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;description&#34;: &#34;Count of Pepr Validate actions by pod&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;fieldConfig&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;defaults&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;color&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;fixedColor&#34;: &#34;dark-purple&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;fixed&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;mappings&#34;: [],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;min&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;thresholds&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;absolute&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;steps&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;green&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: null
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;red&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: 80
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              ]
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;overrides&#34;: []
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;gridPos&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;h&#34;: 8,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;w&#34;: 6,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;x&#34;: 12,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;y&#34;: 10
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: 4,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;options&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;colorMode&#34;: &#34;value&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;graphMode&#34;: &#34;area&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;justifyMode&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;orientation&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;reduceOptions&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;calcs&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;last&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;fields&#34;: &#34;&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;values&#34;: false
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;text&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;titleSize&#34;: 16,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;valueSize&#34;: 66
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;textMode&#34;: &#34;auto&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;pluginVersion&#34;: &#34;9.1.6&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;targets&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;exemplar&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;pepr_Validate_count{container=\&#34;server\&#34;}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;instant&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;A&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;pepr_Validate_sum{container=\&#34;watcher\&#34;}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;hide&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;B&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;title&#34;: &#34;Pepr: Validate Count&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;stat&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;description&#34;: &#34;Count of Pepr mutate actions applied by pod.&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;fieldConfig&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;defaults&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;color&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;fixedColor&#34;: &#34;dark-blue&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;fixed&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;mappings&#34;: [],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;min&#34;: 0,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;thresholds&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;mode&#34;: &#34;absolute&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;steps&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;green&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: null
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;color&#34;: &#34;red&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                  &#34;value&#34;: 80
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              ]
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;overrides&#34;: []
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;gridPos&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;h&#34;: 8,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;w&#34;: 6,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;x&#34;: 18,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;y&#34;: 10
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;id&#34;: 2,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;options&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;colorMode&#34;: &#34;value&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;graphMode&#34;: &#34;area&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;justifyMode&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;orientation&#34;: &#34;auto&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;reduceOptions&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;calcs&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;last&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;fields&#34;: &#34;&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;values&#34;: false
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;text&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;titleSize&#34;: 16,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;valueSize&#34;: 70
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          &#34;textMode&#34;: &#34;value_and_name&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;pluginVersion&#34;: &#34;9.1.6&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;targets&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;pepr_Mutate_count{container=\&#34;server\&#34;}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;A&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;datasource&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;type&#34;: &#34;prometheus&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>              &#34;uid&#34;: &#34;prometheus&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;editorMode&#34;: &#34;builder&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;expr&#34;: &#34;rate(pepr_Mutate_count{container=\&#34;watcher\&#34;}[24h])&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;hide&#34;: false,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;legendFormat&#34;: &#34;{{instance}}&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;range&#34;: true,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &#34;refId&#34;: &#34;B&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;title&#34;: &#34;Pepr: Mutate Count&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &#34;type&#34;: &#34;stat&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    ],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;schemaVersion&#34;: 37,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;style&#34;: &#34;dark&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;tags&#34;: [],
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;templating&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      &#34;list&#34;: []
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;time&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      &#34;from&#34;: &#34;now-24h&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      &#34;to&#34;: &#34;now&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    },
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;timepicker&#34;: {},
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;timezone&#34;: &#34;&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;title&#34;: &#34;Pepr Dashboard&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;uid&#34;: &#34;j7BjgMpIk&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;version&#34;: 17,
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &#34;weekStart&#34;: &#34;&#34;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    }</span>    
+</span></span></code></pre></div><p>Now, apply the grafana-dashboard.yaml file to the cluster:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl apply -f grafana-dashboard.yaml
+</span></span></code></pre></div><h3 id=step-3-install-prometheus-and-grafana-using-the-kube-prometheus-stack-helm-chart>Step 3: Install Prometheus and Grafana using the kube-prometheus-stack Helm Chart</h3><p>First, create a values.yaml file to add our endpoints to Prometheus and allow us to see our dashboard.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#ff79c6>prometheus</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>enabled</span>: <span style=color:#ff79c6>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>additionalServiceMonitors</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#ff79c6>name</span>: admission
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>selector</span>:
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>matchLabels</span>:
+</span></span><span style=display:flex><span>          <span style=color:#ff79c6>pepr.dev/controller</span>: admission
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>namespaceSelector</span>:
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>matchNames</span>:
+</span></span><span style=display:flex><span>          - pepr-system
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>endpoints</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#ff79c6>targetPort</span>: <span style=color:#bd93f9>3000</span>
+</span></span><span style=display:flex><span>          <span style=color:#ff79c6>scheme</span>: https
+</span></span><span style=display:flex><span>          <span style=color:#ff79c6>tlsConfig</span>:
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>insecureSkipVerify</span>: <span style=color:#ff79c6>true</span>
+</span></span><span style=display:flex><span>    - <span style=color:#ff79c6>name</span>: watcher
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>selector</span>:
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>matchLabels</span>:
+</span></span><span style=display:flex><span>          <span style=color:#ff79c6>pepr.dev/controller</span>: watcher
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>namespaceSelector</span>:
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>matchNames</span>:
+</span></span><span style=display:flex><span>          - pepr-system
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>endpoints</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#ff79c6>targetPort</span>: <span style=color:#bd93f9>3000</span>
+</span></span><span style=display:flex><span>          <span style=color:#ff79c6>scheme</span>: https
+</span></span><span style=display:flex><span>          <span style=color:#ff79c6>tlsConfig</span>:
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>insecureSkipVerify</span>: <span style=color:#ff79c6>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>additionalClusterRoleBindings</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#ff79c6>name</span>: scrape-binding
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>roleRef</span>:
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>apiGroup</span>: rbac.authorization.k8s.io
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>kind</span>: ClusterRole
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>name</span>: scrape-resources
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>subjects</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#ff79c6>kind</span>: ServiceAccount
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>name</span>: prometheus-operator
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>namespace</span>: default
+</span></span><span style=display:flex><span><span style=color:#ff79c6>grafana</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>enabled</span>: <span style=color:#ff79c6>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>adminUser</span>: admin
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>adminPassword</span>: secret
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>defaultDashboardsTimezone</span>: browser
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>extraVolumeMounts</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#ff79c6>mountPath</span>: /var/lib/grafana/dashboards
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>name</span>: pepr-dashboard
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>extraVolumes</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#ff79c6>name</span>: pepr-dashboard
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>configMap</span>:
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>name</span>: pepr-dashboard
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>dashboardProviders</span>:
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>dashboardproviders.yaml</span>:
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>apiVersion</span>: <span style=color:#bd93f9>1</span>
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>providers</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#ff79c6>name</span>: <span style=color:#f1fa8c>&#39;default&#39;</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>isDefault</span>: <span style=color:#ff79c6>true</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>orgId</span>: <span style=color:#bd93f9>1</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>folder</span>: <span style=color:#f1fa8c>&#39;&#39;</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>type</span>: file
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>disableDeletion</span>: <span style=color:#ff79c6>false</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>editable</span>: <span style=color:#ff79c6>true</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>options</span>:
+</span></span><span style=display:flex><span>          <span style=color:#ff79c6>path</span>: /var/lib/grafana/dashboards/default
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>dashboardsConfigMaps</span>:
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>default</span>: pepr-dashboard
+</span></span></code></pre></div><p>Now, install the kube-prometheus-stack Helm Chart using the values.yaml file we created.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>helm install -f values.yaml monitoring prometheus-community/kube-prometheus-stack
+</span></span></code></pre></div><h3 id=step-4-check-on-services>Step 4: Check on Services</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl get svc
+</span></span></code></pre></div><p>You should see something similar to the following services:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>$ kubectl get svc
+</span></span><span style=display:flex><span>NAME                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT<span style=color:#ff79c6>(</span>S<span style=color:#ff79c6>)</span>                      AGE
+</span></span><span style=display:flex><span>kubernetes                                ClusterIP   10.43.0.1       &lt;none&gt;        443/TCP                      99m
+</span></span><span style=display:flex><span>monitoring-kube-prometheus-prometheus     ClusterIP   10.43.116.49    &lt;none&gt;        9090/TCP,8080/TCP            81s
+</span></span><span style=display:flex><span>monitoring-kube-state-metrics             ClusterIP   10.43.232.84    &lt;none&gt;        8080/TCP                     81s
+</span></span><span style=display:flex><span>monitoring-grafana                        ClusterIP   10.43.82.67     &lt;none&gt;        80/TCP                       81s
+</span></span><span style=display:flex><span>monitoring-kube-prometheus-operator       ClusterIP   10.43.197.97    &lt;none&gt;        443/TCP                      81s
+</span></span><span style=display:flex><span>monitoring-kube-prometheus-alertmanager   ClusterIP   10.43.40.24     &lt;none&gt;        9093/TCP,8080/TCP            81s
+</span></span><span style=display:flex><span>monitoring-prometheus-node-exporter       ClusterIP   10.43.152.179   &lt;none&gt;        9100/TCP                     81s
+</span></span><span style=display:flex><span>alertmanager-operated                     ClusterIP   None            &lt;none&gt;        9093/TCP,9094/TCP,9094/UDP   81s
+</span></span><span style=display:flex><span>prometheus-operated                       ClusterIP   None            &lt;none&gt;        9090/TCP                     81s
+</span></span></code></pre></div><h3 id=step-5-port-forward-prometheus-and-grafana-services>Step 5: Port Forward Prometheus and Grafana Services</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl port-forward service/prometheus-operated <span style=color:#bd93f9>9090</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl port-forward service/monitoring-grafana 3000:80
+</span></span></code></pre></div><h3 id=step-6-view-prometheus-metrics-targets>Step 6: View Prometheus Metrics Targets</h3><p>You should be able to see the Pepr targets in the Prometheus UI by visiting the following URL:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-plaintext data-lang=plaintext><span style=display:flex><span>http://localhost:9090/targets
+</span></span></code></pre></div><p>The targets should look something like this:</p><p><img src=../../../images/admission-endpoint.png alt="Admission Endpoints">
+<img src=../../../images/watcher-endpoint.png alt="Watcher Endpoint"></p><h3 id=step-7-test-the-prometheus-connection-in-grafana>Step 7: Test the Prometheus Connection in Grafana</h3><p>You should be able to test the Prometheus connection in the Grafana UI by visiting the following URL:</p><p>http://localhost:3000/connections/datasources</p><p>The login information for Grafana was set in the values.yaml file:</p><p>username: admin
+password: secret</p><p>By clicking on the Prometheus data source, you should be able to test the connection to Prometheus by clicking the &ldquo;Test&rdquo; button at the bottom of the screen.</p><p>NOTE: The Prometheus server URL should be something like:</p><p><a href=http://monitoring-kube-prometh-prometheus.default:9090/>http://monitoring-kube-prometh-prometheus.default:9090/</a></p><p>You should now be able to select the Pepr Dashboard from the Grafana UI in the &ldquo;Dashboards&rdquo; section.</p><p>Note: The dashboard may take a few minutes to populate with data.</p><h2 id=summary>Summary</h2><p>This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on <a href=https://kubernetes.slack.com/archives/c06dgh40ucb>Slack</a> or <a href=https://github.com/defenseunicorns/pepr/issues>GitHub Issues</a></p></div><div class=td-content style=page-break-before:always><h1 id=pg-f63c3cab96388a165f1baeacc322672f>3 -
 Module Examples</h1><p>We maintain a repo of Pepr examples at <a href=https://github.com/defenseunicorns/pepr-excellent-examples>Pepr Excellent Examples</a>. Each example is a complete module that can be deployed to a Pepr instance.</p></div><div class=td-content style=page-break-before:always><h1 id=pg-eab9b22a15939e59eb6663351bc50ec6>4 -
 Pepr Best Practices</h1><h2 id=table-of-contents>Table of Contents</h2><ul><li><a href=#pepr-best-practices>Pepr Best Practices</a><ul><li><a href=#table-of-contents>Table of Contents</a></li><li><a href=#core-development>Core Development</a></li><li><a href=#debugging>Debugging</a></li><li><a href=#deployment>Deployment</a></li><li><a href=#keep-modules-small>Keep Modules Small</a></li><li><a href=#monitoring>Monitoring</a></li><li><a href=#multiple-modules-or-multiple-capabilities>Multiple Modules or Multiple Capabilities</a></li><li><a href=#onschedule>OnSchedule</a></li><li><a href=#security>Security</a></li><li><a href=#pepr-store>Pepr Store</a></li><li><a href=#watch>Watch</a></li></ul></li></ul><h2 id=core-development>Core Development</h2><p>When developing new features in Pepr Core, it is recommended to use <code>npx pepr deploy -i pepr:dev</code>, which will deploy Pepr&rsquo;s Kubernetes manifests to the cluster with the development image. This will allow you to test your changes without having to build a new image and push it to a registry.</p><p>The workflow for developing features in Pepr is:</p><ol><li>Run <code>npm test</code> which will create a k3d cluster and build a development image called <code>pepr:dev</code></li><li>Deploy development image into the cluster with <code>npx pepr deploy -i pepr:dev</code></li></ol><h2 id=debugging>Debugging</h2><p>Pepr can be broken down into two parts: Admission and Watches. If the focus of the debug is on a Mutation or Validation, then only pay attention to pods with labels <code>pepr.dev/controller: admission</code>, else, you can focus on <code>pepr.dev/controller: watch</code>.</p><h2 id=deployment>Deployment</h2><p>Production environment deployments should be <code>declarative</code> in order to avoid mistakes. The Pepr modules should be generated with <code>npx pepr build</code> and moved into the appropriate location.</p><p>Development environment deployments can use <code>npx pepr deploy</code> to deploy Pepr&rsquo;s Kubernetes manifests into the cluster or <code>npx pepr dev</code> to active debug the Pepr module with breakpoints in the code editor.</p><h2 id=keep-modules-small>Keep Modules Small</h2><p>Modules are minified and built JavaScript files that are stored in a Kubernetes Secret in the cluster. The Secret is mounted in the Pepr Pod and is processed by Pepr Core. Due to the nature of the module being packaged in a Secret, it is recommended to keep the modules as small as possible to avoid hitting the <a href=https://kubernetes.io/docs/concepts/configuration/secret/#restriction-data-size>1MB limit</a> of secrets.</p><p>Recommendations for keeping modules small are:</p><ul><li>Don&rsquo;t repeat yourself</li><li>Only import the part of the library modules that you need</li></ul><p>It is suggested to lint and format your modules using <code>npx pepr format</code>.</p><h2 id=monitoring>Monitoring</h2><p>Pepr can monitor Mutations and Validations from Admission Controller the through the <code>npx pepr monitor [module-uuid]</code> command. This command will display neatly formatted log showing approved and rejected Validations as well as the Mutations. If <code>[module-uuid]</code> is not supplied, then it uses all Pepr admission controller logs as the data source.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-plaintext data-lang=plaintext><span style=display:flex><span>✅  MUTATE     pepr-demo/pepr-demo (50c5d836-335e-4aa5-8b56-adecb72d4b17)
 </span></span><span style=display:flex><span>

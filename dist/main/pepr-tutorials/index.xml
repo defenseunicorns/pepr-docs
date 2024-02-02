@@ -23,7 +23,7 @@ that after &lt;code>npx pepr init&lt;/code>:&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># Launch pepr dev mode&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># If using another local K8s distro instead of k3d, use `npx pepr dev --host host.docker.internal`&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>pepr dev
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>npx pepr dev
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># From another terminal, apply the sample yaml&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl apply -f capabilities/hello-pepr.samples.yaml
@@ -83,4 +83,802 @@ config.&lt;/em>&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// Do any additional setup before starting the controller
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>&lt;span style="color:#ff79c6">module&lt;/span>.start();
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="summary">Summary&lt;/h2>
-&lt;p>Checkout some examples of Pepr modules in the &lt;a href="https://github.com/defenseunicorns/pepr-excellent-examples">excellent examples repo&lt;/a>. If you have questions after that, please reach out to us on &lt;a href="https://kubernetes.slack.com/archives/c06dgh40ucb">Slack&lt;/a> or &lt;a href="https://github.com/defenseunicorns/pepr/issues">GitHub Issues&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>Checkout some examples of Pepr modules in the &lt;a href="https://github.com/defenseunicorns/pepr-excellent-examples">excellent examples repo&lt;/a>. If you have questions after that, please reach out to us on &lt;a href="https://kubernetes.slack.com/archives/c06dgh40ucb">Slack&lt;/a> or &lt;a href="https://github.com/defenseunicorns/pepr/issues">GitHub Issues&lt;/a>&lt;/p></description></item><item><title>Main: Tutorial - Create a Pepr Dashboard</title><link>/main/pepr-tutorials/create-pepr-dashboard/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/pepr-tutorials/create-pepr-dashboard/</guid><description>
+&lt;h2 id="introduction">Introduction&lt;/h2>
+&lt;p>This tutorial will walk you through the process of creating a dashboard to display your Pepr metrics. This dashboard will present data such as the number of validation requests processed, the number of mutation requests that were allowed, the number of errors that were processed, the number of alerts that were processed, the status of the Pepr pods, and the scrape duration of the Pepr pods. This dashboard will be created using &lt;a href="https://grafana.com/">Grafana&lt;/a>. The dashboard will display data from &lt;a href="https://prometheus.io/">Prometheus&lt;/a>, which is a monitoring system that Pepr uses to collect metrics.&lt;/p>
+&lt;p>This tutorial is not intended for production, but instead is intended to show how to quickly scrape Pepr metrics. The &lt;a href="https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack">Kube Prometheus Stack&lt;/a> provides a starting point for a more production suitable way of deploying Prometheus in prod.&lt;/p>
+&lt;p>An example of what the dashboard will look like is shown below:&lt;/p>
+&lt;p>&lt;img src="../../../images/pepr-dashboard-screenshot.png" alt="Pepr Dashboard">&lt;/p>
+&lt;p>&lt;em>&lt;strong>Note:&lt;/strong>&lt;/em> &lt;em>The dashboard shown above is an example of what the dashboard will look like. The dashboard will be populated with data from your Pepr instance.&lt;/em>&lt;/p>
+&lt;h2 id="steps">Steps&lt;/h2>
+&lt;h3 id="step-1-get-cluster-running-with-your-pepr-module-deployed">Step 1. Get Cluster Running With Your Pepr Module Deployed&lt;/h3>
+&lt;p>You can learn more about how to create a Pepr module and deploy it in the &lt;a href="create-pepr-module/">Create a Pepr Module&lt;/a> tutorial. The short version is:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">#Create your cluster&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>k3d cluster create
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">#Create your module&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>npx pepr init
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">#Change directory to your module that was created using `npx pepr init`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>npx pepr dev
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl apply -f capabilities/hello-pepr.samples.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">#Deploy your module to the cluster&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>npx pepr deploy
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step-2-create-and-apply-our-pepr-dashboard-to-the-cluster">Step 2: Create and Apply Our Pepr Dashboard to the Cluster&lt;/h3>
+&lt;p>Create a new file called grafana-dashboard.yaml and add the following content:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">apiVersion&lt;/span>: v1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">kind&lt;/span>: ConfigMap
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">name&lt;/span>: pepr-dashboard
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">namespace&lt;/span>: default
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">data&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">pepr-dashboard.json&lt;/span>: |&lt;span style="color:#f1fa8c">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;__inputs&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;name&amp;#34;: &amp;#34;DS_PROMETHEUS&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;label&amp;#34;: &amp;#34;Prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;description&amp;#34;: &amp;#34;&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;datasource&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;pluginId&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;pluginName&amp;#34;: &amp;#34;Prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;__elements&amp;#34;: {},
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;__requires&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;grafana&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: &amp;#34;grafana&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;name&amp;#34;: &amp;#34;Grafana&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;version&amp;#34;: &amp;#34;9.1.6&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;datasource&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;name&amp;#34;: &amp;#34;Prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;version&amp;#34;: &amp;#34;1.0.0&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;panel&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: &amp;#34;stat&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;name&amp;#34;: &amp;#34;Stat&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;version&amp;#34;: &amp;#34;&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;panel&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: &amp;#34;timeseries&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;name&amp;#34;: &amp;#34;Time series&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;version&amp;#34;: &amp;#34;&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;annotations&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;list&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;builtIn&amp;#34;: 1,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;grafana&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;-- Grafana --&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;enable&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;hide&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;iconColor&amp;#34;: &amp;#34;rgba(0, 211, 255, 1)&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;name&amp;#34;: &amp;#34;Annotations &amp;amp; Alerts&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;target&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;limit&amp;#34;: 100,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;matchAny&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;tags&amp;#34;: [],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;dashboard&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;dashboard&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editable&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fiscalYearStartMonth&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;graphTooltip&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: null,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;links&amp;#34;: [],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;liveNow&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;panels&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;collapsed&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;gridPos&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;h&amp;#34;: 1,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;w&amp;#34;: 24,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;x&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;y&amp;#34;: 0
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: 18,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;panels&amp;#34;: [],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;title&amp;#34;: &amp;#34;Pepr Status&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;row&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;description&amp;#34;: &amp;#34;Pepr pod status by pod&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fieldConfig&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;defaults&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;thresholds&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mappings&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;options&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;0&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;red&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;index&amp;#34;: 1,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;text&amp;#34;: &amp;#34;Down&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;1&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;green&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;index&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;text&amp;#34;: &amp;#34;Up&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;value&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;options&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;match&amp;#34;: &amp;#34;empty&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;result&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;blue&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;index&amp;#34;: 2,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;text&amp;#34;: &amp;#34;?&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;special&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;min&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;thresholds&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;absolute&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;steps&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;green&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: null
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;red&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: 80
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;overrides&amp;#34;: []
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;gridPos&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;h&amp;#34;: 8,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;w&amp;#34;: 12,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;x&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;y&amp;#34;: 1
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: 14,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;options&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;colorMode&amp;#34;: &amp;#34;value&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;graphMode&amp;#34;: &amp;#34;none&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;justifyMode&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;orientation&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;reduceOptions&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;calcs&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;last&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fields&amp;#34;: &amp;#34;&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;values&amp;#34;: false
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;text&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;titleSize&amp;#34;: 16,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;valueSize&amp;#34;: 70
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;textMode&amp;#34;: &amp;#34;auto&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;pluginVersion&amp;#34;: &amp;#34;9.1.6&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;targets&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;up{container=\&amp;#34;server\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;A&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;up{container=\&amp;#34;watcher\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;hide&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;B&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;title&amp;#34;: &amp;#34;Pepr Status&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;stat&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fieldConfig&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;defaults&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;palette-classic&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;custom&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;axisCenteredZero&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;axisColorMode&amp;#34;: &amp;#34;text&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;axisLabel&amp;#34;: &amp;#34;&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;axisPlacement&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;barAlignment&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;drawStyle&amp;#34;: &amp;#34;line&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fillOpacity&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;gradientMode&amp;#34;: &amp;#34;none&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;hideFrom&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legend&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;tooltip&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;viz&amp;#34;: false
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;lineInterpolation&amp;#34;: &amp;#34;linear&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;lineWidth&amp;#34;: 1,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;pointSize&amp;#34;: 5,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;scaleDistribution&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;linear&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;showPoints&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;spanNulls&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;stacking&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;group&amp;#34;: &amp;#34;A&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;none&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;thresholdsStyle&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;off&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mappings&amp;#34;: [],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;thresholds&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;absolute&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;steps&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;green&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: null
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;red&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: 80
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;overrides&amp;#34;: []
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;gridPos&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;h&amp;#34;: 8,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;w&amp;#34;: 12,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;x&amp;#34;: 12,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;y&amp;#34;: 1
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: 12,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;options&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legend&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;calcs&amp;#34;: [],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;displayMode&amp;#34;: &amp;#34;list&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;placement&amp;#34;: &amp;#34;bottom&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;showLegend&amp;#34;: true
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;tooltip&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;single&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;sort&amp;#34;: &amp;#34;none&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;targets&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;scrape_duration_seconds{container=\&amp;#34;server\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;A&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;scrape_duration_seconds{container=\&amp;#34;watcher\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;hide&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;B&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;title&amp;#34;: &amp;#34;Scrape Duration Seconds&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;timeseries&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;collapsed&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;gridPos&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;h&amp;#34;: 1,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;w&amp;#34;: 24,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;x&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;y&amp;#34;: 9
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: 6,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;panels&amp;#34;: [],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;title&amp;#34;: &amp;#34;Error, Alert, Validate and Mutate Counts&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;row&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fieldConfig&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;defaults&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fixedColor&amp;#34;: &amp;#34;dark-red&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;fixed&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mappings&amp;#34;: [],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;min&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;thresholds&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;absolute&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;steps&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;green&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: null
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;red&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: 80
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;overrides&amp;#34;: []
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;gridPos&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;h&amp;#34;: 8,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;w&amp;#34;: 6,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;x&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;y&amp;#34;: 10
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: 16,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;options&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;colorMode&amp;#34;: &amp;#34;value&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;graphMode&amp;#34;: &amp;#34;area&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;justifyMode&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;orientation&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;reduceOptions&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;calcs&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;last&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fields&amp;#34;: &amp;#34;&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;values&amp;#34;: false
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;text&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;titleSize&amp;#34;: 16,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;valueSize&amp;#34;: 70
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;textMode&amp;#34;: &amp;#34;auto&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;pluginVersion&amp;#34;: &amp;#34;9.1.6&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;targets&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;count by(instance) (rate(pepr_errors{container=\&amp;#34;server\&amp;#34;}[$__rate_interval]))&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;A&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;count by(instance) (rate(pepr_errors{container=\&amp;#34;watcher\&amp;#34;}[$__rate_interval]))&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;hide&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;B&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;title&amp;#34;: &amp;#34;Pepr: Error Count&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;stat&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;description&amp;#34;: &amp;#34;Count of Pepr Alerts by pod&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fieldConfig&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;defaults&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fixedColor&amp;#34;: &amp;#34;dark-yellow&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;fixed&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mappings&amp;#34;: [],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;min&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;thresholds&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;absolute&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;steps&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;green&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: null
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;red&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: 80
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;overrides&amp;#34;: []
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;gridPos&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;h&amp;#34;: 8,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;w&amp;#34;: 6,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;x&amp;#34;: 6,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;y&amp;#34;: 10
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: 10,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;options&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;colorMode&amp;#34;: &amp;#34;value&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;graphMode&amp;#34;: &amp;#34;area&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;justifyMode&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;orientation&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;reduceOptions&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;calcs&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;last&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fields&amp;#34;: &amp;#34;&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;values&amp;#34;: false
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;text&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;titleSize&amp;#34;: 16,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;valueSize&amp;#34;: 70
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;textMode&amp;#34;: &amp;#34;auto&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;pluginVersion&amp;#34;: &amp;#34;9.1.6&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;targets&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;pepr_alerts{container=\&amp;#34;server\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;A&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;pepr_alerts{container=\&amp;#34;watcher\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;hide&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;B&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;title&amp;#34;: &amp;#34;Pepr: Alert Count&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;stat&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;description&amp;#34;: &amp;#34;Count of Pepr Validate actions by pod&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fieldConfig&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;defaults&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fixedColor&amp;#34;: &amp;#34;dark-purple&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;fixed&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mappings&amp;#34;: [],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;min&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;thresholds&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;absolute&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;steps&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;green&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: null
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;red&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: 80
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;overrides&amp;#34;: []
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;gridPos&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;h&amp;#34;: 8,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;w&amp;#34;: 6,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;x&amp;#34;: 12,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;y&amp;#34;: 10
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: 4,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;options&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;colorMode&amp;#34;: &amp;#34;value&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;graphMode&amp;#34;: &amp;#34;area&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;justifyMode&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;orientation&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;reduceOptions&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;calcs&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;last&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fields&amp;#34;: &amp;#34;&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;values&amp;#34;: false
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;text&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;titleSize&amp;#34;: 16,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;valueSize&amp;#34;: 66
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;textMode&amp;#34;: &amp;#34;auto&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;pluginVersion&amp;#34;: &amp;#34;9.1.6&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;targets&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;exemplar&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;pepr_Validate_count{container=\&amp;#34;server\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;instant&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;A&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;pepr_Validate_sum{container=\&amp;#34;watcher\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;hide&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;B&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;title&amp;#34;: &amp;#34;Pepr: Validate Count&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;stat&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;description&amp;#34;: &amp;#34;Count of Pepr mutate actions applied by pod.&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fieldConfig&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;defaults&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fixedColor&amp;#34;: &amp;#34;dark-blue&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;fixed&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mappings&amp;#34;: [],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;min&amp;#34;: 0,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;thresholds&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;mode&amp;#34;: &amp;#34;absolute&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;steps&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;green&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: null
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;color&amp;#34;: &amp;#34;red&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;value&amp;#34;: 80
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;overrides&amp;#34;: []
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;gridPos&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;h&amp;#34;: 8,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;w&amp;#34;: 6,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;x&amp;#34;: 18,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;y&amp;#34;: 10
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;id&amp;#34;: 2,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;options&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;colorMode&amp;#34;: &amp;#34;value&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;graphMode&amp;#34;: &amp;#34;area&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;justifyMode&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;orientation&amp;#34;: &amp;#34;auto&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;reduceOptions&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;calcs&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;last&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;fields&amp;#34;: &amp;#34;&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;values&amp;#34;: false
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;text&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;titleSize&amp;#34;: 16,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;valueSize&amp;#34;: 70
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;textMode&amp;#34;: &amp;#34;value_and_name&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;pluginVersion&amp;#34;: &amp;#34;9.1.6&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;targets&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;pepr_Mutate_count{container=\&amp;#34;server\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;A&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;datasource&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;prometheus&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;rate(pepr_Mutate_count{container=\&amp;#34;watcher\&amp;#34;}[24h])&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;hide&amp;#34;: false,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;B&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;title&amp;#34;: &amp;#34;Pepr: Mutate Count&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;type&amp;#34;: &amp;#34;stat&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> ],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;schemaVersion&amp;#34;: 37,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;style&amp;#34;: &amp;#34;dark&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;tags&amp;#34;: [],
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;templating&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;list&amp;#34;: []
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;time&amp;#34;: {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;from&amp;#34;: &amp;#34;now-24h&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;to&amp;#34;: &amp;#34;now&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;timepicker&amp;#34;: {},
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;timezone&amp;#34;: &amp;#34;&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;title&amp;#34;: &amp;#34;Pepr Dashboard&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;j7BjgMpIk&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;version&amp;#34;: 17,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;weekStart&amp;#34;: &amp;#34;&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Now, apply the grafana-dashboard.yaml file to the cluster:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl apply -f grafana-dashboard.yaml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step-3-install-prometheus-and-grafana-using-the-kube-prometheus-stack-helm-chart">Step 3: Install Prometheus and Grafana using the kube-prometheus-stack Helm Chart&lt;/h3>
+&lt;p>First, create a values.yaml file to add our endpoints to Prometheus and allow us to see our dashboard.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">prometheus&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">enabled&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">additionalServiceMonitors&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">name&lt;/span>: admission
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">matchLabels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">pepr.dev/controller&lt;/span>: admission
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">namespaceSelector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">matchNames&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - pepr-system
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">endpoints&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">targetPort&lt;/span>: &lt;span style="color:#bd93f9">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">scheme&lt;/span>: https
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">tlsConfig&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">insecureSkipVerify&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">name&lt;/span>: watcher
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">matchLabels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">pepr.dev/controller&lt;/span>: watcher
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">namespaceSelector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">matchNames&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - pepr-system
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">endpoints&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">targetPort&lt;/span>: &lt;span style="color:#bd93f9">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">scheme&lt;/span>: https
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">tlsConfig&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">insecureSkipVerify&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">additionalClusterRoleBindings&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">name&lt;/span>: scrape-binding
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">roleRef&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">apiGroup&lt;/span>: rbac.authorization.k8s.io
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">kind&lt;/span>: ClusterRole
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">name&lt;/span>: scrape-resources
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">subjects&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">kind&lt;/span>: ServiceAccount
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">name&lt;/span>: prometheus-operator
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">namespace&lt;/span>: default
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">grafana&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">enabled&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">adminUser&lt;/span>: admin
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">adminPassword&lt;/span>: secret
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">defaultDashboardsTimezone&lt;/span>: browser
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">extraVolumeMounts&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">mountPath&lt;/span>: /var/lib/grafana/dashboards
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">name&lt;/span>: pepr-dashboard
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">extraVolumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">name&lt;/span>: pepr-dashboard
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">configMap&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">name&lt;/span>: pepr-dashboard
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">dashboardProviders&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">dashboardproviders.yaml&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">apiVersion&lt;/span>: &lt;span style="color:#bd93f9">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">providers&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">name&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#39;default&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">isDefault&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">orgId&lt;/span>: &lt;span style="color:#bd93f9">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">folder&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#39;&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">type&lt;/span>: file
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">disableDeletion&lt;/span>: &lt;span style="color:#ff79c6">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">editable&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">path&lt;/span>: /var/lib/grafana/dashboards/default
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">dashboardsConfigMaps&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">default&lt;/span>: pepr-dashboard
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Now, install the kube-prometheus-stack Helm Chart using the values.yaml file we created.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>helm install -f values.yaml monitoring prometheus-community/kube-prometheus-stack
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step-4-check-on-services">Step 4: Check on Services&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl get svc
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You should see something similar to the following services:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ kubectl get svc
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME TYPE CLUSTER-IP EXTERNAL-IP PORT&lt;span style="color:#ff79c6">(&lt;/span>S&lt;span style="color:#ff79c6">)&lt;/span> AGE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes ClusterIP 10.43.0.1 &amp;lt;none&amp;gt; 443/TCP 99m
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>monitoring-kube-prometheus-prometheus ClusterIP 10.43.116.49 &amp;lt;none&amp;gt; 9090/TCP,8080/TCP 81s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>monitoring-kube-state-metrics ClusterIP 10.43.232.84 &amp;lt;none&amp;gt; 8080/TCP 81s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>monitoring-grafana ClusterIP 10.43.82.67 &amp;lt;none&amp;gt; 80/TCP 81s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>monitoring-kube-prometheus-operator ClusterIP 10.43.197.97 &amp;lt;none&amp;gt; 443/TCP 81s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>monitoring-kube-prometheus-alertmanager ClusterIP 10.43.40.24 &amp;lt;none&amp;gt; 9093/TCP,8080/TCP 81s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>monitoring-prometheus-node-exporter ClusterIP 10.43.152.179 &amp;lt;none&amp;gt; 9100/TCP 81s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>alertmanager-operated ClusterIP None &amp;lt;none&amp;gt; 9093/TCP,9094/TCP,9094/UDP 81s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>prometheus-operated ClusterIP None &amp;lt;none&amp;gt; 9090/TCP 81s
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step-5-port-forward-prometheus-and-grafana-services">Step 5: Port Forward Prometheus and Grafana Services&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl port-forward service/prometheus-operated &lt;span style="color:#bd93f9">9090&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl port-forward service/monitoring-grafana 3000:80
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step-6-view-prometheus-metrics-targets">Step 6: View Prometheus Metrics Targets&lt;/h3>
+&lt;p>You should be able to see the Pepr targets in the Prometheus UI by visiting the following URL:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plaintext" data-lang="plaintext">&lt;span style="display:flex;">&lt;span>http://localhost:9090/targets
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The targets should look something like this:&lt;/p>
+&lt;p>&lt;img src="../../../images/admission-endpoint.png" alt="Admission Endpoints">
+&lt;img src="../../../images/watcher-endpoint.png" alt="Watcher Endpoint">&lt;/p>
+&lt;h3 id="step-7-test-the-prometheus-connection-in-grafana">Step 7: Test the Prometheus Connection in Grafana&lt;/h3>
+&lt;p>You should be able to test the Prometheus connection in the Grafana UI by visiting the following URL:&lt;/p>
+&lt;p>http://localhost:3000/connections/datasources&lt;/p>
+&lt;p>The login information for Grafana was set in the values.yaml file:&lt;/p>
+&lt;p>username: admin
+password: secret&lt;/p>
+&lt;p>By clicking on the Prometheus data source, you should be able to test the connection to Prometheus by clicking the &amp;ldquo;Test&amp;rdquo; button at the bottom of the screen.&lt;/p>
+&lt;p>NOTE: The Prometheus server URL should be something like:&lt;/p>
+&lt;p>&lt;a href="http://monitoring-kube-prometh-prometheus.default:9090/">http://monitoring-kube-prometh-prometheus.default:9090/&lt;/a>&lt;/p>
+&lt;p>You should now be able to select the Pepr Dashboard from the Grafana UI in the &amp;ldquo;Dashboards&amp;rdquo; section.&lt;/p>
+&lt;p>Note: The dashboard may take a few minutes to populate with data.&lt;/p>
+&lt;h2 id="summary">Summary&lt;/h2>
+&lt;p>This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on &lt;a href="https://kubernetes.slack.com/archives/c06dgh40ucb">Slack&lt;/a> or &lt;a href="https://github.com/defenseunicorns/pepr/issues">GitHub Issues&lt;/a>&lt;/p></description></item></channel></rss>
