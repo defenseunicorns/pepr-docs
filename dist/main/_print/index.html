@@ -14,7 +14,8 @@
 <a href=#pg-e7b6d1b8c4128f9cbfde49b6521b3dfd>WASM Support</a></li></ul><li>2:
 <a href=#pg-4e651230eae8ca724b2e896690e29bcb>Pepr Tutorials</a></li><ul><li>2.1:
 <a href=#pg-47596fc426929b2e22743d22d53b6f8c>Tutorial - Create a Pepr Module</a></li><li>2.2:
-<a href=#pg-a2c4dcb156359b4ebd4dd0a9533b1917>Tutorial - Create a Pepr Dashboard</a></li></ul><li>3:
+<a href=#pg-a2c4dcb156359b4ebd4dd0a9533b1917>Tutorial - Create a Pepr Dashboard</a></li><li>2.3:
+<a href=#pg-39728e5c33ecb8cb874cd7959fc8d348>Tutorial - Create an Operator in Pepr</a></li></ul><li>3:
 <a href=#pg-f63c3cab96388a165f1baeacc322672f>Module Examples</a></li><ul></ul><li>4:
 <a href=#pg-eab9b22a15939e59eb6663351bc50ec6>Pepr Best Practices</a></li><ul></ul><li>5:
 <a href=#pg-d449864d1b06324a5dc78f74e6d06739>Frequently Asked Questions</a></li><ul></ul><li>6:
@@ -574,7 +575,7 @@ WASM Support</h1><p>Pepr fully supports WebAssembly. Depending on the language u
 </span></span><span style=display:flex><span>});
 </span></span></code></pre></div><h3 id=run-pepr-build>Run Pepr Build</h3><p>Build your Pepr module with the registry specified.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx pepr build -r docker.io/defenseunicorns
 </span></span></code></pre></div></div><div class=td-content style=page-break-before:always><h1 id=pg-4e651230eae8ca724b2e896690e29bcb>2 -
-Pepr Tutorials</h1><p>In this section, we provide tutorials for using Pepr. These tutorials are:</p><ul><li><a href=create-pepr-module/>Create a Pepr Module</a></li><li><a href=create-pepr-dashboard/>Create a Pepr Dashboard</a></li></ul></div><div class=td-content><h1 id=pg-47596fc426929b2e22743d22d53b6f8c>2.1 -
+Pepr Tutorials</h1><p>In this section, we provide tutorials for using Pepr. These tutorials are:</p><ul><li><a href=create-pepr-module/>Create a Pepr Module</a></li><li><a href=create-pepr-dashboard/>Create a Pepr Dashboard</a></li><li><a href=create-pepr-operator/>Create a Pepr Operator</a></li></ul></div><div class=td-content><h1 id=pg-47596fc426929b2e22743d22d53b6f8c>2.1 -
 Tutorial - Create a Pepr Module</h1><h2 id=introduction>Introduction</h2><p>This tutorial will walk you through the process of creating a Pepr module.</p><p>Each Pepr Module is it&rsquo;s own Typescript project, produced by <a href=../../user-guide/pepr-cli#pepr-init><code>npx pepr init</code></a>. Typically a module is maintained by a unique group or system. For example, a module for internal <a href=https://zarf.dev/>Zarf</a> mutations would be different from a module for <a href=https://p1.dso.mil/products/big-bang>Big Bang</a>. An important idea with modules is that they are <em>wholly independent of one another</em>. This means that 2 different modules can be on completely different versions of Pepr and any other dependencies; their only interaction is through the standard K8s interfaces like any other webhook or controller.</p><h2 id=prerequisites>Prerequisites</h2><h2 id=steps>Steps</h2><ol><li><p><strong>Create the module</strong>:</p><p>Use <a href=../../user-guide/pepr-cli#pepr-init><code>npx pepr init</code></a> to generate a new module.</p></li><li><p><strong>Quickly validate system setup</strong>:</p><p>Every new module includes a sample Pepr Capability called <code>HelloPepr</code>. By default,
 this capability is deployed and monitoring the <code>pepr-demo</code> namespace. There is a sample
 yaml also included you can use to see Pepr in your cluster. Here&rsquo;s the quick steps to do
@@ -1384,7 +1385,851 @@ Tutorial - Create a Pepr Dashboard</h1><h2 id=introduction>Introduction</h2><p>T
 </span></span></code></pre></div><h3 id=step-6-view-prometheus-metrics-targets>Step 6: View Prometheus Metrics Targets</h3><p>You should be able to see the Pepr targets in the Prometheus UI by visiting the following URL:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-plaintext data-lang=plaintext><span style=display:flex><span>http://localhost:9090/targets
 </span></span></code></pre></div><p>The targets should look something like this:</p><p><img src=../../../images/admission-endpoint.png alt="Admission Endpoints">
 <img src=../../../images/watcher-endpoint.png alt="Watcher Endpoint"></p><h3 id=step-7-test-the-prometheus-connection-in-grafana>Step 7: Test the Prometheus Connection in Grafana</h3><p>You should be able to test the Prometheus connection in the Grafana UI by visiting the following URL:</p><p>http://localhost:3000/connections/datasources</p><p>The login information for Grafana was set in the values.yaml file:</p><p>username: admin
-password: secret</p><p>By clicking on the Prometheus data source, you should be able to test the connection to Prometheus by clicking the &ldquo;Test&rdquo; button at the bottom of the screen.</p><p>NOTE: The Prometheus server URL should be something like:</p><p><a href=http://monitoring-kube-prometh-prometheus.default:9090/>http://monitoring-kube-prometh-prometheus.default:9090/</a></p><p>You should now be able to select the Pepr Dashboard from the Grafana UI in the &ldquo;Dashboards&rdquo; section.</p><p>Note: The dashboard may take a few minutes to populate with data.</p><h2 id=summary>Summary</h2><p>This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on <a href=https://kubernetes.slack.com/archives/c06dgh40ucb>Slack</a> or <a href=https://github.com/defenseunicorns/pepr/issues>GitHub Issues</a></p></div><div class=td-content style=page-break-before:always><h1 id=pg-f63c3cab96388a165f1baeacc322672f>3 -
+password: secret</p><p>By clicking on the Prometheus data source, you should be able to test the connection to Prometheus by clicking the &ldquo;Test&rdquo; button at the bottom of the screen.</p><p>NOTE: The Prometheus server URL should be something like:</p><p><a href=http://monitoring-kube-prometh-prometheus.default:9090/>http://monitoring-kube-prometh-prometheus.default:9090/</a></p><p>You should now be able to select the Pepr Dashboard from the Grafana UI in the &ldquo;Dashboards&rdquo; section.</p><p>Note: The dashboard may take a few minutes to populate with data.</p><h2 id=summary>Summary</h2><p>This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on <a href=https://kubernetes.slack.com/archives/c06dgh40ucb>Slack</a> or <a href=https://github.com/defenseunicorns/pepr/issues>GitHub Issues</a></p></div><div class=td-content style=page-break-before:always><h1 id=pg-39728e5c33ecb8cb874cd7959fc8d348>2.3 -
+Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><p>This tutorial will walk you through the process of building a Kubernetes Operator in Pepr. If you get stuck, browse over to the <a href=https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/pepr-operator>Pepr Excellent Examples</a> to see the finished code.</p><h2 id=background>Background</h2><p>The WebApp Operator deploys the <code>CustomResourceDefinition</code> for WebApp, then watches and reconciles against instances of WebApps to ensure the desired state meets the actual cluster state.</p><p>The WebApp instance represents a <code>Deployment</code> object with configurable replicas, a <code>Service</code>, and a <code>ConfigMap</code> that has a <code>index.html</code> file that can be configured to a specific language, and theme. The resources the Operator deploys contain <code>ownerReferences</code>, causing a cascading delete effect when the WebApp instance is deleted.</p><p>If any object deployed by the Operator is deleted for any reason, the Operator will abruptly redeploy the object.</p><h2 id=steps>Steps</h2><ul><li><a href=#create-a-new-pepr-module>Create a new Pepr Module</a></li><li><a href=#create-crd>Create CRD</a></li><li><a href=#create-helpers>Create Helpers</a></li><li><a href=#create-queue-and-reconciler>Create Queue and Reconciler</a></li><li><a href=#build-and-deploy>Build and Deploy</a></li></ul><h2 id=create-a-new-pepr-module>Create a new Pepr Module</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx pepr init
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4># output</span>
+</span></span><span style=display:flex><span>✔ Enter a name <span style=color:#ff79c6>for</span> the new Pepr module. This will create a new directory based on the name.
+</span></span><span style=display:flex><span> … operator
+</span></span><span style=display:flex><span>✔ <span style=color:#ff79c6>(</span>Recommended<span style=color:#ff79c6>)</span> Enter a description <span style=color:#ff79c6>for</span> the new Pepr module.
+</span></span><span style=display:flex><span> … Kubernetes Controller <span style=color:#ff79c6>for</span> WebApp Resources
+</span></span><span style=display:flex><span>? How <span style=color:#ff79c6>do</span> you want Pepr to handle errors encountered during K8s operations? › - Use arrow-keys. Return to submit.
+</span></span><span style=display:flex><span>    Ignore
+</span></span><span style=display:flex><span>    Log an audit event
+</span></span><span style=display:flex><span>❯   Reject the operation - Pepr will reject the operation and <span style=color:#ff79c6>return</span> an error to the client.
+</span></span></code></pre></div><h2 id=create-crd>Create CRD</h2><p>Now, it is time to structure the CRD. The CRD is the definition of the WebApp resource. It is a Kubernetes object that defines the WebApp resource and its schema.</p><p>A CRD is created and has the following attributes: <code>theme</code>, <code>language</code>, and <code>replicas</code>. The <code>status</code> is also defined in the CRD, which is used to track the status of the WebApp resource.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: apiextensions.k8s.io/v1
+</span></span><span style=display:flex><span><span style=color:#ff79c6>kind</span>: CustomResourceDefinition
+</span></span><span style=display:flex><span><span style=color:#ff79c6>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>name</span>: webapps.pepr.io
+</span></span><span style=display:flex><span><span style=color:#ff79c6>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>group</span>: pepr.io
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>versions</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#ff79c6>name</span>: v1alpha1
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>served</span>: <span style=color:#ff79c6>true</span>
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>storage</span>: <span style=color:#ff79c6>true</span>
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>subresources</span>:
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>status</span>: {}
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>schema</span>:
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>openAPIV3Schema</span>:
+</span></span><span style=display:flex><span>          <span style=color:#ff79c6>type</span>: object
+</span></span><span style=display:flex><span>          <span style=color:#ff79c6>properties</span>:
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>apiVersion</span>:
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>type</span>: string
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>kind</span>:
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>type</span>: string
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>metadata</span>:
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>type</span>: object
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>spec</span>:
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>required</span>:
+</span></span><span style=display:flex><span>                - theme
+</span></span><span style=display:flex><span>                - language
+</span></span><span style=display:flex><span>                - replicas
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>type</span>: object
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>properties</span>:
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>theme</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#ff79c6>type</span>: string
+</span></span><span style=display:flex><span>                  <span style=color:#ff79c6>description</span>: <span style=color:#f1fa8c>&#34;Theme defines the theme of the web application, either dark or light.&#34;</span>
+</span></span><span style=display:flex><span>                  <span style=color:#ff79c6>enum</span>:
+</span></span><span style=display:flex><span>                    - <span style=color:#f1fa8c>&#34;dark&#34;</span>
+</span></span><span style=display:flex><span>                    - <span style=color:#f1fa8c>&#34;light&#34;</span>
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>language</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#ff79c6>type</span>: string
+</span></span><span style=display:flex><span>                  <span style=color:#ff79c6>description</span>: <span style=color:#f1fa8c>&#34;Language defines the language of the web application, either English (en) or Spanish (es).&#34;</span>
+</span></span><span style=display:flex><span>                  <span style=color:#ff79c6>enum</span>:
+</span></span><span style=display:flex><span>                    - <span style=color:#f1fa8c>&#34;en&#34;</span>
+</span></span><span style=display:flex><span>                    - <span style=color:#f1fa8c>&#34;es&#34;</span>
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>replicas</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#ff79c6>type</span>: integer
+</span></span><span style=display:flex><span>                  <span style=color:#ff79c6>description</span>: <span style=color:#f1fa8c>&#34;Replicas is the number of desired replicas.&#34;</span>
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>status</span>:
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>type</span>: object
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>properties</span>:
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>observedGeneration</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#ff79c6>type</span>: integer
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>phase</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#ff79c6>type</span>: string
+</span></span><span style=display:flex><span>                  <span style=color:#ff79c6>enum</span>:
+</span></span><span style=display:flex><span>                    - <span style=color:#f1fa8c>&#34;Failed&#34;</span>
+</span></span><span style=display:flex><span>                    - <span style=color:#f1fa8c>&#34;Pending&#34;</span>
+</span></span><span style=display:flex><span>                    - <span style=color:#f1fa8c>&#34;Ready&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>scope</span>: Namespaced
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>names</span>:
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>plural</span>: webapps
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>singular</span>: webapp
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>kind</span>: WebApp
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>shortNames</span>:
+</span></span><span style=display:flex><span>    - wa
+</span></span></code></pre></div><p>Make sure the CRD has a <code>status</code> listed under <code>subresources</code> and it is a good idea to provide descriptions under the properties to help users understand what the property is used for. Enums are useful to limit the values that can be used for a property.</p><p>Go to the <code>capabilities</code> directory, create a new directory called <code>crd</code> with two child folders, generated and source.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>mkdir -p capabilities/crd/generated capabilities/crd/source  
+</span></span></code></pre></div><p>Lets go ahead and install the node modules for the project.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npm ci 
+</span></span></code></pre></div><p>Generate a typescript class from the using <code>kubernetes-fluent-client</code> in the <code>generated</code> directory.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx kubernetes-fluent-client crd https://gist.githubusercontent.com/cmwylie19/69b765af5ab25af62696f3337df13687/raw/72f53db7ddc06fc8891dc81136a7c190bc70f41b/WebApp.yaml . 
+</span></span></code></pre></div><p>Change the first lines of the generated file to the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { a, RegisterKind } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>class</span> WebApp <span style=color:#ff79c6>extends</span> a.GenericKind {
+</span></span><span style=display:flex><span>    spec?:       <span style=color:#8be9fd>Spec</span>;
+</span></span><span style=display:flex><span>    status?:     <span style=color:#8be9fd>Status</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>in the <code>source</code> folder, create a file called <code>webapp.crd.ts</code> and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>const</span> WebAppCRD <span style=color:#ff79c6>=</span> {
+</span></span><span style=display:flex><span>  apiVersion<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;apiextensions.k8s.io/v1&#34;</span>,
+</span></span><span style=display:flex><span>  kind<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;CustomResourceDefinition&#34;</span>,
+</span></span><span style=display:flex><span>  metadata<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>    name<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;webapps.pepr.io&#34;</span>,
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>  spec<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>    group<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;pepr.io&#34;</span>,
+</span></span><span style=display:flex><span>    versions<span style=color:#ff79c6>:</span> [
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        name<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;v1alpha1&#34;</span>,
+</span></span><span style=display:flex><span>        served: <span style=color:#8be9fd>true</span>,
+</span></span><span style=display:flex><span>        storage: <span style=color:#8be9fd>true</span>,
+</span></span><span style=display:flex><span>        subresources<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>          status<span style=color:#ff79c6>:</span> {},
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        schema<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>          openAPIV3Schema<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;object&#34;</span>,
+</span></span><span style=display:flex><span>            properties<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>              apiVersion<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;string&#34;</span>,
+</span></span><span style=display:flex><span>              },
+</span></span><span style=display:flex><span>              kind<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;string&#34;</span>,
+</span></span><span style=display:flex><span>              },
+</span></span><span style=display:flex><span>              metadata<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;object&#34;</span>,
+</span></span><span style=display:flex><span>              },
+</span></span><span style=display:flex><span>              spec<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;object&#34;</span>,
+</span></span><span style=display:flex><span>                properties<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                  theme<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;string&#34;</span>,
+</span></span><span style=display:flex><span>                    <span style=color:#ff79c6>enum</span><span style=color:#ff79c6>:</span> [<span style=color:#f1fa8c>&#34;dark&#34;</span>, <span style=color:#f1fa8c>&#34;light&#34;</span>],
+</span></span><span style=display:flex><span>                    description<span style=color:#ff79c6>:</span>
+</span></span><span style=display:flex><span>                      <span style=color:#f1fa8c>&#34;Theme defines the theme of the web application, either dark or light.&#34;</span>,
+</span></span><span style=display:flex><span>                  },
+</span></span><span style=display:flex><span>                  language<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;string&#34;</span>,
+</span></span><span style=display:flex><span>                    <span style=color:#ff79c6>enum</span><span style=color:#ff79c6>:</span> [<span style=color:#f1fa8c>&#34;en&#34;</span>, <span style=color:#f1fa8c>&#34;es&#34;</span>],
+</span></span><span style=display:flex><span>                    description<span style=color:#ff79c6>:</span>
+</span></span><span style=display:flex><span>                      <span style=color:#f1fa8c>&#34;Language defines the language of the web application, either English (en) or Spanish (es).&#34;</span>,
+</span></span><span style=display:flex><span>                  },
+</span></span><span style=display:flex><span>                  replicas<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;integer&#34;</span>,
+</span></span><span style=display:flex><span>                    description<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;Replicas is the number of desired replicas.&#34;</span>,
+</span></span><span style=display:flex><span>                  },
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                required<span style=color:#ff79c6>:</span> [<span style=color:#f1fa8c>&#34;theme&#34;</span>, <span style=color:#f1fa8c>&#34;language&#34;</span>, <span style=color:#f1fa8c>&#34;replicas&#34;</span>],
+</span></span><span style=display:flex><span>              },
+</span></span><span style=display:flex><span>              status<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;object&#34;</span>,
+</span></span><span style=display:flex><span>                properties<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                  observedGeneration<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;integer&#34;</span>,
+</span></span><span style=display:flex><span>                  },
+</span></span><span style=display:flex><span>                  phase<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;string&#34;</span>,
+</span></span><span style=display:flex><span>                    <span style=color:#ff79c6>enum</span><span style=color:#ff79c6>:</span> [<span style=color:#f1fa8c>&#34;Failed&#34;</span>, <span style=color:#f1fa8c>&#34;Pending&#34;</span>, <span style=color:#f1fa8c>&#34;Ready&#34;</span>],
+</span></span><span style=display:flex><span>                  },
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>              },
+</span></span><span style=display:flex><span>            },
+</span></span><span style=display:flex><span>          },
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>    ],
+</span></span><span style=display:flex><span>    scope<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;Namespaced&#34;</span>,
+</span></span><span style=display:flex><span>    names<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>      plural<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;webapps&#34;</span>,
+</span></span><span style=display:flex><span>      singular<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;webapp&#34;</span>,
+</span></span><span style=display:flex><span>      kind<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;WebApp&#34;</span>,
+</span></span><span style=display:flex><span>      shortNames<span style=color:#ff79c6>:</span> [<span style=color:#f1fa8c>&#34;wa&#34;</span>],
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><p>In the root of the crd folder, create an <code>index.ts</code> file and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { V1OwnerReference } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;@kubernetes/client-node&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> { WebApp, Phase, Status } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./generated/webapp-v1alpha1&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebApp } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./generated/webapp-v1alpha1&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#8be9fd;font-style:italic>function</span> getOwnerRef(instance: <span style=color:#8be9fd>WebApp</span>)<span style=color:#ff79c6>:</span> V1OwnerReference[] {
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> { name, uid } <span style=color:#ff79c6>=</span> instance.metadata<span style=color:#ff79c6>!</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>return</span> [
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      apiVersion: <span style=color:#8be9fd>instance.apiVersion</span><span style=color:#ff79c6>!</span>,
+</span></span><span style=display:flex><span>      kind: <span style=color:#8be9fd>instance.kind</span><span style=color:#ff79c6>!</span>,
+</span></span><span style=display:flex><span>      uid: <span style=color:#8be9fd>uid</span><span style=color:#ff79c6>!</span>,
+</span></span><span style=display:flex><span>      name: <span style=color:#8be9fd>name</span><span style=color:#ff79c6>!</span>,
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>  ];
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Add a <code>register.ts</code> file to the <code>crd</code> folder and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { K8s, Log, kind } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebAppCRD } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./source/webapp.crd&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>const</span> RegisterCRD <span style=color:#ff79c6>=</span> () <span style=color:#ff79c6>=&gt;</span> {
+</span></span><span style=display:flex><span>  K8s(kind.CustomResourceDefinition)
+</span></span><span style=display:flex><span>    .Apply(WebAppCRD, { force: <span style=color:#8be9fd>true</span> })
+</span></span><span style=display:flex><span>    .then(() <span style=color:#ff79c6>=&gt;</span> Log.info(<span style=color:#f1fa8c>&#34;WebApp CRD registered&#34;</span>))
+</span></span><span style=display:flex><span>    .<span style=color:#ff79c6>catch</span>(err <span style=color:#ff79c6>=&gt;</span> {
+</span></span><span style=display:flex><span>      Log.error(err);
+</span></span><span style=display:flex><span>      process.exit(<span style=color:#bd93f9>1</span>);
+</span></span><span style=display:flex><span>    });
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>(() <span style=color:#ff79c6>=&gt;</span> RegisterCRD())();
+</span></span></code></pre></div><p>Finally add a <code>validate.ts</code> file to the <code>crd</code> folder and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { PeprValidateRequest } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebApp } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;.&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>const</span> invalidNamespaces <span style=color:#ff79c6>=</span> [
+</span></span><span style=display:flex><span>  <span style=color:#f1fa8c>&#34;kube-system&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f1fa8c>&#34;kube-public&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f1fa8c>&#34;_unknown_&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f1fa8c>&#34;pepr-system&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f1fa8c>&#34;default&#34;</span>,
+</span></span><span style=display:flex><span>];
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>async</span> <span style=color:#8be9fd;font-style:italic>function</span> validator(req: <span style=color:#8be9fd>PeprValidateRequest</span>&lt;<span style=color:#ff79c6>WebApp</span>&gt;) {
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> ns <span style=color:#ff79c6>=</span> req.Raw.metadata<span style=color:#ff79c6>?</span>.<span style=color:#ff79c6>namespace</span> <span style=color:#ff79c6>??</span> <span style=color:#f1fa8c>&#34;_unknown_&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>if</span> (req.Raw.spec.replicas <span style=color:#ff79c6>&gt;</span> <span style=color:#bd93f9>7</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>return</span> req.Deny(<span style=color:#f1fa8c>&#34;max replicas is 7 to prevent noisy neighbors&#34;</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>if</span> (invalidNamespaces.includes(ns)) {
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>if</span> (req.Raw.metadata<span style=color:#ff79c6>?</span>.<span style=color:#ff79c6>namespace</span> <span style=color:#ff79c6>===</span> <span style=color:#f1fa8c>&#34;default&#34;</span>) {
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>return</span> req.Deny(<span style=color:#f1fa8c>&#34;default namespace is not allowed&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>return</span> req.Deny(<span style=color:#f1fa8c>&#34;invalid namespace&#34;</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>return</span> req.Approve();
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>In this section we generated scaffolded the CRD class, created a function to add ownerReferences to the manifests that will be deployed by the Operator, registered the CRD, and added a validator to the CRD.</p><h2 id=create-helpers>Create Helpers</h2><p>In this section we will create helper functions to help with the reconciliation process.</p><p>Create a <code>controller</code> folder in the <code>capabilities</code> folder and create a <code>generators.ts</code> file in the <code>capabilities</code> folder. This file will contain the functions that will generate the manifests that will be deployed by the Operator with the ownerReferences added to them.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { kind, K8s, Log } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { getOwnerRef } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;../crd&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebApp } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;../crd/generated/webapp-v1alpha1&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>default</span> <span style=color:#ff79c6>async</span> <span style=color:#8be9fd;font-style:italic>function</span> Deploy(instance: <span style=color:#8be9fd>WebApp</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>try</span> {
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>await</span> Promise.all([
+</span></span><span style=display:flex><span>      K8s(kind.Deployment).Apply(deployment(instance), {
+</span></span><span style=display:flex><span>        force: <span style=color:#8be9fd>true</span>,
+</span></span><span style=display:flex><span>      }),
+</span></span><span style=display:flex><span>      K8s(kind.Service).Apply(service(instance), { force: <span style=color:#8be9fd>true</span> }),
+</span></span><span style=display:flex><span>      K8s(kind.ConfigMap).Apply(configmap(instance), {
+</span></span><span style=display:flex><span>        force: <span style=color:#8be9fd>true</span>,
+</span></span><span style=display:flex><span>      }),
+</span></span><span style=display:flex><span>    ]);
+</span></span><span style=display:flex><span>  } <span style=color:#ff79c6>catch</span> (error) {
+</span></span><span style=display:flex><span>    Log.error(error, <span style=color:#f1fa8c>&#34;Failed to apply Kubernetes manifests.&#34;</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>function</span> deployment(instance: <span style=color:#8be9fd>WebApp</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> { name, <span style=color:#ff79c6>namespace</span> } <span style=color:#ff79c6>=</span> instance.metadata<span style=color:#ff79c6>!</span>;
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> { replicas } <span style=color:#ff79c6>=</span> instance.spec<span style=color:#ff79c6>!</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>return</span> {
+</span></span><span style=display:flex><span>    apiVersion<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;apps/v1&#34;</span>,
+</span></span><span style=display:flex><span>    kind<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;Deployment&#34;</span>,
+</span></span><span style=display:flex><span>    metadata<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>      ownerReferences: <span style=color:#8be9fd>getOwnerRef</span>(instance),
+</span></span><span style=display:flex><span>      name,
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>namespace</span>,
+</span></span><span style=display:flex><span>      labels<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>        <span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span><span style=color:#ff79c6>:</span> name,
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    spec<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>      replicas,
+</span></span><span style=display:flex><span>      selector<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>        matchLabels<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>          <span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span><span style=color:#ff79c6>:</span> name,
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      template<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>        metadata<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>          ownerReferences: <span style=color:#8be9fd>getOwnerRef</span>(instance),
+</span></span><span style=display:flex><span>          annotations<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>            buildTimestamp<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>`</span><span style=color:#f1fa8c>${</span><span style=color:#8be9fd;font-style:italic>Date</span>.now()<span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>`</span>,
+</span></span><span style=display:flex><span>          },
+</span></span><span style=display:flex><span>          labels<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span><span style=color:#ff79c6>:</span> name,
+</span></span><span style=display:flex><span>          },
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        spec<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>          containers<span style=color:#ff79c6>:</span> [
+</span></span><span style=display:flex><span>            {
+</span></span><span style=display:flex><span>              name<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;server&#34;</span>,
+</span></span><span style=display:flex><span>              image<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;nginx:1.19.6-alpine&#34;</span>,
+</span></span><span style=display:flex><span>              ports<span style=color:#ff79c6>:</span> [
+</span></span><span style=display:flex><span>                {
+</span></span><span style=display:flex><span>                  containerPort: <span style=color:#8be9fd>80</span>,
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>              ],
+</span></span><span style=display:flex><span>              volumeMounts<span style=color:#ff79c6>:</span> [
+</span></span><span style=display:flex><span>                {
+</span></span><span style=display:flex><span>                  name<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;web-content-volume&#34;</span>,
+</span></span><span style=display:flex><span>                  mountPath<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;/usr/share/nginx/html&#34;</span>,
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>              ],
+</span></span><span style=display:flex><span>            },
+</span></span><span style=display:flex><span>          ],
+</span></span><span style=display:flex><span>          volumes<span style=color:#ff79c6>:</span> [
+</span></span><span style=display:flex><span>            {
+</span></span><span style=display:flex><span>              name<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;web-content-volume&#34;</span>,
+</span></span><span style=display:flex><span>              configMap<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>                name<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>`web-content-</span><span style=color:#f1fa8c>${</span>name<span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>`</span>,
+</span></span><span style=display:flex><span>              },
+</span></span><span style=display:flex><span>            },
+</span></span><span style=display:flex><span>          ],
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>  };
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>function</span> service(instance: <span style=color:#8be9fd>WebApp</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> { name, <span style=color:#ff79c6>namespace</span> } <span style=color:#ff79c6>=</span> instance.metadata<span style=color:#ff79c6>!</span>;
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>return</span> {
+</span></span><span style=display:flex><span>    apiVersion<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;v1&#34;</span>,
+</span></span><span style=display:flex><span>    kind<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;Service&#34;</span>,
+</span></span><span style=display:flex><span>    metadata<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>      ownerReferences: <span style=color:#8be9fd>getOwnerRef</span>(instance),
+</span></span><span style=display:flex><span>      name,
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>namespace</span>,
+</span></span><span style=display:flex><span>      labels<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>        <span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span><span style=color:#ff79c6>:</span> name,
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    spec<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>      selector<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>        <span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span><span style=color:#ff79c6>:</span> name,
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      ports<span style=color:#ff79c6>:</span> [
+</span></span><span style=display:flex><span>        {
+</span></span><span style=display:flex><span>          protocol<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;TCP&#34;</span>,
+</span></span><span style=display:flex><span>          port: <span style=color:#8be9fd>80</span>,
+</span></span><span style=display:flex><span>          targetPort: <span style=color:#8be9fd>80</span>,
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>      ],
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>type</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;ClusterIP&#34;</span>,
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>  };
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>function</span> configmap(instance: <span style=color:#8be9fd>WebApp</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> { name, <span style=color:#ff79c6>namespace</span> } <span style=color:#ff79c6>=</span> instance.metadata<span style=color:#ff79c6>!</span>;
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> { language, theme } <span style=color:#ff79c6>=</span> instance.spec<span style=color:#ff79c6>!</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> dark <span style=color:#ff79c6>=</span> <span style=color:#f1fa8c>`
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        body {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            font-family: &#39;Segoe UI&#39;, Tahoma, Geneva, Verdana, sans-serif;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin: 0;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            padding: 0;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            display: flex;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            justify-content: center;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            align-items: center;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            height: 100vh;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            background: #1a1a1a;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            color: #f5f5f5;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            text-align: center;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .top-panel {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            background: #333;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            color: #fff;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            padding: 10px 0;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            width: 100%;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            position: fixed;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            top: 0;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            left: 0;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .top-panel img {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            height: 60px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            vertical-align: middle;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin-right: 15px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .top-panel h1 {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            display: inline;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            vertical-align: middle;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            font-size: 24px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .container {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            max-width: 900px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            background: #222;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            padding: 20px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            border-radius: 5px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin-top: 80px; /* Added margin-top to avoid overlap with the fixed top panel */
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        h2 {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            color: #b22222;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        p {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            font-size: 18px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            line-height: 1.6;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            text-align: left;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            color: #f5f5f5;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .section {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin-bottom: 20px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .links {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin-top: 20px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .links a {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            display: inline-block;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin-right: 15px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            color: #006bee;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            text-decoration: none;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            font-weight: bold;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        `</span>;
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> light <span style=color:#ff79c6>=</span> <span style=color:#f1fa8c>`
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        body {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            font-family: &#39;Segoe UI&#39;, Tahoma, Geneva, Verdana, sans-serif;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin: 0;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            padding: 0;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            display: flex;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            justify-content: center;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            align-items: center;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            height: 100vh;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            background: #fff;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            color: #333;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            text-align: center;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .top-panel {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            background: #fbfbfb;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            color: #333;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            padding: 10px 0;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            width: 100%;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            position: fixed;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            top: 0;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            left: 0;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .top-panel img {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            height: 60px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            vertical-align: middle;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin-right: 15px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .top-panel h1 {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            display: inline;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            vertical-align: middle;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            font-size: 24px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .container {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            max-width: 900px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            background: #fff;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            padding: 20px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            border-radius: 5px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin-top: 80px; /* Added margin-top to avoid overlap with the fixed top panel */
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        h2 {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            color: #b22222;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        p {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            font-size: 18px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            line-height: 1.6;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            text-align: left;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            color: #333;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .section {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin-bottom: 20px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .links {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin-top: 20px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        .links a {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            display: inline-block;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            margin-right: 15px;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            color: #006bee;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            text-decoration: none;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            font-weight: bold;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        `</span>;
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> es <span style=color:#ff79c6>=</span> <span style=color:#f1fa8c>`
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;div class=&#34;top-panel&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;img src=&#34;https://raw.githubusercontent.com/defenseunicorns/pepr/main/_images/pepr.png&#34; alt=&#34;Pepr Logo&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;h1&gt;Pepr - Controlador De Kubernetes&lt;/h1&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;img src=&#34;https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.png&#34; alt=&#34;Kubernetes Logo&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;div class=&#34;container&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;div class=&#34;section&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;h2&gt;Sobre el proyecto&lt;/h2&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;p&gt;Nuestro controlador está diseñado para garantizar la seguridad, la eficiencia y la confiabilidad en la orquestación de tus contenedores. El Controlador de Admisión proporciona control y controles de seguridad rigurosos, mientras que el Operador simplifica operaciones complejas, haciendo que la administración sea muy sencilla.&lt;/p&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;div class=&#34;section&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;h2&gt;Características&lt;/h2&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;p&gt;&lt;strong&gt;Controlador de Admisión :&lt;/strong&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            Verificaciones de cumplimiento automatizadas, aplicación de seguridad en tiempo real y integración perfecta con su canal de CI/CD.&lt;/p&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;p&gt;&lt;strong&gt;Operador:&lt;/strong&gt;Automatice tus aplicaciones de Kubernetes, optimice los procesos de implementación y habilite capacidades de autorreparación con nuestro sofisticado Operador.&lt;/p&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;div class=&#34;section&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;h2&gt;Hablanos!&lt;/h2&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;p&gt;Únate a nuestra comunidad y comience a contribuir hoy. Encuéntrenos en GitHub y únate a nuestro canal de Slack para conectarte con otros usuarios y contribuyentes.&lt;/p&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;div class=&#34;links&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &lt;a href=&#34;https://github.com/defenseunicorns/pepr&#34; target=&#34;_blank&#34;&gt;GitHub Repository&lt;/a&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &lt;a href=&#34;https://kubernetes.slack.com/archives/C06DGH40UCB&#34; target=&#34;_blank&#34;&gt;Slack Channel&lt;/a&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        `</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> en <span style=color:#ff79c6>=</span> <span style=color:#f1fa8c>`
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;div class=&#34;top-panel&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;img src=&#34;https://raw.githubusercontent.com/defenseunicorns/pepr/main/_images/pepr.png&#34; alt=&#34;Pepr Logo&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;h1&gt;Pepr - Kubernetes Controller&lt;/h1&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;img src=&#34;https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.png&#34; alt=&#34;Kubernetes Logo&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;div class=&#34;container&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;div class=&#34;section&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;h2&gt;About the Project&lt;/h2&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;p&gt;Our Kubernetes Admission Controller and Operator are designed to ensure security, efficiency, and reliability in your container orchestration. The Admission Controller provides rigorous security checks and governance, while the Operator simplifies complex operations, making management a breeze.&lt;/p&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;div class=&#34;section&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;h2&gt;Features&lt;/h2&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;p&gt;&lt;strong&gt;Admission Controller:&lt;/strong&gt; Automated compliance checks, real-time security enforcement, and seamless integration with your CI/CD pipeline.&lt;/p&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;p&gt;&lt;strong&gt;Operator:&lt;/strong&gt; Automate your Kubernetes applications, streamline deployment processes, and enable self-healing capabilities with our sophisticated Operator.&lt;/p&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;div class=&#34;section&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;h2&gt;Get Involved&lt;/h2&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;p&gt;Join our community and start contributing today. Find us on GitHub and join our Slack channel to connect with other users and contributors.&lt;/p&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;div class=&#34;links&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &lt;a href=&#34;https://github.com/defenseunicorns/pepr&#34; target=&#34;_blank&#34;&gt;GitHub Repository&lt;/a&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>                &lt;a href=&#34;https://kubernetes.slack.com/archives/C06DGH40UCB&#34; target=&#34;_blank&#34;&gt;Slack Channel&lt;/a&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;/div&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        `</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> site <span style=color:#ff79c6>=</span> <span style=color:#f1fa8c>`
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;!DOCTYPE html&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;html&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;head&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;meta charset=&#34;UTF-8&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;title&gt;Pepr&lt;/title&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;style&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        </span><span style=color:#f1fa8c>${</span>theme <span style=color:#ff79c6>===</span> <span style=color:#f1fa8c>&#34;light&#34;</span> <span style=color:#ff79c6>?</span> light : <span style=color:#8be9fd>dark</span><span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        &lt;/style&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;/head&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;body&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        </span><span style=color:#f1fa8c>${</span>language <span style=color:#ff79c6>===</span> <span style=color:#f1fa8c>&#34;en&#34;</span> <span style=color:#ff79c6>?</span> en : <span style=color:#8be9fd>es</span><span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;/body&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    &lt;/html&gt;
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        `</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>return</span> {
+</span></span><span style=display:flex><span>    apiVersion<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;v1&#34;</span>,
+</span></span><span style=display:flex><span>    kind<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;ConfigMap&#34;</span>,
+</span></span><span style=display:flex><span>    metadata<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>      ownerReferences: <span style=color:#8be9fd>getOwnerRef</span>(instance),
+</span></span><span style=display:flex><span>      name<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>`web-content-</span><span style=color:#f1fa8c>${</span>name<span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>`</span>,
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>namespace</span>,
+</span></span><span style=display:flex><span>      labels<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>        <span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span><span style=color:#ff79c6>:</span> name,
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    data<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>      <span style=color:#f1fa8c>&#34;index.html&#34;</span><span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>`</span><span style=color:#f1fa8c>${</span>site<span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>`</span>,
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>  };
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>In this section we created a <code>generators.ts</code> file that contains functions that generate the manifests that will be deployed by the Operator with the ownerReferences added to them. We decide which <code>ConfigMap</code> to deploy based on the language and theme specified in the WebApp resource and how many replicas to deploy based on the replicas specified in the WebApp resource.</p><h2 id=create-queue-and-reconciler>Create Queue and Reconciler</h2><p>In the base of the <code>capabilities</code> folder, create a <code>reconciler.ts</code> file and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { K8s, Log } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> Deploy <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./controller/generators&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { Phase, Status, WebApp } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./crd&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>/**
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> * The reconciler is called from the queue and is responsible for reconciling the state of the instance
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> * with the cluster. This includes creating the namespace, network policies and virtual services.
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> *
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> * @param pkg the package to reconcile
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> */</span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>async</span> <span style=color:#8be9fd;font-style:italic>function</span> reconciler(instance: <span style=color:#8be9fd>WebApp</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>if</span> (<span style=color:#ff79c6>!</span>instance.metadata<span style=color:#ff79c6>?</span>.<span style=color:#ff79c6>namespace</span>) {
+</span></span><span style=display:flex><span>    Log.error(instance, <span style=color:#f1fa8c>`Invalid WebApp definition`</span>);
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>return</span>;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> isPending <span style=color:#ff79c6>=</span> instance.status<span style=color:#ff79c6>?</span>.phase <span style=color:#ff79c6>===</span> Phase.Pending;
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> isCurrentGeneration <span style=color:#ff79c6>=</span>
+</span></span><span style=display:flex><span>    instance.metadata.generation <span style=color:#ff79c6>===</span> instance.status<span style=color:#ff79c6>?</span>.observedGeneration;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>if</span> (isPending <span style=color:#ff79c6>||</span> isCurrentGeneration) {
+</span></span><span style=display:flex><span>    Log.debug(instance, <span style=color:#f1fa8c>`Skipping pending or completed instance`</span>);
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>return</span>;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> { <span style=color:#ff79c6>namespace</span>, name } <span style=color:#ff79c6>=</span> instance.metadata;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  Log.debug(instance, <span style=color:#f1fa8c>`Processing instance </span><span style=color:#f1fa8c>${</span><span style=color:#ff79c6>namespace</span><span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>/</span><span style=color:#f1fa8c>${</span>name<span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>`</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#6272a4>// Configure the namespace and namespace-wide network policies
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>  <span style=color:#ff79c6>try</span> {
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>await</span> updateStatus(instance, { phase: <span style=color:#8be9fd>Phase.Pending</span> });
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>await</span> Deploy(instance);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>await</span> updateStatus(instance, {
+</span></span><span style=display:flex><span>      phase: <span style=color:#8be9fd>Phase.Ready</span>,
+</span></span><span style=display:flex><span>      observedGeneration: <span style=color:#8be9fd>instance.metadata.generation</span>,
+</span></span><span style=display:flex><span>    });
+</span></span><span style=display:flex><span>  } <span style=color:#ff79c6>catch</span> (e) {
+</span></span><span style=display:flex><span>    Log.error(e, <span style=color:#f1fa8c>`Error configuring for </span><span style=color:#f1fa8c>${</span><span style=color:#ff79c6>namespace</span><span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>/</span><span style=color:#f1fa8c>${</span>name<span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>`</span>);
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>void</span> updateStatus(instance, {
+</span></span><span style=display:flex><span>      phase: <span style=color:#8be9fd>Phase.Failed</span>,
+</span></span><span style=display:flex><span>      observedGeneration: <span style=color:#8be9fd>instance.metadata.generation</span>,
+</span></span><span style=display:flex><span>    });
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>/**
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> * Updates the status of the instance
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> *
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> * @param instance The instance to update
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> * @param status The new status
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> */</span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>async</span> <span style=color:#8be9fd;font-style:italic>function</span> updateStatus(instance: <span style=color:#8be9fd>WebApp</span>, status: <span style=color:#8be9fd>Status</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>await</span> K8s(WebApp).PatchStatus({
+</span></span><span style=display:flex><span>    metadata<span style=color:#ff79c6>:</span> {
+</span></span><span style=display:flex><span>      name: <span style=color:#8be9fd>instance.metadata</span><span style=color:#ff79c6>!</span>.name,
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>namespace</span><span style=color:#ff79c6>:</span> instance.metadata<span style=color:#ff79c6>!</span>.<span style=color:#ff79c6>namespace</span>,
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    status,
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Create another file in the <code>capabilities</code> folder called <code>enqueue.ts</code> and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { Log } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebApp } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./crd&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { reconciler } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./reconciler&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>type</span> QueueItem <span style=color:#ff79c6>=</span> {
+</span></span><span style=display:flex><span>  instance: <span style=color:#8be9fd>WebApp</span>;
+</span></span><span style=display:flex><span>  resolve<span style=color:#ff79c6>:</span> (value: <span style=color:#8be9fd>void</span> <span style=color:#ff79c6>|</span> PromiseLike&lt;<span style=color:#ff79c6>void</span>&gt;) <span style=color:#ff79c6>=&gt;</span> <span style=color:#ff79c6>void</span>;
+</span></span><span style=display:flex><span>  reject<span style=color:#ff79c6>:</span> (reason?: <span style=color:#8be9fd>string</span>) <span style=color:#ff79c6>=&gt;</span> <span style=color:#ff79c6>void</span>;
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>/**
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> * Queue is a FIFO queue for reconciling webapps
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> */</span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>class</span> Queue {
+</span></span><span style=display:flex><span>  #queue: <span style=color:#8be9fd>QueueItem</span>[] <span style=color:#ff79c6>=</span> [];
+</span></span><span style=display:flex><span>  #pendingPromise <span style=color:#ff79c6>=</span> <span style=color:#ff79c6>false</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#6272a4>/**
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>   * Enqueue adds a webapp to the queue and returns a promise that resolves when the webapp is
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>   * reconciled.
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>   *
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>   * @param pkg The webapp to reconcile
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>   * @returns A promise that resolves when the instance is reconciled
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>   */</span>
+</span></span><span style=display:flex><span>  enqueue(instance: <span style=color:#8be9fd>WebApp</span>) {
+</span></span><span style=display:flex><span>    Log.debug(
+</span></span><span style=display:flex><span>      <span style=color:#f1fa8c>`Enqueueing </span><span style=color:#f1fa8c>${</span>instance.metadata<span style=color:#ff79c6>!</span>.<span style=color:#ff79c6>namespace</span><span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>/</span><span style=color:#f1fa8c>${</span>instance.metadata<span style=color:#ff79c6>!</span>.name<span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>`</span>,
+</span></span><span style=display:flex><span>    );
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>return</span> <span style=color:#ff79c6>new</span> Promise&lt;<span style=color:#ff79c6>void</span>&gt;((resolve, reject) <span style=color:#ff79c6>=&gt;</span> {
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>this</span>.#queue.push({ instance, resolve, reject });
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>return</span> <span style=color:#ff79c6>this</span>.#dequeue();
+</span></span><span style=display:flex><span>    });
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#6272a4>/**
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>   * Dequeue reconciles the next webapp in the queue
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>   *
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>   * @returns A promise that resolves when the webapp is reconciled
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>   */</span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>async</span> #dequeue() {
+</span></span><span style=display:flex><span>    <span style=color:#6272a4>// If there is a pending promise, do nothing
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    <span style=color:#ff79c6>if</span> (<span style=color:#ff79c6>this</span>.#pendingPromise) <span style=color:#ff79c6>return</span> <span style=color:#ff79c6>false</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#6272a4>// Take the next item from the queue
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    <span style=color:#ff79c6>const</span> item <span style=color:#ff79c6>=</span> <span style=color:#ff79c6>this</span>.#queue.shift();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#6272a4>// If there is no item, do nothing
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    <span style=color:#ff79c6>if</span> (<span style=color:#ff79c6>!</span>item) <span style=color:#ff79c6>return</span> <span style=color:#ff79c6>false</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>try</span> {
+</span></span><span style=display:flex><span>      <span style=color:#6272a4>// Set the pending promise flag to avoid concurrent reconciliations
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>      <span style=color:#ff79c6>this</span>.#pendingPromise <span style=color:#ff79c6>=</span> <span style=color:#ff79c6>true</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>      <span style=color:#6272a4>// Reconcile the webapp
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>      <span style=color:#ff79c6>await</span> reconciler(item.instance);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>      item.resolve();
+</span></span><span style=display:flex><span>    } <span style=color:#ff79c6>catch</span> (e) {
+</span></span><span style=display:flex><span>      item.reject(e);
+</span></span><span style=display:flex><span>    } <span style=color:#ff79c6>finally</span> {
+</span></span><span style=display:flex><span>      <span style=color:#6272a4>// Reset the pending promise flag
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>      <span style=color:#ff79c6>this</span>.#pendingPromise <span style=color:#ff79c6>=</span> <span style=color:#ff79c6>false</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>      <span style=color:#6272a4>// After the webapp is reconciled, dequeue the next webapp
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>      <span style=color:#ff79c6>await</span> <span style=color:#ff79c6>this</span>.#dequeue();
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Finally create the <code>index.ts</code> file in the <code>capabilities</code> folder and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { Capability, a, Log } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebApp } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./crd&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { validator } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./crd/validator&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { Queue } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./enqueue&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebAppCRD } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./crd/source/webapp.crd&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { RegisterCRD } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./crd/register&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> <span style=color:#f1fa8c>&#34;./crd/register&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> Deploy <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./controller/generators&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>const</span> WebAppController <span style=color:#ff79c6>=</span> <span style=color:#ff79c6>new</span> Capability({
+</span></span><span style=display:flex><span>  name<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;webapp-controller&#34;</span>,
+</span></span><span style=display:flex><span>  description<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;A Kubernetes Operator that manages WebApps&#34;</span>,
+</span></span><span style=display:flex><span>  namespaces<span style=color:#ff79c6>:</span> [],
+</span></span><span style=display:flex><span>});
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>const</span> { When, Store } <span style=color:#ff79c6>=</span> WebAppController;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>const</span> queue <span style=color:#ff79c6>=</span> <span style=color:#ff79c6>new</span> Queue();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// When instance is created or updated, validate it and enqueue it for processing
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>When(WebApp)
+</span></span><span style=display:flex><span>  .IsCreatedOrUpdated()
+</span></span><span style=display:flex><span>  .Validate(validator)
+</span></span><span style=display:flex><span>  .Watch(<span style=color:#ff79c6>async</span> instance <span style=color:#ff79c6>=&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>try</span> {
+</span></span><span style=display:flex><span>      Store.setItem(instance.metadata.name, JSON.stringify(instance));
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>await</span> queue.enqueue(instance);
+</span></span><span style=display:flex><span>    } <span style=color:#ff79c6>catch</span> (error) {
+</span></span><span style=display:flex><span>      Log.info(<span style=color:#f1fa8c>`Error enqueing instance of WebApp`</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>When(WebApp)
+</span></span><span style=display:flex><span>  .IsDeleted()
+</span></span><span style=display:flex><span>  .Mutate(instance <span style=color:#ff79c6>=&gt;</span> {
+</span></span><span style=display:flex><span>    Store.removeItemAndWait(instance.Raw.metadata.name);
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Don&#39;t let the CRD get deleted
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>When(a.CustomResourceDefinition)
+</span></span><span style=display:flex><span>  .IsDeleted()
+</span></span><span style=display:flex><span>  .WithName(WebAppCRD.metadata.name)
+</span></span><span style=display:flex><span>  .Watch(() <span style=color:#ff79c6>=&gt;</span> {
+</span></span><span style=display:flex><span>    RegisterCRD();
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// // Don&#39;t let them be deleted
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>When(a.Deployment)
+</span></span><span style=display:flex><span>  .IsDeleted()
+</span></span><span style=display:flex><span>  .WithLabel(<span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span>)
+</span></span><span style=display:flex><span>  .Watch(<span style=color:#ff79c6>async</span> deploy <span style=color:#ff79c6>=&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>const</span> instance <span style=color:#ff79c6>=</span> JSON.parse(
+</span></span><span style=display:flex><span>      Store.getItem(deploy.metadata<span style=color:#ff79c6>!</span>.labels[<span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span>]),
+</span></span><span style=display:flex><span>    ) <span style=color:#ff79c6>as</span> a.GenericKind;
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>await</span> Deploy(instance);
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>When(a.Service)
+</span></span><span style=display:flex><span>  .IsDeleted()
+</span></span><span style=display:flex><span>  .WithLabel(<span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span>)
+</span></span><span style=display:flex><span>  .Watch(<span style=color:#ff79c6>async</span> svc <span style=color:#ff79c6>=&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>const</span> instance <span style=color:#ff79c6>=</span> JSON.parse(
+</span></span><span style=display:flex><span>      Store.getItem(svc.metadata<span style=color:#ff79c6>!</span>.labels[<span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span>]),
+</span></span><span style=display:flex><span>    ) <span style=color:#ff79c6>as</span> a.GenericKind;
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>await</span> Deploy(instance);
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>When(a.ConfigMap)
+</span></span><span style=display:flex><span>  .IsDeleted()
+</span></span><span style=display:flex><span>  .WithLabel(<span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span>)
+</span></span><span style=display:flex><span>  .Watch(<span style=color:#ff79c6>async</span> cm <span style=color:#ff79c6>=&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>const</span> instance <span style=color:#ff79c6>=</span> JSON.parse(
+</span></span><span style=display:flex><span>      Store.getItem(cm.metadata<span style=color:#ff79c6>!</span>.labels[<span style=color:#f1fa8c>&#34;pepr.dev/operator&#34;</span>]),
+</span></span><span style=display:flex><span>    ) <span style=color:#ff79c6>as</span> a.GenericKind;
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>await</span> Deploy(instance);
+</span></span><span style=display:flex><span>  });
+</span></span></code></pre></div><p>In this section we created a <code>reconciler.ts</code> file that contains the reconciler function that is called from the queue and is responsible for reconciling the state of the instance with the cluster and updating the status of the instance. We also created a <code>enqueue.ts</code> file that contains the queue class that is used to enqueue instances of the WebApp resource. Finally, we created the <code>index.ts</code> file that contains the WebAppController capability and the functions that are used to watch for changes to the WebApp resource and the resources that are deployed by the Operator.</p><h2 id=build-and-deploy>Build and Deploy</h2><h1 id=webapp-operator>WebApp Operator</h1><p>The WebApp Operator deploys the <code>CustomResourceDefinition</code> for WebApp, then watches and reconciles against instances of WebApps to ensure the desired state meets the actual cluster state.</p><p>The WebApp instance represents a <code>Deployment</code> object with confirgurable replicas, a <code>Service</code>, and a <code>ConfigMap</code> that has a <code>index.html</code> file that can be configured to a specific language, and theme. The resources the Operator deploys contain <code>ownerReferences</code>, causing a cascading delete effect when the WebApp instance is deleted.</p><p>If any object deployed by the Operator is deleted for any reason, other than through the <code>ownerReference</code> mechanism, the Operator will abruptly redeploy the object.</p><h2 id=demo>Demo</h2><h1 id=webapp-operator-1>WebApp Operator</h1><p>The WebApp Operator deploys the <code>CustomResourceDefinition</code> for WebApp, then watches and reconciles against instances of WebApps to ensure the desired state meets the actual cluster state.</p><p>The WebApp instance represents a <code>Deployment</code> object with confirgurable replicas, a <code>Service</code>, and a <code>ConfigMap</code> that has a <code>index.html</code> file that can be configured to a specific language, and theme. The resources the Operator deploys contain <code>ownerReferences</code>, causing a cascading delete effect when the WebApp instance is deleted.</p><p>If any object deployed by the Operator is deleted for any reason, other than through the <code>ownerReference</code> mechanism, the Operator will abruptly redeploy the object.</p><h2 id=demo-1>Demo</h2><p><em>Create an ephemeral cluster. (Kind or k3d will work)</em></p><p>Make sure Pepr is update to date</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx pepr update
+</span></span></code></pre></div><p>Build the Pepr manifests</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx pepr build
+</span></span></code></pre></div><p>Deploy the Operator</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl apply -f dist/pepr-module-774fab07-77fa-517c-b5f8-c682c96c20c0.yaml
+</span></span><span style=display:flex><span>kubectl <span style=color:#8be9fd;font-style:italic>wait</span> --for<span style=color:#ff79c6>=</span><span style=color:#8be9fd;font-style:italic>condition</span><span style=color:#ff79c6>=</span>Ready pods -l app -n pepr-system --timeout<span style=color:#ff79c6>=</span>120s
+</span></span></code></pre></div><p>Notice that the WebApp CRD has been deployed</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl get crd | grep webapp
+</span></span></code></pre></div><p>Explain the <code>WebApp.spec</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl explain wa.spec
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4># output</span>
+</span></span><span style=display:flex><span>GROUP:      pepr.io
+</span></span><span style=display:flex><span>KIND:       WebApp
+</span></span><span style=display:flex><span>VERSION:    v1alpha1
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>FIELD: spec &lt;Object&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>DESCRIPTION:
+</span></span><span style=display:flex><span>    &lt;empty&gt;
+</span></span><span style=display:flex><span>FIELDS:
+</span></span><span style=display:flex><span>  language      &lt;string&gt; -required-
+</span></span><span style=display:flex><span>    Language defines the language of the web application, either English <span style=color:#ff79c6>(</span>en<span style=color:#ff79c6>)</span> or
+</span></span><span style=display:flex><span>    Spanish <span style=color:#ff79c6>(</span>es<span style=color:#ff79c6>)</span>.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  replicas      &lt;integer&gt; -required-
+</span></span><span style=display:flex><span>    Replicas is the number of desired replicas.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  theme &lt;string&gt; -required-
+</span></span><span style=display:flex><span>    Theme defines the theme of the web application, either dark or light.
+</span></span></code></pre></div><p>Create an instance of a <code>WebApp</code> in English with the light theme and 1 replica</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-yaml data-lang=yaml><span style=display:flex><span>kubectl create ns webapps;
+</span></span><span style=display:flex><span>kubectl apply -f -&lt;&lt;EOF
+</span></span><span style=display:flex><span><span style=color:#ff79c6>kind</span>: WebApp
+</span></span><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: pepr.io/v1alpha1
+</span></span><span style=display:flex><span><span style=color:#ff79c6>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>name</span>: webapp-light-en
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>namespace</span>: webapps
+</span></span><span style=display:flex><span><span style=color:#ff79c6>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>theme</span>: light 
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>language</span>: en
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>replicas</span>: <span style=color:#bd93f9>1</span> 
+</span></span><span style=display:flex><span>EOF
+</span></span></code></pre></div><p>Check that the <code>ConfigMap</code>, <code>Service</code> and <code>Deployment</code> are deployed</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl get cm,svc,deploy -n webapps
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4># output</span>
+</span></span><span style=display:flex><span>NAME                                    DATA   AGE
+</span></span><span style=display:flex><span>configmap/kube-root-ca.crt              <span style=color:#bd93f9>1</span>      6s
+</span></span><span style=display:flex><span>configmap/web-content-webapp-light-en   <span style=color:#bd93f9>1</span>      5s
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>NAME                      TYPE        CLUSTER-IP   EXTERNAL-IP   PORT<span style=color:#ff79c6>(</span>S<span style=color:#ff79c6>)</span>   AGE
+</span></span><span style=display:flex><span>service/webapp-light-en   ClusterIP   10.43.85.1   &lt;none&gt;        80/TCP    5s
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
+</span></span><span style=display:flex><span>deployment.apps/webapp-light-en   1/1     <span style=color:#bd93f9>1</span>            <span style=color:#bd93f9>1</span>           5s
+</span></span></code></pre></div><p>Get the Status of the WebApp</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-json data-lang=json><span style=display:flex><span>kubectl get wa webapp-light-en -n webapps -ojsonpath=<span style=color:#f1fa8c>&#34;{.status}&#34;</span> | jq  
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span># output
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;observedGeneration&#34;</span>: <span style=color:#bd93f9>1</span>,
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;phase&#34;</span>: <span style=color:#f1fa8c>&#34;Ready&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Port-forward and look at the WebApp in the browser</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl port-forward svc/webapp-light-en -n webapps 3000:80
+</span></span></code></pre></div><p><a href=http://localhost:3000>WebApp</a>
+<img src=light.png alt=WebApp></p><p>Delete the <code>ConfigMap</code> on the WebApp to watch it the operator reconcile it back</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl delete cm -n webapps --all 
+</span></span><span style=display:flex><span><span style=color:#6272a4># wait a few seconds</span>
+</span></span><span style=display:flex><span>kubectl get cm -n webapps 
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4># output</span>
+</span></span><span style=display:flex><span>configmap <span style=color:#f1fa8c>&#34;kube-root-ca.crt&#34;</span> deleted
+</span></span><span style=display:flex><span>configmap <span style=color:#f1fa8c>&#34;web-content-webapp-light-en&#34;</span> deleted
+</span></span><span style=display:flex><span>NAME                          DATA   AGE
+</span></span><span style=display:flex><span>kube-root-ca.crt              <span style=color:#bd93f9>1</span>      0s
+</span></span><span style=display:flex><span>web-content-webapp-light-en   <span style=color:#bd93f9>1</span>      0s
+</span></span></code></pre></div><p>Update the <code>WebApp</code> and change the theme to dark and language to spanish</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl apply -f -<span style=color:#f1fa8c>&lt;&lt;EOF
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>kind: WebApp
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>apiVersion: pepr.io/v1alpha1
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>  name: webapp-light-en
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>  namespace: webapps
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>spec:
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>  theme: dark 
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>  language: es
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>  replicas: 1 
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>EOF</span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>#output</span>
+</span></span><span style=display:flex><span>webapp.pepr.io/webapp-light-en configured
+</span></span></code></pre></div><p>Port-forward and look at the WebApp in the browser</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl port-forward svc/webapp-light-en -n webapps 3000:80
+</span></span></code></pre></div><p><a href=http://localhost:3000>WebApp</a></p><p><img src=dark.png alt=WebApp></p><p>Delete the WebApp and check the namespace</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl delete wa -n webapps --all
+</span></span><span style=display:flex><span><span style=color:#6272a4># wait a few seconds</span>
+</span></span><span style=display:flex><span>kubectl get cm,deploy,svc -n webapps
+</span></span><span style=display:flex><span><span style=color:#6272a4># output</span>
+</span></span><span style=display:flex><span>NAME                         DATA   AGE
+</span></span><span style=display:flex><span>configmap/kube-root-ca.crt   <span style=color:#bd93f9>1</span>      40s
+</span></span></code></pre></div><p>When the WebApp is deleted, all of the resources that it created are also deleted.</p><h2 id=conclusion>Conclusion</h2><p>In this tutorial we created a Kubernetes Operator using Pepr. We created a CRD, created helper functions to help with the reconciliation process, and created a queue and reconciler to reconcile the state of the instance with the cluster. We also built and deployed the Operator and created an instance of the WebApp resource and watched the Operator reconcile the state of the instance with the cluster. Finally, we updated and deleted the instance and watched the Operator reconcile the manifests based in the updated instance and delete the resources when the instance was deleted.</p><p>If you have questions, reach out in the <a href=https://kubernetes.slack.com/archives/c06dgh40ucb>Slack channel</a> or <a href=https://github.com/defenseunicorns/pepr>GitHub</a>. Also, checkout the finished example in <a href=https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/pepr-operator>Pepr Excellent Examples</a></p></div><div class=td-content style=page-break-before:always><h1 id=pg-f63c3cab96388a165f1baeacc322672f>3 -
 Module Examples</h1><p>We maintain a repo of Pepr examples at <a href=https://github.com/defenseunicorns/pepr-excellent-examples>Pepr Excellent Examples</a>. Each example is a complete module that can be deployed to a Pepr instance.</p></div><div class=td-content style=page-break-before:always><h1 id=pg-eab9b22a15939e59eb6663351bc50ec6>4 -
 Pepr Best Practices</h1><h2 id=table-of-contents>Table of Contents</h2><ul><li><a href=#pepr-best-practices>Pepr Best Practices</a><ul><li><a href=#table-of-contents>Table of Contents</a></li><li><a href=#core-development>Core Development</a></li><li><a href=#debugging>Debugging</a></li><li><a href=#deployment>Deployment</a></li><li><a href=#keep-modules-small>Keep Modules Small</a></li><li><a href=#monitoring>Monitoring</a></li><li><a href=#multiple-modules-or-multiple-capabilities>Multiple Modules or Multiple Capabilities</a></li><li><a href=#onschedule>OnSchedule</a></li><li><a href=#security>Security</a></li><li><a href=#pepr-store>Pepr Store</a></li><li><a href=#watch>Watch</a></li></ul></li></ul><h2 id=core-development>Core Development</h2><p>When developing new features in Pepr Core, it is recommended to use <code>npx pepr deploy -i pepr:dev</code>, which will deploy Pepr&rsquo;s Kubernetes manifests to the cluster with the development image. This will allow you to test your changes without having to build a new image and push it to a registry.</p><p>The workflow for developing features in Pepr is:</p><ol><li>Run <code>npm test</code> which will create a k3d cluster and build a development image called <code>pepr:dev</code></li><li>Deploy development image into the cluster with <code>npx pepr deploy -i pepr:dev</code></li></ol><h2 id=debugging>Debugging</h2><p>Pepr can be broken down into two parts: Admission and Watches. If the focus of the debug is on a Mutation or Validation, then only pay attention to pods with labels <code>pepr.dev/controller: admission</code>, else, you can focus on <code>pepr.dev/controller: watch</code>.</p><h2 id=deployment>Deployment</h2><p>Production environment deployments should be <code>declarative</code> in order to avoid mistakes. The Pepr modules should be generated with <code>npx pepr build</code> and moved into the appropriate location.</p><p>Development environment deployments can use <code>npx pepr deploy</code> to deploy Pepr&rsquo;s Kubernetes manifests into the cluster or <code>npx pepr dev</code> to active debug the Pepr module with breakpoints in the code editor.</p><h2 id=keep-modules-small>Keep Modules Small</h2><p>Modules are minified and built JavaScript files that are stored in a Kubernetes Secret in the cluster. The Secret is mounted in the Pepr Pod and is processed by Pepr Core. Due to the nature of the module being packaged in a Secret, it is recommended to keep the modules as small as possible to avoid hitting the <a href=https://kubernetes.io/docs/concepts/configuration/secret/#restriction-data-size>1MB limit</a> of secrets.</p><p>Recommendations for keeping modules small are:</p><ul><li>Don&rsquo;t repeat yourself</li><li>Only import the part of the library modules that you need</li></ul><p>It is suggested to lint and format your modules using <code>npx pepr format</code>.</p><h2 id=monitoring>Monitoring</h2><p>Pepr can monitor Mutations and Validations from Admission Controller the through the <code>npx pepr monitor [module-uuid]</code> command. This command will display neatly formatted log showing approved and rejected Validations as well as the Mutations. If <code>[module-uuid]</code> is not supplied, then it uses all Pepr admission controller logs as the data source.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-plaintext data-lang=plaintext><span style=display:flex><span>✅  MUTATE     pepr-demo/pepr-demo (50c5d836-335e-4aa5-8b56-adecb72d4b17)
 </span></span><span style=display:flex><span>
