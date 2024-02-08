@@ -59,7 +59,7 @@
 &lt;p>A Pepr Module is a collection of files that can be used to create a new Pepr Project. A Pepr Module can be used to create a new Pepr Project by using the &lt;code>npx pepr init&lt;/code> command.&lt;/p></description></item><item><title>Main: Actions</title><link>/main/user-guide/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/actions/</guid><description>
 &lt;p>An action is a discrete set of behaviors defined in a single function that acts on a given Kubernetes GroupVersionKind (GVK) passed in during the admission controller lifecycle. Actions are the atomic operations that are performed on Kubernetes resources by Pepr.&lt;/p>
 &lt;p>For example, an action could be responsible for adding a specific label to a Kubernetes resource, or for modifying a specific field in a resource&amp;rsquo;s metadata. Actions can be grouped together within a Capability to provide a more comprehensive set of operations that can be performed on Kubernetes resources.&lt;/p>
-&lt;p>Actions are &lt;code>Mutate()&lt;/code>, &lt;code>Validate()&lt;/code>, or &lt;code>Watch()&lt;/code>. Both Mutate and Validate actions run during the admission controller lifecycle, while Watch actions run in a separate controller that tracks changes to resources, including existing resources.&lt;/p>
+&lt;p>Actions are &lt;code>Mutate()&lt;/code>, &lt;code>Validate()&lt;/code>, &lt;code>Watch()&lt;/code>, or &lt;code>Reconcile()&lt;/code>. Both Mutate and Validate actions run during the admission controller lifecycle, while Watch and Reconcile actions run in a separate controller that tracks changes to resources, including existing resources.&lt;/p>
 &lt;p>Let&amp;rsquo;s look at some example actions that are included in the &lt;code>HelloPepr&lt;/code> capability that is created for you when you &lt;a href="../pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>:&lt;/p>
 &lt;hr>
 &lt;p>In this first example, Pepr is adding a label and annotation to a ConfigMap with tne name &lt;code>example-1&lt;/code> when it is created. Comments are added to each line to explain in more detail what is happening.&lt;/p>
@@ -101,6 +101,54 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Watch() is where we define the actual behavior of this action.
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .Watch((cm, phase) &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(cm, &lt;span style="color:#f1fa8c">`ConfigMap &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>cm.metadata.name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c"> was &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>phase&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>There are many more examples in the &lt;code>HelloPepr&lt;/code> capability that you can use as a reference when creating your own actions. Note that each time you run &lt;a href="../pepr-cli#pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/a>, Pepr will automatically update the &lt;code>HelloPepr&lt;/code> capability with the latest examples and best practices for you to reference and test directly in your Pepr Module.&lt;/p>
+&lt;hr>
+&lt;p>In some scenarios involving Kubernetes Resource Controllers or Operator patterns, opting for a Reconcile action could be more fitting. Comparable to the Watch functionality, Reconcile is responsible for monitoring the name and phase of any Kubernetes Object. It operates within the Watch controller dedicated to observing modifications to resources, including those already existing, enabling responses to alterations as they occur. Unlike Watch, however, Reconcile employs a Queue to sequentially handle events once they are returned by the Kubernetes API. This allows the operator to handle bursts of events without overwhelming the system or the Kubernetes API. It provides a mechanism to back off when the system is under heavy load, enhancing overall stability and maintaining the state consistency of Kubernetes resources, as the order of operations can impact the final state of a resource.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>When(WebApp)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .IsCreatedOrUpdated()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .Validate(validator)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .Reconcile(&lt;span style="color:#ff79c6">async&lt;/span> instance &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">const&lt;/span> { &lt;span style="color:#ff79c6">namespace&lt;/span>, name, generation } &lt;span style="color:#ff79c6">=&lt;/span> instance.metadata;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">if&lt;/span> (&lt;span style="color:#ff79c6">!&lt;/span>instance.metadata&lt;span style="color:#ff79c6">?&lt;/span>.&lt;span style="color:#ff79c6">namespace&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.error(instance, &lt;span style="color:#f1fa8c">`Invalid WebApp definition`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">return&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">const&lt;/span> isPending &lt;span style="color:#ff79c6">=&lt;/span> instance.status&lt;span style="color:#ff79c6">?&lt;/span>.phase &lt;span style="color:#ff79c6">===&lt;/span> Phase.Pending;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">const&lt;/span> isCurrentGeneration &lt;span style="color:#ff79c6">=&lt;/span> generation &lt;span style="color:#ff79c6">===&lt;/span> instance.status&lt;span style="color:#ff79c6">?&lt;/span>.observedGeneration;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">if&lt;/span> (isPending &lt;span style="color:#ff79c6">||&lt;/span> isCurrentGeneration) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.debug(instance, &lt;span style="color:#f1fa8c">`Skipping pending or completed instance`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">return&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.debug(instance, &lt;span style="color:#f1fa8c">`Processing instance &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>&lt;span style="color:#ff79c6">namespace&lt;/span>&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">/&lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Set Status to pending
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">await&lt;/span> updateStatus(instance, { phase: &lt;span style="color:#8be9fd">Phase.Pending&lt;/span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Deploy Deployment, ConfigMap, Service, ServiceAccount, and RBAC based on instance
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">await&lt;/span> Deploy(instance);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Set Status to ready
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">await&lt;/span> updateStatus(instance, {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> phase: &lt;span style="color:#8be9fd">Phase.Ready&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> observedGeneration: &lt;span style="color:#8be9fd">instance.metadata.generation&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#ff79c6">catch&lt;/span> (e) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.error(e, &lt;span style="color:#f1fa8c">`Error configuring for &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>&lt;span style="color:#ff79c6">namespace&lt;/span>&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">/&lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Set Status to failed
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">void&lt;/span> updateStatus(instance, {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> phase: &lt;span style="color:#8be9fd">Phase.Failed&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> observedGeneration: &lt;span style="color:#8be9fd">instance.metadata.generation&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>There are many more examples in the &lt;code>HelloPepr&lt;/code> capability that you can use as a reference when creating your own actions. Note that each time you run &lt;a href="../pepr-cli#pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/a>, Pepr will automatically update the &lt;code>HelloPepr&lt;/code> capability with the latest examples and best practices for you to reference and test directly in your Pepr Module.&lt;/p></description></item><item><title>Main: Pepr Capabilities</title><link>/main/user-guide/capabilities/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/capabilities/</guid><description>
 &lt;p>A capability is set of related &lt;a href="../actions/">actions&lt;/a> that work together to achieve a specific transformation or operation on Kubernetes resources. Capabilities are user-defined and can include one or more actions. They are defined within a Pepr module and can be used in both MutatingWebhookConfigurations and ValidatingWebhookConfigurations. A Capability can have a specific scope, such as mutating or validating, and can be reused in multiple Pepr modules.&lt;/p>
