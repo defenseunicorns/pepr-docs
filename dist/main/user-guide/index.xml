@@ -52,6 +52,7 @@
 &lt;li>&lt;code>-n, --no-embed&lt;/code> - Disables embedding of deployment files into output module. Useful when creating library modules intended solely for reuse/distribution via NPM&lt;/li>
 &lt;li>&lt;code>-r, --registry-info [&amp;lt;registry&amp;gt;/&amp;lt;username&amp;gt;]&lt;/code> - Registry Info: Image registry and username. Note: You must be signed into the registry&lt;/li>
 &lt;li>&lt;code>-o, --output-dir [output directory]&lt;/code> - Define where to place build output&lt;/li>
+&lt;li>&lt;code>--timeout [timeout]&lt;/code> - How long the API server should wait for a webhook to respond before treating the call as a failure&lt;/li>
 &lt;li>&lt;code>--rbac-mode [admin|scoped]&lt;/code> - Rbac Mode: admin, scoped (default: admin) (choices: &amp;ldquo;admin&amp;rdquo;, &amp;ldquo;scoped&amp;rdquo;, default: &amp;ldquo;admin&amp;rdquo;)&lt;/li>
 &lt;/ul></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
 &lt;h2 id="what-is-a-pepr-module">What is a Pepr Module?&lt;/h2>
