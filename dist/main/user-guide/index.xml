@@ -214,8 +214,9 @@
 &lt;ul>
 &lt;li>&lt;code>getItem(key: string)&lt;/code>: Retrieves a value by its key. Returns &lt;code>null&lt;/code> if the key doesn&amp;rsquo;t exist.&lt;/li>
 &lt;li>&lt;code>setItem(key: string, value: string)&lt;/code>: Sets a value for a given key. Creates a new key-value pair if the key doesn&amp;rsquo;t exist.&lt;/li>
-&lt;li>&lt;code>setItemAndWait(key: string, value: string)&lt;/code>: Sets a value for a given key. Creates a new key-value pair if the key doesn&amp;rsquo;t exist. Returns a promise when the new key and value show up in the store. Should only be used on a &lt;code>Watch&lt;/code> to avoid &lt;a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts">timeouts&lt;/a>.&lt;/li>
+&lt;li>&lt;code>setItemAndWait(key: string, value: string)&lt;/code>: Sets a value for a given key. Creates a new key-value pair if the key doesn&amp;rsquo;t exist. Resolves a promise when the new key and value show up in the store. Note - Async operations in Mutate and Validate are susceptible to &lt;a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts">timeouts&lt;/a>.&lt;/li>
 &lt;li>&lt;code>removeItem(key: string)&lt;/code>: Deletes a key-value pair by its key.&lt;/li>
+&lt;li>&lt;code>removeItemAndWait(key: string)&lt;/code>: Deletes a key-value pair by its key and resolves a promise when the key and value do not show up in the store. Note - Async operations in Mutate and Validate are susceptible to &lt;a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts">timeouts&lt;/a>.&lt;/li>
 &lt;li>&lt;code>clear()&lt;/code>: Clears all key-value pairs from the store.&lt;/li>
 &lt;li>&lt;code>subscribe(listener: DataReceiver)&lt;/code>: Subscribes to store updates.&lt;/li>
 &lt;li>&lt;code>onReady(callback: DataReceiver)&lt;/code>: Executes a callback when the store is ready.&lt;/li>
