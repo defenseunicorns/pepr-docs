@@ -61,6 +61,8 @@
 &lt;li>&lt;code>-o, --output-dir [output directory]&lt;/code> - Define where to place build output&lt;/li>
 &lt;li>&lt;code>--timeout [timeout]&lt;/code> - How long the API server should wait for a webhook to respond before treating the call as a failure&lt;/li>
 &lt;li>&lt;code>--rbac-mode [admin|scoped]&lt;/code> - Rbac Mode: admin, scoped (default: admin) (choices: &amp;ldquo;admin&amp;rdquo;, &amp;ldquo;scoped&amp;rdquo;, default: &amp;ldquo;admin&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-i, --custom-image [custom-image]&lt;/code> - Custom Image: Use custom image for Admission and Watcher Deployments.&lt;/li>
+&lt;li>&lt;code>--registry [GitHub, Iron Bank]&lt;/code>, - Container registry: Choose container registry for deployment manifests.&lt;/li>
 &lt;/ul></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
 &lt;h2 id="what-is-a-pepr-module">What is a Pepr Module?&lt;/h2>
 &lt;p>A Pepr Module is a collection of files that can be used to create a new Pepr Project. A Pepr Module can be used to create a new Pepr Project by using the &lt;code>npx pepr init&lt;/code> command.&lt;/p></description></item><item><title>Main: Actions</title><link>/main/user-guide/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/actions/</guid><description>
