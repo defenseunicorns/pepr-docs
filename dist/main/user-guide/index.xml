@@ -66,12 +66,20 @@
 &lt;/ul></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
 &lt;h2 id="what-is-a-pepr-module">What is a Pepr Module?&lt;/h2>
 &lt;p>A Pepr Module is a collection of files that can be used to create a new Pepr Project. A Pepr Module can be used to create a new Pepr Project by using the &lt;code>npx pepr init&lt;/code> command.&lt;/p></description></item><item><title>Main: Actions</title><link>/main/user-guide/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/actions/</guid><description>
+&lt;ul>
+&lt;li>&lt;a href="#overview">Overview&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#mutate">Mutate&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#validate">Validate&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#watch">Watch&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#reconcile">Reconcile&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="overview">Overview&lt;/h2>
 &lt;p>An action is a discrete set of behaviors defined in a single function that acts on a given Kubernetes GroupVersionKind (GVK) passed in during the admission controller lifecycle. Actions are the atomic operations that are performed on Kubernetes resources by Pepr.&lt;/p>
 &lt;p>For example, an action could be responsible for adding a specific label to a Kubernetes resource, or for modifying a specific field in a resource&amp;rsquo;s metadata. Actions can be grouped together within a Capability to provide a more comprehensive set of operations that can be performed on Kubernetes resources.&lt;/p>
 &lt;p>Actions are &lt;code>Mutate()&lt;/code>, &lt;code>Validate()&lt;/code>, &lt;code>Watch()&lt;/code>, or &lt;code>Reconcile()&lt;/code>. Both Mutate and Validate actions run during the admission controller lifecycle, while Watch and Reconcile actions run in a separate controller that tracks changes to resources, including existing resources.&lt;/p>
 &lt;p>Let&amp;rsquo;s look at some example actions that are included in the &lt;code>HelloPepr&lt;/code> capability that is created for you when you &lt;a href="../pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>:&lt;/p>
 &lt;hr>
-&lt;p>In this first example, Pepr is adding a label and annotation to a ConfigMap with tne name &lt;code>example-1&lt;/code> when it is created. Comments are added to each line to explain in more detail what is happening.&lt;/p>
+&lt;p>In this first example, Pepr is adding a label and annotation to a ConfigMap with the name &lt;code>example-1&lt;/code> when it is created. Comments are added to each line to explain in more detail what is happening.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// When(a.&amp;lt;Kind&amp;gt;) filters which GroupVersionKind (GVK) this action should act on.
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>When(a.ConfigMap)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// This limits the action to only act on new resources.
@@ -159,7 +167,16 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Main: Pepr Capabilities</title><link>/main/user-guide/capabilities/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/capabilities/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="mutate">Mutate&lt;/h2>
+&lt;p>Mutating admission webhooks are invoked first and can modify objects sent to the API server to enforce custom defaults. After an object is sent to Pepr&amp;rsquo;s Mutating Admission Webhook, Pepr will &lt;a href="https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/mutate-processor.ts#l64">annotate the object&lt;/a> to indicate the status.&lt;/p>
+&lt;p>After a successful mutation of an object in a module with UUID static-test, and capability name hello-pepr, expect to see this annotation: &lt;code>static-test.pepr.dev/hello-pepr: succeeded&lt;/code>.&lt;/p>
+&lt;h2 id="validate">Validate&lt;/h2>
+&lt;p>After the Mutation phase, after all object modifications are complete, and after the incoming object is validated by the API server, validating admission webhooks are invoked and can reject requests to enforce custom policies.&lt;/p>
+&lt;p>Validate does not annotate the objects that are allowed into the cluster, but the validation webhook can be audited with &lt;code>npx pepr monitor&lt;/code>. Read the &lt;a href="https://docs.pepr.dev/main/best-practices/#monitoring">monitoring docs&lt;/a> for more information.&lt;/p>
+&lt;h2 id="watch">Watch&lt;/h2>
+&lt;p>&lt;a href="https://kubernetes.io/docs/reference/using-api/api-concepts">Kubernetes&lt;/a> supports efficient change notifications on resources via watches. Pepr uses the Watch action for monitoring resources that previously existed in the cluster and for performing long-running asynchronous events upon receiving change notifications on resources, as watches are not limited by &lt;a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts">timeouts&lt;/a>.&lt;/p>
+&lt;h2 id="reconcile">Reconcile&lt;/h2>
+&lt;p>Reconcile functions the same as Watch but is tailored for building Kubernetes Controllers and Operators because it processes callback operations in a &lt;a href="https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/watch-processor.ts#l86">Queue&lt;/a>, guaranteeing ordered and synchronous processing of events, even when the system may be under heavy load.&lt;/p></description></item><item><title>Main: Pepr Capabilities</title><link>/main/user-guide/capabilities/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/capabilities/</guid><description>
 &lt;p>A capability is set of related &lt;a href="../actions/">actions&lt;/a> that work together to achieve a specific transformation or operation on Kubernetes resources. Capabilities are user-defined and can include one or more actions. They are defined within a Pepr module and can be used in both MutatingWebhookConfigurations and ValidatingWebhookConfigurations. A Capability can have a specific scope, such as mutating or validating, and can be reused in multiple Pepr modules.&lt;/p>
 &lt;p>When you &lt;a href="../pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>, a &lt;code>capabilities&lt;/code> directory is created for you. This directory is where you will define your capabilities. You can create as many capabilities as you need, and each capability can contain one or more actions. Pepr also automatically creates a &lt;code>HelloPepr&lt;/code> capability with a number of example actions to help you get started.&lt;/p>
 &lt;h2 id="creating-a-capability">Creating a Capability&lt;/h2>
