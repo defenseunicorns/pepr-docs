@@ -329,8 +329,12 @@ for (const version of RUN.versions) {
     await activity(`Rewrite broken content`, async () => {
       RUN.srcmd.content = rewriteRemoteVideoLinks(RUN.srcmd.content)
 
-      // rewrite relative .md link paths to compensate Hugo-gen'd pretty path
-      RUN.srcmd.content = RUN.srcmd.content.replaceAll('](../', '](../../').replaceAll('](./', '](../')
+      const baseFile = path.basename(RUN.srcmd.file)
+      
+      // rewrite relative .md link paths to compensate Hugo-gen'd pretty path, except for README.md/_index.md files
+      if (baseFile !== "README.md") {
+        RUN.srcmd.content = RUN.srcmd.content.replaceAll('](../', '](../../').replaceAll('](./', '](../')
+      }
 
       RUN.srcmd.content = rewriteNumberedFileLinks(RUN.srcmd.content)
 
