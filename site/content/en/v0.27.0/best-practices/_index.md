@@ -15,9 +15,11 @@ weight: 60
   - [Monitoring](#monitoring)
   - [Multiple Modules or Multiple Capabilities](#multiple-modules-or-multiple-capabilities)
   - [OnSchedule](#onschedule)
+  - [Reconcile](#reconcile)
   - [Security](#security)
   - [Pepr Store](#pepr-store)
   - [Watch](#watch)
+
 
 ## Core Development
 
@@ -51,7 +53,7 @@ It is suggested to lint and format your modules using `npx pepr format`.
 
 ## Monitoring
 
-Pepr can monitor Mutations and Validations from Admission Controller the through the `npx pepr monitor [module-uuid]` command. This command will display neatly formatted log showing approved and rejected Validations as well as the Mutations.  If `[module-uuid]` is not supplied, then it uses all Pepr admission controller logs as the data source.
+Pepr can monitor Mutations and Validations from Admission Controller the through the `npx pepr monitor [module-uuid]` command. This command will display neatly formatted log showing approved and rejected Validations as well as the Mutations.  If `[module-uuid]` is not supplied, then it uses all Pepr admission controller logs as the data source. If you are unsure of what modules are currently deployed, issue `npx pepr uuid` to display the modules and their descriptions.
 
 ```plaintext
 ✅  MUTATE     pepr-demo/pepr-demo (50c5d836-335e-4aa5-8b56-adecb72d4b17)
@@ -95,6 +97,17 @@ When(a.Pod)
       runAsUser: 1000
     }
   })
+```
+## Reconcile 
+
+Fills a similar niche to .Watch() -- and runs in the Watch Controller -- but it employs a Queue to force sequential processing of resource states once they are returned by the Kubernetes API. This allows things like operators to handle bursts of events without overwhelming the system or the Kubernetes API. It provides a mechanism to back off when the system is under heavy load, enhancing overall stability and maintaining the state consistency of Kubernetes resources, as the order of operations can impact the final state of a resource. For example, creating and then deleting a resource should be processed in that exact order to avoid state inconsistencies.
+
+```typescript
+When(WebApp)
+  .IsCreatedOrUpdated()
+  .Validate(validator)
+  .Reconcile(async instance => {
+     // Do WORK HERE
 ```
 
 ## Pepr Store

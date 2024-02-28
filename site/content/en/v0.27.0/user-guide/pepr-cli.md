@@ -67,6 +67,16 @@ npx pepr monitor [options] [module-uuid]
 
 ---
 
+## `npx pepr uuid`
+
+Module UUID(s) currently deployed in the cluster with their descriptions.
+
+**Options:**
+
+- `[uuid]` - Specific module UUID
+
+---
+
 ## `npx pepr build`
 
 Create a [zarf.yaml](https://zarf.dev) and K8s manifest for the current module. This includes everything needed to deploy Pepr and the current module into production environments.
@@ -78,4 +88,7 @@ Create a [zarf.yaml](https://zarf.dev) and K8s manifest for the current module. 
 - `-n, --no-embed` - Disables embedding of deployment files into output module. Useful when creating library modules intended solely for reuse/distribution via NPM
 - `-r, --registry-info [<registry>/<username>]` - Registry Info: Image registry and username. Note: You must be signed into the registry
 - `-o, --output-dir [output directory]` - Define where to place build output
+- `--timeout [timeout]` - How long the API server should wait for a webhook to respond before treating the call as a failure
 - `--rbac-mode [admin|scoped]` - Rbac Mode: admin, scoped (default: admin) (choices: "admin", "scoped", default: "admin")
+- `-i, --custom-image [custom-image]` - Custom Image: Use custom image for Admission and Watcher Deployments.
+- `--registry [GitHub, Iron Bank]`, - Container registry: Choose container registry for deployment manifests.

@@ -1,17 +1,18 @@
 ---
 title: Pepr
-linkTitle: v0.24.1
+linkTitle: v0.27.0
 cascade:
   type: docs
-aliases: []
+aliases: ["/current/"]
 ---
 
 
-[![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](.)
+[![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev)
 [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr)
 [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr)
 [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr)
 [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr)
 
 #### **_Type safe Kubernetes middleware for humans_**
 
