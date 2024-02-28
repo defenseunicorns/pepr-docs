@@ -782,4 +782,169 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="run-pepr-build">Run Pepr Build&lt;/h3>
 &lt;p>Build your Pepr module with the registry specified.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr build -r docker.io/defenseunicorns
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Main: Customization</title><link>/main/user-guide/customization/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/customization/</guid><description>
+&lt;p>This document outlines how to customize the build output through Helm overrides and &lt;code>package.json&lt;/code> configurations.&lt;/p>
+&lt;h2 id="customizing-with-helm">Customizing with Helm&lt;/h2>
+&lt;p>Below are the available Helm override configurations after you have built your Pepr module that you can put in the &lt;code>values.yaml&lt;/code>.&lt;/p>
+&lt;h3 id="helm-overrides-table">Helm Overrides Table&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Parameter&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Example Values&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>secrets.apiToken&lt;/code>&lt;/td>
+&lt;td>Kube API-Server Token.&lt;/td>
+&lt;td>&lt;code>Buffer.from(apiToken).toString(&amp;quot;base64&amp;quot;)&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>hash&lt;/code>&lt;/td>
+&lt;td>Unique hash for deployment. Do not change.&lt;/td>
+&lt;td>&lt;code>&amp;lt;your_hash&amp;gt;&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>namespace.annotations&lt;/code>&lt;/td>
+&lt;td>Namespace annotations&lt;/td>
+&lt;td>&lt;code>{}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>namespace.labels&lt;/code>&lt;/td>
+&lt;td>Namespace labels&lt;/td>
+&lt;td>&lt;code>{&amp;quot;pepr.dev&amp;quot;: &amp;quot;&amp;quot;}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>uuid&lt;/code>&lt;/td>
+&lt;td>Unique identifier for the module&lt;/td>
+&lt;td>&lt;code>hub-operator&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>admission.*&lt;/code>&lt;/td>
+&lt;td>Admission controller configurations&lt;/td>
+&lt;td>Various, see subparameters below&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>watcher.*&lt;/code>&lt;/td>
+&lt;td>Watcher configurations&lt;/td>
+&lt;td>Various, see subparameters below&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="admission-and-watcher-subparameters">Admission and Watcher Subparameters&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Subparameter&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>failurePolicy&lt;/code>&lt;/td>
+&lt;td>Webhook failure policy [Ignore, Fail]&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>webhookTimeout&lt;/code>&lt;/td>
+&lt;td>Timeout seconds for webhooks [1 - 30]&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>env&lt;/code>&lt;/td>
+&lt;td>Container environment variables&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>image&lt;/code>&lt;/td>
+&lt;td>Container image&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>annotations&lt;/code>&lt;/td>
+&lt;td>Deployment annotations&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>labels&lt;/code>&lt;/td>
+&lt;td>Deployment labels&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>securityContext&lt;/code>&lt;/td>
+&lt;td>Pod security context&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>resources&lt;/code>&lt;/td>
+&lt;td>Resource limits&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>containerSecurityContext&lt;/code>&lt;/td>
+&lt;td>Container&amp;rsquo;s security context&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>nodeSelector&lt;/code>&lt;/td>
+&lt;td>Node selection constraints&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tolerations&lt;/code>&lt;/td>
+&lt;td>Tolerations to taints&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>affinity&lt;/code>&lt;/td>
+&lt;td>Node scheduling options&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Note: Replace &lt;code>*&lt;/code> with &lt;code>admission&lt;/code> or &lt;code>watcher&lt;/code> as needed to apply settings specifically for each part.&lt;/p>
+&lt;h2 id="customizing-with-packagejson">Customizing with package.json&lt;/h2>
+&lt;p>Below are the available configurations through &lt;code>package.json&lt;/code>.&lt;/p>
+&lt;h3 id="packagejson-configurations-table">package.json Configurations Table&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Field&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Example Values&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>name&lt;/code>&lt;/td>
+&lt;td>User-defined name of the module&lt;/td>
+&lt;td>&lt;code>pepr-test-module&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>uuid&lt;/code>&lt;/td>
+&lt;td>Unique identifier for the module&lt;/td>
+&lt;td>&lt;code>hub-operator&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>onError&lt;/code>&lt;/td>
+&lt;td>Behavior of the webhook failure policy&lt;/td>
+&lt;td>&lt;code>reject&lt;/code>, &lt;code>ignore&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>webhookTimeout&lt;/code>&lt;/td>
+&lt;td>Webhook timeout in seconds&lt;/td>
+&lt;td>&lt;code>1&lt;/code> - &lt;code>30&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>customLabels&lt;/code>&lt;/td>
+&lt;td>Custom labels for namespaces&lt;/td>
+&lt;td>&lt;code>{namespace: {}}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>alwaysIgnore&lt;/code>&lt;/td>
+&lt;td>Conditions to always ignore&lt;/td>
+&lt;td>&lt;code>{namespaces: [], labels: []}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>includedFiles&lt;/code>&lt;/td>
+&lt;td>For working with WebAssembly&lt;/td>
+&lt;td>[&amp;ldquo;main.wasm&amp;rdquo;, &amp;ldquo;wasm_exec.js&amp;rdquo;]&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>env&lt;/code>&lt;/td>
+&lt;td>Environment variables for the container&lt;/td>
+&lt;td>&lt;code>{LOG_LEVEL: &amp;quot;warn&amp;quot;}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>These tables provide a comprehensive overview of the fields available for customization within the Helm overrides and the &lt;code>package.json&lt;/code> file. Modify these according to your deployment requirements.&lt;/p></description></item></channel></rss>
