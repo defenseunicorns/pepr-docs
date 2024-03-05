@@ -13,6 +13,11 @@ code {
   color-scheme: dark;
 }
 
+nav.td-sidebar-nav a.active {
+  background-color: transparent;
+  font-weight: bold;
+}
+
 // make version dropdown highling not-so-obnoxious
 ul.dropdown-menu {
   --bs-dropdown-bg: #0f1443;
