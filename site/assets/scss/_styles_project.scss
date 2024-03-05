@@ -14,8 +14,12 @@ code {
 }
 
 // make version dropdown highling not-so-obnoxious
+ul.dropdown-menu {
+  --bs-dropdown-bg: #0f1443;
+}
+
 ul.dropdown-menu > li {
-  --bs-dropdown-link-hover-bg: color-mix(in srgb, var(--bs-body-bg) 95%, white);
+  --bs-dropdown-link-hover-bg: color-mix(in srgb, #0f1443 95%, white);
 }
 
 // right-align top menu version dropdown
@@ -68,13 +72,28 @@ video.td-content {
 @media screen and (max-width: 991.98px) {
   div#main_navbar {
     overflow: visible;
+    font-size: 16px;
   }
 
   ul.navbar-nav {
     overflow-x: visible !important;
+    padding-top: 0 !important;
   }
 
   li.nav-item {
     display: inherit !important;
+  }
+
+  nav.td-navbar {
+    min-height: auto;
+    height: 56px;
+  }
+
+  nav.td-navbar > div.container-fluid {
+    flex-direction: row !important;
+  }
+  
+  ul.dropdown-menu {
+    inset: 0px auto auto 0px !important;
   }
 }
