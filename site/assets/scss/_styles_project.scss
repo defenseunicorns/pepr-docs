@@ -63,3 +63,18 @@ video.td-content {
   padding-left: 0.75em;
   line-height: 1.5em;
 }
+
+// enable version dropdown on small screens
+@media screen and (max-width: 991.98px) {
+  div#main_navbar {
+    overflow: visible;
+  }
+
+  ul.navbar-nav {
+    overflow-x: visible !important;
+  }
+
+  li.nav-item {
+    display: inherit !important;
+  }
+}
