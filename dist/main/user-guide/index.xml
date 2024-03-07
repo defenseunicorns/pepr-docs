@@ -928,7 +928,7 @@ The response body is a plain text representation of the metrics data, according 
 &lt;tr>
 &lt;td>&lt;code>alwaysIgnore&lt;/code>&lt;/td>
 &lt;td>Conditions to always ignore&lt;/td>
-&lt;td>&lt;code>{namespaces: [], labels: []}&lt;/code>&lt;/td>
+&lt;td>&lt;code>{namespaces: []}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>includedFiles&lt;/code>&lt;/td>
