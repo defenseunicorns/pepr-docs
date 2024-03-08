@@ -1,4 +1,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>– User Guide</title><link>/main/user-guide/</link><description>Recent content in User Guide on</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="/main/user-guide/index.xml" rel="self" type="application/rss+xml"/><item><title>Main: Pepr CLI</title><link>/main/user-guide/pepr-cli/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-cli/</guid><description>
+&lt;ul>
+&lt;li>&lt;a href="#pepr-cli">Pepr CLI&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#npx-pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#npx-pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#npx-pepr-dev">&lt;code>npx pepr dev&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#npx-pepr-deploy">&lt;code>npx pepr deploy&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#npx-pepr-monitor">&lt;code>npx pepr monitor&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#npx-pepr-uuid">&lt;code>npx pepr uuid&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#npx-pepr-build">&lt;code>npx pepr build&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#npx-pepr-kfc">&lt;code>npx pepr kfc&lt;/code>&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
 &lt;h2 id="npx-pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/h2>
 &lt;p>Initialize a new Pepr Module.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
@@ -63,7 +77,14 @@
 &lt;li>&lt;code>--rbac-mode [admin|scoped]&lt;/code> - Rbac Mode: admin, scoped (default: admin) (choices: &amp;ldquo;admin&amp;rdquo;, &amp;ldquo;scoped&amp;rdquo;, default: &amp;ldquo;admin&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-i, --custom-image [custom-image]&lt;/code> - Custom Image: Use custom image for Admission and Watcher Deployments.&lt;/li>
 &lt;li>&lt;code>--registry [GitHub, Iron Bank]&lt;/code>, - Container registry: Choose container registry for deployment manifests.&lt;/li>
-&lt;/ul></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
+&lt;/ul>
+&lt;h2 id="npx-pepr-kfc">&lt;code>npx pepr kfc&lt;/code>&lt;/h2>
+&lt;p>Execute a &lt;code>kubernetes-fluent-client&lt;/code> command. This command is a wrapper around &lt;code>kubernetes-fluent-client&lt;/code>.&lt;/p>
+&lt;p>Usage:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr kfc &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>command&lt;span style="color:#ff79c6">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>If you are unsure of what commands are available, you can run &lt;code>npx pepr kfc&lt;/code> to see the available commands.&lt;/p>
+&lt;p>For example, to generate usable types from a Kubernetes CRD, you can run &lt;code>npx pepr kfc crd [source] [directory]&lt;/code>. This will generate the types for the &lt;code>[source]&lt;/code> CRD and output the generated types to the &lt;code>[directory]&lt;/code>.&lt;/p>
+&lt;p>You can learn more about the &lt;code>kubernetes-fluent-client&lt;/code> &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">here&lt;/a>.&lt;/p></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
 &lt;h2 id="what-is-a-pepr-module">What is a Pepr Module?&lt;/h2>
 &lt;p>A Pepr Module is a collection of files that can be used to create a new Pepr Project. A Pepr Module can be used to create a new Pepr Project by using the &lt;code>npx pepr init&lt;/code> command.&lt;/p></description></item><item><title>Main: Actions</title><link>/main/user-guide/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/actions/</guid><description>
 &lt;ul>
