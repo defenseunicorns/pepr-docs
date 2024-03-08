@@ -12,7 +12,7 @@ Pepr is a community-driven project. We welcome contributions of all kinds, from 
 
 You can find all the details on contributing to Pepr at:
 
-* [Contributing to Pepr](../../contribute)
+* [Contributing to Pepr](../contribute)
 
 ### Reporting Bugs
 
@@ -24,4 +24,4 @@ Information on reporting bugs can be found at:
 
 Information on reporting security issues can be found at:
 
-* [Reporting Security Issues](../../contribute/report-security-issue/)
+* [Reporting Security Issues](../contribute/report-security-issue/)
