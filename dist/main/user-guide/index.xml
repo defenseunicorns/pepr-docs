@@ -912,6 +912,10 @@ The response body is a plain text representation of the metrics data, according 
 &lt;td>&lt;code>affinity&lt;/code>&lt;/td>
 &lt;td>Node scheduling options&lt;/td>
 &lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>terminationGracePeriodSeconds&lt;/code>&lt;/td>
+&lt;td>Optional duration in seconds the pod needs to terminate gracefully&lt;/td>
+&lt;/tr>
 &lt;/tbody>
 &lt;/table>
 &lt;p>Note: Replace &lt;code>*&lt;/code> with &lt;code>admission&lt;/code> or &lt;code>watcher&lt;/code> as needed to apply settings specifically for each part.&lt;/p>
