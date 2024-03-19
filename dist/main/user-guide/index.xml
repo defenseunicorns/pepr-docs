@@ -17,7 +17,6 @@
 &lt;p>Initialize a new Pepr Module.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>-l, --log-level [level]&lt;/code> - Log level: debug, info, warn, error (default: &amp;ldquo;info&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init and VSCode launch&lt;/li>
 &lt;/ul>
 &lt;hr>
@@ -25,7 +24,6 @@
 &lt;p>Update the current Pepr Module to the latest SDK version and update the global Pepr CLI to the same version.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>-l, --log-level [level]&lt;/code> - Log level: debug, info, warn, error (default: &amp;ldquo;info&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>--skip-template-update&lt;/code> - Skip updating the template files&lt;/li>
 &lt;/ul>
 &lt;hr>
@@ -33,7 +31,6 @@
 &lt;p>Connect a local cluster to a local version of the Pepr Controller to do real-time debugging of your module. Note the &lt;code>npx pepr dev&lt;/code> assumes a K3d cluster is running by default. If you are working with Kind or another docker-based K8s distro, you will need to pass the &lt;code>--host host.docker.internal&lt;/code> option to &lt;code>npx pepr dev&lt;/code>. If working with a remote cluster you will have to give Pepr a host path to your machine that is reachable from the K8s cluster.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>-l, --log-level [level]&lt;/code> - Log level: debug, info, warn, error (default: &amp;ldquo;info&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-h, --host [host]&lt;/code> - Host to listen on (default: &amp;ldquo;host.k3d.internal&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>--confirm&lt;/code> - Skip confirmation prompt&lt;/li>
 &lt;/ul>
@@ -42,7 +39,6 @@
 &lt;p>Deploy the current module into a Kubernetes cluster, useful for CI systems. Not recommended for production use.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>-l, --log-level [level]&lt;/code> - Log level: debug, info, warn, error (default: &amp;ldquo;info&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-i, --image [image]&lt;/code> - Override the image tag&lt;/li>
 &lt;li>&lt;code>--confirm&lt;/code> - Skip confirmation prompt&lt;/li>
 &lt;/ul>
@@ -53,7 +49,6 @@
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr monitor &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>module-uuid&lt;span style="color:#ff79c6">]&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>-l, --log-level [level]&lt;/code> - Log level: debug, info, warn, error (default: &amp;ldquo;info&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-h, --help&lt;/code> - Display help for command&lt;/li>
 &lt;/ul>
 &lt;hr>
@@ -68,7 +63,6 @@
 &lt;p>Create a &lt;a href="https://zarf.dev">zarf.yaml&lt;/a> and K8s manifest for the current module. This includes everything needed to deploy Pepr and the current module into production environments.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>-l, --log-level [level]&lt;/code> - Log level: debug, info, warn, error (default: &amp;ldquo;info&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-e, --entry-point [file]&lt;/code> - Specify the entry point file to build with. (default: &amp;ldquo;pepr.ts&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-n, --no-embed&lt;/code> - Disables embedding of deployment files into output module. Useful when creating library modules intended solely for reuse/distribution via NPM&lt;/li>
 &lt;li>&lt;code>-r, --registry-info [&amp;lt;registry&amp;gt;/&amp;lt;username&amp;gt;]&lt;/code> - Registry Info: Image registry and username. Note: You must be signed into the registry&lt;/li>
