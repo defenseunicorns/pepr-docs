@@ -21,7 +21,7 @@
 &lt;/ul>
 &lt;hr>
 &lt;h2 id="npx-pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/h2>
-&lt;p>Update the current Pepr Module to the latest SDK version and update the global Pepr CLI to the same version.&lt;/p>
+&lt;p>Update the current Pepr Module to the latest SDK version. This command is not recommended for production use, instead, we recommend Renovate or Dependabot for automated updates.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
 &lt;li>&lt;code>--skip-template-update&lt;/code> - Skip updating the template files&lt;/li>
