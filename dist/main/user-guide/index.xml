@@ -396,10 +396,6 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Main: OnSchedule</title><link>/main/user-guide/onschedule/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/onschedule/</guid><description>
 &lt;p>The &lt;code>OnSchedule&lt;/code> feature allows you to schedule and automate the execution of specific code at predefined intervals or schedules. This feature is designed to simplify recurring tasks and can serve as an alternative to traditional CronJobs. This code is designed to be run at the top level on a Capability, not within a function like &lt;code>When&lt;/code>.&lt;/p>
-&lt;blockquote>
-&lt;p>&lt;strong>Note -&lt;/strong> To use this feature in dev mode you MUST set &lt;code>PEPR_WATCH_MODE=&amp;quot;true&amp;quot;&lt;/code>. This is because the scheduler only runs on the watch controller and the watch controller is not started by default in dev mode.&lt;/p>
-&lt;/blockquote>
-&lt;p>For example: &lt;code>PEPR_WATCH_MODE=&amp;quot;true&amp;quot; npx pepr dev&lt;/code>&lt;/p>
 &lt;h2 id="best-practices">Best Practices&lt;/h2>
 &lt;p>&lt;code>OnSchedule&lt;/code> is designed for targeting intervals equal to or larger than 30 seconds due to the storage mechanism used to archive schedule info.&lt;/p>
 &lt;h2 id="usage">Usage&lt;/h2>
