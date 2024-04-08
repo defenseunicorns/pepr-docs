@@ -1509,13 +1509,13 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>    <span style=color:#ff79c6>shortNames</span>:
 </span></span><span style=display:flex><span>    - wa
 </span></span></code></pre></div><p>Status should also be listed under <code>subresources</code> to make it writable. We provide descriptions under the properties for clarity around what the property is used for. Enums are useful to limit the values that can be used for a property.</p><p>Go to the <code>capabilities</code> directory, create a new directory called <code>crd</code> with two child folders, generated and source.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>mkdir -p capabilities/crd/generated capabilities/crd/source  
-</span></span></code></pre></div><p>Generate a class based on the WebApp CRD using <code>kubernetes-fluent-client</code> and store it in the generated directory.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx kubernetes-fluent-client crd https://gist.githubusercontent.com/cmwylie19/69b765af5ab25af62696f3337df13687/raw/72f53db7ddc06fc8891dc81136a7c190bc70f41b/WebApp.yaml . 
+</span></span></code></pre></div><p>Generate a class based on the WebApp CRD using <code>kubernetes-fluent-client</code>. This way we can react to the fields of the CRD in a type-safe way.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx kubernetes-fluent-client crd https://gist.githubusercontent.com/cmwylie19/69b765af5ab25af62696f3337df13687/raw/72f53db7ddc06fc8891dc81136a7c190bc70f41b/WebApp.yaml . 
 </span></span></code></pre></div><p>Change the first lines of the generated file to the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { a, RegisterKind } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
 </span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>class</span> WebApp <span style=color:#ff79c6>extends</span> a.GenericKind {
 </span></span><span style=display:flex><span>    spec?:       <span style=color:#8be9fd>Spec</span>;
 </span></span><span style=display:flex><span>    status?:     <span style=color:#8be9fd>Status</span>;
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>in the <code>source</code> folder, create a file called <code>webapp.crd.ts</code> and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>const</span> WebAppCRD <span style=color:#ff79c6>=</span> {
+</span></span></code></pre></div><p>Move the updated file to <code>capabilities/crd/generated/webapp-v1alpha1.ts</code>.</p><p>In the <code>capabilities/crd/source</code> folder, create a file called <code>webapp.crd.ts</code> and add the following. This will have the controller automatically create the CRD when it starts.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>const</span> WebAppCRD <span style=color:#ff79c6>=</span> {
 </span></span><span style=display:flex><span>  apiVersion<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;apiextensions.k8s.io/v1&#34;</span>,
 </span></span><span style=display:flex><span>  kind<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;CustomResourceDefinition&#34;</span>,
 </span></span><span style=display:flex><span>  metadata<span style=color:#ff79c6>:</span> {
@@ -1592,23 +1592,7 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>    },
 </span></span><span style=display:flex><span>  },
 </span></span><span style=display:flex><span>};
-</span></span></code></pre></div><p>In the root of the crd folder, create an <code>index.ts</code> file and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { V1OwnerReference } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;@kubernetes/client-node&#34;</span>;
-</span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> { WebApp, Phase, Status } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./generated/webapp-v1alpha1&#34;</span>;
-</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebApp } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./generated/webapp-v1alpha1&#34;</span>;
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#8be9fd;font-style:italic>function</span> getOwnerRef(instance: <span style=color:#8be9fd>WebApp</span>)<span style=color:#ff79c6>:</span> V1OwnerReference[] {
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> { name, uid } <span style=color:#ff79c6>=</span> instance.metadata<span style=color:#ff79c6>!</span>;
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>return</span> [
-</span></span><span style=display:flex><span>    {
-</span></span><span style=display:flex><span>      apiVersion: <span style=color:#8be9fd>instance.apiVersion</span><span style=color:#ff79c6>!</span>,
-</span></span><span style=display:flex><span>      kind: <span style=color:#8be9fd>instance.kind</span><span style=color:#ff79c6>!</span>,
-</span></span><span style=display:flex><span>      uid: <span style=color:#8be9fd>uid</span><span style=color:#ff79c6>!</span>,
-</span></span><span style=display:flex><span>      name: <span style=color:#8be9fd>name</span><span style=color:#ff79c6>!</span>,
-</span></span><span style=display:flex><span>    },
-</span></span><span style=display:flex><span>  ];
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>Add a <code>register.ts</code> file to the <code>crd</code> folder and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { K8s, Log, kind } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
+</span></span></code></pre></div><p>Add a <code>register.ts</code> file to the <code>capabilities/crd/</code> folder and add the following. This will auto register the CRD on startup.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { K8s, Log, kind } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebAppCRD } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./source/webapp.crd&#34;</span>;
 </span></span><span style=display:flex><span>
@@ -1622,9 +1606,9 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>    });
 </span></span><span style=display:flex><span>};
 </span></span><span style=display:flex><span>(() <span style=color:#ff79c6>=&gt;</span> RegisterCRD())();
-</span></span></code></pre></div><p>Finally add a <code>validate.ts</code> file to the <code>crd</code> folder and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { PeprValidateRequest } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
+</span></span></code></pre></div><p>Finally add a <code>validate.ts</code> file to the <code>crd</code> folder and add the following. This will ensure that instances of the WebApp resource are in valid namespaces and have a maximum of 7 replicas.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { PeprValidateRequest } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebApp } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;.&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebApp } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./generated/webapp-v1alpha1&#34;</span>;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#ff79c6>const</span> invalidNamespaces <span style=color:#ff79c6>=</span> [
 </span></span><span style=display:flex><span>  <span style=color:#f1fa8c>&#34;kube-system&#34;</span>,
@@ -1649,9 +1633,10 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>  <span style=color:#ff79c6>return</span> req.Approve();
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>In this section we generated the CRD class for WebApp, created a function to add <code>ownerReferences</code> to the manifests that will be deployed by the Operator to handle deletion of Kubernetes objects, registered the CRD, and added a validator to validate that instances of WebApp are in valid namespaces.</p><h2 id=create-helpers>Create Helpers</h2><p>In this section we will create helper functions to help with the reconciliation process.</p><p>Create a <code>controller</code> folder in the <code>capabilities</code> folder and create a <code>generators.ts</code> file in the <code>capabilities</code> folder. This file will contain the functions that will generate the manifests that will be deployed by the Operator with the ownerReferences added to them.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { kind, K8s, Log } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
-</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { getOwnerRef } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;../crd&#34;</span>;
+</span></span></code></pre></div><p>In this section we generated the CRD class for WebApp, created a function to auto register the CRD, and added a validator to validate that instances of WebApp are in valid namespaces and have a maximum of 7 replicas.</p><h2 id=create-helpers>Create Helpers</h2><p>In this section we will create helper functions to help with the reconciliation process. The idea is that this operator will &ldquo;remedy&rdquo; any accidental deletions of the resources it creates. If any object deployed by the Operator is deleted for any reason, the Operator will automatically redeploy the object.</p><p>Create a <code>controller</code> folder in the <code>capabilities</code> folder and create a <code>generators.ts</code> file. This file will contain functions that generate Kubernetes Objects for the Operator to deploy (with the ownerReferences auto-included). Since these resources are owned by the WebApp resource, they will be deleted when the WebApp resource is deleted.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { kind, K8s, Log, sdk } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
 </span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { WebApp } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;../crd/generated/webapp-v1alpha1&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>const</span> { getOwnerRefFrom } <span style=color:#ff79c6>=</span> sdk;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>default</span> <span style=color:#ff79c6>async</span> <span style=color:#8be9fd;font-style:italic>function</span> Deploy(instance: <span style=color:#8be9fd>WebApp</span>) {
 </span></span><span style=display:flex><span>  <span style=color:#ff79c6>try</span> {
@@ -1677,7 +1662,7 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>    apiVersion<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;apps/v1&#34;</span>,
 </span></span><span style=display:flex><span>    kind<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;Deployment&#34;</span>,
 </span></span><span style=display:flex><span>    metadata<span style=color:#ff79c6>:</span> {
-</span></span><span style=display:flex><span>      ownerReferences: <span style=color:#8be9fd>getOwnerRef</span>(instance),
+</span></span><span style=display:flex><span>      ownerReferences: <span style=color:#8be9fd>getOwnerRefFrom</span>(instance),
 </span></span><span style=display:flex><span>      name,
 </span></span><span style=display:flex><span>      <span style=color:#ff79c6>namespace</span>,
 </span></span><span style=display:flex><span>      labels<span style=color:#ff79c6>:</span> {
@@ -1693,7 +1678,7 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>      },
 </span></span><span style=display:flex><span>      template<span style=color:#ff79c6>:</span> {
 </span></span><span style=display:flex><span>        metadata<span style=color:#ff79c6>:</span> {
-</span></span><span style=display:flex><span>          ownerReferences: <span style=color:#8be9fd>getOwnerRef</span>(instance),
+</span></span><span style=display:flex><span>          ownerReferences: <span style=color:#8be9fd>getOwnerRefFrom</span>(instance),
 </span></span><span style=display:flex><span>          annotations<span style=color:#ff79c6>:</span> {
 </span></span><span style=display:flex><span>            buildTimestamp<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>`</span><span style=color:#f1fa8c>${</span><span style=color:#8be9fd;font-style:italic>Date</span>.now()<span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>`</span>,
 </span></span><span style=display:flex><span>          },
@@ -1739,7 +1724,7 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>    apiVersion<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;v1&#34;</span>,
 </span></span><span style=display:flex><span>    kind<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;Service&#34;</span>,
 </span></span><span style=display:flex><span>    metadata<span style=color:#ff79c6>:</span> {
-</span></span><span style=display:flex><span>      ownerReferences: <span style=color:#8be9fd>getOwnerRef</span>(instance),
+</span></span><span style=display:flex><span>      ownerReferences: <span style=color:#8be9fd>getOwnerRefFrom</span>(instance),
 </span></span><span style=display:flex><span>      name,
 </span></span><span style=display:flex><span>      <span style=color:#ff79c6>namespace</span>,
 </span></span><span style=display:flex><span>      labels<span style=color:#ff79c6>:</span> {
@@ -1969,7 +1954,7 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>    apiVersion<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;v1&#34;</span>,
 </span></span><span style=display:flex><span>    kind<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;ConfigMap&#34;</span>,
 </span></span><span style=display:flex><span>    metadata<span style=color:#ff79c6>:</span> {
-</span></span><span style=display:flex><span>      ownerReferences: <span style=color:#8be9fd>getOwnerRef</span>(instance),
+</span></span><span style=display:flex><span>      ownerReferences: <span style=color:#8be9fd>getOwnerRefFrom</span>(instance),
 </span></span><span style=display:flex><span>      name<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>`web-content-</span><span style=color:#f1fa8c>${</span>name<span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>`</span>,
 </span></span><span style=display:flex><span>      <span style=color:#ff79c6>namespace</span>,
 </span></span><span style=display:flex><span>      labels<span style=color:#ff79c6>:</span> {
@@ -1981,10 +1966,11 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>    },
 </span></span><span style=display:flex><span>  };
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>We decide which <code>ConfigMap</code> to deploy based on the language and theme specified in the WebApp resource and how many replicas to deploy based on the replicas specified in the WebApp resource.</p><h2 id=create-reconciler>Create Reconciler</h2><p>In the base of the <code>capabilities</code> folder, create a <code>reconciler.ts</code> file and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { K8s, Log } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
-</span></span><span style=display:flex><span>
+</span></span></code></pre></div><p>Our job is to make the deployment of the WebApp simple. Instead of having to keep track of the versions and revisions of all of the Kubernetes Objects required for the WebApp, rolling pods and updating configMaps, the deployer now only needs to focus on the <code>WebApp</code> instance. The controller will reconcile instances of the operand (WebApp) against the actual cluster state to reach the desired state.</p><p>We decide which <code>ConfigMap</code> to deploy based on the language and theme specified in the WebApp resource and how many replicas to deploy based on the replicas specified in the WebApp resource.</p><h2 id=create-reconciler>Create Reconciler</h2><p>Now, create the function that reacts to changes across WebApp instances. This function will be called and put into a queue, guaranteeing ordered and synchronous processing of events, even when the system may be under heavy load.</p><p>In the base of the <code>capabilities</code> folder, create a <code>reconciler.ts</code> file and add the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { K8s, Log, sdk } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
 </span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> Deploy <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./controller/generators&#34;</span>;
 </span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> { Phase, Status, WebApp } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;./crd&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>const</span> { writeEvent } <span style=color:#ff79c6>=</span> sdk;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#6272a4>/**
 </span></span></span><span style=display:flex><span><span style=color:#6272a4> * The reconciler is called from the queue and is responsible for reconciling the state of the instance
@@ -2037,6 +2023,7 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span></span><span style=display:flex><span><span style=color:#6272a4> * @param status The new status
 </span></span></span><span style=display:flex><span><span style=color:#6272a4> */</span>
 </span></span><span style=display:flex><span><span style=color:#ff79c6>async</span> <span style=color:#8be9fd;font-style:italic>function</span> updateStatus(instance: <span style=color:#8be9fd>WebApp</span>, status: <span style=color:#8be9fd>Status</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>await</span> writeEvent(instance, {phase: <span style=color:#8be9fd>status</span>}, <span style=color:#f1fa8c>&#34;Normal&#34;</span>, <span style=color:#f1fa8c>&#34;CreatedOrUpdate&#34;</span>, instance.metadata.name, instance.metadata.name);
 </span></span><span style=display:flex><span>  <span style=color:#ff79c6>await</span> K8s(WebApp).PatchStatus({
 </span></span><span style=display:flex><span>    metadata<span style=color:#ff79c6>:</span> {
 </span></span><span style=display:flex><span>      name: <span style=color:#8be9fd>instance.metadata</span><span style=color:#ff79c6>!</span>.name,
@@ -2075,10 +2062,13 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>  });
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>When(WebApp)
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Remove the instance from the store BEFORE it is deleted so reconcile stops 
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>// and a cascading deletion occurs for all owned resources.
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>// To make this work, we extended the timeout on the WebHook Configuration
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>When(WebApp)
 </span></span><span style=display:flex><span>  .IsDeleted()
-</span></span><span style=display:flex><span>  .Mutate(instance <span style=color:#ff79c6>=&gt;</span> {
-</span></span><span style=display:flex><span>    Store.removeItemAndWait(instance.Raw.metadata.name);
+</span></span><span style=display:flex><span>  .Mutate(<span style=color:#ff79c6>async</span> instance <span style=color:#ff79c6>=&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>await</span> Store.removeItemAndWait(instance.Raw.metadata.name);
 </span></span><span style=display:flex><span>  });
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#6272a4>// Don&#39;t let the CRD get deleted
@@ -2117,10 +2107,10 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>    ) <span style=color:#ff79c6>as</span> a.GenericKind;
 </span></span><span style=display:flex><span>    <span style=color:#ff79c6>await</span> Deploy(instance);
 </span></span><span style=display:flex><span>  });
-</span></span></code></pre></div><p>In this section we created a <code>reconciler.ts</code> file that contains the function that is responsible for reconciling the state of the instance with the cluster based on CustomResource and updating the status of the instance. The <code>index.ts</code> file that contains the WebAppController capability and the functions that are used to watch for changes to the WebApp resource and corresponding Kubernetes resources. The <code>Reconcile</code> action processes the callback in a queue guaranteeing ordered and synchronous processing of events</p><h2 id=demo>Demo</h2><p><em>Create an ephemeral cluster. (Kind or k3d will work)</em></p><p>Clone the Operator</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>git clone https://github.com/defenseunicorns/pepr-excellent-examples.git
+</span></span></code></pre></div><ul><li>When a WebApp is created or updated, validate it, store the name of the instance and enqueue it for processing.</li><li>If an &ldquo;owned&rdquo; resource (ConfigMap, Service, or Deployment) is deleted, redeploy it.</li><li>Always redeploy the WebApp CRD if it was deleted as the controller depends on it</li></ul><p>In this section we created a <code>reconciler.ts</code> file that contains the function that is responsible for reconciling the state of the instance with the cluster based on CustomResource and updating the status of the instance. The <code>index.ts</code> file that contains the WebAppController capability and the functions that are used to watch for changes to the WebApp resource and corresponding Kubernetes resources. The <code>Reconcile</code> action processes the callback in a queue guaranteeing ordered and synchronous processing of events</p><h2 id=demo>Demo</h2><p><em>Create an ephemeral cluster. (Kind or k3d will work)</em></p><p>Clone the Operator</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>git clone https://github.com/defenseunicorns/pepr-excellent-examples.git
 </span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>cd</span> pepr-operator
 </span></span></code></pre></div><p>Make sure Pepr is update to date</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx pepr update
-</span></span></code></pre></div><p>Build the Pepr manifests</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx pepr build
+</span></span></code></pre></div><p>Build the Pepr manifests (Already built with appropriate RBAC)</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx pepr build
 </span></span></code></pre></div><p>Deploy the Operator</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl apply -f dist/pepr-module-774fab07-77fa-517c-b5f8-c682c96c20c0.yaml
 </span></span><span style=display:flex><span>kubectl <span style=color:#8be9fd;font-style:italic>wait</span> --for<span style=color:#ff79c6>=</span><span style=color:#8be9fd;font-style:italic>condition</span><span style=color:#ff79c6>=</span>Ready pods -l app -n pepr-system --timeout<span style=color:#ff79c6>=</span>120s
 </span></span></code></pre></div><p>Notice that the WebApp CRD has been deployed</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl get crd | grep webapp
@@ -2176,6 +2166,25 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;observedGeneration&#34;</span>: <span style=color:#bd93f9>1</span>,
 </span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;phase&#34;</span>: <span style=color:#f1fa8c>&#34;Ready&#34;</span>
 </span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Describe the WebApp to look at events</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl describe wa webapp-light-en -n webapps
+</span></span><span style=display:flex><span><span style=color:#6272a4># output</span>
+</span></span><span style=display:flex><span>Name:         webapp-light-en
+</span></span><span style=display:flex><span>Namespace:    webapps
+</span></span><span style=display:flex><span>API Version:  pepr.io/v1alpha1
+</span></span><span style=display:flex><span>Kind:         WebApp
+</span></span><span style=display:flex><span>Metadata: ...
+</span></span><span style=display:flex><span>Spec:
+</span></span><span style=display:flex><span>  Language:  en
+</span></span><span style=display:flex><span>  Replicas:  <span style=color:#bd93f9>1</span>
+</span></span><span style=display:flex><span>  Theme:     light
+</span></span><span style=display:flex><span>Status:
+</span></span><span style=display:flex><span>  Observed Generation:  <span style=color:#bd93f9>1</span>
+</span></span><span style=display:flex><span>  Phase:                Ready
+</span></span><span style=display:flex><span>Events:
+</span></span><span style=display:flex><span>  Type    Reason                    Age   From             Message
+</span></span><span style=display:flex><span>  ----    ------                    ----  ----             -------
+</span></span><span style=display:flex><span>  Normal  InstanceCreatedOrUpdated  36s   webapp-light-en  Pending
+</span></span><span style=display:flex><span>  Normal  InstanceCreatedOrUpdated  36s   webapp-light-en  Ready
 </span></span></code></pre></div><p>Port-forward and look at the WebApp in the browser</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl port-forward svc/webapp-light-en -n webapps 3000:80
 </span></span></code></pre></div><p><a href=http://localhost:3000>WebApp</a>
 <img src=light.png alt=WebApp></p><p>Delete the <code>ConfigMap</code> on the WebApp to watch it the operator reconcile it back</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>kubectl delete cm -n webapps --all 
