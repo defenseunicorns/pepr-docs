@@ -1,9 +1,9 @@
 ---
 title: Pepr
-linkTitle: v0.29.1
+linkTitle: v0.29.2
 cascade:
   type: docs
-aliases: []
+aliases: ["/current/"]
 ---
 
 
