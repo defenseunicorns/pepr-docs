@@ -796,6 +796,39 @@ The response body is a plain text representation of the metrics data, according 
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr build -r docker.io/defenseunicorns
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Main: Customization</title><link>/main/user-guide/customization/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/customization/</guid><description>
 &lt;p>This document outlines how to customize the build output through Helm overrides and &lt;code>package.json&lt;/code> configurations.&lt;/p>
+&lt;h2 id="customizing-watch-configuration">Customizing Watch Configuration&lt;/h2>
+&lt;p>The Watch configuration is a part of the Pepr module that allows you to watch for specific resources in the Kubernetes cluster. The Watch configuration can be customized by specific enviroment variables of the Watcher Deployment and can be set in the field in the &lt;code>package.json&lt;/code> or in the helm &lt;code>values.yaml&lt;/code> file.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Field&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Example Values&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>PEPR_RETRYMAX&lt;/code>&lt;/td>
+&lt;td>The maximum number of times to retry the watch, the retry count is reset on success.&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;5&amp;quot;&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>PEPR_RETRYDELAYSECONDS&lt;/code>&lt;/td>
+&lt;td>The delay between retries in seconds.&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;10&amp;quot;&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>PEPR_RESYNCINTERVALSECONDS&lt;/code>&lt;/td>
+&lt;td>Amount of seconds to wait before a forced-resyncing of the watch list&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;300&amp;quot;&lt;/code> (5 mins)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>PEPR_ALLOWWATCHBOOKMARKS&lt;/code>&lt;/td>
+&lt;td>Whether to allow &lt;a href="https://kubernetes.io/docs/reference/using-api/api-concepts/#watch-bookmarks">watch bookmarks&lt;/a>.&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;true&amp;quot;&lt;/code> or &lt;code>&amp;quot;false&amp;quot;&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
 &lt;h2 id="customizing-with-helm">Customizing with Helm&lt;/h2>
 &lt;p>Below are the available Helm override configurations after you have built your Pepr module that you can put in the &lt;code>values.yaml&lt;/code>.&lt;/p>
 &lt;h3 id="helm-overrides-table">Helm Overrides Table&lt;/h3>
