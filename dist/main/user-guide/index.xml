@@ -89,32 +89,27 @@
 &lt;/ul>
 &lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> ownerRef &lt;span style="color:#ff79c6">=&lt;/span> getOwnerRefFrom(kubernetesResource);
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">---&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>## &lt;span style="color:#f1fa8c">`writeEvent`&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Write a K8s event &lt;span style="color:#ff79c6">for&lt;/span> a CRD. Accepts the following parameters&lt;span style="color:#ff79c6">:&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> kubernetesResource: &lt;span style="color:#8be9fd">GenericKind&lt;/span>&lt;span style="color:#ff79c6">**&lt;/span> The Kubernetes resource to write the event &lt;span style="color:#ff79c6">for&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> event&lt;span style="color:#ff79c6">**&lt;/span> The event to write, should contain a human&lt;span style="color:#ff79c6">-&lt;/span>readable message &lt;span style="color:#ff79c6">for&lt;/span> the event
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> eventType&lt;span style="color:#ff79c6">**&lt;/span> The &lt;span style="color:#ff79c6">type&lt;/span> &lt;span style="color:#ff79c6">of&lt;/span> event to write, &lt;span style="color:#ff79c6">for&lt;/span> example &lt;span style="color:#f1fa8c">&amp;#34;Warning&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> eventReason&lt;span style="color:#ff79c6">**&lt;/span> The reason &lt;span style="color:#ff79c6">for&lt;/span> the event, &lt;span style="color:#ff79c6">for&lt;/span> example &lt;span style="color:#f1fa8c">&amp;#34;ReconciliationFailed&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> reportingComponent&lt;span style="color:#ff79c6">**&lt;/span> The component that &lt;span style="color:#ff79c6">is&lt;/span> reporting the event, &lt;span style="color:#ff79c6">for&lt;/span> example &lt;span style="color:#f1fa8c">&amp;#34;uds.dev/operator&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> reportingInstance&lt;span style="color:#ff79c6">**&lt;/span> The instance &lt;span style="color:#ff79c6">of&lt;/span> the component that &lt;span style="color:#ff79c6">is&lt;/span> reporting the event, &lt;span style="color:#ff79c6">for&lt;/span> example process.env.HOSTNAME
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">**&lt;/span>Usage&lt;span style="color:#ff79c6">:**&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">```typescript
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">writeEvent(
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> kubernetesResource,
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> event,
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;Warning&amp;#34;,
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;ReconciliationFailed&amp;#34;,
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uds.dev/operator&amp;#34;,
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> process.env.HOSTNAME,
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">);
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;h2 id="writeevent">&lt;code>writeEvent&lt;/code>&lt;/h2>
+&lt;p>Write a K8s event for a CRD. Accepts the following parameters:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>@param kubernetesResource: GenericKind&lt;/strong> The Kubernetes resource to write the event for&lt;/li>
+&lt;li>&lt;strong>@param event&lt;/strong> The event to write, should contain a human-readable message for the event&lt;/li>
+&lt;li>&lt;strong>@param eventType&lt;/strong> The type of event to write, for example &amp;ldquo;Warning&amp;rdquo;&lt;/li>
+&lt;li>&lt;strong>@param eventReason&lt;/strong> The reason for the event, for example &amp;ldquo;ReconciliationFailed&amp;rdquo;&lt;/li>
+&lt;li>&lt;strong>@param reportingComponent&lt;/strong> The component that is reporting the event, for example &amp;ldquo;uds.dev/operator&amp;rdquo;&lt;/li>
+&lt;li>&lt;strong>@param reportingInstance&lt;/strong> The instance of the component that is reporting the event, for example process.env.HOSTNAME&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>writeEvent(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> kubernetesResource,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> event,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;Warning&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;ReconciliationFailed&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;uds.dev/operator&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> process.env.HOSTNAME,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
 &lt;h2 id="sanitizeresourcename">&lt;code>sanitizeResourceName&lt;/code>&lt;/h2>
 &lt;p>Returns a sanitized resource name to make the given name a valid Kubernetes resource name. Accepts the following parameter:&lt;/p>
 &lt;ul>
@@ -124,7 +119,7 @@
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> sanitizedResourceName &lt;span style="color:#ff79c6">=&lt;/span> sanitizeResourceName(resourceName)
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
 &lt;h2 id="see-also">See Also&lt;/h2>
-&lt;p>Looking for information on the Pepr mutate helpers? See &lt;a href="../actions/mutate/">Helpers&lt;/a> for information on helpers for mutate actions.&lt;/p></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
+&lt;p>Looking for information on the Pepr mutate helpers? See &lt;a href="../actions/mutate#mutate-helpers">Mutate Helpers&lt;/a> for information on those.&lt;/p></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
 &lt;h2 id="what-is-a-pepr-module">What is a Pepr Module?&lt;/h2>
 &lt;p>A Pepr Module is a collection of files that can be used to create a new Pepr Project. A Pepr Module can be used to create a new Pepr Project by using the &lt;code>npx pepr init&lt;/code> command.&lt;/p></description></item><item><title>Main: Actions</title><link>/main/user-guide/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/actions/</guid><description>
 &lt;h2 id="overview">Overview&lt;/h2>
