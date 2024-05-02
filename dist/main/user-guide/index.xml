@@ -1,18 +1,4 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>– User Guide</title><link>/main/user-guide/</link><description>Recent content in User Guide on</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="/main/user-guide/index.xml" rel="self" type="application/rss+xml"/><item><title>Main: Pepr CLI</title><link>/main/user-guide/pepr-cli/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-cli/</guid><description>
-&lt;ul>
-&lt;li>&lt;a href="#pepr-cli">Pepr CLI&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#npx-pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#npx-pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#npx-pepr-dev">&lt;code>npx pepr dev&lt;/code>&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#npx-pepr-deploy">&lt;code>npx pepr deploy&lt;/code>&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#npx-pepr-monitor">&lt;code>npx pepr monitor&lt;/code>&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#npx-pepr-uuid">&lt;code>npx pepr uuid&lt;/code>&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#npx-pepr-build">&lt;code>npx pepr build&lt;/code>&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#npx-pepr-kfc">&lt;code>npx pepr kfc&lt;/code>&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;/ul>
 &lt;h2 id="npx-pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/h2>
 &lt;p>Initialize a new Pepr Module.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
@@ -79,21 +65,73 @@
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr kfc &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>command&lt;span style="color:#ff79c6">]&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>If you are unsure of what commands are available, you can run &lt;code>npx pepr kfc&lt;/code> to see the available commands.&lt;/p>
 &lt;p>For example, to generate usable types from a Kubernetes CRD, you can run &lt;code>npx pepr kfc crd [source] [directory]&lt;/code>. This will generate the types for the &lt;code>[source]&lt;/code> CRD and output the generated types to the &lt;code>[directory]&lt;/code>.&lt;/p>
-&lt;p>You can learn more about the &lt;code>kubernetes-fluent-client&lt;/code> &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">here&lt;/a>.&lt;/p></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
+&lt;p>You can learn more about the &lt;code>kubernetes-fluent-client&lt;/code> &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">here&lt;/a>.&lt;/p></description></item><item><title>Main: Pepr SDK</title><link>/main/user-guide/sdk/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/sdk/</guid><description>
+&lt;h2 id="containers">&lt;code>containers&lt;/code>&lt;/h2>
+&lt;p>Returns list of all containers in a pod. Accepts the following parameters:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>@param peprValidationRequest&lt;/strong> The request/pod to get the containers from&lt;/li>
+&lt;li>&lt;strong>@param containerType&lt;/strong> The type of container to get&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>&lt;em>Get all containers&lt;/em>&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>&lt;em>Get only the standard containers&lt;/em>&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;containers&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>&lt;em>Get only the init containers&lt;/em>&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;initContainers&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>&lt;em>Get only the ephemeral containers&lt;/em>&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;ephemeralContainers&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;h2 id="getownerreffrom">&lt;code>getOwnerRefFrom&lt;/code>&lt;/h2>
+&lt;p>Returns the owner reference for a Kubernetes resource. Accepts the following parameters:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>@param kubernetesResource: GenericKind&lt;/strong> The Kubernetes resource to get the owner reference for&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> ownerRef &lt;span style="color:#ff79c6">=&lt;/span> getOwnerRefFrom(kubernetesResource);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">---&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>## &lt;span style="color:#f1fa8c">`writeEvent`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Write a K8s event &lt;span style="color:#ff79c6">for&lt;/span> a CRD. Accepts the following parameters&lt;span style="color:#ff79c6">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> kubernetesResource: &lt;span style="color:#8be9fd">GenericKind&lt;/span>&lt;span style="color:#ff79c6">**&lt;/span> The Kubernetes resource to write the event &lt;span style="color:#ff79c6">for&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> event&lt;span style="color:#ff79c6">**&lt;/span> The event to write, should contain a human&lt;span style="color:#ff79c6">-&lt;/span>readable message &lt;span style="color:#ff79c6">for&lt;/span> the event
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> eventType&lt;span style="color:#ff79c6">**&lt;/span> The &lt;span style="color:#ff79c6">type&lt;/span> &lt;span style="color:#ff79c6">of&lt;/span> event to write, &lt;span style="color:#ff79c6">for&lt;/span> example &lt;span style="color:#f1fa8c">&amp;#34;Warning&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> eventReason&lt;span style="color:#ff79c6">**&lt;/span> The reason &lt;span style="color:#ff79c6">for&lt;/span> the event, &lt;span style="color:#ff79c6">for&lt;/span> example &lt;span style="color:#f1fa8c">&amp;#34;ReconciliationFailed&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> reportingComponent&lt;span style="color:#ff79c6">**&lt;/span> The component that &lt;span style="color:#ff79c6">is&lt;/span> reporting the event, &lt;span style="color:#ff79c6">for&lt;/span> example &lt;span style="color:#f1fa8c">&amp;#34;uds.dev/operator&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">-&lt;/span> &lt;span style="color:#ff79c6">**&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">@param&lt;/span> reportingInstance&lt;span style="color:#ff79c6">**&lt;/span> The instance &lt;span style="color:#ff79c6">of&lt;/span> the component that &lt;span style="color:#ff79c6">is&lt;/span> reporting the event, &lt;span style="color:#ff79c6">for&lt;/span> example process.env.HOSTNAME
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">**&lt;/span>Usage&lt;span style="color:#ff79c6">:**&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">```typescript
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">writeEvent(
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> kubernetesResource,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> event,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;Warning&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;ReconciliationFailed&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uds.dev/operator&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> process.env.HOSTNAME,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">);
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;h2 id="sanitizeresourcename">&lt;code>sanitizeResourceName&lt;/code>&lt;/h2>
+&lt;p>Returns a sanitized resource name to make the given name a valid Kubernetes resource name. Accepts the following parameter:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>@param resourceName&lt;/strong> The name of the resource to sanitize&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> sanitizedResourceName &lt;span style="color:#ff79c6">=&lt;/span> sanitizeResourceName(resourceName)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;h2 id="see-also">See Also&lt;/h2>
+&lt;p>Looking for information on the Pepr mutate helpers? See &lt;a href="../actions/mutate/">Helpers&lt;/a> for information on helpers for mutate actions.&lt;/p></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
 &lt;h2 id="what-is-a-pepr-module">What is a Pepr Module?&lt;/h2>
 &lt;p>A Pepr Module is a collection of files that can be used to create a new Pepr Project. A Pepr Module can be used to create a new Pepr Project by using the &lt;code>npx pepr init&lt;/code> command.&lt;/p></description></item><item><title>Main: Actions</title><link>/main/user-guide/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/actions/</guid><description>
-&lt;ul>
-&lt;li>&lt;a href="#overview">Overview&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#mutate">Mutate&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#validate">Validate&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#watch">Watch&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#reconcile">Reconcile&lt;/a>&lt;/li>
-&lt;/ul>
 &lt;h2 id="overview">Overview&lt;/h2>
 &lt;p>An action is a discrete set of behaviors defined in a single function that acts on a given Kubernetes GroupVersionKind (GVK) passed in during the admission controller lifecycle. Actions are the atomic operations that are performed on Kubernetes resources by Pepr.&lt;/p>
 &lt;p>For example, an action could be responsible for adding a specific label to a Kubernetes resource, or for modifying a specific field in a resource&amp;rsquo;s metadata. Actions can be grouped together within a Capability to provide a more comprehensive set of operations that can be performed on Kubernetes resources.&lt;/p>
 &lt;p>Actions are &lt;code>Mutate()&lt;/code>, &lt;code>Validate()&lt;/code>, &lt;code>Watch()&lt;/code>, or &lt;code>Reconcile()&lt;/code>. Both Mutate and Validate actions run during the admission controller lifecycle, while Watch and Reconcile actions run in a separate controller that tracks changes to resources, including existing resources.&lt;/p>
-&lt;p>Let&amp;rsquo;s look at some example actions that are included in the &lt;code>HelloPepr&lt;/code> capability that is created for you when you &lt;a href="../pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>:&lt;/p>
+&lt;p>Let&amp;rsquo;s look at some example actions that are included in the &lt;code>HelloPepr&lt;/code> capability that is created for you when you &lt;a href="./pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>:&lt;/p>
 &lt;hr>
 &lt;p>In this first example, Pepr is adding a label and annotation to a ConfigMap with the name &lt;code>example-1&lt;/code> when it is created. Comments are added to each line to explain in more detail what is happening.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// When(a.&amp;lt;Kind&amp;gt;) filters which GroupVersionKind (GVK) this action should act on.
@@ -135,7 +173,7 @@
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .Watch((cm, phase) &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(cm, &lt;span style="color:#f1fa8c">`ConfigMap &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>cm.metadata.name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c"> was &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>phase&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>There are many more examples in the &lt;code>HelloPepr&lt;/code> capability that you can use as a reference when creating your own actions. Note that each time you run &lt;a href="../pepr-cli#pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/a>, Pepr will automatically update the &lt;code>HelloPepr&lt;/code> capability with the latest examples and best practices for you to reference and test directly in your Pepr Module.&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>There are many more examples in the &lt;code>HelloPepr&lt;/code> capability that you can use as a reference when creating your own actions. Note that each time you run &lt;a href="./pepr-cli#pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/a>, Pepr will automatically update the &lt;code>HelloPepr&lt;/code> capability with the latest examples and best practices for you to reference and test directly in your Pepr Module.&lt;/p>
 &lt;hr>
 &lt;p>In some scenarios involving Kubernetes Resource Controllers or Operator patterns, opting for a Reconcile action could be more fitting. Comparable to the Watch functionality, Reconcile is responsible for monitoring the name and phase of any Kubernetes Object. It operates within the Watch controller dedicated to observing modifications to resources, including those already existing, enabling responses to alterations as they occur. Unlike Watch, however, Reconcile employs a Queue to sequentially handle events once they are returned by the Kubernetes API. This allows the operator to handle bursts of events without overwhelming the system or the Kubernetes API. It provides a mechanism to back off when the system is under heavy load, enhancing overall stability and maintaining the state consistency of Kubernetes resources, as the order of operations can impact the final state of a resource.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>When(WebApp)
@@ -183,16 +221,7 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="mutate">Mutate&lt;/h2>
-&lt;p>Mutating admission webhooks are invoked first and can modify objects sent to the API server to enforce custom defaults. After an object is sent to Pepr&amp;rsquo;s Mutating Admission Webhook, Pepr will &lt;a href="https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/mutate-processor.ts#l64">annotate the object&lt;/a> to indicate the status.&lt;/p>
-&lt;p>After a successful mutation of an object in a module with UUID static-test, and capability name hello-pepr, expect to see this annotation: &lt;code>static-test.pepr.dev/hello-pepr: succeeded&lt;/code>.&lt;/p>
-&lt;h2 id="validate">Validate&lt;/h2>
-&lt;p>After the Mutation phase, after all object modifications are complete, and after the incoming object is validated by the API server, validating admission webhooks are invoked and can reject requests to enforce custom policies.&lt;/p>
-&lt;p>Validate does not annotate the objects that are allowed into the cluster, but the validation webhook can be audited with &lt;code>npx pepr monitor&lt;/code>. Read the &lt;a href="https://docs.pepr.dev/main/best-practices/#monitoring">monitoring docs&lt;/a> for more information.&lt;/p>
-&lt;h2 id="watch">Watch&lt;/h2>
-&lt;p>&lt;a href="https://kubernetes.io/docs/reference/using-api/api-concepts">Kubernetes&lt;/a> supports efficient change notifications on resources via watches. Pepr uses the Watch action for monitoring resources that previously existed in the cluster and for performing long-running asynchronous events upon receiving change notifications on resources, as watches are not limited by &lt;a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts">timeouts&lt;/a>.&lt;/p>
-&lt;h2 id="reconcile">Reconcile&lt;/h2>
-&lt;p>Reconcile functions the same as Watch but is tailored for building Kubernetes Controllers and Operators because it processes callback operations in a &lt;a href="https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/watch-processor.ts#l86">Queue&lt;/a>, guaranteeing ordered and synchronous processing of events, even when the system may be under heavy load.&lt;/p></description></item><item><title>Main: Pepr Capabilities</title><link>/main/user-guide/capabilities/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/capabilities/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Main: Pepr Capabilities</title><link>/main/user-guide/capabilities/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/capabilities/</guid><description>
 &lt;p>A capability is set of related &lt;a href="../actions/">actions&lt;/a> that work together to achieve a specific transformation or operation on Kubernetes resources. Capabilities are user-defined and can include one or more actions. They are defined within a Pepr module and can be used in both MutatingWebhookConfigurations and ValidatingWebhookConfigurations. A Capability can have a specific scope, such as mutating or validating, and can be reused in multiple Pepr modules.&lt;/p>
 &lt;p>When you &lt;a href="../pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>, a &lt;code>capabilities&lt;/code> directory is created for you. This directory is where you will define your capabilities. You can create as many capabilities as you need, and each capability can contain one or more actions. Pepr also automatically creates a &lt;code>HelloPepr&lt;/code> capability with a number of example actions to help you get started.&lt;/p>
 &lt;h2 id="creating-a-capability">Creating a Capability&lt;/h2>
