@@ -49,6 +49,7 @@ Returns the owner reference for a Kubernetes resource. Accepts the following par
 
 ```typescript
 const ownerRef = getOwnerRefFrom(kubernetesResource);
+```
 
 ---
 
@@ -94,4 +95,4 @@ const sanitizedResourceName = sanitizeResourceName(resourceName)
 
 ## See Also
 
-Looking for information on the Pepr mutate helpers? See [Helpers](../actions/mutate/) for information on helpers for mutate actions.
+Looking for information on the Pepr mutate helpers? See [Mutate Helpers](../actions/mutate#mutate-helpers) for information on those.
