@@ -66,6 +66,9 @@ function rewriteNumberedFileLinks(content) {
 	Array.from(content.matchAll(/\]\([^)]*\)/g), (m) => m[0]).forEach(
 		(mdLink) => {
 			let parts = mdLink.replace('](', '').replace(')', '').split('/');
+			if (parts[0] === '..' && parts[1] === '..' && (parts[2] === 'CODE_OF_CONDUCT.md' || parts[2] === 'SECURITY.md' || parts[2] === 'SUPPORT.md')) {
+				parts.shift();
+			}
 			if (parts[0].startsWith('http')) {
 				return;
 			}
@@ -74,7 +77,9 @@ function rewriteNumberedFileLinks(content) {
 				const [prefix, ...rest] = part.split('_');
 				return isInt(prefix) ? rest.join('_') : part;
 			});
+
 			let newLink = `](${parts.join('/')})`;
+
 			content = content.replaceAll(mdLink, newLink);
 		}
 	);
@@ -290,13 +295,10 @@ for (const version of RUN.versions) {
 
 				if (rootMdExists) {
           if (rootMdFile === 'SECURITY.md') {
-            console.log('Processing SECURITY.md');
             rootMdDir = `910_security`;
           } else if (rootMdFile === 'CODE_OF_CONDUCT.md') {
-            console.log('Processing CODE_OF_CONDUCT.md');
             rootMdDir = `900_code_of_conduct`;
           } else if (rootMdFile === 'SUPPORT.md') {
-            console.log('Processing SUPPORT.md');
             rootMdDir = `920_support`;
           }
 
@@ -316,8 +318,6 @@ for (const version of RUN.versions) {
 						RUN.srcmds = [];
 					}
 					RUN.srcmds.push(indexFilePath);
-
-					console.log(`index.md created and added to RUN.srcmds successfully.`);
 				} else {
 					console.log('${rootMdFile} does not exist.');
 				}
@@ -332,16 +332,13 @@ for (const version of RUN.versions) {
 		RUN.srcmd = { file: srcmd, content: '' };
 
 		await activity(`Read source file`, async (log) => {
-			console.log(`Start processing ${RUN.srcmd.file}`);
 			if (
 				RUN.srcmd.file.endsWith('910_security/README.md') ||
 				RUN.srcmd.file.endsWith('900_code_of_conduct/README.md') ||
 				RUN.srcmd.file.endsWith('920_support/README.md')
-			) {
-				console.log(`Processing ${src}`);
+			){
 				src = `${RUN.srcmd.file}`;
 			} else {
-				console.log(`Processing ${src}`);
 				src = `${RUN.coredocs}/${RUN.srcmd.file}`;
 			}
 			RUN.srcmd.content = await fs.readFile(src, { encoding: 'utf8' });
