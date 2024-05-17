@@ -18,10 +18,10 @@ You can find all the details on contributing to Pepr at:
 
 Information on reporting bugs can be found at:
 
-* [Reporting Bugs](support#reporting-bugs)
+* [Reporting Bugs](../support/)
 
 ### Reporting Security Issues
 
 Information on reporting security issues can be found at:
 
-* [Reporting Security Issues](../contribute/report-security-issue/)
+* [Reporting Security Issues](../security/)
