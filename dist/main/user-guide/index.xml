@@ -15,6 +15,12 @@
 &lt;hr>
 &lt;h2 id="npx-pepr-dev">&lt;code>npx pepr dev&lt;/code>&lt;/h2>
 &lt;p>Connect a local cluster to a local version of the Pepr Controller to do real-time debugging of your module. Note the &lt;code>npx pepr dev&lt;/code> assumes a K3d cluster is running by default. If you are working with Kind or another docker-based K8s distro, you will need to pass the &lt;code>--host host.docker.internal&lt;/code> option to &lt;code>npx pepr dev&lt;/code>. If working with a remote cluster you will have to give Pepr a host path to your machine that is reachable from the K8s cluster.&lt;/p>
+&lt;p>NOTE: This command, by necessity, installs resources into the cluster you run it against. Generally, these resources are removed once the &lt;code>pepr dev&lt;/code> session ends but there are two notable exceptions:&lt;/p>
+&lt;ul>
+&lt;li>the &lt;code>pepr-system&lt;/code> namespace, and&lt;/li>
+&lt;li>the &lt;code>PeprStore&lt;/code> CRD.&lt;/li>
+&lt;/ul>
+&lt;p>These can&amp;rsquo;t be auto-removed because they&amp;rsquo;re global in scope &amp;amp; doing so would risk wrecking any other Pepr deployments that are already running in-cluster. If (for some strange reason) you&amp;rsquo;re &lt;em>not&lt;/em> &lt;code>pepr dev&lt;/code>-ing against an ephemeral dev cluster and need to keep the cluster clean, you&amp;rsquo;ll have to remove these hold-overs yourself (or not)!&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
 &lt;li>&lt;code>-h, --host [host]&lt;/code> - Host to listen on (default: &amp;ldquo;host.k3d.internal&amp;rdquo;)&lt;/li>
