@@ -35,7 +35,7 @@ params:
   version_menu: Releases
   versions:
     - version: v0.32
-      url: /v0.32.0/
+      url: /v0.32.1/
     - version: v0.31
       url: /v0.31.1/
     - version: v0.30
