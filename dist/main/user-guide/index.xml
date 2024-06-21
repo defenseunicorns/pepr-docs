@@ -64,6 +64,7 @@
 &lt;li>&lt;code>-i, --custom-image [custom-image]&lt;/code> - Custom Image: Use custom image for Admission and Watcher Deployments.&lt;/li>
 &lt;li>&lt;code>--registry [GitHub, Iron Bank]&lt;/code> - Container registry: Choose container registry for deployment manifests.&lt;/li>
 &lt;li>&lt;code>-v, --version &amp;lt;version&amp;gt;. Example: '0.27.3'&lt;/code> - The version of the Pepr image to use in the deployment manifests.&lt;/li>
+&lt;li>&lt;code>--withPullSecret &amp;lt;imagePullSecret&amp;gt;&lt;/code> - Image Pull Secret: Use image pull secret for controller Deployment.&lt;/li>
 &lt;li>&lt;code>-z, --zarf [manifest|chart]&lt;/code> - The Zarf package type to generate: manifest or chart (default: manifest).&lt;/li>
 &lt;/ul>
 &lt;h2 id="npx-pepr-kfc">&lt;code>npx pepr kfc&lt;/code>&lt;/h2>
