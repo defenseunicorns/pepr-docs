@@ -4,6 +4,12 @@ weight: 15
 ---
 
 
+To use, import the `sdk` from the `pepr` package:
+
+```typescript
+import { sdk } from "pepr";
+```
+
 ## `containers`
 
 Returns list of all containers in a pod. Accepts the following parameters:
@@ -16,24 +22,28 @@ Returns list of all containers in a pod. Accepts the following parameters:
 **_Get all containers_**
 
 ```typescript
+const { containers } = sdk;
 let result = containers(peprValidationRequest)
 ```
 
 **_Get only the standard containers_**
 
 ```typescript
+const { containers } = sdk;
 let result = containers(peprValidationRequest, "containers")
 ```
 
 **_Get only the init containers_**
 
 ```typescript
+const { containers } = sdk;
 let result = containers(peprValidationRequest, "initContainers")
 ```
 
 **_Get only the ephemeral containers_**
 
 ```typescript
+const { containers } = sdk;
 let result = containers(peprValidationRequest, "ephemeralContainers")
 ```
 
@@ -48,6 +58,7 @@ Returns the owner reference for a Kubernetes resource. Accepts the following par
 **Usage:**
 
 ```typescript
+const { getOwnerRefFrom } = sdk;
 const ownerRef = getOwnerRefFrom(kubernetesResource);
 ```
 
@@ -67,6 +78,7 @@ Write a K8s event for a CRD. Accepts the following parameters:
 **Usage:**
 
 ```typescript
+const { writeEvent } = sdk;
 writeEvent(
   kubernetesResource,
   event,
@@ -88,6 +100,7 @@ Returns a sanitized resource name to make the given name a valid Kubernetes reso
 **Usage:**
 
 ```typescript
+const { sanitizeResourceName } = sdk;
 const sanitizedResourceName = sanitizeResourceName(resourceName)
 ```
 
