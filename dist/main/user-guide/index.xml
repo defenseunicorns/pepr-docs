@@ -74,7 +74,9 @@
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>If you are unsure of what commands are available, you can run &lt;code>npx pepr kfc&lt;/code> to see the available commands.&lt;/p>
 &lt;p>For example, to generate usable types from a Kubernetes CRD, you can run &lt;code>npx pepr kfc crd [source] [directory]&lt;/code>. This will generate the types for the &lt;code>[source]&lt;/code> CRD and output the generated types to the &lt;code>[directory]&lt;/code>.&lt;/p>
 &lt;p>You can learn more about the &lt;code>kubernetes-fluent-client&lt;/code> &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">here&lt;/a>.&lt;/p></description></item><item><title>Main: Pepr SDK</title><link>/main/user-guide/sdk/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/sdk/</guid><description>
-&lt;h2 id="containers">&lt;code>containers&lt;/code>&lt;/h2>
+&lt;p>To use, import the &lt;code>sdk&lt;/code> from the &lt;code>pepr&lt;/code> package:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> { sdk } &lt;span style="color:#ff79c6">from&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="containers">&lt;code>containers&lt;/code>&lt;/h2>
 &lt;p>Returns list of all containers in a pod. Accepts the following parameters:&lt;/p>
 &lt;ul>
 &lt;li>&lt;strong>@param peprValidationRequest&lt;/strong> The request/pod to get the containers from&lt;/li>
@@ -82,13 +84,17 @@
 &lt;/ul>
 &lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
 &lt;p>&lt;strong>&lt;em>Get all containers&lt;/em>&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest)
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { containers } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest)
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>&lt;em>Get only the standard containers&lt;/em>&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;containers&amp;#34;&lt;/span>)
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { containers } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;containers&amp;#34;&lt;/span>)
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>&lt;em>Get only the init containers&lt;/em>&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;initContainers&amp;#34;&lt;/span>)
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { containers } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;initContainers&amp;#34;&lt;/span>)
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>&lt;em>Get only the ephemeral containers&lt;/em>&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;ephemeralContainers&amp;#34;&lt;/span>)
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { containers } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;ephemeralContainers&amp;#34;&lt;/span>)
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
 &lt;h2 id="getownerreffrom">&lt;code>getOwnerRefFrom&lt;/code>&lt;/h2>
 &lt;p>Returns the owner reference for a Kubernetes resource. Accepts the following parameters:&lt;/p>
@@ -96,7 +102,8 @@
 &lt;li>&lt;strong>@param kubernetesResource: GenericKind&lt;/strong> The Kubernetes resource to get the owner reference for&lt;/li>
 &lt;/ul>
 &lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> ownerRef &lt;span style="color:#ff79c6">=&lt;/span> getOwnerRefFrom(kubernetesResource);
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { getOwnerRefFrom } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> ownerRef &lt;span style="color:#ff79c6">=&lt;/span> getOwnerRefFrom(kubernetesResource);
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
 &lt;h2 id="writeevent">&lt;code>writeEvent&lt;/code>&lt;/h2>
 &lt;p>Write a K8s event for a CRD. Accepts the following parameters:&lt;/p>
@@ -109,7 +116,8 @@
 &lt;li>&lt;strong>@param reportingInstance&lt;/strong> The instance of the component that is reporting the event, for example process.env.HOSTNAME&lt;/li>
 &lt;/ul>
 &lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>writeEvent(
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { writeEvent } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>writeEvent(
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> kubernetesResource,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> event,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;Warning&amp;#34;&lt;/span>,
@@ -124,7 +132,8 @@
 &lt;li>&lt;strong>@param resourceName&lt;/strong> The name of the resource to sanitize&lt;/li>
 &lt;/ul>
 &lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> sanitizedResourceName &lt;span style="color:#ff79c6">=&lt;/span> sanitizeResourceName(resourceName)
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { sanitizeResourceName } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> sanitizedResourceName &lt;span style="color:#ff79c6">=&lt;/span> sanitizeResourceName(resourceName)
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
 &lt;h2 id="see-also">See Also&lt;/h2>
 &lt;p>Looking for information on the Pepr mutate helpers? See &lt;a href="../actions/mutate#mutate-helpers">Mutate Helpers&lt;/a> for information on those.&lt;/p></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
