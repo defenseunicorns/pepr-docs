@@ -33,6 +33,12 @@
 &lt;ul>
 &lt;li>&lt;code>-i, --image [image]&lt;/code> - Override the image tag&lt;/li>
 &lt;li>&lt;code>--confirm&lt;/code> - Skip confirmation prompt&lt;/li>
+&lt;li>&lt;code>--pullSecret &amp;lt;name&amp;gt;&lt;/code> - Deploy imagePullSecret for Controller private registry&lt;/li>
+&lt;li>&lt;code>--docker-server &amp;lt;server&amp;gt;&lt;/code> - Docker server address&lt;/li>
+&lt;li>&lt;code>--docker-username &amp;lt;username&amp;gt;&lt;/code> - Docker registry username&lt;/li>
+&lt;li>&lt;code>--docker-email &amp;lt;email&amp;gt;&lt;/code> - Email for Docker registry&lt;/li>
+&lt;li>&lt;code>--docker-password &amp;lt;password&amp;gt;&lt;/code> - Password for Docker registry&lt;/li>
+&lt;li>&lt;code>--force&lt;/code> - Force deploy the module, override manager field&lt;/li>
 &lt;/ul>
 &lt;hr>
 &lt;h2 id="npx-pepr-monitor">&lt;code>npx pepr monitor&lt;/code>&lt;/h2>
