@@ -621,7 +621,11 @@
 &lt;li>&lt;code>pepr_alerts&lt;/code>: A counter that increments when an alert event is triggered in the application.&lt;/li>
 &lt;li>&lt;code>pepr_Mutate&lt;/code>: A summary that provides the observed durations of mutation events in the application.&lt;/li>
 &lt;li>&lt;code>pepr_Validate&lt;/code>: A summary that provides the observed durations of validation events in the application.&lt;/li>
+&lt;li>&lt;code>pepr_Cache_Miss&lt;/code>: A gauge that provides the number of cache misses per window.&lt;/li>
+&lt;li>&lt;code>pepr_Resync_Failure_Count&lt;/code>: A gauge that provides the number of unsuccessful attempts at receiving an event within the last seen event limit before re-establishing a new connection.&lt;/li>
 &lt;/ul>
+&lt;h2 id="environment-variables">Environment Variables&lt;/h2>
+&lt;p>| &lt;code>PEPR_MAX_CACHE_MISS_WINDOWS&lt;/code> | Maximum number windows to emit &lt;code>pepr_Cache_Miss&lt;/code> metrics for | default: &lt;code>&amp;quot;INF&amp;quot;&lt;/code> |&lt;/p>
 &lt;h2 id="api-details">API Details&lt;/h2>
 &lt;p>&lt;strong>Method:&lt;/strong> GET&lt;/p>
 &lt;p>&lt;strong>URL:&lt;/strong> &lt;code>/metrics&lt;/code>&lt;/p>
@@ -667,6 +671,19 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_Validate{quantile=&amp;#34;0.999&amp;#34;} 201.23339900001884
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_Validate_sum 402.4275380000472
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_Validate_count 2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # HELP pepr_Cache_Miss Number of cache misses per window
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # TYPE pepr_Cache_Miss gauge
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_Cache_Miss{window=&amp;#34;2024-07-25T11:54:33.897Z&amp;#34;} 18
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_Cache_Miss{window=&amp;#34;2024-07-25T12:24:34.592Z&amp;#34;} 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_Cache_Miss{window=&amp;#34;2024-07-25T13:14:33.450Z&amp;#34;} 22
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_Cache_Miss{window=&amp;#34;2024-07-25T13:44:34.234Z&amp;#34;} 19
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_Cache_Miss{window=&amp;#34;2024-07-25T14:14:34.961Z&amp;#34;} 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # HELP pepr_Resync_Failure_Count Number of retries per count
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # TYPE pepr_Resync_Failure_Count gauge
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_Resync_Failure_count{count=&amp;#34;0&amp;#34;} 5
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_Resync_Failure_count{count=&amp;#34;1&amp;#34;} 4
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="prometheus-operator">Prometheus Operator&lt;/h2>
 &lt;p>If using the Prometheus Operator, the following &lt;code>ServiceMonitor&lt;/code> example manifests can be used to scrape the &lt;code>/metrics&lt;/code> endpoint for the &lt;code>admission&lt;/code> and &lt;code>watcher&lt;/code> controllers.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">apiVersion&lt;/span>: monitoring.coreos.com/v1
@@ -867,19 +884,24 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;code>PEPR_RETRYMAX&lt;/code>&lt;/td>
-&lt;td>The maximum number of times to retry the watch, the retry count is reset on success.&lt;/td>
+&lt;td>&lt;code>PEPR_RESYNC_FAILURE_MAX&lt;/code>&lt;/td>
+&lt;td>The maximum number of times to fail on a resync interval before re-establishing the watch URL and doing a relist.&lt;/td>
 &lt;td>default: &lt;code>&amp;quot;5&amp;quot;&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;code>PEPR_RETRYDELAYSECONDS&lt;/code>&lt;/td>
+&lt;td>&lt;code>PEPR_RETRY_DELAY_SECONDS&lt;/code>&lt;/td>
 &lt;td>The delay between retries in seconds.&lt;/td>
 &lt;td>default: &lt;code>&amp;quot;10&amp;quot;&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;code>PEPR_RESYNCINTERVALSECONDS&lt;/code>&lt;/td>
-&lt;td>Amount of seconds to wait before a forced-resyncing of the watch list&lt;/td>
+&lt;td>&lt;code>PEPR_LAST_SEEN_LIMIT_SECONDS&lt;/code>&lt;/td>
+&lt;td>Max seconds to go without receiving a watch event before re-establishing the watch&lt;/td>
 &lt;td>default: &lt;code>&amp;quot;300&amp;quot;&lt;/code> (5 mins)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>PEPR_RELIST_INTERVAL_SECONDS&lt;/code>&lt;/td>
+&lt;td>Amount of seconds to wait before a relist of the watched resources&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;1800&amp;quot;&lt;/code> (30 mins)&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
