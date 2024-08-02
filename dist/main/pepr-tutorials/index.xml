@@ -652,7 +652,7 @@ config.&lt;/em>&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;exemplar&amp;#34;: false,
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;pepr_Validate_count{container=\&amp;#34;server\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;pepr_validate_count{container=\&amp;#34;server\&amp;#34;}&amp;#34;,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;instant&amp;#34;: false,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
@@ -664,7 +664,7 @@ config.&lt;/em>&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;pepr_Validate_sum{container=\&amp;#34;watcher\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;pepr_validate_sum{container=\&amp;#34;watcher\&amp;#34;}&amp;#34;,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;hide&amp;#34;: false,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
@@ -737,7 +737,7 @@ config.&lt;/em>&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;pepr_Mutate_count{container=\&amp;#34;server\&amp;#34;}&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;pepr_mutate_count{container=\&amp;#34;server\&amp;#34;}&amp;#34;,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;refId&amp;#34;: &amp;#34;A&amp;#34;
@@ -748,7 +748,7 @@ config.&lt;/em>&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;uid&amp;#34;: &amp;#34;prometheus&amp;#34;
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> },
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;editorMode&amp;#34;: &amp;#34;builder&amp;#34;,
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;rate(pepr_Mutate_count{container=\&amp;#34;watcher\&amp;#34;}[24h])&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;expr&amp;#34;: &amp;#34;rate(pepr_mutate_count{container=\&amp;#34;watcher\&amp;#34;}[24h])&amp;#34;,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;hide&amp;#34;: false,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;legendFormat&amp;#34;: &amp;#34;{{instance}}&amp;#34;,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> &amp;#34;range&amp;#34;: true,
