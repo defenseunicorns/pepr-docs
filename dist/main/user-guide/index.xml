@@ -992,6 +992,14 @@ The response body is a plain text representation of the metrics data, according 
 &lt;td>Pod security context&lt;/td>
 &lt;/tr>
 &lt;tr>
+&lt;td>&lt;code>readinessProbe&lt;/code>&lt;/td>
+&lt;td>Pod readiness probe definition&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>livenessProbe&lt;/code>&lt;/td>
+&lt;td>Pod liveness probe definition&lt;/td>
+&lt;/tr>
+&lt;tr>
 &lt;td>&lt;code>resources&lt;/code>&lt;/td>
 &lt;td>Resource limits&lt;/td>
 &lt;/tr>
