@@ -905,6 +905,42 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
+&lt;h2 id="configuring-reconcile">Configuring Reconcile&lt;/h2>
+&lt;p>The &lt;a href="../actions/reconcile/">Reconcile Action&lt;/a> allows you to maintain ordering of resource updates processed by a Pepr controller. The Reconcile configuration can be customized by specific enviroment variables of the Watcher Deployment and can be set in the &lt;code>package.json&lt;/code> or in the helm &lt;code>values.yaml&lt;/code> file.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Field&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Example Values&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>PEPR_RECONCILE_STRATEGY&lt;/code>&lt;/td>
+&lt;td>How Pepr should order resource updates being Reconcile()&amp;rsquo;d.&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;singular&amp;quot;&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Available Options&lt;/th>
+&lt;th>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>singular&lt;/code>&lt;/td>
+&lt;td>Pepr will keep a single queue of events across &lt;em>all&lt;/em> Reconcile()&amp;rsquo;d resources of a kind.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>sharded&lt;/code>&lt;/td>
+&lt;td>Pepr will keep multiple queues of events, one for each resource &lt;em>instance&lt;/em> of a kind.&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
 &lt;h2 id="customizing-with-helm">Customizing with Helm&lt;/h2>
 &lt;p>Below are the available Helm override configurations after you have built your Pepr module that you can put in the &lt;code>values.yaml&lt;/code>.&lt;/p>
 &lt;h3 id="helm-overrides-table">Helm Overrides Table&lt;/h3>
