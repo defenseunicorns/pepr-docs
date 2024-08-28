@@ -901,7 +901,7 @@ The response body is a plain text representation of the metrics data, according 
 &lt;tr>
 &lt;td>&lt;code>PEPR_RELIST_INTERVAL_SECONDS&lt;/code>&lt;/td>
 &lt;td>Amount of seconds to wait before a relist of the watched resources&lt;/td>
-&lt;td>default: &lt;code>&amp;quot;1800&amp;quot;&lt;/code> (30 mins)&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;600&amp;quot;&lt;/code> (10 mins)&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
