@@ -1111,4 +1111,32 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;p>These tables provide a comprehensive overview of the fields available for customization within the Helm overrides and the &lt;code>package.json&lt;/code> file. Modify these according to your deployment requirements.&lt;/p></description></item></channel></rss>
+&lt;p>These tables provide a comprehensive overview of the fields available for customization within the Helm overrides and the &lt;code>package.json&lt;/code> file. Modify these according to your deployment requirements.&lt;/p></description></item><item><title>Main: Pepr Filters</title><link>/main/user-guide/filters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/filters/</guid><description>
+&lt;p>Filters are functions that take a &lt;code>AdmissionReview&lt;/code> or Watch event and return a boolean. They are used to filter out resources that do not meet certain criteria. Filters are used in the package to filter out resources that are not relevant to the user-defined admission or watch process.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>When(a.ConfigMap)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// This limits the action to only act on new resources.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .IsCreated()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Namespace filter
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .InNamespace(&lt;span style="color:#f1fa8c">&amp;#34;webapp&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Name filter
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .WithName(&lt;span style="color:#f1fa8c">&amp;#34;example-1&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Label filter
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .WithLabel(&lt;span style="color:#f1fa8c">&amp;#34;app&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;webapp&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .WithLabel(&lt;span style="color:#f1fa8c">&amp;#34;env&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;prod&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .Mutate(request &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> request
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .SetLabel(&lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;was-here&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .SetAnnotation(&lt;span style="color:#f1fa8c">&amp;#34;pepr.dev&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;annotations-work-too&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="filters">&lt;code>Filters&lt;/code>&lt;/h2>
+&lt;ul>
+&lt;li>&lt;code>.WithName(&amp;quot;name&amp;quot;)&lt;/code>: Filters resources by name.&lt;/li>
+&lt;li>&lt;code>.InNamespace(&amp;quot;namespace&amp;quot;)&lt;/code>: Filters resources by namespace.&lt;/li>
+&lt;li>&lt;code>.WithLabel(&amp;quot;key&amp;quot;, &amp;quot;value&amp;quot;)&lt;/code>: Filters resources by label. (Can be multiple)&lt;/li>
+&lt;li>&lt;code>.WithDeletionTimestamp()&lt;/code>: Filters resources that have a deletion timestamp.&lt;/li>
+&lt;/ul>
+&lt;p>Notes:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>WithDeletionTimestamp()&lt;/code> is does not work on Delete through the &lt;code>Mutate&lt;/code> or &lt;code>Validate&lt;/code> methods because the Kubernetes Admission Process does not fire the DELETE event with a deletion timestamp on the resource.&lt;/li>
+&lt;li>&lt;code>WithDeletionTimestamp()&lt;/code> &lt;em>will&lt;/em> match on an Update event during Admission (&lt;code>Mutate&lt;/code> or &lt;code>Validate&lt;/code>) when pending-deletion permitted changes (like removing a finalizer) occur.&lt;/li>
+&lt;/ul></description></item></channel></rss>
