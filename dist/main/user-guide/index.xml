@@ -103,9 +103,11 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;ephemeralContainers&amp;#34;&lt;/span>)
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
 &lt;h2 id="getownerreffrom">&lt;code>getOwnerRefFrom&lt;/code>&lt;/h2>
-&lt;p>Returns the owner reference for a Kubernetes resource. Accepts the following parameters:&lt;/p>
+&lt;p>Returns the owner reference for a Kubernetes resource as an array. Accepts the following parameters:&lt;/p>
 &lt;ul>
 &lt;li>&lt;strong>@param kubernetesResource: GenericKind&lt;/strong> The Kubernetes resource to get the owner reference for&lt;/li>
+&lt;li>&lt;strong>@param blockOwnerDeletion: boolean&lt;/strong> If true, AND if the owner has the &amp;ldquo;foregroundDeletion&amp;rdquo; finalizer, then the owner cannot be deleted from the key-value store until this reference is removed.&lt;/li>
+&lt;li>&lt;strong>@param controller: boolean&lt;/strong> If true, this reference points to the managing controller.&lt;/li>
 &lt;/ul>
 &lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { getOwnerRefFrom } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
