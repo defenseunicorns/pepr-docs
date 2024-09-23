@@ -1148,7 +1148,9 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="filters">&lt;code>Filters&lt;/code>&lt;/h2>
 &lt;ul>
 &lt;li>&lt;code>.WithName(&amp;quot;name&amp;quot;)&lt;/code>: Filters resources by name.&lt;/li>
+&lt;li>&lt;code>.WithNameRegex(/^pepr/)&lt;/code>: Filters resources by name using a regex.&lt;/li>
 &lt;li>&lt;code>.InNamespace(&amp;quot;namespace&amp;quot;)&lt;/code>: Filters resources by namespace.&lt;/li>
+&lt;li>&lt;code>.InNamespaceRegex(/(.*)-system/)&lt;/code>: Filters resources by namespace using a regex.&lt;/li>
 &lt;li>&lt;code>.WithLabel(&amp;quot;key&amp;quot;, &amp;quot;value&amp;quot;)&lt;/code>: Filters resources by label. (Can be multiple)&lt;/li>
 &lt;li>&lt;code>.WithDeletionTimestamp()&lt;/code>: Filters resources that have a deletion timestamp.&lt;/li>
 &lt;/ul>
