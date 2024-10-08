@@ -6,6 +6,30 @@ weight: 120
 
 This document outlines how to customize the build output through Helm overrides and `package.json` configurations.
 
+## Redact Store Values from Logs
+
+By default, the store values are displayed in logs, to redact them you can set the `PEPR_STORE_REDACT_VALUES` environment variable to `true` in the `package.json` file or directly on the Watcher or Admission `Deployment`. The default value is `undefined`.
+
+```json
+{
+  "env": {
+    "PEPR_STORE_REDACT_VALUES": "true"
+  }
+}
+```
+
+## Display Node Warnings
+
+You can display warnings in the logs by setting the `PEPR_NODE_WARNINGS` environment variable to `true` in the `package.json` file or directly on the Watcher or Admission `Deployment`. The default value is `undefined`.
+
+```json
+{
+  "env": {
+    "PEPR_NODE_WARNINGS": "true"
+  }
+}
+```
+
 ## Customizing Log Format
 
 The log format can be customized by setting the `PINO_TIME_STAMP` environment variable in the `package.json` file or directly on the Watcher or Admission `Deployment`. The default value is a partial JSON timestamp string representation of the time. If set to `iso`, the timestamp is displayed in an ISO format. 
@@ -45,18 +69,18 @@ The Watch configuration is a part of the Pepr module that allows you to watch fo
 
 ## Configuring Reconcile
 
-The [Reconcile Action](../actions/reconcile/) allows you to maintain ordering of resource updates processed by a Pepr controller. The Reconcile configuration can be customized by specific enviroment variables of the Watcher Deployment and can be set in the `package.json` or in the helm `values.yaml` file.
+The [Reconcile Action](../actions/reconcile/) allows you to maintain ordering of resource updates processed by a Pepr controller. The Reconcile configuration can be customized via enviroment variable on the Watcher Deployment, which can be set in the `package.json` or in the helm `values.yaml` file.
 
 | Field | Description | Example Values |
 |-|-|-|
-| `PEPR_RECONCILE_STRATEGY` | How Pepr should order resource updates being Reconcile()'d. | default: `"singular"` |
+| `PEPR_RECONCILE_STRATEGY` | How Pepr should order resource updates being Reconcile()'d. | default: `"kind"` |
 
 | Available Options ||
 |-|-|
-| `singular`  | Pepr will keep a single queue of events across _all_ Reconcile()'d resources of a kind.
-| `sharded`   | Pepr will keep multiple queues of events, one for each resource _instance_ of a kind.
-
-
+| `kind`  | separate queues of events for Reconcile()'d resources of a kind |
+| `kindNs` | separate queues of events for Reconcile()'d resources of a kind, within a namespace |
+| `kindNsName` | separate queues of events for Reconcile()'d resources of a kind, within a namespace, per name |
+| `global` | a single queue of events for all Reconcile()'d resources |
 
 ## Customizing with Helm
 

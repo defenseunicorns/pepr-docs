@@ -38,8 +38,6 @@ params:
       url: /v0.37.2/
     - version: v0.36
       url: /v0.36.0/
-    - version: v0.35
-      url: /v0.35.0/
     - version: main
       url: /main/
 markup:
