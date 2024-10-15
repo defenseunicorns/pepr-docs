@@ -924,6 +924,11 @@ The response body is a plain text representation of the metrics data, according 
 &lt;td>Amount of seconds to wait before a relist of the watched resources&lt;/td>
 &lt;td>default: &lt;code>&amp;quot;600&amp;quot;&lt;/code> (10 mins)&lt;/td>
 &lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>PEPR_HTTP2_WATCH&lt;/code>&lt;/td>
+&lt;td>Configure the Kubernetes Fluent Client to use an http2 watcher&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;undefined&amp;quot;&lt;/code>&lt;/td>
+&lt;/tr>
 &lt;/tbody>
 &lt;/table>
 &lt;h2 id="configuring-reconcile">Configuring Reconcile&lt;/h2>
