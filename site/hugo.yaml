@@ -35,9 +35,9 @@ params:
   version_menu: Releases
   versions:
     - version: v0.38
-      url: /v0.38.2/
+      url: /v0.38.3/
     - version: v0.37
-      url: /v0.37.2/
+      url: /0.37.3/
     - version: v0.36
       url: /v0.36.0/
     - version: main
