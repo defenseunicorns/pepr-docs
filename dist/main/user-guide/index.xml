@@ -1145,8 +1145,13 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>rbac&lt;/code>&lt;/td>
-&lt;td>Custom RBAC rules&lt;/td>
+&lt;td>Custom RBAC rules (requires building with &lt;code>rbacMode: scoped&lt;/code>)&lt;/td>
 &lt;td>&lt;code>{&amp;quot;rbac&amp;quot;: [{&amp;quot;apiGroups&amp;quot;: [&amp;quot;&amp;lt;apiGroups&amp;gt;&amp;quot;], &amp;quot;resources&amp;quot;: [&amp;quot;&amp;lt;resources&amp;gt;&amp;quot;], &amp;quot;verbs&amp;quot;: [&amp;quot;&amp;lt;verbs&amp;gt;&amp;quot;]}]}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>rbacMode&lt;/code>&lt;/td>
+&lt;td>Configures module to build binding RBAC with principal of least privilege&lt;/td>
+&lt;td>&lt;code>scoped&lt;/code>, &lt;code>admin&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
