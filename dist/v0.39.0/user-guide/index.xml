@@ -1,0 +1,1207 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>– User Guide</title><link>/v0.39.0/user-guide/</link><description>Recent content in User Guide on</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="/v0.39.0/user-guide/index.xml" rel="self" type="application/rss+xml"/><item><title>V0.39.0: Pepr CLI</title><link>/v0.39.0/user-guide/pepr-cli/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/pepr-cli/</guid><description>
+&lt;h2 id="npx-pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/h2>
+&lt;p>Initialize a new Pepr Module.&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init and VSCode launch.&lt;/li>
+&lt;li>&lt;code>--confirm&lt;/code> - Skip verification prompt when creating a new module.&lt;/li>
+&lt;li>&lt;code>--description &amp;lt;string&amp;gt;&lt;/code> - Explain the purpose of the new module.&lt;/li>
+&lt;li>&lt;code>--name &amp;lt;string&amp;gt;&lt;/code> - Set the name of the new module.&lt;/li>
+&lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init, and VSCode launch.&lt;/li>
+&lt;li>&lt;code>--errorBehavior &amp;lt;audit|ignore|reject&amp;gt;&lt;/code> - Set an errorBehavior.&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="npx-pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/h2>
+&lt;p>Update the current Pepr Module to the latest SDK version. This command is not recommended for production use, instead, we recommend Renovate or Dependabot for automated updates.&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>--skip-template-update&lt;/code> - Skip updating the template files&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="npx-pepr-dev">&lt;code>npx pepr dev&lt;/code>&lt;/h2>
+&lt;p>Connect a local cluster to a local version of the Pepr Controller to do real-time debugging of your module. Note the &lt;code>npx pepr dev&lt;/code> assumes a K3d cluster is running by default. If you are working with Kind or another docker-based K8s distro, you will need to pass the &lt;code>--host host.docker.internal&lt;/code> option to &lt;code>npx pepr dev&lt;/code>. If working with a remote cluster you will have to give Pepr a host path to your machine that is reachable from the K8s cluster.&lt;/p>
+&lt;p>NOTE: This command, by necessity, installs resources into the cluster you run it against. Generally, these resources are removed once the &lt;code>pepr dev&lt;/code> session ends but there are two notable exceptions:&lt;/p>
+&lt;ul>
+&lt;li>the &lt;code>pepr-system&lt;/code> namespace, and&lt;/li>
+&lt;li>the &lt;code>PeprStore&lt;/code> CRD.&lt;/li>
+&lt;/ul>
+&lt;p>These can&amp;rsquo;t be auto-removed because they&amp;rsquo;re global in scope &amp;amp; doing so would risk wrecking any other Pepr deployments that are already running in-cluster. If (for some strange reason) you&amp;rsquo;re &lt;em>not&lt;/em> &lt;code>pepr dev&lt;/code>-ing against an ephemeral dev cluster and need to keep the cluster clean, you&amp;rsquo;ll have to remove these hold-overs yourself (or not)!&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>-h, --host [host]&lt;/code> - Host to listen on (default: &amp;ldquo;host.k3d.internal&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>--confirm&lt;/code> - Skip confirmation prompt&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="npx-pepr-deploy">&lt;code>npx pepr deploy&lt;/code>&lt;/h2>
+&lt;p>Deploy the current module into a Kubernetes cluster, useful for CI systems. Not recommended for production use.&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>-i, --image [image]&lt;/code> - Override the image tag&lt;/li>
+&lt;li>&lt;code>--confirm&lt;/code> - Skip confirmation prompt&lt;/li>
+&lt;li>&lt;code>--pullSecret &amp;lt;name&amp;gt;&lt;/code> - Deploy imagePullSecret for Controller private registry&lt;/li>
+&lt;li>&lt;code>--docker-server &amp;lt;server&amp;gt;&lt;/code> - Docker server address&lt;/li>
+&lt;li>&lt;code>--docker-username &amp;lt;username&amp;gt;&lt;/code> - Docker registry username&lt;/li>
+&lt;li>&lt;code>--docker-email &amp;lt;email&amp;gt;&lt;/code> - Email for Docker registry&lt;/li>
+&lt;li>&lt;code>--docker-password &amp;lt;password&amp;gt;&lt;/code> - Password for Docker registry&lt;/li>
+&lt;li>&lt;code>--force&lt;/code> - Force deploy the module, override manager field&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="npx-pepr-monitor">&lt;code>npx pepr monitor&lt;/code>&lt;/h2>
+&lt;p>Monitor Validations for a given Pepr Module or all Pepr Modules.&lt;/p>
+&lt;p>Usage:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr monitor &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>module-uuid&lt;span style="color:#ff79c6">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>-h, --help&lt;/code> - Display help for command&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="npx-pepr-uuid">&lt;code>npx pepr uuid&lt;/code>&lt;/h2>
+&lt;p>Module UUID(s) currently deployed in the cluster with their descriptions.&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>[uuid]&lt;/code> - Specific module UUID&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="npx-pepr-build">&lt;code>npx pepr build&lt;/code>&lt;/h2>
+&lt;p>Create a &lt;a href="https://zarf.dev">zarf.yaml&lt;/a> and K8s manifest for the current module. This includes everything needed to deploy Pepr and the current module into production environments.&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>-e, --entry-point [file]&lt;/code> - Specify the entry point file to build with. (default: &amp;ldquo;pepr.ts&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-n, --no-embed&lt;/code> - Disables embedding of deployment files into output module. Useful when creating library modules intended solely for reuse/distribution via NPM&lt;/li>
+&lt;li>&lt;code>-r, --registry-info [&amp;lt;registry&amp;gt;/&amp;lt;username&amp;gt;]&lt;/code> - Registry Info: Image registry and username. Note: You must be signed into the registry&lt;/li>
+&lt;li>&lt;code>-o, --output-dir [output directory]&lt;/code> - Define where to place build output&lt;/li>
+&lt;li>&lt;code>--timeout [timeout]&lt;/code> - How long the API server should wait for a webhook to respond before treating the call as a failure&lt;/li>
+&lt;li>&lt;code>--rbac-mode [admin|scoped]&lt;/code> - Rbac Mode: admin, scoped (default: admin) (choices: &amp;ldquo;admin&amp;rdquo;, &amp;ldquo;scoped&amp;rdquo;, default: &amp;ldquo;admin&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-i, --custom-image [custom-image]&lt;/code> - Custom Image: Use custom image for Admission and Watcher Deployments.&lt;/li>
+&lt;li>&lt;code>--registry [GitHub, Iron Bank]&lt;/code> - Container registry: Choose container registry for deployment manifests.&lt;/li>
+&lt;li>&lt;code>-v, --version &amp;lt;version&amp;gt;. Example: '0.27.3'&lt;/code> - The version of the Pepr image to use in the deployment manifests.&lt;/li>
+&lt;li>&lt;code>--withPullSecret &amp;lt;imagePullSecret&amp;gt;&lt;/code> - Image Pull Secret: Use image pull secret for controller Deployment.&lt;/li>
+&lt;li>&lt;code>-z, --zarf [manifest|chart]&lt;/code> - The Zarf package type to generate: manifest or chart (default: manifest).&lt;/li>
+&lt;/ul>
+&lt;h2 id="npx-pepr-kfc">&lt;code>npx pepr kfc&lt;/code>&lt;/h2>
+&lt;p>Execute a &lt;code>kubernetes-fluent-client&lt;/code> command. This command is a wrapper around &lt;code>kubernetes-fluent-client&lt;/code>.&lt;/p>
+&lt;p>Usage:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr kfc &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>command&lt;span style="color:#ff79c6">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>If you are unsure of what commands are available, you can run &lt;code>npx pepr kfc&lt;/code> to see the available commands.&lt;/p>
+&lt;p>For example, to generate usable types from a Kubernetes CRD, you can run &lt;code>npx pepr kfc crd [source] [directory]&lt;/code>. This will generate the types for the &lt;code>[source]&lt;/code> CRD and output the generated types to the &lt;code>[directory]&lt;/code>.&lt;/p>
+&lt;p>You can learn more about the &lt;code>kubernetes-fluent-client&lt;/code> &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">here&lt;/a>.&lt;/p></description></item><item><title>V0.39.0: Pepr SDK</title><link>/v0.39.0/user-guide/sdk/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/sdk/</guid><description>
+&lt;p>To use, import the &lt;code>sdk&lt;/code> from the &lt;code>pepr&lt;/code> package:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> { sdk } &lt;span style="color:#ff79c6">from&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="containers">&lt;code>containers&lt;/code>&lt;/h2>
+&lt;p>Returns list of all containers in a pod. Accepts the following parameters:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>@param peprValidationRequest&lt;/strong> The request/pod to get the containers from&lt;/li>
+&lt;li>&lt;strong>@param containerType&lt;/strong> The type of container to get&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>&lt;em>Get all containers&lt;/em>&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { containers } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>&lt;em>Get only the standard containers&lt;/em>&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { containers } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;containers&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>&lt;em>Get only the init containers&lt;/em>&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { containers } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;initContainers&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>&lt;em>Get only the ephemeral containers&lt;/em>&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { containers } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> result &lt;span style="color:#ff79c6">=&lt;/span> containers(peprValidationRequest, &lt;span style="color:#f1fa8c">&amp;#34;ephemeralContainers&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;h2 id="getownerreffrom">&lt;code>getOwnerRefFrom&lt;/code>&lt;/h2>
+&lt;p>Returns the owner reference for a Kubernetes resource as an array. Accepts the following parameters:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>@param kubernetesResource: GenericKind&lt;/strong> The Kubernetes resource to get the owner reference for&lt;/li>
+&lt;li>&lt;strong>@param blockOwnerDeletion: boolean&lt;/strong> If true, AND if the owner has the &amp;ldquo;foregroundDeletion&amp;rdquo; finalizer, then the owner cannot be deleted from the key-value store until this reference is removed.&lt;/li>
+&lt;li>&lt;strong>@param controller: boolean&lt;/strong> If true, this reference points to the managing controller.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { getOwnerRefFrom } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> ownerRef &lt;span style="color:#ff79c6">=&lt;/span> getOwnerRefFrom(kubernetesResource);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;h2 id="writeevent">&lt;code>writeEvent&lt;/code>&lt;/h2>
+&lt;p>Write a K8s event for a CRD. Accepts the following parameters:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>@param kubernetesResource: GenericKind&lt;/strong> The Kubernetes resource to write the event for&lt;/li>
+&lt;li>&lt;strong>@param event&lt;/strong> The event to write, should contain a human-readable message for the event&lt;/li>
+&lt;li>&lt;strong>@param eventType&lt;/strong> The type of event to write, for example &amp;ldquo;Warning&amp;rdquo;&lt;/li>
+&lt;li>&lt;strong>@param eventReason&lt;/strong> The reason for the event, for example &amp;ldquo;ReconciliationFailed&amp;rdquo;&lt;/li>
+&lt;li>&lt;strong>@param reportingComponent&lt;/strong> The component that is reporting the event, for example &amp;ldquo;uds.dev/operator&amp;rdquo;&lt;/li>
+&lt;li>&lt;strong>@param reportingInstance&lt;/strong> The instance of the component that is reporting the event, for example process.env.HOSTNAME&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { writeEvent } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>writeEvent(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> kubernetesResource,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> event,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;Warning&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;ReconciliationFailed&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;uds.dev/operator&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> process.env.HOSTNAME,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;h2 id="sanitizeresourcename">&lt;code>sanitizeResourceName&lt;/code>&lt;/h2>
+&lt;p>Returns a sanitized resource name to make the given name a valid Kubernetes resource name. Accepts the following parameter:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>@param resourceName&lt;/strong> The name of the resource to sanitize&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { sanitizeResourceName } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> sanitizedResourceName &lt;span style="color:#ff79c6">=&lt;/span> sanitizeResourceName(resourceName)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;h2 id="see-also">See Also&lt;/h2>
+&lt;p>Looking for information on the Pepr mutate helpers? See &lt;a href="../actions/mutate#mutate-helpers">Mutate Helpers&lt;/a> for information on those.&lt;/p></description></item><item><title>V0.39.0: Pepr Modules</title><link>/v0.39.0/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/pepr-modules/</guid><description>
+&lt;h2 id="what-is-a-pepr-module">What is a Pepr Module?&lt;/h2>
+&lt;p>A Pepr Module is a collection of files that can be used to create a new Pepr Project. A Pepr Module can be used to create a new Pepr Project by using the &lt;code>npx pepr init&lt;/code> command.&lt;/p></description></item><item><title>V0.39.0: Actions</title><link>/v0.39.0/user-guide/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/actions/</guid><description>
+&lt;h2 id="overview">Overview&lt;/h2>
+&lt;p>An action is a discrete set of behaviors defined in a single function that acts on a given Kubernetes GroupVersionKind (GVK) passed in during the admission controller lifecycle. Actions are the atomic operations that are performed on Kubernetes resources by Pepr.&lt;/p>
+&lt;p>For example, an action could be responsible for adding a specific label to a Kubernetes resource, or for modifying a specific field in a resource&amp;rsquo;s metadata. Actions can be grouped together within a Capability to provide a more comprehensive set of operations that can be performed on Kubernetes resources.&lt;/p>
+&lt;p>Actions are &lt;code>Mutate()&lt;/code>, &lt;code>Validate()&lt;/code>, &lt;code>Watch()&lt;/code>, &lt;code>Reconcile()&lt;/code>, and &lt;code>Finalize()&lt;/code>. Both Mutate and Validate actions run during the admission controller lifecycle, while Watch and Reconcile actions run in a separate controller that tracks changes to resources, including existing resource; the Finalize action spans both the admission &amp;amp; afterward.&lt;/p>
+&lt;p>Let&amp;rsquo;s look at some example actions that are included in the &lt;code>HelloPepr&lt;/code> capability that is created for you when you &lt;a href="./pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>:&lt;/p>
+&lt;hr>
+&lt;p>In this first example, Pepr is adding a label and annotation to a ConfigMap with the name &lt;code>example-1&lt;/code> when it is created. Comments are added to each line to explain in more detail what is happening.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// When(a.&amp;lt;Kind&amp;gt;) filters which GroupVersionKind (GVK) this action should act on.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>When(a.ConfigMap)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// This limits the action to only act on new resources.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .IsCreated()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// This limits the action to only act on resources with the name &amp;#34;example-1&amp;#34;.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .WithName(&lt;span style="color:#f1fa8c">&amp;#34;example-1&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Mutate() is where we define the actual behavior of this action.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .Mutate(request &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// The request object is a wrapper around the K8s resource that Pepr is acting on.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> request
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Here we are adding a label to the ConfigMap.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .SetLabel(&lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;was-here&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// And here we are adding an annotation.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .SetAnnotation(&lt;span style="color:#f1fa8c">&amp;#34;pepr.dev&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;annotations-work-too&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Note that we are not returning anything here. This is because Pepr is tracking the changes in each action automatically.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> });
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;p>In this example, a Validate action rejects any ConfigMap in the &lt;code>pepr-demo&lt;/code> namespace that has no data.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>When(a.ConfigMap)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .IsCreated()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .InNamespace(&lt;span style="color:#f1fa8c">&amp;#34;pepr-demo&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Validate() is where we define the actual behavior of this action.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .Validate(request &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// If data exists, approve the request.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">if&lt;/span> (request.Raw.data) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">return&lt;/span> request.Approve();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Otherwise, reject the request with a message and optional code.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">return&lt;/span> request.Deny(&lt;span style="color:#f1fa8c">&amp;#34;ConfigMap must have data&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;p>In this example, a Watch action on the name and phase of any ConfigMap.Watch actions run in a separate controller that tracks changes to resources, including existing resources so that you can react to changes in real-time. It is important to note that Watch actions are not run during the admission controller lifecycle, so they cannot be used to modify or validate resources. They also may run multiple times for the same resource, so it is important to make sure that your Watch actions are idempotent. In a future release, Pepr will provide a better way to control when a Watch action is run to avoid this issue.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>When(a.ConfigMap)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Watch() is where we define the actual behavior of this action.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .Watch((cm, phase) &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(cm, &lt;span style="color:#f1fa8c">`ConfigMap &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>cm.metadata.name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c"> was &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>phase&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>There are many more examples in the &lt;code>HelloPepr&lt;/code> capability that you can use as a reference when creating your own actions. Note that each time you run &lt;a href="./pepr-cli#pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/a>, Pepr will automatically update the &lt;code>HelloPepr&lt;/code> capability with the latest examples and best practices for you to reference and test directly in your Pepr Module.&lt;/p>
+&lt;hr>
+&lt;p>In some scenarios involving Kubernetes Resource Controllers or Operator patterns, opting for a Reconcile action could be more fitting. Comparable to the Watch functionality, Reconcile is responsible for monitoring the name and phase of any Kubernetes Object. It operates within the Watch controller dedicated to observing modifications to resources, including those already existing, enabling responses to alterations as they occur. Unlike Watch, however, Reconcile employs a Queue to sequentially handle events once they are returned by the Kubernetes API. This allows the operator to handle bursts of events without overwhelming the system or the Kubernetes API. It provides a mechanism to back off when the system is under heavy load, enhancing overall stability and maintaining the state consistency of Kubernetes resources, as the order of operations can impact the final state of a resource.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>When(WebApp)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .IsCreatedOrUpdated()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .Validate(validator)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .Reconcile(&lt;span style="color:#ff79c6">async&lt;/span> instance &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">const&lt;/span> { &lt;span style="color:#ff79c6">namespace&lt;/span>, name, generation } &lt;span style="color:#ff79c6">=&lt;/span> instance.metadata;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">if&lt;/span> (&lt;span style="color:#ff79c6">!&lt;/span>instance.metadata&lt;span style="color:#ff79c6">?&lt;/span>.&lt;span style="color:#ff79c6">namespace&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.error(instance, &lt;span style="color:#f1fa8c">`Invalid WebApp definition`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">return&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">const&lt;/span> isPending &lt;span style="color:#ff79c6">=&lt;/span> instance.status&lt;span style="color:#ff79c6">?&lt;/span>.phase &lt;span style="color:#ff79c6">===&lt;/span> Phase.Pending;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">const&lt;/span> isCurrentGeneration &lt;span style="color:#ff79c6">=&lt;/span> generation &lt;span style="color:#ff79c6">===&lt;/span> instance.status&lt;span style="color:#ff79c6">?&lt;/span>.observedGeneration;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">if&lt;/span> (isPending &lt;span style="color:#ff79c6">||&lt;/span> isCurrentGeneration) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.debug(instance, &lt;span style="color:#f1fa8c">`Skipping pending or completed instance`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">return&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.debug(instance, &lt;span style="color:#f1fa8c">`Processing instance &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>&lt;span style="color:#ff79c6">namespace&lt;/span>&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">/&lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Set Status to pending
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">await&lt;/span> updateStatus(instance, { phase: &lt;span style="color:#8be9fd">Phase.Pending&lt;/span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Deploy Deployment, ConfigMap, Service, ServiceAccount, and RBAC based on instance
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">await&lt;/span> Deploy(instance);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Set Status to ready
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">await&lt;/span> updateStatus(instance, {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> phase: &lt;span style="color:#8be9fd">Phase.Ready&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> observedGeneration: &lt;span style="color:#8be9fd">instance.metadata.generation&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#ff79c6">catch&lt;/span> (e) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.error(e, &lt;span style="color:#f1fa8c">`Error configuring for &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>&lt;span style="color:#ff79c6">namespace&lt;/span>&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">/&lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Set Status to failed
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">void&lt;/span> updateStatus(instance, {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> phase: &lt;span style="color:#8be9fd">Phase.Failed&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> observedGeneration: &lt;span style="color:#8be9fd">instance.metadata.generation&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>V0.39.0: Pepr Capabilities</title><link>/v0.39.0/user-guide/capabilities/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/capabilities/</guid><description>
+&lt;p>A capability is set of related &lt;a href="../actions/">actions&lt;/a> that work together to achieve a specific transformation or operation on Kubernetes resources. Capabilities are user-defined and can include one or more actions. They are defined within a Pepr module and can be used in both MutatingWebhookConfigurations and ValidatingWebhookConfigurations. A Capability can have a specific scope, such as mutating or validating, and can be reused in multiple Pepr modules.&lt;/p>
+&lt;p>When you &lt;a href="../pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>, a &lt;code>capabilities&lt;/code> directory is created for you. This directory is where you will define your capabilities. You can create as many capabilities as you need, and each capability can contain one or more actions. Pepr also automatically creates a &lt;code>HelloPepr&lt;/code> capability with a number of example actions to help you get started.&lt;/p>
+&lt;h2 id="creating-a-capability">Creating a Capability&lt;/h2>
+&lt;p>Defining a new capability can be done via a &lt;a href="https://code.visualstudio.com/docs/editor/userdefinedsnippets">VSCode Snippet&lt;/a> generated during &lt;a href="../pepr-cli#pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/a>.&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>Create a new file in the &lt;code>capabilities&lt;/code> directory with the name of your capability. For example, &lt;code>capabilities/my-capability.ts&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Open the new file in VSCode and type &lt;code>create&lt;/code> in the file. A suggestion should prompt you to generate the content from there.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>[&lt;video class="td-content" controls src="https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4](https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4">&lt;/video>)&lt;/p>
+&lt;p>&lt;em>If you prefer not to use VSCode, you can also modify or copy the &lt;code>HelloPepr&lt;/code> capability to meet your needs instead.&lt;/em>&lt;/p>
+&lt;h2 id="reusable-capabilities">Reusable Capabilities&lt;/h2>
+&lt;p>Pepr has an NPM org managed by Defense Unicorns, &lt;code>@pepr&lt;/code>, where capabilities are published for reuse in other Pepr Modules. You can find a list of published capabilities &lt;a href="https://www.npmjs.com/search?q=@pepr">here&lt;/a>.&lt;/p>
+&lt;p>You also can publish your own Pepr capabilities to NPM and import them. A couple of things you&amp;rsquo;ll want to be aware of when publishing your own capabilities:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>Reuseable capability versions should use the format &lt;code>0.x.x&lt;/code> or &lt;code>0.12.x&lt;/code> as examples to determine compatibility with other reusable capabilities. Before &lt;code>1.x.x&lt;/code>, we recommend binding to &lt;code>0.x.x&lt;/code> if you can for maximum compatibility.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>pepr.ts&lt;/code> will still be used for local development, but you&amp;rsquo;ll also need to publish an &lt;code>index.ts&lt;/code> that exports your capabilities. When you build &amp;amp; publish the capability to NPM, you can use &lt;code>npx pepr build -e index.ts&lt;/code> to generate the code needed for reuse by other Pepr modules.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>See &lt;a href="https://github.com/defenseunicorns/pepr-istio">Pepr Istio&lt;/a> for an example of a reusable capability.&lt;/p>
+&lt;/li>
+&lt;/ul></description></item><item><title>V0.39.0: Pepr Store</title><link>/v0.39.0/user-guide/store/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/store/</guid><description>
+&lt;h2 id="a-lightweight-key-value-store-for-pepr-modules">A Lightweight Key-Value Store for Pepr Modules&lt;/h2>
+&lt;p>The nature of admission controllers and general watch operations (the &lt;code>Mutate&lt;/code>, &lt;code>Validate&lt;/code> and &lt;code>Watch&lt;/code> actions in Pepr) make some types of complex and long-running operations difficult. There are also times when you need to share data between different actions. While you could manually create your own K8s resources and manage their cleanup, this can be very hard to track and keep performant at scale.&lt;/p>
+&lt;p>The Pepr Store solves this by exposing a simple, &lt;a href="https://developer.mozilla.org/en-us/docs/web/api/storage">Web Storage API&lt;/a>-compatible mechanism for use within capabilities. Additionally, as Pepr runs multiple replicas of the admission controller along with a watch controller, the Pepr Store provides a unique way to share data between these different instances automatically.&lt;/p>
+&lt;p>Each Pepr Capability has a &lt;code>Store&lt;/code> instance that can be used to get, set and delete data as well as subscribe to any changes to the Store. Behind the scenes, all capability store instances in a single Pepr Module are stored within a single CRD in the cluster. This CRD is automatically created when the Pepr Module is deployed. Care is taken to make the read and write operations as efficient as possible by using K8s watches, batch processing and patch operations for writes.&lt;/p>
+&lt;h2 id="key-features">Key Features&lt;/h2>
+&lt;ul>
+&lt;li>&lt;strong>Asynchronous Key-Value Store&lt;/strong>: Provides an asynchronous interface for storing small amounts of data, making it ideal for sharing information between various actions and capabilities.&lt;/li>
+&lt;li>&lt;strong>Web Storage API Compatibility&lt;/strong>: The store&amp;rsquo;s API is aligned with the standard &lt;a href="https://developer.mozilla.org/en-us/docs/web/api/storage">Web Storage API&lt;/a>, simplifying the learning curve.&lt;/li>
+&lt;li>&lt;strong>Real-time Updates&lt;/strong>: The &lt;code>.subscribe()&lt;/code> and &lt;code>onReady()&lt;/code> methods enable real-time updates, allowing you to react to changes in the data store instantaneously.&lt;/li>
+&lt;li>&lt;strong>Automatic CRD Management&lt;/strong>: Each Pepr Module has its data stored within a single Custom Resource Definition (CRD) that is automatically created upon deployment.&lt;/li>
+&lt;li>&lt;strong>Efficient Operations&lt;/strong>: Pepr Store uses Kubernetes watches, batch processing, and patch operations to make read and write operations as efficient as possible.&lt;/li>
+&lt;/ul>
+&lt;h2 id="quick-start">Quick Start&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// Example usage for Pepr Store
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>Store.setItem(&lt;span style="color:#f1fa8c">&amp;#34;example-1&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;was-here&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Store.setItem(&lt;span style="color:#f1fa8c">&amp;#34;example-1-data&amp;#34;&lt;/span>, JSON.stringify(request.Raw.data));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Store.onReady(data &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(data, &lt;span style="color:#f1fa8c">&amp;#34;Pepr Store Ready&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>});
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> unsubscribe &lt;span style="color:#ff79c6">=&lt;/span> Store.subscribe(data &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(data, &lt;span style="color:#f1fa8c">&amp;#34;Pepr Store Updated&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> unsubscribe();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>});
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="api-reference">API Reference&lt;/h2>
+&lt;h3 id="methods">Methods&lt;/h3>
+&lt;ul>
+&lt;li>&lt;code>getItem(key: string)&lt;/code>: Retrieves a value by its key. Returns &lt;code>null&lt;/code> if the key doesn&amp;rsquo;t exist.&lt;/li>
+&lt;li>&lt;code>setItem(key: string, value: string)&lt;/code>: Sets a value for a given key. Creates a new key-value pair if the key doesn&amp;rsquo;t exist.&lt;/li>
+&lt;li>&lt;code>setItemAndWait(key: string, value: string)&lt;/code>: Sets a value for a given key. Creates a new key-value pair if the key doesn&amp;rsquo;t exist. Resolves a promise when the new key and value show up in the store. Note - Async operations in Mutate and Validate are susceptible to &lt;a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts">timeouts&lt;/a>.&lt;/li>
+&lt;li>&lt;code>removeItem(key: string)&lt;/code>: Deletes a key-value pair by its key.&lt;/li>
+&lt;li>&lt;code>removeItemAndWait(key: string)&lt;/code>: Deletes a key-value pair by its key and resolves a promise when the key and value do not show up in the store. Note - Async operations in Mutate and Validate are susceptible to &lt;a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts">timeouts&lt;/a>.&lt;/li>
+&lt;li>&lt;code>clear()&lt;/code>: Clears all key-value pairs from the store.&lt;/li>
+&lt;li>&lt;code>subscribe(listener: DataReceiver)&lt;/code>: Subscribes to store updates.&lt;/li>
+&lt;li>&lt;code>onReady(callback: DataReceiver)&lt;/code>: Executes a callback when the store is ready.&lt;/li>
+&lt;/ul></description></item><item><title>V0.39.0: Custom Resources</title><link>/v0.39.0/user-guide/custom-resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/custom-resources/</guid><description>
+&lt;h2 id="importing-custom-resources">Importing Custom Resources&lt;/h2>
+&lt;p>The &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">Kubernetes Fluent Client&lt;/a> supports the creation of TypeScript typings directly from Kubernetes Custom Resource Definitions (CRDs). The files it generates can be directly incorporated into Pepr capabilities and provide a way to work with strongly-typed CRDs.&lt;/p>
+&lt;p>For example (below), Istio CRDs can be imported and used as though they were intrinsic Kubernetes resources.&lt;/p>
+&lt;h2 id="generating-typescript-types-from-crds">Generating TypeScript Types from CRDs&lt;/h2>
+&lt;p>Using the kubernetes-fluent-client to produce a new type looks like this:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx kubernetes-fluent-client crd &lt;span style="color:#ff79c6">[&lt;/span>source&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>directory&lt;span style="color:#ff79c6">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>crd&lt;/code> command expects a &lt;code>[source]&lt;/code>, which can be a URL or local file containing the &lt;code>CustomResourceDefinition(s)&lt;/code>, and a &lt;code>[directory]&lt;/code> where the generated code will live.&lt;/p>
+&lt;p>The following example creates types for the Istio CRDs:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>user@workstation$ npx kubernetes-fluent-client crd https://raw.githubusercontent.com/istio/istio/master/manifests/charts/base/crds/crd-all.gen.yaml crds
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Attempting to load https://raw.githubusercontent.com/istio/istio/master/manifests/charts/base/crds/crd-all.gen.yaml as a URL
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating extensions.istio.io/v1alpha1 types &lt;span style="color:#ff79c6">for&lt;/span> WasmPlugin
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1alpha3 types &lt;span style="color:#ff79c6">for&lt;/span> DestinationRule
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1beta1 types &lt;span style="color:#ff79c6">for&lt;/span> DestinationRule
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1alpha3 types &lt;span style="color:#ff79c6">for&lt;/span> EnvoyFilter
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1alpha3 types &lt;span style="color:#ff79c6">for&lt;/span> Gateway
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1beta1 types &lt;span style="color:#ff79c6">for&lt;/span> Gateway
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1beta1 types &lt;span style="color:#ff79c6">for&lt;/span> ProxyConfig
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1alpha3 types &lt;span style="color:#ff79c6">for&lt;/span> ServiceEntry
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1beta1 types &lt;span style="color:#ff79c6">for&lt;/span> ServiceEntry
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1alpha3 types &lt;span style="color:#ff79c6">for&lt;/span> Sidecar
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1beta1 types &lt;span style="color:#ff79c6">for&lt;/span> Sidecar
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1alpha3 types &lt;span style="color:#ff79c6">for&lt;/span> VirtualService
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1beta1 types &lt;span style="color:#ff79c6">for&lt;/span> VirtualService
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1alpha3 types &lt;span style="color:#ff79c6">for&lt;/span> WorkloadEntry
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1beta1 types &lt;span style="color:#ff79c6">for&lt;/span> WorkloadEntry
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1alpha3 types &lt;span style="color:#ff79c6">for&lt;/span> WorkloadGroup
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating networking.istio.io/v1beta1 types &lt;span style="color:#ff79c6">for&lt;/span> WorkloadGroup
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating security.istio.io/v1 types &lt;span style="color:#ff79c6">for&lt;/span> AuthorizationPolicy
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating security.istio.io/v1beta1 types &lt;span style="color:#ff79c6">for&lt;/span> AuthorizationPolicy
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating security.istio.io/v1beta1 types &lt;span style="color:#ff79c6">for&lt;/span> PeerAuthentication
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating security.istio.io/v1 types &lt;span style="color:#ff79c6">for&lt;/span> RequestAuthentication
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating security.istio.io/v1beta1 types &lt;span style="color:#ff79c6">for&lt;/span> RequestAuthentication
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- Generating telemetry.istio.io/v1alpha1 types &lt;span style="color:#ff79c6">for&lt;/span> Telemetry
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>✅ Generated &lt;span style="color:#bd93f9">23&lt;/span> files in the istio directory
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Observe that the &lt;code>kubernetes-fluent-client&lt;/code> has produced the TypeScript types within the &lt;code>crds&lt;/code> directory. These types can now be utilized in the Pepr module.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>user&lt;span style="color:#8be9fd;font-style:italic">@workstation&lt;/span>$ cat crds&lt;span style="color:#ff79c6">/&lt;/span>proxyconfig&lt;span style="color:#ff79c6">-&lt;/span>v1beta1.ts
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// This file is auto-generated by kubernetes-fluent-client, do not edit manually
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> { GenericKind, RegisterKind } &lt;span style="color:#ff79c6">from&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;kubernetes-fluent-client&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">export&lt;/span> &lt;span style="color:#ff79c6">class&lt;/span> ProxyConfig &lt;span style="color:#ff79c6">extends&lt;/span> GenericKind {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * Provides configuration for individual workloads. See more details at:
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * https://istio.io/docs/reference/config/networking/proxy-config.html
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> spec?: &lt;span style="color:#8be9fd">Spec&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> status&lt;span style="color:#ff79c6">?:&lt;/span> { [key: &lt;span style="color:#8be9fd">string&lt;/span>]&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#8be9fd">any&lt;/span> };
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * Provides configuration for individual workloads. See more details at:
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * https://istio.io/docs/reference/config/networking/proxy-config.html
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">export&lt;/span> &lt;span style="color:#ff79c6">interface&lt;/span> Spec {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * The number of worker threads to run.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> concurrency?: &lt;span style="color:#8be9fd">number&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * Additional environment variables for the proxy.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> environmentVariables&lt;span style="color:#ff79c6">?:&lt;/span> { [key: &lt;span style="color:#8be9fd">string&lt;/span>]&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#8be9fd">string&lt;/span> };
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * Specifies the details of the proxy image.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> image?: &lt;span style="color:#8be9fd">Image&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * Optional.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> selector?: &lt;span style="color:#8be9fd">Selector&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * Specifies the details of the proxy image.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">export&lt;/span> &lt;span style="color:#ff79c6">interface&lt;/span> Image {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * The image type of the image.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> imageType?: &lt;span style="color:#8be9fd">string&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * Optional.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">export&lt;/span> &lt;span style="color:#ff79c6">interface&lt;/span> Selector {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * One or more labels that indicate a specific set of pods/VMs on which a policy should be
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * applied.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> matchLabels&lt;span style="color:#ff79c6">?:&lt;/span> { [key: &lt;span style="color:#8be9fd">string&lt;/span>]&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#8be9fd">string&lt;/span> };
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>RegisterKind(ProxyConfig, {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> group&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;networking.istio.io&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> version&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;v1beta1&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> kind&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;ProxyConfig&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>});
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="using-new-types">Using new types&lt;/h2>
+&lt;p>The generated types can be imported into Pepr directly, &lt;em>there is no additional logic needed to make them to work&lt;/em>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> { Capability, K8s, Log, a, kind } &lt;span style="color:#ff79c6">from&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> { Gateway } &lt;span style="color:#ff79c6">from&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;../crds/gateway-v1beta1&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> PurpleDestination,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> VirtualService,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>} &lt;span style="color:#ff79c6">from&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;../crds/virtualservice-v1beta1&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">export&lt;/span> &lt;span style="color:#ff79c6">const&lt;/span> IstioVirtualService &lt;span style="color:#ff79c6">=&lt;/span> &lt;span style="color:#ff79c6">new&lt;/span> Capability({
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;istio-virtual-service&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> description&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;Generate Istio VirtualService resources&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>});
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// Use the &amp;#39;When&amp;#39; function to create a new action
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>&lt;span style="color:#ff79c6">const&lt;/span> { When, Store } &lt;span style="color:#ff79c6">=&lt;/span> IstioVirtualService;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// Define the configuration keys
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>&lt;span style="color:#ff79c6">enum&lt;/span> config {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Gateway &lt;span style="color:#ff79c6">=&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;uds/istio-gateway&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Host &lt;span style="color:#ff79c6">=&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;uds/istio-host&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Port &lt;span style="color:#ff79c6">=&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;uds/istio-port&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Domain &lt;span style="color:#ff79c6">=&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;uds/istio-domain&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// Define the valid gateway names
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>&lt;span style="color:#ff79c6">const&lt;/span> validGateway &lt;span style="color:#ff79c6">=&lt;/span> [&lt;span style="color:#f1fa8c">&amp;#34;admin&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;tenant&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;passthrough&amp;#34;&lt;/span>];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// Watch Gateways to get the HTTPS domain for each gateway
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>When(Gateway)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .IsCreatedOrUpdated()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .WithLabel(config.Domain)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .Watch(vs &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Store the domain for the gateway
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> Store.setItem(vs.metadata.name, vs.metadata.labels[config.Domain]);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>V0.39.0: OnSchedule</title><link>/v0.39.0/user-guide/onschedule/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/onschedule/</guid><description>
+&lt;p>The &lt;code>OnSchedule&lt;/code> feature allows you to schedule and automate the execution of specific code at predefined intervals or schedules. This feature is designed to simplify recurring tasks and can serve as an alternative to traditional CronJobs. This code is designed to be run at the top level on a Capability, not within a function like &lt;code>When&lt;/code>.&lt;/p>
+&lt;h2 id="best-practices">Best Practices&lt;/h2>
+&lt;p>&lt;code>OnSchedule&lt;/code> is designed for targeting intervals equal to or larger than 30 seconds due to the storage mechanism used to archive schedule info.&lt;/p>
+&lt;h2 id="usage">Usage&lt;/h2>
+&lt;p>Create a recurring task execution by calling the OnSchedule function with the following parameters:&lt;/p>
+&lt;p>&lt;strong>name&lt;/strong> - The unique name of the schedule.&lt;/p>
+&lt;p>&lt;strong>every&lt;/strong> - An integer that represents the frequency of the schedule in number of &lt;em>units&lt;/em>.&lt;/p>
+&lt;p>&lt;strong>unit&lt;/strong> - A string specifying the time unit for the schedule (e.g., &lt;code>seconds&lt;/code>, &lt;code>minute&lt;/code>, &lt;code>minutes&lt;/code>, &lt;code>hour&lt;/code>, &lt;code>hours&lt;/code>).&lt;/p>
+&lt;p>&lt;strong>startTime&lt;/strong> - (Optional) A UTC timestamp indicating when the schedule should start. All date times must be provided in GMT. If not specified the schedule will start when the schedule store reports ready.&lt;/p>
+&lt;p>&lt;strong>run&lt;/strong> - A function that contains the code you want to execute on the defined schedule.&lt;/p>
+&lt;p>&lt;strong>completions&lt;/strong> - (Optional) An integer indicating the maximum number of times the schedule should run to completion. If not specified the schedule will run indefinitely.&lt;/p>
+&lt;h2 id="examples">Examples&lt;/h2>
+&lt;p>Update a ConfigMap every 30 seconds:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>OnSchedule({
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;hello-interval&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> every: &lt;span style="color:#8be9fd">30&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> unit&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;seconds&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> run: &lt;span style="color:#8be9fd">async&lt;/span> () &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(&lt;span style="color:#f1fa8c">&amp;#34;Wait 30 seconds and create/update a ConfigMap&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">await&lt;/span> K8s(kind.ConfigMap).Apply({
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> metadata&lt;span style="color:#ff79c6">:&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;last-updated&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">namespace&lt;/span>&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;default&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> data&lt;span style="color:#ff79c6">:&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> count&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">`&lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>&lt;span style="color:#ff79c6">new&lt;/span> &lt;span style="color:#8be9fd;font-style:italic">Date&lt;/span>()&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#ff79c6">catch&lt;/span> (error) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.error(error, &lt;span style="color:#f1fa8c">&amp;#34;Failed to apply ConfigMap using server-side apply.&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Refresh an AWSToken every 24 hours, with a delayed start of 30 seconds, running a total of 3 times:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>OnSchedule({
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;refresh-aws-token&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> every: &lt;span style="color:#8be9fd">24&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> unit&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;hours&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> startTime: &lt;span style="color:#8be9fd">new&lt;/span> &lt;span style="color:#8be9fd;font-style:italic">Date&lt;/span>(&lt;span style="color:#ff79c6">new&lt;/span> &lt;span style="color:#8be9fd;font-style:italic">Date&lt;/span>().getTime() &lt;span style="color:#ff79c6">+&lt;/span> &lt;span style="color:#bd93f9">1000&lt;/span> &lt;span style="color:#ff79c6">*&lt;/span> &lt;span style="color:#bd93f9">30&lt;/span>),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> run: &lt;span style="color:#8be9fd">async&lt;/span> () &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">await&lt;/span> RefreshAWSToken();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> completions: &lt;span style="color:#8be9fd">3&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>});
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="advantages">Advantages&lt;/h2>
+&lt;ul>
+&lt;li>Simplifies scheduling recurring tasks without the need for complex CronJob configurations.&lt;/li>
+&lt;li>Provides flexibility to define schedules in a human-readable format.&lt;/li>
+&lt;li>Allows you to execute code with precision at specified intervals.&lt;/li>
+&lt;li>Supports limiting the number of schedule completions for finite tasks.&lt;/li>
+&lt;/ul></description></item><item><title>V0.39.0: RBAC Modes</title><link>/v0.39.0/user-guide/rbac/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/rbac/</guid><description>
+&lt;p>During the build phase of Pepr (&lt;code>npx pepr build --rbac-mode [admin|scoped]&lt;/code>), you have the option to specify the desired RBAC mode through specific flags. This allows fine-tuning the level of access granted based on requirements and preferences.&lt;/p>
+&lt;h2 id="modes">Modes&lt;/h2>
+&lt;h3 id="admin">admin&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr build --rbac-mode admin
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Description:&lt;/strong> The service account is given cluster-admin permissions, granting it full, unrestricted access across the entire cluster. This can be useful for administrative tasks where broad permissions are necessary. However, use this mode with caution, as it can pose security risks if misused. This is the default mode.&lt;/p>
+&lt;h3 id="scoped">scoped&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr build --rbac-mode scoped
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Description:&lt;/strong> The service account is provided just enough permissions to perform its required tasks, and no more. This mode is recommended for most use cases as it limits potential attack vectors and aligns with best practices in security. &lt;em>The admission controller&amp;rsquo;s primary mutating or validating action doesn&amp;rsquo;t require a ClusterRole (as the request is not persisted or executed while passing through admission control), if you have a use case where the admission controller&amp;rsquo;s logic involves reading other Kubernetes resources or taking additional actions beyond just validating, mutating, or watching the incoming request, appropriate RBAC settings should be reflected in the ClusterRole. See how in &lt;a href="#updating-the-clusterrole">Updating the ClusterRole&lt;/a>.&lt;/em>&lt;/p>
+&lt;h2 id="debugging-rbac-issues">Debugging RBAC Issues&lt;/h2>
+&lt;p>If encountering unexpected behaviors in Pepr while running in scoped mode, check to see if they are related to RBAC.&lt;/p>
+&lt;ol>
+&lt;li>Check Deployment logs for RBAC errors:&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl logs -n pepr-system -l app | jq
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># example output&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;level&amp;#34;&lt;/span>: 50,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;time&amp;#34;&lt;/span>: 1697983053758,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;pid&amp;#34;&lt;/span>: 16,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;hostname&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;pepr-static-test-watcher-745d65857d-pndg7&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;data&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;kind&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;Status&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;apiVersion&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;v1&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;metadata&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">{}&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;status&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;Failure&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;message&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;configmaps \&amp;#34;pepr-ssa-demo\&amp;#34; is forbidden: User \&amp;#34;system:serviceaccount:pepr-system:pepr-static-test\&amp;#34; cannot patch resource \&amp;#34;configmaps\&amp;#34; in API group \&amp;#34;\&amp;#34; in the namespace \&amp;#34;pepr-demo-2\&amp;#34;&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;reason&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;Forbidden&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;details&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;name&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;pepr-ssa-demo&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;kind&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;configmaps&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">}&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;code&amp;#34;&lt;/span>: &lt;span style="color:#bd93f9">403&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">}&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;ok&amp;#34;&lt;/span>: false,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;status&amp;#34;&lt;/span>: 403,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;statusText&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;Forbidden&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;msg&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;Dooes the ServiceAccount permissions to CREATE and PATCH this ConfigMap?&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ol>
+&lt;li>Verify ServiceAccount Permissions with &lt;code>kubectl auth can-i&lt;/code>&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">SA&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#ff79c6">$(&lt;/span>kubectl get deploy -n pepr-system -o&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">jsonpath&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#39;{range .items[0]}{.spec.template.spec.serviceAccountName}{&amp;#34;\n&amp;#34;}{end}&amp;#39;&lt;/span>&lt;span style="color:#ff79c6">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># Can i create configmaps as the service account in pepr-demo-2?&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl auth can-i create cm --as&lt;span style="color:#ff79c6">=&lt;/span>system:serviceaccount:pepr-system:&lt;span style="color:#8be9fd;font-style:italic">$SA&lt;/span> -n pepr-demo-2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># example output: no&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ol>
+&lt;li>Describe the ClusterRole&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">SA&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#ff79c6">$(&lt;/span>kubectl get deploy -n pepr-system -o&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">jsonpath&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#39;{range .items[0]}{.spec.template.spec.serviceAccountName}{&amp;#34;\n&amp;#34;}{end}&amp;#39;&lt;/span>&lt;span style="color:#ff79c6">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl describe clusterrole &lt;span style="color:#8be9fd;font-style:italic">$SA&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># example output:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Name: pepr-static-test
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Labels: &amp;lt;none&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Annotations: &amp;lt;none&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>PolicyRule:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Resources Non-Resource URLs Resource Names Verbs
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --------- ----------------- -------------- -----
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> peprstores.pepr.dev &lt;span style="color:#ff79c6">[]&lt;/span> &lt;span style="color:#ff79c6">[]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>create delete get list patch update watch&lt;span style="color:#ff79c6">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> configmaps &lt;span style="color:#ff79c6">[]&lt;/span> &lt;span style="color:#ff79c6">[]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>watch&lt;span style="color:#ff79c6">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> namespaces &lt;span style="color:#ff79c6">[]&lt;/span> &lt;span style="color:#ff79c6">[]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>watch&lt;span style="color:#ff79c6">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="updating-the-clusterrole">Updating the ClusterRole&lt;/h2>
+&lt;p>As discussed in the &lt;a href="#modes">Modes&lt;/a> section, the admission controller&amp;rsquo;s primary mutating or validating action doesn&amp;rsquo;t require a ClusterRole (as the request is not persisted or executed while passing through admission control), if you have a use case where the admission controller&amp;rsquo;s logic involves reading other Kubernetes resources or taking additional actions beyond just validating, mutating, or watching the incoming request, appropriate RBAC settings should be reflected in the ClusterRole.&lt;/p>
+&lt;p>Step 1: Figure out the desired permissions. (&lt;code>kubectl create clusterrole --help&lt;/code> is a good place to start figuring out the syntax)&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span> kubectl create clusterrole configMapApplier --verb&lt;span style="color:#ff79c6">=&lt;/span>create,patch --resource&lt;span style="color:#ff79c6">=&lt;/span>configmap --dry-run&lt;span style="color:#ff79c6">=&lt;/span>client -oyaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4"># example output&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>apiVersion: rbac.authorization.k8s.io/v1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kind: ClusterRole
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>metadata:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> creationTimestamp: null
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name: configMapApplier
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>rules:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- apiGroups:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f1fa8c">&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> resources:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - configmaps
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> verbs:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - create
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - patch
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Step 2: Update the ClusterRole in the &lt;code>dist&lt;/code> folder.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">apiVersion&lt;/span>: rbac.authorization.k8s.io/v1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">kind&lt;/span>: ClusterRole
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">name&lt;/span>: pepr-static-test
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">rules&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">apiGroups&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - pepr.dev
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">resources&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - peprstores
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">verbs&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - create
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - get
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - patch
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - watch
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">apiGroups&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f1fa8c">&amp;#39;&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">resources&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - namespaces
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">verbs&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - watch
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">apiGroups&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f1fa8c">&amp;#39;&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">resources&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - configmaps
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">verbs&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - watch
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - create &lt;span style="color:#6272a4"># New&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - patch &lt;span style="color:#6272a4"># New&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Step 3: Apply the updated configuration&lt;/p></description></item><item><title>V0.39.0: Metrics Endpoints</title><link>/v0.39.0/user-guide/metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/metrics/</guid><description>
+&lt;p>The &lt;code>/metrics&lt;/code> endpoint provides metrics for the application that are collected via the &lt;code>MetricsCollector&lt;/code> class. It uses the &lt;code>prom-client&lt;/code> library and performance hooks from Node.js to gather and expose the metrics data in a format that can be scraped by Prometheus.&lt;/p>
+&lt;h2 id="metrics-exposed">Metrics Exposed&lt;/h2>
+&lt;p>The &lt;code>MetricsCollector&lt;/code> exposes the following metrics:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>pepr_errors&lt;/code>: A counter that increments when an error event occurs in the application.&lt;/li>
+&lt;li>&lt;code>pepr_alerts&lt;/code>: A counter that increments when an alert event is triggered in the application.&lt;/li>
+&lt;li>&lt;code>pepr_mutate&lt;/code>: A summary that provides the observed durations of mutation events in the application.&lt;/li>
+&lt;li>&lt;code>pepr_validate&lt;/code>: A summary that provides the observed durations of validation events in the application.&lt;/li>
+&lt;li>&lt;code>pepr_cache_miss&lt;/code>: A gauge that provides the number of cache misses per window.&lt;/li>
+&lt;li>&lt;code>pepr_resync_failure_count&lt;/code>: A gauge that provides the number of unsuccessful attempts at receiving an event within the last seen event limit before re-establishing a new connection.&lt;/li>
+&lt;/ul>
+&lt;h2 id="environment-variables">Environment Variables&lt;/h2>
+&lt;p>| &lt;code>PEPR_MAX_CACHE_MISS_WINDOWS&lt;/code> | Maximum number windows to emit &lt;code>pepr_cache_miss&lt;/code> metrics for | default: &lt;code>Undefined&lt;/code> |&lt;/p>
+&lt;h2 id="api-details">API Details&lt;/h2>
+&lt;p>&lt;strong>Method:&lt;/strong> GET&lt;/p>
+&lt;p>&lt;strong>URL:&lt;/strong> &lt;code>/metrics&lt;/code>&lt;/p>
+&lt;p>&lt;strong>Response Type:&lt;/strong> text/plain&lt;/p>
+&lt;p>&lt;strong>Status Codes:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>200 OK: On success, returns the current metrics from the application.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Response Body:&lt;/strong>
+The response body is a plain text representation of the metrics data, according to the Prometheus exposition formats. It includes the metrics mentioned above.&lt;/p>
+&lt;h2 id="examples">Examples&lt;/h2>
+&lt;h3 id="request">Request&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plaintext" data-lang="plaintext">&lt;span style="display:flex;">&lt;span>GET /metrics
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="response">Response&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plaintext" data-lang="plaintext">&lt;span style="display:flex;">&lt;span> `# HELP pepr_errors Mutation/Validate errors encountered
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # TYPE pepr_errors counter
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_errors 5
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # HELP pepr_alerts Mutation/Validate bad api token received
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # TYPE pepr_alerts counter
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_alerts 10
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # HELP pepr_mutate Mutation operation summary
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # TYPE pepr_mutate summary
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_mutate{quantile=&amp;#34;0.01&amp;#34;} 100.60707900021225
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_mutate{quantile=&amp;#34;0.05&amp;#34;} 100.60707900021225
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_mutate{quantile=&amp;#34;0.5&amp;#34;} 100.60707900021225
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_mutate{quantile=&amp;#34;0.9&amp;#34;} 100.60707900021225
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_mutate{quantile=&amp;#34;0.95&amp;#34;} 100.60707900021225
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_mutate{quantile=&amp;#34;0.99&amp;#34;} 100.60707900021225
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_mutate{quantile=&amp;#34;0.999&amp;#34;} 100.60707900021225
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_mutate_sum 100.60707900021225
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_mutate_count 1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # HELP pepr_validate Validation operation summary
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # TYPE pepr_validate summary
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_validate{quantile=&amp;#34;0.01&amp;#34;} 201.19413900002837
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_validate{quantile=&amp;#34;0.05&amp;#34;} 201.19413900002837
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_validate{quantile=&amp;#34;0.5&amp;#34;} 201.2137690000236
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_validate{quantile=&amp;#34;0.9&amp;#34;} 201.23339900001884
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_validate{quantile=&amp;#34;0.95&amp;#34;} 201.23339900001884
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_validate{quantile=&amp;#34;0.99&amp;#34;} 201.23339900001884
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_validate{quantile=&amp;#34;0.999&amp;#34;} 201.23339900001884
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_validate_sum 402.4275380000472
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_validate_count 2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # HELP pepr_cache_miss Number of cache misses per window
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # TYPE pepr_cache_miss gauge
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_cache_miss{window=&amp;#34;2024-07-25T11:54:33.897Z&amp;#34;} 18
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_cache_miss{window=&amp;#34;2024-07-25T12:24:34.592Z&amp;#34;} 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_cache_miss{window=&amp;#34;2024-07-25T13:14:33.450Z&amp;#34;} 22
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_cache_miss{window=&amp;#34;2024-07-25T13:44:34.234Z&amp;#34;} 19
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_cache_miss{window=&amp;#34;2024-07-25T14:14:34.961Z&amp;#34;} 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # HELP pepr_resync_failure_count Number of retries per count
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # TYPE pepr_resync_failure_count gauge
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_resync_failure_count{count=&amp;#34;0&amp;#34;} 5
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pepr_resync_failure_count{count=&amp;#34;1&amp;#34;} 4
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="prometheus-operator">Prometheus Operator&lt;/h2>
+&lt;p>If using the Prometheus Operator, the following &lt;code>ServiceMonitor&lt;/code> example manifests can be used to scrape the &lt;code>/metrics&lt;/code> endpoint for the &lt;code>admission&lt;/code> and &lt;code>watcher&lt;/code> controllers.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">apiVersion&lt;/span>: monitoring.coreos.com/v1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">kind&lt;/span>: ServiceMonitor
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">name&lt;/span>: admission
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">matchLabels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">pepr.dev/controller&lt;/span>: admission
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">namespaceSelector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">matchNames&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - pepr-system
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">endpoints&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">targetPort&lt;/span>: &lt;span style="color:#bd93f9">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">scheme&lt;/span>: https
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">tlsConfig&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">insecureSkipVerify&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">apiVersion&lt;/span>: monitoring.coreos.com/v1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">kind&lt;/span>: ServiceMonitor
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">name&lt;/span>: watcher
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">matchLabels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">pepr.dev/controller&lt;/span>: watcher
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">namespaceSelector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">matchNames&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - pepr-system
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">endpoints&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ff79c6">targetPort&lt;/span>: &lt;span style="color:#bd93f9">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">scheme&lt;/span>: https
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">tlsConfig&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">insecureSkipVerify&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>V0.39.0: WASM Support</title><link>/v0.39.0/user-guide/webassembly/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/webassembly/</guid><description>
+&lt;p>Pepr fully supports WebAssembly. Depending on the language used to generate the WASM, certain files can be too large to fit into a &lt;code>Secret&lt;/code> or &lt;code>ConfigMap&lt;/code>. Due to this limitation, users have the ability to incorporate &lt;code>*.wasm&lt;/code> and any other essential files during the build phase, which are then embedded into the Pepr Controller container. This is achieved through adding an array of files to the &lt;code>includedFiles&lt;/code> section under &lt;code>pepr&lt;/code> in the &lt;code>package.json&lt;/code>.&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>NOTE -&lt;/strong> In order to instantiate the WebAsembly module in TypeScript, you need the WebAssembly type. This is accomplished through add the &amp;ldquo;DOM&amp;rdquo; to the &lt;code>lib&lt;/code> array in the &lt;code>compilerOptions&lt;/code> section of the &lt;code>tsconfig.json&lt;/code>. Ex: &lt;code>&amp;quot;lib&amp;quot;: [&amp;quot;ES2022&amp;quot;, &amp;quot;DOM&amp;quot;]&lt;/code>. Be aware that adding the DOM will add a lot of extra types to your project and your developer experience will be impacted in terms of the intellisense.&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="high-level-overview">High-Level Overview&lt;/h2>
+&lt;p>WASM support is achieved through adding files as layers atop the Pepr controller image, these files are then able to be read by the individual capabilities. The key components of WASM support are:&lt;/p>
+&lt;ul>
+&lt;li>Add files to the &lt;strong>base&lt;/strong> of the Pepr module.&lt;/li>
+&lt;li>Reference the files in the &lt;code>includedFiles&lt;/code> section of the &lt;code>pepr&lt;/code> block of the &lt;code>package.json&lt;/code>&lt;/li>
+&lt;li>Run &lt;code>npx pepr build&lt;/code> with the &lt;code>-r&lt;/code> option specifying registry info. Ex: &lt;code>npx pepr build -r docker.io/cmwylie19&lt;/code>&lt;/li>
+&lt;li>Pepr builds and pushes a custom image that is used in the &lt;code>Deployment&lt;/code>.&lt;/li>
+&lt;/ul>
+&lt;h2 id="using-wasm-support">Using WASM Support&lt;/h2>
+&lt;h3 id="creating-a-wasm-module-in-go">Creating a WASM Module in Go&lt;/h3>
+&lt;p>Create a simple Go function that you want to call from your Pepr module&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">package&lt;/span> main
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> (
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;fmt&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;syscall/js&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">func&lt;/span> &lt;span style="color:#50fa7b">concats&lt;/span>(this js.Value, args []js.Value) &lt;span style="color:#8be9fd;font-style:italic">interface&lt;/span>{} {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> fmt.&lt;span style="color:#50fa7b">Println&lt;/span>(&lt;span style="color:#f1fa8c">&amp;#34;PeprWASM!&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> stringOne &lt;span style="color:#ff79c6">:=&lt;/span> args[&lt;span style="color:#bd93f9">0&lt;/span>].&lt;span style="color:#50fa7b">String&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> stringTwo &lt;span style="color:#ff79c6">:=&lt;/span> args[&lt;span style="color:#bd93f9">1&lt;/span>].&lt;span style="color:#50fa7b">String&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">return&lt;/span> fmt.&lt;span style="color:#50fa7b">Sprintf&lt;/span>(&lt;span style="color:#f1fa8c">&amp;#34;%s%s&amp;#34;&lt;/span>, stringOne, stringTwo)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">func&lt;/span> &lt;span style="color:#50fa7b">main&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> done &lt;span style="color:#ff79c6">:=&lt;/span> &lt;span style="color:#8be9fd;font-style:italic">make&lt;/span>(&lt;span style="color:#8be9fd;font-style:italic">chan&lt;/span> &lt;span style="color:#8be9fd;font-style:italic">struct&lt;/span>{}, &lt;span style="color:#bd93f9">0&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> js.&lt;span style="color:#50fa7b">Global&lt;/span>().&lt;span style="color:#50fa7b">Set&lt;/span>(&lt;span style="color:#f1fa8c">&amp;#34;concats&amp;#34;&lt;/span>, js.&lt;span style="color:#50fa7b">FuncOf&lt;/span>(concats))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;lt;-&lt;/span>done
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Compile it to a wasm target and move it to your Pepr module&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">GOOS&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>js &lt;span style="color:#8be9fd;font-style:italic">GOARCH&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>wasm go build -o main.wasm
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cp main.wasm &lt;span style="color:#8be9fd;font-style:italic">$YOUR_PEPR_MODULE&lt;/span>/
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Copy the &lt;code>wasm_exec.js&lt;/code> from &lt;code>GOROOT&lt;/code> to your Pepr Module&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>cp &lt;span style="color:#f1fa8c">&amp;#34;&lt;/span>&lt;span style="color:#ff79c6">$(&lt;/span>go env GOROOT&lt;span style="color:#ff79c6">)&lt;/span>&lt;span style="color:#f1fa8c">/misc/wasm/wasm_exec.js&amp;#34;&lt;/span> &lt;span style="color:#8be9fd;font-style:italic">$YOUR_PEPR_MODULE&lt;/span>/
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Update the polyfill to add &lt;code>globalThis.crypto&lt;/code> in the &lt;code>wasm_exec.js&lt;/code> since we are not running in the browser. This is needed directly under: &lt;code>(() =&amp;gt; {&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-javascript" data-lang="javascript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// Initialize the polyfill
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>&lt;span style="color:#ff79c6">if&lt;/span> (&lt;span style="color:#ff79c6">typeof&lt;/span> globalThis.crypto &lt;span style="color:#ff79c6">===&lt;/span> &lt;span style="color:#f1fa8c">&amp;#39;undefined&amp;#39;&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> globalThis.crypto &lt;span style="color:#ff79c6">=&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> getRandomValues&lt;span style="color:#ff79c6">:&lt;/span> (array) =&amp;gt; {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">for&lt;/span> (&lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> i &lt;span style="color:#ff79c6">=&lt;/span> &lt;span style="color:#bd93f9">0&lt;/span>; i &lt;span style="color:#ff79c6">&amp;lt;&lt;/span> array.length; i&lt;span style="color:#ff79c6">++&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> array[i] &lt;span style="color:#ff79c6">=&lt;/span> &lt;span style="color:#8be9fd;font-style:italic">Math&lt;/span>.floor(&lt;span style="color:#8be9fd;font-style:italic">Math&lt;/span>.random() &lt;span style="color:#ff79c6">*&lt;/span> &lt;span style="color:#bd93f9">256&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> };
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="configure-pepr-to-use-wasm">Configure Pepr to use WASM&lt;/h3>
+&lt;p>After adding the files to the root of the Pepr module, reference those files in the &lt;code>package.json&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;name&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;pepr-test-module&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;version&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;0.0.1&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;description&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;A test module for Pepr&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;keywords&amp;#34;&lt;/span>: [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;k8s&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;policy-engine&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;pepr-module&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;security&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;engines&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;node&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;&amp;gt;=18.0.0&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;pepr&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;name&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;pepr-test-module&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;uuid&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;static-test&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;onError&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;ignore&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;alwaysIgnore&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;namespaces&amp;#34;&lt;/span>: [],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;labels&amp;#34;&lt;/span>: []
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;includedFiles&amp;#34;&lt;/span>:[
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;main.wasm&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;wasm_exec.js&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Update the &lt;code>tsconfig.json&lt;/code> to add &amp;ldquo;DOM&amp;rdquo; to the &lt;code>compilerOptions&lt;/code> lib:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;compilerOptions&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;allowSyntheticDefaultImports&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;declaration&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;declarationMap&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;emitDeclarationOnly&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;esModuleInterop&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;lib&amp;#34;&lt;/span>: [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;ES2022&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;DOM&amp;#34;&lt;/span> &lt;span style="color:#6272a4">// &amp;lt;- Add this
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> ],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;module&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;CommonJS&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;moduleResolution&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;node&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;outDir&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;dist&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;resolveJsonModule&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;rootDir&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;.&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;strict&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">false&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;target&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;ES2022&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;useUnknownInCatchVariables&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;include&amp;#34;&lt;/span>: [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;**/*.ts&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="call-wasm-functions-from-typescript">Call WASM functions from TypeScript&lt;/h3>
+&lt;p>Import the &lt;code>wasm_exec.js&lt;/code> in the &lt;code>pepr.ts&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-javascript" data-lang="javascript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;./wasm_exec.js&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Create a helper function to load the wasm file in a capability and call it during an event of your choice&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">async&lt;/span> &lt;span style="color:#8be9fd;font-style:italic">function&lt;/span> callWASM(a,b) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">const&lt;/span> go &lt;span style="color:#ff79c6">=&lt;/span> &lt;span style="color:#ff79c6">new&lt;/span> globalThis.Go();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">const&lt;/span> wasmData &lt;span style="color:#ff79c6">=&lt;/span> readFileSync(&lt;span style="color:#f1fa8c">&amp;#34;main.wasm&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#8be9fd;font-style:italic">var&lt;/span> concated: &lt;span style="color:#8be9fd">string&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">await&lt;/span> WebAssembly.instantiate(wasmData, go.importObject).then(wasmModule &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> go.run(wasmModule.instance);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> concated &lt;span style="color:#ff79c6">=&lt;/span> &lt;span style="color:#ff79c6">global&lt;/span>.concats(a,b);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">return&lt;/span> concated;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>When(a.Pod)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>.IsCreated()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>.Mutate(&lt;span style="color:#ff79c6">async&lt;/span> pod &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#8be9fd;font-style:italic">let&lt;/span> label_value &lt;span style="color:#ff79c6">=&lt;/span> &lt;span style="color:#ff79c6">await&lt;/span> callWASM(&lt;span style="color:#f1fa8c">&amp;#34;loves&amp;#34;&lt;/span>,&lt;span style="color:#f1fa8c">&amp;#34;wasm&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> pod.SetLabel(&lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>,label_value)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">catch&lt;/span>(err) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.error(err);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>});
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="run-pepr-build">Run Pepr Build&lt;/h3>
+&lt;p>Build your Pepr module with the registry specified.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr build -r docker.io/defenseunicorns
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>V0.39.0: Customization</title><link>/v0.39.0/user-guide/customization/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/customization/</guid><description>
+&lt;p>This document outlines how to customize the build output through Helm overrides and &lt;code>package.json&lt;/code> configurations.&lt;/p>
+&lt;h2 id="redact-store-values-from-logs">Redact Store Values from Logs&lt;/h2>
+&lt;p>By default, the store values are displayed in logs, to redact them you can set the &lt;code>PEPR_STORE_REDACT_VALUES&lt;/code> environment variable to &lt;code>true&lt;/code> in the &lt;code>package.json&lt;/code> file or directly on the Watcher or Admission &lt;code>Deployment&lt;/code>. The default value is &lt;code>undefined&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;env&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;PEPR_STORE_REDACT_VALUES&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;true&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="display-node-warnings">Display Node Warnings&lt;/h2>
+&lt;p>You can display warnings in the logs by setting the &lt;code>PEPR_NODE_WARNINGS&lt;/code> environment variable to &lt;code>true&lt;/code> in the &lt;code>package.json&lt;/code> file or directly on the Watcher or Admission &lt;code>Deployment&lt;/code>. The default value is &lt;code>undefined&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;env&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;PEPR_NODE_WARNINGS&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;true&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="customizing-log-format">Customizing Log Format&lt;/h2>
+&lt;p>The log format can be customized by setting the &lt;code>PINO_TIME_STAMP&lt;/code> environment variable in the &lt;code>package.json&lt;/code> file or directly on the Watcher or Admission &lt;code>Deployment&lt;/code>. The default value is a partial JSON timestamp string representation of the time. If set to &lt;code>iso&lt;/code>, the timestamp is displayed in an ISO format.&lt;/p>
+&lt;p>&lt;strong>Caution&lt;/strong>: attempting to format time in-process will significantly impact logging performance.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;env&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;PINO_TIME_STAMP&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;iso&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>With ISO:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{&lt;span style="color:#ff79c6">&amp;#34;level&amp;#34;&lt;/span>:&lt;span style="color:#bd93f9">30&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;time&amp;#34;&lt;/span>:&lt;span style="color:#f1fa8c">&amp;#34;2024-05-14T14:26:03.788Z&amp;#34;&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;pid&amp;#34;&lt;/span>:&lt;span style="color:#bd93f9">16&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;hostname&amp;#34;&lt;/span>:&lt;span style="color:#f1fa8c">&amp;#34;pepr-static-test-7f4d54b6cc-9lxm6&amp;#34;&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;method&amp;#34;&lt;/span>:&lt;span style="color:#f1fa8c">&amp;#34;GET&amp;#34;&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;url&amp;#34;&lt;/span>:&lt;span style="color:#f1fa8c">&amp;#34;/healthz&amp;#34;&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;status&amp;#34;&lt;/span>:&lt;span style="color:#bd93f9">200&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;duration&amp;#34;&lt;/span>:&lt;span style="color:#f1fa8c">&amp;#34;1 ms&amp;#34;&lt;/span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Default (without):&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{&lt;span style="color:#ff79c6">&amp;#34;level&amp;#34;&lt;/span>:&lt;span style="color:#bd93f9">30&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;time&amp;#34;&lt;/span>:&lt;span style="color:#f1fa8c">&amp;#34;1715696764106&amp;#34;&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;pid&amp;#34;&lt;/span>:&lt;span style="color:#bd93f9">16&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;hostname&amp;#34;&lt;/span>:&lt;span style="color:#f1fa8c">&amp;#34;pepr-static-test-watcher-559d94447f-xkq2h&amp;#34;&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;method&amp;#34;&lt;/span>:&lt;span style="color:#f1fa8c">&amp;#34;GET&amp;#34;&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;url&amp;#34;&lt;/span>:&lt;span style="color:#f1fa8c">&amp;#34;/healthz&amp;#34;&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;status&amp;#34;&lt;/span>:&lt;span style="color:#bd93f9">200&lt;/span>,&lt;span style="color:#ff79c6">&amp;#34;duration&amp;#34;&lt;/span>:&lt;span style="color:#f1fa8c">&amp;#34;1 ms&amp;#34;&lt;/span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="customizing-watch-configuration">Customizing Watch Configuration&lt;/h2>
+&lt;p>The Watch configuration is a part of the Pepr module that allows you to watch for specific resources in the Kubernetes cluster. The Watch configuration can be customized by specific enviroment variables of the Watcher Deployment and can be set in the field in the &lt;code>package.json&lt;/code> or in the helm &lt;code>values.yaml&lt;/code> file.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Field&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Example Values&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>PEPR_RESYNC_FAILURE_MAX&lt;/code>&lt;/td>
+&lt;td>The maximum number of times to fail on a resync interval before re-establishing the watch URL and doing a relist.&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;5&amp;quot;&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>PEPR_RETRY_DELAY_SECONDS&lt;/code>&lt;/td>
+&lt;td>The delay between retries in seconds.&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;10&amp;quot;&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>PEPR_LAST_SEEN_LIMIT_SECONDS&lt;/code>&lt;/td>
+&lt;td>Max seconds to go without receiving a watch event before re-establishing the watch&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;300&amp;quot;&lt;/code> (5 mins)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>PEPR_RELIST_INTERVAL_SECONDS&lt;/code>&lt;/td>
+&lt;td>Amount of seconds to wait before a relist of the watched resources&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;600&amp;quot;&lt;/code> (10 mins)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>PEPR_USE_LEGACY_WATCH&lt;/code>&lt;/td>
+&lt;td>Configure the Kubernetes Fluent Client to use legacy node-fetch watcher&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;undefined&amp;quot;&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="configuring-reconcile">Configuring Reconcile&lt;/h2>
+&lt;p>The &lt;a href="../actions/reconcile/">Reconcile Action&lt;/a> allows you to maintain ordering of resource updates processed by a Pepr controller. The Reconcile configuration can be customized via enviroment variable on the Watcher Deployment, which can be set in the &lt;code>package.json&lt;/code> or in the helm &lt;code>values.yaml&lt;/code> file.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Field&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Example Values&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>PEPR_RECONCILE_STRATEGY&lt;/code>&lt;/td>
+&lt;td>How Pepr should order resource updates being Reconcile()&amp;rsquo;d.&lt;/td>
+&lt;td>default: &lt;code>&amp;quot;kind&amp;quot;&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Available Options&lt;/th>
+&lt;th>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>kind&lt;/code>&lt;/td>
+&lt;td>separate queues of events for Reconcile()&amp;rsquo;d resources of a kind&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>kindNs&lt;/code>&lt;/td>
+&lt;td>separate queues of events for Reconcile()&amp;rsquo;d resources of a kind, within a namespace&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>kindNsName&lt;/code>&lt;/td>
+&lt;td>separate queues of events for Reconcile()&amp;rsquo;d resources of a kind, within a namespace, per name&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>global&lt;/code>&lt;/td>
+&lt;td>a single queue of events for all Reconcile()&amp;rsquo;d resources&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="customizing-with-helm">Customizing with Helm&lt;/h2>
+&lt;p>Below are the available Helm override configurations after you have built your Pepr module that you can put in the &lt;code>values.yaml&lt;/code>.&lt;/p>
+&lt;h3 id="helm-overrides-table">Helm Overrides Table&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Parameter&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Example Values&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>secrets.apiToken&lt;/code>&lt;/td>
+&lt;td>Kube API-Server Token.&lt;/td>
+&lt;td>&lt;code>Buffer.from(apiToken).toString(&amp;quot;base64&amp;quot;)&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>hash&lt;/code>&lt;/td>
+&lt;td>Unique hash for deployment. Do not change.&lt;/td>
+&lt;td>&lt;code>&amp;lt;your_hash&amp;gt;&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>namespace.annotations&lt;/code>&lt;/td>
+&lt;td>Namespace annotations&lt;/td>
+&lt;td>&lt;code>{}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>namespace.labels&lt;/code>&lt;/td>
+&lt;td>Namespace labels&lt;/td>
+&lt;td>&lt;code>{&amp;quot;pepr.dev&amp;quot;: &amp;quot;&amp;quot;}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>uuid&lt;/code>&lt;/td>
+&lt;td>Unique identifier for the module&lt;/td>
+&lt;td>&lt;code>hub-operator&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>admission.*&lt;/code>&lt;/td>
+&lt;td>Admission controller configurations&lt;/td>
+&lt;td>Various, see subparameters below&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>watcher.*&lt;/code>&lt;/td>
+&lt;td>Watcher configurations&lt;/td>
+&lt;td>Various, see subparameters below&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="admission-and-watcher-subparameters">Admission and Watcher Subparameters&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Subparameter&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>failurePolicy&lt;/code>&lt;/td>
+&lt;td>Webhook failure policy [Ignore, Fail]&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>webhookTimeout&lt;/code>&lt;/td>
+&lt;td>Timeout seconds for webhooks [1 - 30]&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>env&lt;/code>&lt;/td>
+&lt;td>Container environment variables&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>image&lt;/code>&lt;/td>
+&lt;td>Container image&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>annotations&lt;/code>&lt;/td>
+&lt;td>Deployment annotations&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>labels&lt;/code>&lt;/td>
+&lt;td>Deployment labels&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>securityContext&lt;/code>&lt;/td>
+&lt;td>Pod security context&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>readinessProbe&lt;/code>&lt;/td>
+&lt;td>Pod readiness probe definition&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>livenessProbe&lt;/code>&lt;/td>
+&lt;td>Pod liveness probe definition&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>resources&lt;/code>&lt;/td>
+&lt;td>Resource limits&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>containerSecurityContext&lt;/code>&lt;/td>
+&lt;td>Container&amp;rsquo;s security context&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>nodeSelector&lt;/code>&lt;/td>
+&lt;td>Node selection constraints&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tolerations&lt;/code>&lt;/td>
+&lt;td>Tolerations to taints&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>affinity&lt;/code>&lt;/td>
+&lt;td>Node scheduling options&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>terminationGracePeriodSeconds&lt;/code>&lt;/td>
+&lt;td>Optional duration in seconds the pod needs to terminate gracefully&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Note: Replace &lt;code>*&lt;/code> with &lt;code>admission&lt;/code> or &lt;code>watcher&lt;/code> as needed to apply settings specifically for each part.&lt;/p>
+&lt;h2 id="customizing-with-packagejson">Customizing with package.json&lt;/h2>
+&lt;p>Below are the available configurations through &lt;code>package.json&lt;/code>.&lt;/p>
+&lt;h3 id="packagejson-configurations-table">package.json Configurations Table&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Field&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Example Values&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>uuid&lt;/code>&lt;/td>
+&lt;td>Unique identifier for the module&lt;/td>
+&lt;td>&lt;code>hub-operator&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>onError&lt;/code>&lt;/td>
+&lt;td>Behavior of the webhook failure policy&lt;/td>
+&lt;td>&lt;code>reject&lt;/code>, &lt;code>ignore&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>webhookTimeout&lt;/code>&lt;/td>
+&lt;td>Webhook timeout in seconds&lt;/td>
+&lt;td>&lt;code>1&lt;/code> - &lt;code>30&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>customLabels&lt;/code>&lt;/td>
+&lt;td>Custom labels for namespaces&lt;/td>
+&lt;td>&lt;code>{namespace: {}}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>alwaysIgnore&lt;/code>&lt;/td>
+&lt;td>Conditions to always ignore&lt;/td>
+&lt;td>&lt;code>{namespaces: []}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>includedFiles&lt;/code>&lt;/td>
+&lt;td>For working with WebAssembly&lt;/td>
+&lt;td>[&amp;ldquo;main.wasm&amp;rdquo;, &amp;ldquo;wasm_exec.js&amp;rdquo;]&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>env&lt;/code>&lt;/td>
+&lt;td>Environment variables for the container&lt;/td>
+&lt;td>&lt;code>{LOG_LEVEL: &amp;quot;warn&amp;quot;}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>rbac&lt;/code>&lt;/td>
+&lt;td>Custom RBAC rules (requires building with &lt;code>rbacMode: scoped&lt;/code>)&lt;/td>
+&lt;td>&lt;code>{&amp;quot;rbac&amp;quot;: [{&amp;quot;apiGroups&amp;quot;: [&amp;quot;&amp;lt;apiGroups&amp;gt;&amp;quot;], &amp;quot;resources&amp;quot;: [&amp;quot;&amp;lt;resources&amp;gt;&amp;quot;], &amp;quot;verbs&amp;quot;: [&amp;quot;&amp;lt;verbs&amp;gt;&amp;quot;]}]}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>rbacMode&lt;/code>&lt;/td>
+&lt;td>Configures module to build binding RBAC with principal of least privilege&lt;/td>
+&lt;td>&lt;code>scoped&lt;/code>, &lt;code>admin&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>These tables provide a comprehensive overview of the fields available for customization within the Helm overrides and the &lt;code>package.json&lt;/code> file. Modify these according to your deployment requirements.&lt;/p>
+&lt;h3 id="example-custom-rbac-rules">Example Custom RBAC Rules&lt;/h3>
+&lt;p>The following example demonstrates how to add custom RBAC rules to the Pepr module.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;pepr&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;rbac&amp;#34;&lt;/span>: [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;apiGroups&amp;#34;&lt;/span>: [&lt;span style="color:#f1fa8c">&amp;#34;pepr.dev&amp;#34;&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;resources&amp;#34;&lt;/span>: [&lt;span style="color:#f1fa8c">&amp;#34;customresources&amp;#34;&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;verbs&amp;#34;&lt;/span>: [&lt;span style="color:#f1fa8c">&amp;#34;get&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;list&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;apiGroups&amp;#34;&lt;/span>: [&lt;span style="color:#f1fa8c">&amp;#34;apps&amp;#34;&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;resources&amp;#34;&lt;/span>: [&lt;span style="color:#f1fa8c">&amp;#34;deployments&amp;#34;&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;verbs&amp;#34;&lt;/span>: [&lt;span style="color:#f1fa8c">&amp;#34;create&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;delete&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>V0.39.0: Pepr Filters</title><link>/v0.39.0/user-guide/filters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.39.0/user-guide/filters/</guid><description>
+&lt;p>Filters are functions that take a &lt;code>AdmissionReview&lt;/code> or Watch event and return a boolean. They are used to filter out resources that do not meet certain criteria. Filters are used in the package to filter out resources that are not relevant to the user-defined admission or watch process.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>When(a.ConfigMap)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// This limits the action to only act on new resources.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .IsCreated()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Namespace filter
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .InNamespace(&lt;span style="color:#f1fa8c">&amp;#34;webapp&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Name filter
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .WithName(&lt;span style="color:#f1fa8c">&amp;#34;example-1&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Label filter
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .WithLabel(&lt;span style="color:#f1fa8c">&amp;#34;app&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;webapp&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .WithLabel(&lt;span style="color:#f1fa8c">&amp;#34;env&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;prod&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .Mutate(request &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> request
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .SetLabel(&lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;was-here&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .SetAnnotation(&lt;span style="color:#f1fa8c">&amp;#34;pepr.dev&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;annotations-work-too&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="filters">&lt;code>Filters&lt;/code>&lt;/h2>
+&lt;ul>
+&lt;li>&lt;code>.WithName(&amp;quot;name&amp;quot;)&lt;/code>: Filters resources by name.&lt;/li>
+&lt;li>&lt;code>.WithNameRegex(/^pepr/)&lt;/code>: Filters resources by name using a regex.&lt;/li>
+&lt;li>&lt;code>.InNamespace(&amp;quot;namespace&amp;quot;)&lt;/code>: Filters resources by namespace.&lt;/li>
+&lt;li>&lt;code>.InNamespaceRegex(/(.*)-system/)&lt;/code>: Filters resources by namespace using a regex.&lt;/li>
+&lt;li>&lt;code>.WithLabel(&amp;quot;key&amp;quot;, &amp;quot;value&amp;quot;)&lt;/code>: Filters resources by label. (Can be multiple)&lt;/li>
+&lt;li>&lt;code>.WithDeletionTimestamp()&lt;/code>: Filters resources that have a deletion timestamp.&lt;/li>
+&lt;/ul>
+&lt;p>Notes:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>WithDeletionTimestamp()&lt;/code> is does not work on Delete through the &lt;code>Mutate&lt;/code> or &lt;code>Validate&lt;/code> methods because the Kubernetes Admission Process does not fire the DELETE event with a deletion timestamp on the resource.&lt;/li>
+&lt;li>&lt;code>WithDeletionTimestamp()&lt;/code> &lt;em>will&lt;/em> match on an Update event during Admission (&lt;code>Mutate&lt;/code> or &lt;code>Validate&lt;/code>) when pending-deletion permitted changes (like removing a finalizer) occur.&lt;/li>
+&lt;/ul></description></item></channel></rss>
