@@ -924,11 +924,6 @@ The response body is a plain text representation of the metrics data, according 
 &lt;td>Amount of seconds to wait before a relist of the watched resources&lt;/td>
 &lt;td>default: &lt;code>&amp;quot;600&amp;quot;&lt;/code> (10 mins)&lt;/td>
 &lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>PEPR_USE_LEGACY_WATCH&lt;/code>&lt;/td>
-&lt;td>Configure the Kubernetes Fluent Client to use legacy node-fetch watcher&lt;/td>
-&lt;td>default: &lt;code>&amp;quot;undefined&amp;quot;&lt;/code>&lt;/td>
-&lt;/tr>
 &lt;/tbody>
 &lt;/table>
 &lt;h2 id="configuring-reconcile">Configuring Reconcile&lt;/h2>
@@ -1095,7 +1090,7 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;p>Note: Replace &lt;code>*&lt;/code> with &lt;code>admission&lt;/code> or &lt;code>watcher&lt;/code> as needed to apply settings specifically for each part.&lt;/p>
+&lt;p>Note: Replace &lt;code>*&lt;/code> within &lt;code>admission.*&lt;/code> or &lt;code>watcher.*&lt;/code> to apply settings specific to the desired subparameter (e.g. &lt;code>admission.failurePolicy&lt;/code>).&lt;/p>
 &lt;h2 id="customizing-with-packagejson">Customizing with package.json&lt;/h2>
 &lt;p>Below are the available configurations through &lt;code>package.json&lt;/code>.&lt;/p>
 &lt;h3 id="packagejson-configurations-table">package.json Configurations Table&lt;/h3>
