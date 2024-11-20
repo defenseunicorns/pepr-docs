@@ -34,12 +34,12 @@ params:
       url: https://github.com/defenseunicorns/pepr-docs
   version_menu: Releases
   versions:
+    - version: v0.40
+      url: /v0.40.0/
     - version: v0.39
       url: /v0.39.1/
     - version: v0.38
       url: /v0.38.3/
-    - version: v0.37
-      url: /0.37.3/
     - version: main
       url: /main/
 markup:
