@@ -1111,7 +1111,7 @@ The response body is a plain text representation of the metrics data, according 
 &lt;tr>
 &lt;td>&lt;code>onError&lt;/code>&lt;/td>
 &lt;td>Behavior of the webhook failure policy&lt;/td>
-&lt;td>&lt;code>reject&lt;/code>, &lt;code>ignore&lt;/code>&lt;/td>
+&lt;td>&lt;code>audit&lt;/code>, &lt;code>ignore&lt;/code>, &lt;code>reject&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>webhookTimeout&lt;/code>&lt;/td>
