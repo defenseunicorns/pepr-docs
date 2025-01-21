@@ -68,11 +68,11 @@
 &lt;ul>
 &lt;li>&lt;code>-e, --entry-point [file]&lt;/code> - Specify the entry point file to build with. (default: &amp;ldquo;pepr.ts&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-n, --no-embed&lt;/code> - Disables embedding of deployment files into output module. Useful when creating library modules intended solely for reuse/distribution via NPM&lt;/li>
-&lt;li>&lt;code>-r, --registry-info [&amp;lt;registry&amp;gt;/&amp;lt;username&amp;gt;]&lt;/code> - Registry Info: Image registry and username. Note: You must be signed into the registry&lt;/li>
+&lt;li>&lt;code>-r, --registry-info [&amp;lt;registry&amp;gt;/&amp;lt;username&amp;gt;]&lt;/code> - Provide the image registry and username for building and pushing a custom WASM container. Requires authentication. Builds and pushes &amp;lsquo;registry/username/custom-pepr-controller:&lt;current-version>&amp;rsquo;.&lt;/li>
 &lt;li>&lt;code>-o, --output-dir [output directory]&lt;/code> - Define where to place build output&lt;/li>
 &lt;li>&lt;code>--timeout [timeout]&lt;/code> - How long the API server should wait for a webhook to respond before treating the call as a failure&lt;/li>
 &lt;li>&lt;code>--rbac-mode [admin|scoped]&lt;/code> - Rbac Mode: admin, scoped (default: admin) (choices: &amp;ldquo;admin&amp;rdquo;, &amp;ldquo;scoped&amp;rdquo;, default: &amp;ldquo;admin&amp;rdquo;)&lt;/li>
-&lt;li>&lt;code>-i, --custom-image [custom-image]&lt;/code> - Custom Image: Use custom image for Admission and Watcher Deployments.&lt;/li>
+&lt;li>&lt;code>-i, --custom-image [custom-image]&lt;/code> - Specify a custom image (including version) for Admission and Watch Deployments. Example: &amp;lsquo;docker.io/username/custom-pepr-controller:v1.0.0&amp;rsquo;&lt;/li>
 &lt;li>&lt;code>--registry [GitHub, Iron Bank]&lt;/code> - Container registry: Choose container registry for deployment manifests.&lt;/li>
 &lt;li>&lt;code>-v, --version &amp;lt;version&amp;gt;. Example: '0.27.3'&lt;/code> - The version of the Pepr image to use in the deployment manifests.&lt;/li>
 &lt;li>&lt;code>--withPullSecret &amp;lt;imagePullSecret&amp;gt;&lt;/code> - Image Pull Secret: Use image pull secret for controller Deployment.&lt;/li>
