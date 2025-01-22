@@ -66,7 +66,6 @@ The Watch configuration is a part of the Pepr module that allows you to watch fo
 | `PEPR_RETRY_DELAY_SECONDS`     | The delay between retries in seconds.                                                                            | default: `"10"`                 |
 | `PEPR_LAST_SEEN_LIMIT_SECONDS` | Max seconds to go without receiving a watch event before re-establishing the watch | default: `"300"` (5 mins)       |
 | `PEPR_RELIST_INTERVAL_SECONDS` | Amount of seconds to wait before a relist of the watched resources  | default: `"600"` (10 mins)       |
-| `PEPR_USE_LEGACY_WATCH` | Configure the Kubernetes Fluent Client to use legacy node-fetch watcher  | default: `"undefined"` |
 
 ## Configuring Reconcile
 
@@ -91,6 +90,7 @@ Below are the available Helm override configurations after you have built your P
 
 | Parameter                       | Description                               | Example Values                                 |
 |---------------------------------|-------------------------------------------|------------------------------------------------|
+| `additionalIgnoredNamespaces`              | Namespaces to ignore in addition to alwaysIgnore.namespaces from Pepr config in `package.json`.                    | `- pepr-playground`     |
 | `secrets.apiToken`              | Kube API-Server Token.                    | `Buffer.from(apiToken).toString("base64")`     |
 | `hash`                          | Unique hash for deployment. Do not change.| `<your_hash>`                                  |
 | `namespace.annotations`         | Namespace annotations                     | `{}`                                           |
@@ -119,7 +119,7 @@ Below are the available Helm override configurations after you have built your P
 | `affinity`                                   | Node scheduling options                                             |
 | `terminationGracePeriodSeconds`              | Optional duration in seconds the pod needs to terminate gracefully  |
 
-Note: Replace `*` with `admission` or `watcher` as needed to apply settings specifically for each part.
+Note: Replace `*` within `admission.*` or `watcher.*` to apply settings specific to the desired subparameter (e.g. `admission.failurePolicy`).
 
 ## Customizing with package.json
 
@@ -130,7 +130,7 @@ Below are the available configurations through `package.json`.
 | Field            | Description                            | Example Values                  |
 |------------------|----------------------------------------|---------------------------------|
 | `uuid`           | Unique identifier for the module       | `hub-operator`                  |
-| `onError`        | Behavior of the webhook failure policy | `reject`, `ignore`              |
+| `onError`        | Behavior of the webhook failure policy | `audit`, `ignore`, `reject`     |
 | `webhookTimeout` | Webhook timeout in seconds             | `1` - `30`                      |
 | `customLabels`   | Custom labels for namespaces           | `{namespace: {}}`               |
 | `alwaysIgnore`   | Conditions to always ignore            | `{namespaces: []}`              |
