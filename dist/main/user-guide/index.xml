@@ -151,7 +151,7 @@
 &lt;h2 id="see-also">See Also&lt;/h2>
 &lt;p>Looking for information on the Pepr mutate helpers? See &lt;a href="../actions/mutate#mutate-helpers">Mutate Helpers&lt;/a> for information on those.&lt;/p></description></item><item><title>Main: Pepr Modules</title><link>/main/user-guide/pepr-modules/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-modules/</guid><description>
 &lt;h2 id="what-is-a-pepr-module">What is a Pepr Module?&lt;/h2>
-&lt;p>A Pepr Module is a collection of files that can be used to create a new Pepr Project. A Pepr Module can be used to create a new Pepr Project by using the &lt;code>npx pepr init&lt;/code> command.&lt;/p></description></item><item><title>Main: Actions</title><link>/main/user-guide/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/actions/</guid><description>
+&lt;p>A Pepr Module is a collection of &lt;a href="https://docs.pepr.dev/main/user-guide/capabilities/">capabilities&lt;/a>, config and scaffolding in a Pepr Project. To create a module use the &lt;code>npx pepr init&lt;/code> command.&lt;/p></description></item><item><title>Main: Actions</title><link>/main/user-guide/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/actions/</guid><description>
 &lt;h2 id="overview">Overview&lt;/h2>
 &lt;p>An action is a discrete set of behaviors defined in a single function that acts on a given Kubernetes GroupVersionKind (GVK) passed in during the admission controller lifecycle. Actions are the atomic operations that are performed on Kubernetes resources by Pepr.&lt;/p>
 &lt;p>For example, an action could be responsible for adding a specific label to a Kubernetes resource, or for modifying a specific field in a resource&amp;rsquo;s metadata. Actions can be grouped together within a Capability to provide a more comprehensive set of operations that can be performed on Kubernetes resources.&lt;/p>
@@ -270,9 +270,6 @@
 &lt;/li>
 &lt;li>
 &lt;p>&lt;code>pepr.ts&lt;/code> will still be used for local development, but you&amp;rsquo;ll also need to publish an &lt;code>index.ts&lt;/code> that exports your capabilities. When you build &amp;amp; publish the capability to NPM, you can use &lt;code>npx pepr build -e index.ts&lt;/code> to generate the code needed for reuse by other Pepr modules.&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>See &lt;a href="https://github.com/defenseunicorns/pepr-istio">Pepr Istio&lt;/a> for an example of a reusable capability.&lt;/p>
 &lt;/li>
 &lt;/ul></description></item><item><title>Main: Pepr Store</title><link>/main/user-guide/store/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/store/</guid><description>
 &lt;h2 id="a-lightweight-key-value-store-for-pepr-modules">A Lightweight Key-Value Store for Pepr Modules&lt;/h2>
