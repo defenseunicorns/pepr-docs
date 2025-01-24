@@ -90,6 +90,7 @@ Below are the available Helm override configurations after you have built your P
 
 | Parameter                       | Description                               | Example Values                                 |
 |---------------------------------|-------------------------------------------|------------------------------------------------|
+| `additionalIgnoredNamespaces`              | Namespaces to ignore in addition to alwaysIgnore.namespaces from Pepr config in `package.json`.                    | `- pepr-playground`     |
 | `secrets.apiToken`              | Kube API-Server Token.                    | `Buffer.from(apiToken).toString("base64")`     |
 | `hash`                          | Unique hash for deployment. Do not change.| `<your_hash>`                                  |
 | `namespace.annotations`         | Namespace annotations                     | `{}`                                           |
@@ -129,7 +130,7 @@ Below are the available configurations through `package.json`.
 | Field            | Description                            | Example Values                  |
 |------------------|----------------------------------------|---------------------------------|
 | `uuid`           | Unique identifier for the module       | `hub-operator`                  |
-| `onError`        | Behavior of the webhook failure policy | `reject`, `ignore`              |
+| `onError`        | Behavior of the webhook failure policy | `audit`, `ignore`, `reject`     |
 | `webhookTimeout` | Webhook timeout in seconds             | `1` - `30`                      |
 | `customLabels`   | Custom labels for namespaces           | `{namespace: {}}`               |
 | `alwaysIgnore`   | Conditions to always ignore            | `{namespaces: []}`              |
