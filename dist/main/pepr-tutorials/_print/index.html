@@ -1402,7 +1402,14 @@ Tutorial - Create an Operator in Pepr</h1><h2 id=introduction>Introduction</h2><
 </span></span></span><span style=display:flex><span><span style=color:#6272a4> * @param status The new status
 </span></span></span><span style=display:flex><span><span style=color:#6272a4> */</span>
 </span></span><span style=display:flex><span><span style=color:#ff79c6>async</span> <span style=color:#8be9fd;font-style:italic>function</span> updateStatus(instance: <span style=color:#8be9fd>WebApp</span>, status: <span style=color:#8be9fd>Status</span>) {
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>await</span> writeEvent(instance, {phase: <span style=color:#8be9fd>status</span>}, <span style=color:#f1fa8c>&#34;Normal&#34;</span>, <span style=color:#f1fa8c>&#34;CreatedOrUpdate&#34;</span>, instance.metadata.name, instance.metadata.name);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>await</span> writeEvent(instance, {phase: <span style=color:#8be9fd>status</span>}, {
+</span></span><span style=display:flex><span>      eventType<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;Normal&#34;</span>,
+</span></span><span style=display:flex><span>      eventReason<span style=color:#ff79c6>:</span> <span style=color:#f1fa8c>&#34;CreatedOrUpdate&#34;</span>,
+</span></span><span style=display:flex><span>      reportingComponent: <span style=color:#8be9fd>instance.kind</span>,
+</span></span><span style=display:flex><span>      reportingInstance: <span style=color:#8be9fd>instance.metadata.name</span>,
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>  <span style=color:#ff79c6>await</span> K8s(WebApp).PatchStatus({
 </span></span><span style=display:flex><span>    metadata<span style=color:#ff79c6>:</span> {
 </span></span><span style=display:flex><span>      name: <span style=color:#8be9fd>instance.metadata</span><span style=color:#ff79c6>!</span>.name,

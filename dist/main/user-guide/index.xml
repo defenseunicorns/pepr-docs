@@ -123,21 +123,24 @@
 &lt;ul>
 &lt;li>&lt;strong>@param kubernetesResource: GenericKind&lt;/strong> The Kubernetes resource to write the event for&lt;/li>
 &lt;li>&lt;strong>@param event&lt;/strong> The event to write, should contain a human-readable message for the event&lt;/li>
-&lt;li>&lt;strong>@param eventType&lt;/strong> The type of event to write, for example &amp;ldquo;Warning&amp;rdquo;&lt;/li>
-&lt;li>&lt;strong>@param eventReason&lt;/strong> The reason for the event, for example &amp;ldquo;ReconciliationFailed&amp;rdquo;&lt;/li>
-&lt;li>&lt;strong>@param reportingComponent&lt;/strong> The component that is reporting the event, for example &amp;ldquo;uds.dev/operator&amp;rdquo;&lt;/li>
-&lt;li>&lt;strong>@param reportingInstance&lt;/strong> The instance of the component that is reporting the event, for example process.env.HOSTNAME&lt;/li>
+&lt;li>&lt;strong>@param options&lt;/strong> Configuration options for the event.
+&lt;ul>
+&lt;li>eventType: string – The type of event to write, for example &amp;ldquo;Warning&amp;rdquo;&lt;/li>
+&lt;li>eventReason: string – The reason for the event, for example &amp;ldquo;ReconciliationFailed&amp;rdquo;&lt;/li>
+&lt;li>reportingComponent: string – The component that is reporting the event, for example &amp;ldquo;uds.dev/operator&amp;rdquo;&lt;/li>
+&lt;li>reportingInstance: string – The instance of the component that is reporting the event, for example process.env.HOSTNAME&lt;/li>
+&lt;/ul>
+&lt;/li>
 &lt;/ul>
 &lt;p>&lt;strong>Usage:&lt;/strong>&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> { writeEvent } &lt;span style="color:#ff79c6">=&lt;/span> sdk;
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>writeEvent(
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> kubernetesResource,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> event,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;Warning&amp;#34;&lt;/span>,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;ReconciliationFailed&amp;#34;&lt;/span>,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;uds.dev/operator&amp;#34;&lt;/span>,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> process.env.HOSTNAME,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> event &lt;span style="color:#ff79c6">=&lt;/span> { message&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;Resource was created.&amp;#34;&lt;/span> };
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>writeEvent(kubernetesResource, event, {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> eventType&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;Info&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> eventReason&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;ReconciliationSuccess&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> reportingComponent&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;uds.dev/operator&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> reportingInstance: &lt;span style="color:#8be9fd">process.env.HOSTNAME&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>});
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
 &lt;h2 id="sanitizeresourcename">&lt;code>sanitizeResourceName&lt;/code>&lt;/h2>
 &lt;p>Returns a sanitized resource name to make the given name a valid Kubernetes resource name. Accepts the following parameter:&lt;/p>

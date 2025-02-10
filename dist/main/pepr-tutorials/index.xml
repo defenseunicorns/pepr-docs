@@ -1504,7 +1504,14 @@ password: secret&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * @param status The new status
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">async&lt;/span> &lt;span style="color:#8be9fd;font-style:italic">function&lt;/span> updateStatus(instance: &lt;span style="color:#8be9fd">WebApp&lt;/span>, status: &lt;span style="color:#8be9fd">Status&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">await&lt;/span> writeEvent(instance, {phase: &lt;span style="color:#8be9fd">status&lt;/span>}, &lt;span style="color:#f1fa8c">&amp;#34;Normal&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;CreatedOrUpdate&amp;#34;&lt;/span>, instance.metadata.name, instance.metadata.name);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">await&lt;/span> writeEvent(instance, {phase: &lt;span style="color:#8be9fd">status&lt;/span>}, {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> eventType&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;Normal&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> eventReason&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;CreatedOrUpdate&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> reportingComponent: &lt;span style="color:#8be9fd">instance.kind&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> reportingInstance: &lt;span style="color:#8be9fd">instance.metadata.name&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">await&lt;/span> K8s(WebApp).PatchStatus({
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> metadata&lt;span style="color:#ff79c6">:&lt;/span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name: &lt;span style="color:#8be9fd">instance.metadata&lt;/span>&lt;span style="color:#ff79c6">!&lt;/span>.name,
