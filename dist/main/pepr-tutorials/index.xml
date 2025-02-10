@@ -871,7 +871,7 @@ config.&lt;/em>&lt;/p>
 &lt;img src="../../../images/watcher-endpoint.png" alt="Watcher Endpoint">&lt;/p>
 &lt;h3 id="step-7-test-the-prometheus-connection-in-grafana">Step 7: Test the Prometheus Connection in Grafana&lt;/h3>
 &lt;p>You should be able to test the Prometheus connection in the Grafana UI by visiting the following URL:&lt;/p>
-&lt;p>http://localhost:3000/connections/datasources&lt;/p>
+&lt;p>&lt;a href="http://localhost:3000/connections/datasources">http://localhost:3000/connections/datasources&lt;/a>&lt;/p>
 &lt;p>The login information for Grafana was set in the values.yaml file:&lt;/p>
 &lt;p>username: admin
 password: secret&lt;/p>
@@ -894,7 +894,7 @@ password: secret&lt;/p>
 &lt;li>&lt;a href="#create-crd">Create CRD&lt;/a>&lt;/li>
 &lt;li>&lt;a href="#create-helpers">Create Helpers&lt;/a>&lt;/li>
 &lt;li>&lt;a href="#create-reconciler">Create Reconciler&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#build-and-deploy">Build and Deploy&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#demo">Build and Deploy&lt;/a>&lt;/li>
 &lt;/ul>
 &lt;h2 id="create-a-new-pepr-module">Create a new Pepr Module&lt;/h2>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr init
@@ -1568,7 +1568,7 @@ password: secret&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> RegisterCRD();
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// // Don&amp;#39;t let them be deleted
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// Don&amp;#39;t let them be deleted
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>When(a.Deployment)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .IsDeleted()
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .WithLabel(&lt;span style="color:#f1fa8c">&amp;#34;pepr.dev/operator&amp;#34;&lt;/span>)
@@ -1603,7 +1603,7 @@ password: secret&lt;/p>
 &lt;/ul>
 &lt;p>In this section we created a &lt;code>reconciler.ts&lt;/code> file that contains the function that is responsible for reconciling the state of the instance with the cluster based on CustomResource and updating the status of the instance. The &lt;code>index.ts&lt;/code> file that contains the WebAppController capability and the functions that are used to watch for changes to the WebApp resource and corresponding Kubernetes resources. The &lt;code>Reconcile&lt;/code> action processes the callback in a queue guaranteeing ordered and synchronous processing of events&lt;/p>
 &lt;h2 id="demo">Demo&lt;/h2>
-&lt;p>&lt;em>Create an ephemeral cluster. (Kind or k3d will work)&lt;/em>&lt;/p>
+&lt;p>Create an ephemeral cluster (Kind or k3d will work).&lt;/p>
 &lt;p>Clone the Operator&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>git clone https://github.com/defenseunicorns/pepr-excellent-examples.git
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">cd&lt;/span> pepr-operator
