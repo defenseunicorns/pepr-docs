@@ -1,9 +1,11 @@
 ---
-title: Roadmap for Pepr 
+title: Roadmap for Pepr
 weight: 90
 ---
 
+
 _2024 Roadmap_  
+
 ## Phase 1: Preparation - Testing and Docs
 
 - **Q1**:
@@ -71,7 +73,8 @@ _2024 Roadmap_
     - Ensure that Pepr/KFC can handle a large number of resources and events over a sustained period of time (nightly).
 
 _2025 Roadmap_  
-## Phase 1: Code Quality - Experimentation 
+
+## Phase 1: Code Quality - Experimentation
 
 - **Q1**:
   - **Turn on eslint enforcement and configure settings and see no warnings**:
@@ -90,8 +93,7 @@ _2025 Roadmap_
   - **Determine if a Transactional PeprStore makes sense**:
     - Sus out details involved with having a transactional Pepr Store. What are the implications of this? What are the benefits? What are the drawbacks? What are the use-cases? What are the technologies that can be used to implement this?
   - **Experimentation with Deno2**:
-    - Experiment with Deno2 through Dash Days and see if it can be used in the project. Look into the performance improvements and new features that Deno2 brings to the table. 
-
+    - Experiment with Deno2 through Dash Days and see if it can be used in the project. Look into the performance improvements and new features that Deno2 brings to the table.
 
 ## Phase 3: TBD
 
@@ -104,4 +106,3 @@ _2025 Roadmap_
 ## Phase 4: TDB
 
 - **Q4**:
-
