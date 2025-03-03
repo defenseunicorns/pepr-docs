@@ -1,4 +1,11 @@
 {
   "name": "pepr-docs",
-  "workspaces": [ "build", "site" ]
+  "workspaces": [
+    "build",
+    "site"
+  ],
+  "devDependencies": {
+    "eslint": "^9.21.0",
+    "typescript-eslint": "^8.26.0"
+  }
 }
