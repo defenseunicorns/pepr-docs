@@ -9,6 +9,7 @@
 &lt;li>&lt;code>--name &amp;lt;string&amp;gt;&lt;/code> - Set the name of the new module.&lt;/li>
 &lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init, and VSCode launch.&lt;/li>
 &lt;li>&lt;code>--errorBehavior &amp;lt;audit|ignore|reject&amp;gt;&lt;/code> - Set an errorBehavior.&lt;/li>
+&lt;li>&lt;code>--uuid [string]&lt;/code> - Unique identifier for your module with a max length of 32 characters.&lt;/li>
 &lt;/ul>
 &lt;hr>
 &lt;h2 id="npx-pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/h2>
@@ -1155,6 +1156,7 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
+&lt;p>&lt;strong>uuid&lt;/strong>: An identifier for the module in the &lt;code>pepr-system&lt;/code> namespace. If not provided, a UUID will be generated. It can be any &lt;a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/names/">kubernetes acceptable name&lt;/a> that is under 36 characters.&lt;/p>
 &lt;p>These tables provide a comprehensive overview of the fields available for customization within the Helm overrides and the &lt;code>package.json&lt;/code> file. Modify these according to your deployment requirements.&lt;/p>
 &lt;h3 id="example-custom-rbac-rules">Example Custom RBAC Rules&lt;/h3>
 &lt;p>The following example demonstrates how to add custom RBAC rules to the Pepr module.&lt;/p>
