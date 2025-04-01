@@ -20,7 +20,7 @@ program
 	.parse(process.argv);
 const opts = program.opts();
 
-const RUN = { cutoff: 3 }; // global state bucket!
+const RUN = { cutoff: 2 }; // global state bucket!
 
 async function activity(label, func) {
 	let log = [];
