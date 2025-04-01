@@ -16,6 +16,7 @@ Thank you for your interest in contributing to Pepr! We welcome all contribution
   - [Submitting a Pull Request](#submitting-a-pull-request)
     - [PR Requirements](#pr-requirements)
   - [Coding Guidelines](#coding-guidelines)
+    - [Git Hooks](#git-hooks)
   - [Running Tests](#running-tests)
     - [Run Tests Locally](#run-tests-locally)
     - [Test a Local Development Version](#test-a-local-development-version)
@@ -53,12 +54,15 @@ Please follow our [Code of Conduct](../code_of_conduct/) to maintain a respectfu
 - All commits must be signed.
 - PRs should have a related issue, except for trivial fixes.
 
+We take PR reviews seriously and strive to provide a great contributor experience with timely feedback. To help maintain this, we ask external contributors to limit themselves to no more than two open PRs at a time. Having too many open PRs can slow down the review process and impact the quality of feedback
+
 ## Coding Guidelines
 
 Please follow the coding conventions and style used in the project. Use ESLint and Prettier for linting and formatting:
 
 - Check formatting: `npm run format:check`
 - Fix formatting: `npm run format:fix`
+- If regex is used, provide a link to regex101.com with an explanation of the regex pattern.
 
 ### Git Hooks
 
@@ -90,11 +94,13 @@ Please follow the coding conventions and style used in the project. Use ESLint a
 
 1. Run `npm run build` to build the package.
 2. For running modified pepr, you have two options:
+
   - Using `npx ts-node ./src/cli.ts init` to run the modified code directly, without installing it locally.
     You'll need to also run `npx link <your_dev_pepr_location>` inside your pepr module, to link to the
     development version of pepr.
   - Install the pre-build package with `npm install pepr-0.0.0-development.tgz`.
     You'll need to re-run the installation after every build, though.
+
 3. Run `npx pepr dev` inside your module's directory to run the modified version of pepr.
 
 > [!TIP]

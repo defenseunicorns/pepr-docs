@@ -54,7 +54,7 @@ let result = containers(peprValidationRequest, "ephemeralContainers")
 Returns the owner reference for a Kubernetes resource as an array. Accepts the following parameters:
 
 - **@param kubernetesResource: GenericKind** The Kubernetes resource to get the owner reference for
-- **@param blockOwnerDeletion: boolean** If true, AND if the owner has the "foregroundDeletion" finalizer, then the owner cannot be deleted from the key-value store until this reference is removed. 
+- **@param blockOwnerDeletion: boolean** If true, AND if the owner has the "foregroundDeletion" finalizer, then the owner cannot be deleted from the key-value store until this reference is removed.
 - **@param controller: boolean** If true, this reference points to the managing controller.
 
 **Usage:**
@@ -72,23 +72,23 @@ Write a K8s event for a CRD. Accepts the following parameters:
 
 - **@param kubernetesResource: GenericKind** The Kubernetes resource to write the event for
 - **@param event** The event to write, should contain a human-readable message for the event
-- **@param eventType** The type of event to write, for example "Warning"
-- **@param eventReason** The reason for the event, for example "ReconciliationFailed"
-- **@param reportingComponent** The component that is reporting the event, for example "uds.dev/operator"
-- **@param reportingInstance** The instance of the component that is reporting the event, for example process.env.HOSTNAME
+- **@param options** Configuration options for the event.
+  - eventType: string – The type of event to write, for example "Warning"
+  - eventReason: string – The reason for the event, for example "ReconciliationFailed"
+  - reportingComponent: string – The component that is reporting the event, for example "uds.dev/operator"
+  - reportingInstance: string – The instance of the component that is reporting the event, for example process.env.HOSTNAME
 
 **Usage:**
 
 ```typescript
 const { writeEvent } = sdk;
-writeEvent(
-  kubernetesResource,
-  event,
-  "Warning",
-  "ReconciliationFailed",
-  "uds.dev/operator",
-  process.env.HOSTNAME,
-);
+const event = { message: "Resource was created." };
+writeEvent(kubernetesResource, event, {
+  eventType: "Info",
+  eventReason: "ReconciliationSuccess",
+  reportingComponent: "uds.dev/operator",
+  reportingInstance: process.env.HOSTNAME,
+});
 ```
 
 ---
