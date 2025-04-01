@@ -9,7 +9,7 @@
 &lt;li>&lt;code>--name &amp;lt;string&amp;gt;&lt;/code> - Set the name of the new module.&lt;/li>
 &lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init, and VSCode launch.&lt;/li>
 &lt;li>&lt;code>--errorBehavior &amp;lt;audit|ignore|reject&amp;gt;&lt;/code> - Set an errorBehavior.&lt;/li>
-&lt;li>&lt;code>--uuid [string]&lt;/code> - Unique identifier for your module with a max length of 32 characters.&lt;/li>
+&lt;li>&lt;code>--uuid [string]&lt;/code> - Unique identifier for your module with a max length of 36 characters.&lt;/li>
 &lt;/ul>
 &lt;hr>
 &lt;h2 id="npx-pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/h2>
