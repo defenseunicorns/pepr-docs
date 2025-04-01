@@ -894,7 +894,7 @@ password: secret&lt;/p>
 &lt;li>&lt;a href="#create-crd">Create CRD&lt;/a>&lt;/li>
 &lt;li>&lt;a href="#create-helpers">Create Helpers&lt;/a>&lt;/li>
 &lt;li>&lt;a href="#create-reconciler">Create Reconciler&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#build-and-deploy">Build and Deploy&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#demo">Demo&lt;/a>&lt;/li>
 &lt;/ul>
 &lt;h2 id="create-a-new-pepr-module">Create a new Pepr Module&lt;/h2>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr init
@@ -1504,7 +1504,7 @@ password: secret&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> * @param status The new status
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"> */&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">async&lt;/span> &lt;span style="color:#8be9fd;font-style:italic">function&lt;/span> updateStatus(instance: &lt;span style="color:#8be9fd">WebApp&lt;/span>, status: &lt;span style="color:#8be9fd">Status&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">await&lt;/span> writeEvent(instance, {phase: &lt;span style="color:#8be9fd">status&lt;/span>}, &lt;span style="color:#f1fa8c">&amp;#34;Normal&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;CreatedOrUpdate&amp;#34;&lt;/span>, instance.metadata.name, instance.metadata.name);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">await&lt;/span> writeEvent(instance, {message: &lt;span style="color:#8be9fd">status.phase&lt;/span>}, &lt;span style="color:#f1fa8c">&amp;#34;Normal&amp;#34;&lt;/span>, &lt;span style="color:#f1fa8c">&amp;#34;CreatedOrUpdate&amp;#34;&lt;/span>, instance.metadata.name, instance.metadata.name);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">await&lt;/span> K8s(WebApp).PatchStatus({
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> metadata&lt;span style="color:#ff79c6">:&lt;/span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name: &lt;span style="color:#8be9fd">instance.metadata&lt;/span>&lt;span style="color:#ff79c6">!&lt;/span>.name,
