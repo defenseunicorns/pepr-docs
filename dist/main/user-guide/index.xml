@@ -628,7 +628,9 @@
 &lt;li>&lt;code>pepr_errors&lt;/code>: A counter that increments when an error event occurs in the application.&lt;/li>
 &lt;li>&lt;code>pepr_alerts&lt;/code>: A counter that increments when an alert event is triggered in the application.&lt;/li>
 &lt;li>&lt;code>pepr_mutate&lt;/code>: A summary that provides the observed durations of mutation events in the application.&lt;/li>
+&lt;li>&lt;code>pepr_mutate_timeouts&lt;/code> : A counter that increments when a webhook timeout occurs during mutation.&lt;/li>
 &lt;li>&lt;code>pepr_validate&lt;/code>: A summary that provides the observed durations of validation events in the application.&lt;/li>
+&lt;li>&lt;code>pepr_validate_timeouts&lt;/code> : A counter that increments when a webhook timeout occurs during validation.&lt;/li>
 &lt;li>&lt;code>pepr_cache_miss&lt;/code>: A gauge that provides the number of cache misses per window.&lt;/li>
 &lt;li>&lt;code>pepr_resync_failure_count&lt;/code>: A gauge that provides the number of unsuccessful attempts at receiving an event within the last seen event limit before re-establishing a new connection.&lt;/li>
 &lt;/ul>
