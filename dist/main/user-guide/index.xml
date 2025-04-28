@@ -10,6 +10,7 @@
 &lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init, and VSCode launch.&lt;/li>
 &lt;li>&lt;code>--errorBehavior &amp;lt;audit|ignore|reject&amp;gt;&lt;/code> - Set an errorBehavior.&lt;/li>
 &lt;li>&lt;code>--uuid [string]&lt;/code> - Unique identifier for your module with a max length of 36 characters.&lt;/li>
+&lt;li>&lt;code>--crd&lt;/code> - Scaffold and generate Kubernetes CRDs from structured TypeScript definitions.&lt;/li>
 &lt;/ul>
 &lt;hr>
 &lt;h2 id="npx-pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/h2>
@@ -85,7 +86,35 @@
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr kfc &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>command&lt;span style="color:#ff79c6">]&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>If you are unsure of what commands are available, you can run &lt;code>npx pepr kfc&lt;/code> to see the available commands.&lt;/p>
 &lt;p>For example, to generate usable types from a Kubernetes CRD, you can run &lt;code>npx pepr kfc crd [source] [directory]&lt;/code>. This will generate the types for the &lt;code>[source]&lt;/code> CRD and output the generated types to the &lt;code>[directory]&lt;/code>.&lt;/p>
-&lt;p>You can learn more about the &lt;code>kubernetes-fluent-client&lt;/code> &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">here&lt;/a>.&lt;/p></description></item><item><title>Main: Pepr SDK</title><link>/main/user-guide/sdk/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/sdk/</guid><description>
+&lt;p>You can learn more about the &lt;code>kubernetes-fluent-client&lt;/code> &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">here&lt;/a>.&lt;/p>
+&lt;h2 id="npx-pepr-crd">&lt;code>npx pepr crd&lt;/code>&lt;/h2>
+&lt;p>Scaffold and generate Kubernetes CRDs from structured TypeScript definitions.&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;p>-h, &amp;ndash;help display help for command&lt;/p>
+&lt;p>&lt;strong>Commands:&lt;/strong>&lt;/p>
+&lt;p>create [options] Create a new CRD TypeScript definition
+generate [options] Generate CRD manifests from TypeScript definitions
+help [command] display help for command&lt;/p>
+&lt;h2 id="npx-pepr-crd-create">&lt;code>npx pepr crd create&lt;/code>&lt;/h2>
+&lt;p>Create a new CRD TypeScript definition.&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>--group &amp;lt;group&amp;gt; &lt;/code> - API group (e.g. cache)&lt;/li>
+&lt;li>&lt;code>--version &amp;lt;version&amp;gt;&lt;/code> - API version (e.g. v1alpha1)&lt;/li>
+&lt;li>&lt;code>--kind &amp;lt;kind&amp;gt;&lt;/code> - Kind name (e.g. Memcached)&lt;/li>
+&lt;li>&lt;code>--domain &amp;lt;domain&amp;gt;&lt;/code> - Optional domain (e.g. pepr.dev) (default: &amp;ldquo;pepr.dev&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>--scope &amp;lt;Namespaced | Cluster&amp;gt;&lt;/code> - Whether the resulting custom resource is cluster- or namespace-scoped (default: &amp;ldquo;Namespaced&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>--plural &amp;lt;plural&amp;gt;&lt;/code> - Plural name (e.g. memcacheds) (default: &amp;ldquo;&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>--shortName &amp;lt;shortName&amp;gt;&lt;/code> - Short name (e.g. mc) (default: &amp;ldquo;&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-h, --help&lt;/code> - display help for command&lt;/li>
+&lt;/ul>
+&lt;h2 id="npx-pepr-crd-generate">&lt;code>npx pepr crd generate&lt;/code>&lt;/h2>
+&lt;p>Generate CRD manifests from TypeScript definitions&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>--output &amp;lt;output&amp;gt;&lt;/code> - Output directory for generated CRDs (default: &amp;ldquo;./crds&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-h, --help&lt;/code> - display help for command&lt;/li>
+&lt;/ul></description></item><item><title>Main: Pepr SDK</title><link>/main/user-guide/sdk/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/sdk/</guid><description>
 &lt;p>To use, import the &lt;code>sdk&lt;/code> from the &lt;code>pepr&lt;/code> package:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> { sdk } &lt;span style="color:#ff79c6">from&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>;
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="containers">&lt;code>containers&lt;/code>&lt;/h2>
