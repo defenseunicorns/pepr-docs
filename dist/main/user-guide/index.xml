@@ -68,6 +68,7 @@
 &lt;p>Create a &lt;a href="https://zarf.dev">zarf.yaml&lt;/a> and K8s manifest for the current module. This includes everything needed to deploy Pepr and the current module into production environments.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
+&lt;li>&lt;code>--custom-name [name]&lt;/code> - Specify a custom name for zarf component and service monitors in helm charts.&lt;/li>
 &lt;li>&lt;code>-e, --entry-point [file]&lt;/code> - Specify the entry point file to build with. (default: &amp;ldquo;pepr.ts&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-n, --no-embed&lt;/code> - Disables embedding of deployment files into output module. Useful when creating library modules intended solely for reuse/distribution via NPM&lt;/li>
 &lt;li>&lt;code>-r, --registry-info [&amp;lt;registry&amp;gt;/&amp;lt;username&amp;gt;]&lt;/code> - Provide the image registry and username for building and pushing a custom WASM container. Requires authentication. Builds and pushes &amp;lsquo;registry/username/custom-pepr-controller:&lt;current-version>&amp;rsquo;.&lt;/li>
