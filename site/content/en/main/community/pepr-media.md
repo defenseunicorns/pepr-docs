@@ -8,7 +8,7 @@ weight: 50
 
 ### Presentations
 
-- [Building Smarter Kubernetes Workflows: Pepr for the modern SRE](https://sreday.com/2025-london-q1/casey_wylie_defense_unicorns_building_smarter_kubernetes_workflows_pepr_for_the_modern_sre)
+- Building Smarter Kubernetes Workflows: Pepr for the modern SRE
 
 ## 2024
 
