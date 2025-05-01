@@ -1,69 +1,4 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>– User Guide</title><link>/main/user-guide/</link><description>Recent content in User Guide on</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="/main/user-guide/index.xml" rel="self" type="application/rss+xml"/><item><title>Main: Pepr CLI</title><link>/main/user-guide/pepr-cli/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/pepr-cli/</guid><description>
-&lt;h2 id="npx-pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/h2>
-&lt;p>Initialize a new Pepr Module.&lt;/p>
-&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init and VSCode launch.&lt;/li>
-&lt;li>&lt;code>--confirm&lt;/code> - Skip verification prompt when creating a new module.&lt;/li>
-&lt;li>&lt;code>--description &amp;lt;string&amp;gt;&lt;/code> - Explain the purpose of the new module.&lt;/li>
-&lt;li>&lt;code>--name &amp;lt;string&amp;gt;&lt;/code> - Set the name of the new module.&lt;/li>
-&lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init, and VSCode launch.&lt;/li>
-&lt;li>&lt;code>--errorBehavior &amp;lt;audit|ignore|reject&amp;gt;&lt;/code> - Set an errorBehavior.&lt;/li>
-&lt;li>&lt;code>--uuid [string]&lt;/code> - Unique identifier for your module with a max length of 36 characters.&lt;/li>
-&lt;li>&lt;code>--crd&lt;/code> - Scaffold and generate Kubernetes CRDs from structured TypeScript definitions.&lt;/li>
-&lt;/ul>
-&lt;hr>
-&lt;h2 id="npx-pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/h2>
-&lt;p>Update the current Pepr Module to the latest SDK version. This command is not recommended for production use, instead, we recommend Renovate or Dependabot for automated updates.&lt;/p>
-&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>--skip-template-update&lt;/code> - Skip updating the template files&lt;/li>
-&lt;/ul>
-&lt;hr>
-&lt;h2 id="npx-pepr-dev">&lt;code>npx pepr dev&lt;/code>&lt;/h2>
-&lt;p>Connect a local cluster to a local version of the Pepr Controller to do real-time debugging of your module. Note the &lt;code>npx pepr dev&lt;/code> assumes a K3d cluster is running by default. If you are working with Kind or another docker-based K8s distro, you will need to pass the &lt;code>--host host.docker.internal&lt;/code> option to &lt;code>npx pepr dev&lt;/code>. If working with a remote cluster you will have to give Pepr a host path to your machine that is reachable from the K8s cluster.&lt;/p>
-&lt;p>NOTE: This command, by necessity, installs resources into the cluster you run it against. Generally, these resources are removed once the &lt;code>pepr dev&lt;/code> session ends but there are two notable exceptions:&lt;/p>
-&lt;ul>
-&lt;li>the &lt;code>pepr-system&lt;/code> namespace, and&lt;/li>
-&lt;li>the &lt;code>PeprStore&lt;/code> CRD.&lt;/li>
-&lt;/ul>
-&lt;p>These can&amp;rsquo;t be auto-removed because they&amp;rsquo;re global in scope &amp;amp; doing so would risk wrecking any other Pepr deployments that are already running in-cluster. If (for some strange reason) you&amp;rsquo;re &lt;em>not&lt;/em> &lt;code>pepr dev&lt;/code>-ing against an ephemeral dev cluster and need to keep the cluster clean, you&amp;rsquo;ll have to remove these hold-overs yourself (or not)!&lt;/p>
-&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>-h, --host [host]&lt;/code> - Host to listen on (default: &amp;ldquo;host.k3d.internal&amp;rdquo;)&lt;/li>
-&lt;li>&lt;code>--confirm&lt;/code> - Skip confirmation prompt&lt;/li>
-&lt;/ul>
-&lt;hr>
-&lt;h2 id="npx-pepr-deploy">&lt;code>npx pepr deploy&lt;/code>&lt;/h2>
-&lt;p>Deploy the current module into a Kubernetes cluster, useful for CI systems. Not recommended for production use.&lt;/p>
-&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>-i, --image [image]&lt;/code> - Override the image tag&lt;/li>
-&lt;li>&lt;code>--confirm&lt;/code> - Skip confirmation prompt&lt;/li>
-&lt;li>&lt;code>--pullSecret &amp;lt;name&amp;gt;&lt;/code> - Deploy imagePullSecret for Controller private registry&lt;/li>
-&lt;li>&lt;code>--docker-server &amp;lt;server&amp;gt;&lt;/code> - Docker server address&lt;/li>
-&lt;li>&lt;code>--docker-username &amp;lt;username&amp;gt;&lt;/code> - Docker registry username&lt;/li>
-&lt;li>&lt;code>--docker-email &amp;lt;email&amp;gt;&lt;/code> - Email for Docker registry&lt;/li>
-&lt;li>&lt;code>--docker-password &amp;lt;password&amp;gt;&lt;/code> - Password for Docker registry&lt;/li>
-&lt;li>&lt;code>--force&lt;/code> - Force deploy the module, override manager field&lt;/li>
-&lt;/ul>
-&lt;hr>
-&lt;h2 id="npx-pepr-monitor">&lt;code>npx pepr monitor&lt;/code>&lt;/h2>
-&lt;p>Monitor Validations for a given Pepr Module or all Pepr Modules.&lt;/p>
-&lt;p>Usage:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr monitor &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>module-uuid&lt;span style="color:#ff79c6">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>-h, --help&lt;/code> - Display help for command&lt;/li>
-&lt;/ul>
-&lt;hr>
-&lt;h2 id="npx-pepr-uuid">&lt;code>npx pepr uuid&lt;/code>&lt;/h2>
-&lt;p>Module UUID(s) currently deployed in the cluster with their descriptions.&lt;/p>
-&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>[uuid]&lt;/code> - Specific module UUID&lt;/li>
-&lt;/ul>
-&lt;hr>
 &lt;h2 id="npx-pepr-build">&lt;code>npx pepr build&lt;/code>&lt;/h2>
 &lt;p>Create a &lt;a href="https://zarf.dev">zarf.yaml&lt;/a> and K8s manifest for the current module. This includes everything needed to deploy Pepr and the current module into production environments.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
@@ -81,13 +16,6 @@
 &lt;li>&lt;code>--withPullSecret &amp;lt;imagePullSecret&amp;gt;&lt;/code> - Image Pull Secret: Use image pull secret for controller Deployment.&lt;/li>
 &lt;li>&lt;code>-z, --zarf [manifest|chart]&lt;/code> - The Zarf package type to generate: manifest or chart (default: manifest).&lt;/li>
 &lt;/ul>
-&lt;h2 id="npx-pepr-kfc">&lt;code>npx pepr kfc&lt;/code>&lt;/h2>
-&lt;p>Execute a &lt;code>kubernetes-fluent-client&lt;/code> command. This command is a wrapper around &lt;code>kubernetes-fluent-client&lt;/code>.&lt;/p>
-&lt;p>Usage:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr kfc &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>command&lt;span style="color:#ff79c6">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>If you are unsure of what commands are available, you can run &lt;code>npx pepr kfc&lt;/code> to see the available commands.&lt;/p>
-&lt;p>For example, to generate usable types from a Kubernetes CRD, you can run &lt;code>npx pepr kfc crd [source] [directory]&lt;/code>. This will generate the types for the &lt;code>[source]&lt;/code> CRD and output the generated types to the &lt;code>[directory]&lt;/code>.&lt;/p>
-&lt;p>You can learn more about the &lt;code>kubernetes-fluent-client&lt;/code> &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">here&lt;/a>.&lt;/p>
 &lt;h2 id="npx-pepr-crd">&lt;code>npx pepr crd&lt;/code>&lt;/h2>
 &lt;p>Scaffold and generate Kubernetes CRDs from structured TypeScript definitions.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
@@ -115,6 +43,72 @@ help [command] display help for command&lt;/p>
 &lt;ul>
 &lt;li>&lt;code>--output &amp;lt;output&amp;gt;&lt;/code> - Output directory for generated CRDs (default: &amp;ldquo;./crds&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-h, --help&lt;/code> - display help for command&lt;/li>
+&lt;/ul>
+&lt;h2 id="npx-pepr-deploy">&lt;code>npx pepr deploy&lt;/code>&lt;/h2>
+&lt;p>Deploy the current module into a Kubernetes cluster, useful for CI systems. Not recommended for production use.&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>-i, --image [image]&lt;/code> - Override the image tag&lt;/li>
+&lt;li>&lt;code>--confirm&lt;/code> - Skip confirmation prompt&lt;/li>
+&lt;li>&lt;code>--pullSecret &amp;lt;name&amp;gt;&lt;/code> - Deploy imagePullSecret for Controller private registry&lt;/li>
+&lt;li>&lt;code>--docker-server &amp;lt;server&amp;gt;&lt;/code> - Docker server address&lt;/li>
+&lt;li>&lt;code>--docker-username &amp;lt;username&amp;gt;&lt;/code> - Docker registry username&lt;/li>
+&lt;li>&lt;code>--docker-email &amp;lt;email&amp;gt;&lt;/code> - Email for Docker registry&lt;/li>
+&lt;li>&lt;code>--docker-password &amp;lt;password&amp;gt;&lt;/code> - Password for Docker registry&lt;/li>
+&lt;li>&lt;code>--force&lt;/code> - Force deploy the module, override manager field&lt;/li>
+&lt;/ul>
+&lt;h2 id="npx-pepr-dev">&lt;code>npx pepr dev&lt;/code>&lt;/h2>
+&lt;p>Connect a local cluster to a local version of the Pepr Controller to do real-time debugging of your module. Note the &lt;code>npx pepr dev&lt;/code> assumes a K3d cluster is running by default. If you are working with Kind or another docker-based K8s distro, you will need to pass the &lt;code>--host host.docker.internal&lt;/code> option to &lt;code>npx pepr dev&lt;/code>. If working with a remote cluster you will have to give Pepr a host path to your machine that is reachable from the K8s cluster.&lt;/p>
+&lt;p>NOTE: This command, by necessity, installs resources into the cluster you run it against. Generally, these resources are removed once the &lt;code>pepr dev&lt;/code> session ends but there are two notable exceptions:&lt;/p>
+&lt;ul>
+&lt;li>the &lt;code>pepr-system&lt;/code> namespace, and&lt;/li>
+&lt;li>the &lt;code>PeprStore&lt;/code> CRD.&lt;/li>
+&lt;/ul>
+&lt;p>These can&amp;rsquo;t be auto-removed because they&amp;rsquo;re global in scope &amp;amp; doing so would risk wrecking any other Pepr deployments that are already running in-cluster. If (for some strange reason) you&amp;rsquo;re &lt;em>not&lt;/em> &lt;code>pepr dev&lt;/code>-ing against an ephemeral dev cluster and need to keep the cluster clean, you&amp;rsquo;ll have to remove these hold-overs yourself (or not)!&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>-h, --host [host]&lt;/code> - Host to listen on (default: &amp;ldquo;host.k3d.internal&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>--confirm&lt;/code> - Skip confirmation prompt&lt;/li>
+&lt;/ul>
+&lt;h2 id="npx-pepr-init">&lt;code>npx pepr init&lt;/code>&lt;/h2>
+&lt;p>Initialize a new Pepr Module.&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init and VSCode launch.&lt;/li>
+&lt;li>&lt;code>--confirm&lt;/code> - Skip verification prompt when creating a new module.&lt;/li>
+&lt;li>&lt;code>--description &amp;lt;string&amp;gt;&lt;/code> - Explain the purpose of the new module.&lt;/li>
+&lt;li>&lt;code>--name &amp;lt;string&amp;gt;&lt;/code> - Set the name of the new module.&lt;/li>
+&lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init, and VSCode launch.&lt;/li>
+&lt;li>&lt;code>--errorBehavior &amp;lt;audit|ignore|reject&amp;gt;&lt;/code> - Set an errorBehavior.&lt;/li>
+&lt;li>&lt;code>--uuid [string]&lt;/code> - Unique identifier for your module with a max length of 36 characters.&lt;/li>
+&lt;li>&lt;code>--crd&lt;/code> - Scaffold and generate Kubernetes CRDs from structured TypeScript definitions.&lt;/li>
+&lt;/ul>
+&lt;h2 id="npx-pepr-kfc">&lt;code>npx pepr kfc&lt;/code>&lt;/h2>
+&lt;p>Execute a &lt;code>kubernetes-fluent-client&lt;/code> command. This command is a wrapper around &lt;code>kubernetes-fluent-client&lt;/code>.&lt;/p>
+&lt;p>Usage:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr kfc &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>command&lt;span style="color:#ff79c6">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>If you are unsure of what commands are available, you can run &lt;code>npx pepr kfc&lt;/code> to see the available commands.&lt;/p>
+&lt;p>For example, to generate usable types from a Kubernetes CRD, you can run &lt;code>npx pepr kfc crd [source] [directory]&lt;/code>. This will generate the types for the &lt;code>[source]&lt;/code> CRD and output the generated types to the &lt;code>[directory]&lt;/code>.&lt;/p>
+&lt;p>You can learn more about the &lt;code>kubernetes-fluent-client&lt;/code> &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">here&lt;/a>.&lt;/p>
+&lt;h2 id="npx-pepr-monitor">&lt;code>npx pepr monitor&lt;/code>&lt;/h2>
+&lt;p>Monitor Validations for a given Pepr Module or all Pepr Modules.&lt;/p>
+&lt;p>Usage:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr monitor &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>module-uuid&lt;span style="color:#ff79c6">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>-h, --help&lt;/code> - Display help for command&lt;/li>
+&lt;/ul>
+&lt;h2 id="npx-pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/h2>
+&lt;p>Update the current Pepr Module to the latest SDK version. This command is not recommended for production use, instead, we recommend Renovate or Dependabot for automated updates.&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>--skip-template-update&lt;/code> - Skip updating the template files&lt;/li>
+&lt;/ul>
+&lt;h2 id="npx-pepr-uuid">&lt;code>npx pepr uuid&lt;/code>&lt;/h2>
+&lt;p>Module UUID(s) currently deployed in the cluster with their descriptions.&lt;/p>
+&lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>[uuid]&lt;/code> - Specific module UUID&lt;/li>
 &lt;/ul></description></item><item><title>Main: Pepr SDK</title><link>/main/user-guide/sdk/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/sdk/</guid><description>
 &lt;p>To use, import the &lt;code>sdk&lt;/code> from the &lt;code>pepr&lt;/code> package:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> { sdk } &lt;span style="color:#ff79c6">from&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>;
