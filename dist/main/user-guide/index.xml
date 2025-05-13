@@ -1206,7 +1206,7 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>watch&lt;/code>&lt;/td>
-&lt;td>watcher namespaces to always ignor&lt;/td>
+&lt;td>watcher namespaces to always ignore&lt;/td>
 &lt;td>&lt;code>{alwaysIgnore: {namespaces: []}}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
