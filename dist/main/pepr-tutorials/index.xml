@@ -906,7 +906,7 @@ password: secret&lt;/p>
 &lt;li>Access to the &lt;code>curl&lt;/code> command&lt;/li>
 &lt;li>Basic understanding of Kubernetes concepts&lt;/li>
 &lt;li>Familiarity with TypeScript&lt;/li>
-&lt;li>Node.js ≥ 18.0&lt;/li>
+&lt;li>Node.js ≥ 20.0&lt;/li>
 &lt;/ul>
 &lt;p>&lt;a href="#building-a-kubernetes-operator-with-pepr">Back to top&lt;/a>&lt;/p>
 &lt;h2 id="tutorial-steps">Tutorial Steps&lt;/h2>
