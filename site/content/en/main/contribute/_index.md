@@ -31,7 +31,7 @@ Please follow our [Code of Conduct](../code_of_conduct/) to maintain a respectfu
 
 - **Repository**: [https://github.com/defenseunicorns/pepr/](https://github.com/defenseunicorns/pepr/)
 - **npm package**: [https://www.npmjs.com/package/pepr](https://www.npmjs.com/package/pepr)
-- **Required Node version**: `>=18.0.0`
+- **Required Node version**: `>=20.0.0`
 
 ### Setup
 
