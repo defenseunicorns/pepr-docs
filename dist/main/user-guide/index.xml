@@ -1282,4 +1282,24 @@ The response body is a plain text representation of the metrics data, according 
 &lt;ul>
 &lt;li>&lt;code>WithDeletionTimestamp()&lt;/code> is does not work on Delete through the &lt;code>Mutate&lt;/code> or &lt;code>Validate&lt;/code> methods because the Kubernetes Admission Process does not fire the DELETE event with a deletion timestamp on the resource.&lt;/li>
 &lt;li>&lt;code>WithDeletionTimestamp()&lt;/code> &lt;em>will&lt;/em> match on an Update event during Admission (&lt;code>Mutate&lt;/code> or &lt;code>Validate&lt;/code>) when pending-deletion permitted changes (like removing a finalizer) occur.&lt;/li>
-&lt;/ul></description></item></channel></rss>
+&lt;/ul></description></item><item><title>Main: Generating CRDs</title><link>/main/user-guide/generating-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/generating-crds/</guid><description>
+&lt;p>Pepr comes with the ability to generate Kubernetes Custom Resource Definitions (CRDs) from TypeScript types. This feature is particularly useful for operator developers who are creating Operators that utilize CRDs.&lt;/p>
+&lt;p>To generate a TypeScript types for a CRD, you can use the &lt;code>pepr crd create&lt;/code> command. This command allows you to specify the group, version, kind, short name, plural name, and scope of the CRD.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr crd create &lt;span style="color:#f1fa8c">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --group cache &lt;span style="color:#f1fa8c">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --version v1alpha1 &lt;span style="color:#f1fa8c">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --kind Memcache &lt;span style="color:#f1fa8c">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --shortName mc &lt;span style="color:#f1fa8c">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --plural memcaches &lt;span style="color:#f1fa8c">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --scope Namespaced
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This command will create a TypeScript file in the &lt;code>crds&lt;/code> directory with the generated types for the specified CRD. The generated file will include the necessary type definitions for the CRD.&lt;/p>
+&lt;blockquote>
+&lt;p>Note: The comments in the interface spec and condition type become descriptions for the CRD properties, so you can add comments to your properties to provide additional context or documentation for the generated types.&lt;/p>
+&lt;/blockquote>
+&lt;p>After adding the required types for your CRD, you can then generate the CRD YAML file using the &lt;code>pepr crd generate&lt;/code> command. This command will create a YAML file that defines the CRD in Kubernetes format.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr crd generate
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You can control the output directory for the generated CRD YAML file by using the &lt;code>--output&lt;/code> option. If not, it will be generated in the crds directory by default.&lt;/p>
+&lt;p>At this point, you can apply the generated CRD to your Kubernetes cluster using &lt;code>kubectl apply -f crds/your-crd-file.yaml&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&amp;gt; kubectl apply -f crds
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>customresourcedefinition.apiextensions.k8s.io/memcaches.cache.pepr.dev created
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>
