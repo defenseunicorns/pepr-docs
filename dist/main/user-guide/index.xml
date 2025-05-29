@@ -24,7 +24,7 @@ crd Scaffold and generate Kubernetes CRDs from structured TypeScript definitions
 &lt;li>&lt;code>-e, --entry-point [file]&lt;/code> - Specify the entry point file to build with. (default: &amp;ldquo;pepr.ts&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-n, --no-embed&lt;/code> - Disables embedding of deployment files into output module. Useful when creating library modules intended solely for reuse/distribution via NPM.&lt;/li>
 &lt;li>&lt;code>-i, --custom-image &amp;lt;custom-image&amp;gt;&lt;/code> - Specify a custom image (including version) for Admission and Watch Deployments. Example: &amp;lsquo;docker.io/username/custom-pepr-controller:v1.0.0&amp;rsquo;&lt;/li>
-&lt;li>&lt;code>-r, --registry-info [&amp;lt;registry&amp;gt;/&amp;lt;username&amp;gt;]&lt;/code> - Provide the image registry and username for building and pushing a custom WASM container. Requires authentication. Builds and pushes &amp;lsquo;registry/username/custom-pepr-controller:&lt;current-version>&amp;rsquo;.&lt;/li>
+&lt;li>&lt;code>-r, --registry-info [&amp;lt;registry&amp;gt;/&amp;lt;username&amp;gt;]&lt;/code> - Provide the image registry and username for building and pushing a custom WASM container. Requires authentication. Builds and pushes &lt;code>'registry/username/custom-pepr-controller:&amp;lt;current-version&amp;gt;'&lt;/code>.&lt;/li>
 &lt;li>&lt;code>-o, --output-dir &amp;lt;output directory&amp;gt;&lt;/code> - Define where to place build output&lt;/li>
 &lt;li>&lt;code>--timeout &amp;lt;timeout&amp;gt;&lt;/code> - How long the API server should wait for a webhook to respond before treating the call as a failure&lt;/li>
 &lt;li>&lt;code>--withPullSecret &amp;lt;imagePullSecret&amp;gt;&lt;/code> - Image Pull Secret: Use image pull secret for controller Deployment. (default: &amp;ldquo;&amp;rdquo;)&lt;/li>
@@ -123,7 +123,7 @@ help [command] display help for command&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr kfc &lt;span style="color:#ff79c6">[&lt;/span>options&lt;span style="color:#ff79c6">]&lt;/span> &lt;span style="color:#ff79c6">[&lt;/span>command&lt;span style="color:#ff79c6">]&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>If you are unsure of what commands are available, you can run &lt;code>npx pepr kfc&lt;/code> to see the available commands.&lt;/p>
 &lt;p>For example, to generate usable types from a Kubernetes CRD, you can run &lt;code>npx pepr kfc crd [source] [directory]&lt;/code>. This will generate the types for the &lt;code>[source]&lt;/code> CRD and output the generated types to the &lt;code>[directory]&lt;/code>.&lt;/p>
-&lt;p>You can learn more about the &lt;code>kubernetes-fluent-client&lt;/code> &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">here&lt;/a>.&lt;/p>
+&lt;p>You can &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">learn more about the &lt;code>kubernetes-fluent-client&lt;/code> here&lt;/a>.&lt;/p>
 &lt;h2 id="npx-pepr-monitor">&lt;code>npx pepr monitor&lt;/code>&lt;/h2>
 &lt;p>Monitor Validations for a given Pepr Module or all Pepr Modules.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
@@ -329,7 +329,7 @@ help [command] display help for command&lt;/p>
 &lt;p>[&lt;video class="td-content" controls src="https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4](https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4">&lt;/video>)&lt;/p>
 &lt;p>&lt;em>If you prefer not to use VSCode, you can also modify or copy the &lt;code>HelloPepr&lt;/code> capability to meet your needs instead.&lt;/em>&lt;/p>
 &lt;h2 id="reusable-capabilities">Reusable Capabilities&lt;/h2>
-&lt;p>Pepr has an NPM org managed by Defense Unicorns, &lt;code>@pepr&lt;/code>, where capabilities are published for reuse in other Pepr Modules. You can find a list of published capabilities &lt;a href="https://www.npmjs.com/search?q=@pepr">here&lt;/a>.&lt;/p>
+&lt;p>Pepr has an NPM org managed by Defense Unicorns, &lt;code>@pepr&lt;/code>, where capabilities are published for reuse in other Pepr Modules. You can find a list of &lt;a href="https://www.npmjs.com/search?q=@pepr">published capabilities here&lt;/a>.&lt;/p>
 &lt;p>You also can publish your own Pepr capabilities to NPM and import them. A couple of things you&amp;rsquo;ll want to be aware of when publishing your own capabilities:&lt;/p>
 &lt;ul>
 &lt;li>

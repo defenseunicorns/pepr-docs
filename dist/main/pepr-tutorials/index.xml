@@ -1061,7 +1061,7 @@ An ephemeral cluster is a temporary Kubernetes cluster that exists only for test
 &lt;/li>
 &lt;/ol>
 &lt;p>This process creates a self-contained deployment unit that includes everything needed to run your operator in a Kubernetes cluster.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-fallback" data-lang="fallback">&lt;span style="display:flex;">&lt;span>┌─────────────────────┐ ┌──────────────────┐ ┌───────────────────┐
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>┌─────────────────────┐ ┌──────────────────┐ ┌───────────────────┐
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ │ │ │ │ │
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ Your Pepr Code │────────▶ │ pepr build │────────▶ │ dist/ │
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ (TypeScript) │ │ (Build Process) │ │(Deployment Files) │
@@ -1116,7 +1116,7 @@ An ephemeral cluster is a temporary Kubernetes cluster that exists only for test
 It may take a moment for the cluster to recognize this resource before the following command will work:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl explain wa.spec
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Expected Output:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-fallback" data-lang="fallback">&lt;span style="display:flex;">&lt;span>GROUP: pepr.io
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>GROUP: pepr.io
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>KIND: WebApp
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>VERSION: v1alpha1
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
@@ -1148,7 +1148,7 @@ It may take a moment for the cluster to recognize this resource before the follo
 &lt;li>Taking actions to align the actual state with the desired state&lt;/li>
 &lt;/ol>
 &lt;p>This continuous loop ensures your application maintains its expected configuration even when disruptions occur.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-fallback" data-lang="fallback">&lt;span style="display:flex;">&lt;span>┌───────────────────┐
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>┌───────────────────┐
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ │
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ Custom Resource │◄────────────┐
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│ (WebApp) │ │
@@ -1228,7 +1228,7 @@ It may take a moment for the cluster to recognize this resource before the follo
 &lt;p>You can also see events related to your WebApp that provide a timeline of actions taken by the operator:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl describe wa webapp-light-en -n webapps
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Expected Output:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-fallback" data-lang="fallback">&lt;span style="display:flex;">&lt;span>Name: webapp-light-en
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>Name: webapp-light-en
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Namespace: webapps
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>API Version: pepr.io/v1alpha1
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Kind: WebApp
@@ -1253,7 +1253,7 @@ Be sure to make note of the &lt;code>Port-forward PID&lt;/code> for later when w
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">PID&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">$!&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">echo&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;Port-forward PID: &lt;/span>&lt;span style="color:#8be9fd;font-style:italic">$PID&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>About port-forwarding&lt;/strong>&lt;/p>
-&lt;p>Port-forwarding creates a secure tunnel from your local machine to a pod or service in your Kubernetes cluster. In this case, we&amp;rsquo;re forwarding your local port 3000 to port 80 of the WebApp service, allowing you to access the application at http://localhost:3000 in your browser.&lt;/p>
+&lt;p>Port-forwarding creates a secure tunnel from your local machine to a pod or service in your Kubernetes cluster. In this case, we&amp;rsquo;re forwarding your local port 3000 to port 80 of the WebApp service, allowing you to access the application at &lt;a href="http://localhost:3000">http://localhost:3000&lt;/a> in your browser.&lt;/p>
 &lt;p>Now open &lt;a href="http://localhost:3000">http://localhost:3000&lt;/a> in your browser or run &lt;code>curl http://localhost:3000&lt;/code> to see the response in a terminal.
 The browser should display a light theme web application:&lt;/p>
 &lt;p>&lt;img src="resources/create-pepr-operator/light.png" alt="WebApp Light Theme">&lt;/p>
@@ -1263,7 +1263,7 @@ The browser should display a light theme web application:&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sleep &lt;span style="color:#bd93f9">10&lt;/span> &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl get cm -n webapps
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Expected output:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-fallback" data-lang="fallback">&lt;span style="display:flex;">&lt;span>configmap &amp;#34;kube-root-ca.crt&amp;#34; deleted
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>configmap &amp;#34;kube-root-ca.crt&amp;#34; deleted
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>configmap &amp;#34;web-content-webapp-light-en&amp;#34; deleted
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME DATA AGE
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kube-root-ca.crt 1 0s
@@ -1322,7 +1322,7 @@ The browser should display a dark theme web application:&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl get cm,deploy,svc -n webapps
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You can also delete the entire test cluster when you&amp;rsquo;re finished:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>k3d cluster delete pepr-dev
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="congratulations">Congratulations!&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="congratulations">Congratulations&lt;/h2>
 &lt;p>You&amp;rsquo;ve successfully built a Kubernetes operator using Pepr. Through this tutorial, you:&lt;/p>
 &lt;ol>
 &lt;li>Created a custom resource definition (CRD) for WebApps&lt;/li>
