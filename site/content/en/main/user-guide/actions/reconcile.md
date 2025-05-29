@@ -10,7 +10,6 @@ Ordering can be configured to operate in one of two ways: as a single queue that
 
 See [Configuring Reconcile](../../customization#configuring-reconcile) for more on configuring how Reconcile behaves.
 
-
 ```ts
 When(WebApp)
   .IsCreatedOrUpdated()

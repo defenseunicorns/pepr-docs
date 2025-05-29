@@ -4,7 +4,7 @@ weight: 50
 ---
 
 
-## 2025 
+## 2025
 
 ### Presentations
 
