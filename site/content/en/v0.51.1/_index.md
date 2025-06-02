@@ -1,9 +1,9 @@
 ---
 title: Pepr
-linkTitle: v0.51.0
+linkTitle: v0.51.1
 cascade:
   type: docs
-aliases: []
+aliases: ["/current/"]
 ---
 
 
@@ -96,7 +96,7 @@ When(a.ConfigMap)
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/en/) v18.0.0+ (even-numbered releases only)
+- [Node.js](https://nodejs.org/en/) v20.0.0+ (even-numbered releases only)
   - To ensure compatability and optimal performance, it is recommended to use even-numbered releases of Node.js as they are stable releases and receive long-term support for three years. Odd-numbered releases are experimental and may not be supported by certain libraries utilized in Pepr.
 
 - [npm](https://www.npmjs.com/) v10.1.0+
@@ -161,7 +161,7 @@ See [actions](./user-guide/actions) for more details.
 
 ## TypeScript
 
-[TypeScript](https://www.typescriptlang.org/) is a strongly typed, object-oriented programming language built on top of JavaScript. It provides optional static typing and a rich type system, allowing developers to write more robust code. TypeScript is transpiled to JavaScript, enabling it to run in any environment that supports JavaScript. Pepr allows you to use JavaScript or TypeScript to write capabilities, but TypeScript is recommended for its type safety and rich type system. You can learn more about TypeScript [here](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html).
+[TypeScript](https://www.typescriptlang.org/) is a strongly typed, object-oriented programming language built on top of JavaScript. It provides optional static typing and a rich type system, allowing developers to write more robust code. TypeScript is transpiled to JavaScript, enabling it to run in any environment that supports JavaScript. Pepr allows you to use JavaScript or TypeScript to write capabilities, but TypeScript is recommended for its type safety and rich type system.See the [Typescript docs](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html) to learn more.
 
 ## Community
 
