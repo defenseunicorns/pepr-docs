@@ -1,5 +1,5 @@
 ---
-title: Tutorial - Create a Pepr Module
+title: Create a Pepr Module
 weight: 10
 ---
 

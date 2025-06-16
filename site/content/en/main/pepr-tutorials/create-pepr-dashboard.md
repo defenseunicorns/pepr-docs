@@ -1,5 +1,5 @@
 ---
-title: Tutorial - Create a Pepr Dashboard
+title: Create a Pepr Dashboard
 weight: 20
 ---
 
