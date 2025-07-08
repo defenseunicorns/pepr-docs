@@ -1,0 +1,29 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>– Community and Support</title><link>/v0.51.6/community/</link><description>Recent content in Community and Support on</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="/v0.51.6/community/index.xml" rel="self" type="application/rss+xml"/><item><title>V0.51.6: Pepr Media</title><link>/v0.51.6/community/pepr-media/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/v0.51.6/community/pepr-media/</guid><description>
+&lt;h2 id="2025">2025&lt;/h2>
+&lt;h3 id="presentations">Presentations&lt;/h3>
+&lt;ul>
+&lt;li>Building Smarter Kubernetes Workflows: Pepr for the modern SRE&lt;/li>
+&lt;li>&lt;a href="https://open.spotify.com/episode/3ztxklcsmn0hfhxcinczvt?si=c824f1ace8ca4960">Shipping Software faster and Safer with Pepr&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="2024">2024&lt;/h2>
+&lt;h3 id="session-recordings">Session Recordings&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://www.youtube.com/watch?v=32xhsjpmtbu&amp;amp;t=25s">Leveraging Fluent Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.youtube.com/watch?v=sqjfvq1frr4">Optimizing Kubernetes Operators and Admission Control - Open Source Summit NA 2024&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.youtube.com/watch?v=kgsfs68hzby">Pepr Analysis and Demo - YouTube&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h3 id="workshops">Workshops&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://killercoda.com/decoder/scenario/pepr">Pepr Scenario Killer Koda&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://github.com/cmwylie19/enterprise-admission-controller">DevopsDaysRaleigh Pepr Workshop - Building an enterprise admission controller&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h3 id="blogs">Blogs&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://itnext.io/from-yaml-chaos-to-kubernetes-zen-5b9e8242a5cb">From YAML Chaos to Kubernetes Zen&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="2023">2023&lt;/h2>
+&lt;h3 id="session-recordings-1">Session Recordings&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://www.youtube.com/watch?v=32xhsjpmtbu&amp;amp;t=12s">Optimizing Kubernetes Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.youtube.com/watch?v=2khimo0ito4">Getting Started with Defense Unicorns Integrating Capabilities with Pepr&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>
