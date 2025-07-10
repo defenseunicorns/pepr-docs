@@ -21,17 +21,17 @@ crd Scaffold and generate Kubernetes CRDs from structured TypeScript definitions
 &lt;p>Build a Pepr Module for deployment.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>-e, --entry-point [file]&lt;/code> - Specify the entry point file to build with. (default: &amp;ldquo;pepr.ts&amp;rdquo;)&lt;/li>
-&lt;li>&lt;code>-n, --no-embed&lt;/code> - Disables embedding of deployment files into output module. Useful when creating library modules intended solely for reuse/distribution via NPM.&lt;/li>
-&lt;li>&lt;code>-i, --custom-image &amp;lt;custom-image&amp;gt;&lt;/code> - Specify a custom image (including version) for Admission and Watch Deployments. Example: &amp;lsquo;docker.io/username/custom-pepr-controller:v1.0.0&amp;rsquo;&lt;/li>
-&lt;li>&lt;code>-r, --registry-info [&amp;lt;registry&amp;gt;/&amp;lt;username&amp;gt;]&lt;/code> - Provide the image registry and username for building and pushing a custom WASM container. Requires authentication. Builds and pushes &lt;code>'registry/username/custom-pepr-controller:&amp;lt;current-version&amp;gt;'&lt;/code>.&lt;/li>
-&lt;li>&lt;code>-o, --output-dir &amp;lt;output directory&amp;gt;&lt;/code> - Define where to place build output&lt;/li>
-&lt;li>&lt;code>--timeout &amp;lt;timeout&amp;gt;&lt;/code> - How long the API server should wait for a webhook to respond before treating the call as a failure&lt;/li>
-&lt;li>&lt;code>--withPullSecret &amp;lt;imagePullSecret&amp;gt;&lt;/code> - Image Pull Secret: Use image pull secret for controller Deployment. (default: &amp;ldquo;&amp;rdquo;)&lt;/li>
-&lt;li>&lt;code>--registry &amp;lt;GitHub|Iron Bank&amp;gt;&lt;/code> - Container registry: Choose container registry for deployment manifests. Can&amp;rsquo;t be used with &amp;ndash;custom-image. (choices: &amp;ldquo;GitHub&amp;rdquo;, &amp;ldquo;Iron Bank&amp;rdquo;)&lt;/li>
-&lt;li>&lt;code>-z, --zarf [manifest|chart]&lt;/code> - Zarf package type: manifest, chart (default: manifest) (choices: &amp;ldquo;manifest&amp;rdquo;, &amp;ldquo;chart&amp;rdquo;, default: &amp;ldquo;manifest&amp;rdquo;)&lt;/li>
-&lt;li>&lt;code>--rbac-mode [admin|scoped]&lt;/code> - Rbac Mode: admin, scoped (default: admin) (choices: &amp;ldquo;admin&amp;rdquo;, &amp;ldquo;scoped&amp;rdquo;)&lt;/li>
-&lt;li>&lt;code>--custom-name [name]&lt;/code> - Specify a custom name for zarf component and service monitors in helm charts.&lt;/li>
+&lt;li>&lt;code>-M, --rbac-mode &amp;lt;admin|scoped&amp;gt;&lt;/code> - Set RBAC mode. (choices: &amp;ldquo;admin&amp;rdquo;, &amp;ldquo;scoped&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-I, --registry-info &amp;lt;registry/username&amp;gt;&lt;/code> - Provide the image registry and username for building and pushing a custom WASM container. Requires authentication. Conflicts with &amp;ndash;custom-image and &amp;ndash;registry. Builds and pushes &lt;code>'&amp;lt;registry/username&amp;gt;/custom-pepr-controller:&amp;lt;current-version&amp;gt;'&lt;/code>.&lt;/li>
+&lt;li>&lt;code>-P, --with-pull-secret &amp;lt;name&amp;gt;&lt;/code> - Use image pull secret for controller Deployment. (default: &amp;ldquo;&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-c, --custom-name &amp;lt;name&amp;gt;&lt;/code> - Set name for zarf component and service monitors in helm charts.&lt;/li>
+&lt;li>&lt;code>-e, --entry-point &amp;lt;file&amp;gt;&lt;/code> - Specify the entry point file to build with. (default: &amp;ldquo;pepr.ts&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-i, --custom-image &amp;lt;image&amp;gt;&lt;/code> - Specify a custom image with version for deployments. Conflicts with &amp;ndash;registry-info and &amp;ndash;registry. Example: &amp;lsquo;docker.io/username/custom-pepr-controller:v1.0.0&amp;rsquo;&lt;/li>
+&lt;li>&lt;code>-n, --no-embed&lt;/code> - Disable embedding of deployment files into output module. Useful when creating library modules intended solely for reuse/distribution via NPM.&lt;/li>
+&lt;li>&lt;code>-o, --output &amp;lt;directory&amp;gt;&lt;/code> - Set output directory.&lt;/li>
+&lt;li>&lt;code>-r, --registry &amp;lt;GitHub|Iron Bank&amp;gt;&lt;/code> - Container registry: Choose container registry for deployment manifests. Conflicts with &amp;ndash;custom-image and &amp;ndash;registry-info. (choices: &amp;ldquo;GitHub&amp;rdquo;, &amp;ldquo;Iron Bank&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-t, --timeout &amp;lt;seconds&amp;gt;&lt;/code> - How long the API server should wait for a webhook to respond before treating the call as a failure.&lt;/li>
+&lt;li>&lt;code>-z, --zarf &amp;lt;manifest|chart&amp;gt;&lt;/code> - Set Zarf package type (choices: &amp;ldquo;manifest&amp;rdquo;, &amp;ldquo;chart&amp;rdquo;, default: &amp;ldquo;manifest&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-h, --help&lt;/code> - display help for command&lt;/li>
 &lt;/ul>
 &lt;p>Create a &lt;a href="https://zarf.dev">zarf.yaml&lt;/a> and K8s manifest for the current module. This includes everything needed to deploy Pepr and the current module into production environments.&lt;/p>
@@ -336,7 +336,7 @@ help [command] display help for command&lt;/p>
 &lt;p>Reuseable capability versions should use the format &lt;code>0.x.x&lt;/code> or &lt;code>0.12.x&lt;/code> as examples to determine compatibility with other reusable capabilities. Before &lt;code>1.x.x&lt;/code>, we recommend binding to &lt;code>0.x.x&lt;/code> if you can for maximum compatibility.&lt;/p>
 &lt;/li>
 &lt;li>
-&lt;p>&lt;code>pepr.ts&lt;/code> will still be used for local development, but you&amp;rsquo;ll also need to publish an &lt;code>index.ts&lt;/code> that exports your capabilities. When you build &amp;amp; publish the capability to NPM, you can use &lt;code>npx pepr build -e index.ts&lt;/code> to generate the code needed for reuse by other Pepr modules.&lt;/p>
+&lt;p>&lt;code>pepr.ts&lt;/code> will still be used for local development, but you&amp;rsquo;ll also need to publish an &lt;code>index.ts&lt;/code> that exports your capabilities. When you build &amp;amp; publish the capability to NPM, you can use &lt;code>npx pepr build --entry-point index.ts&lt;/code> to generate the code needed for reuse by other Pepr modules.&lt;/p>
 &lt;/li>
 &lt;/ul></description></item><item><title>Main: Pepr Store</title><link>/main/user-guide/store/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/store/</guid><description>
 &lt;h2 id="a-lightweight-key-value-store-for-pepr-modules">A Lightweight Key-Value Store for Pepr Modules&lt;/h2>
@@ -802,7 +802,7 @@ The response body is a plain text representation of the metrics data, according 
 &lt;ul>
 &lt;li>Add files to the &lt;strong>base&lt;/strong> of the Pepr module.&lt;/li>
 &lt;li>Reference the files in the &lt;code>includedFiles&lt;/code> section of the &lt;code>pepr&lt;/code> block of the &lt;code>package.json&lt;/code>&lt;/li>
-&lt;li>Run &lt;code>npx pepr build&lt;/code> with the &lt;code>-r&lt;/code> option specifying registry info. Ex: &lt;code>npx pepr build -r docker.io/cmwylie19&lt;/code>&lt;/li>
+&lt;li>Run &lt;code>npx pepr build&lt;/code> with the &lt;code>--registry-info&lt;/code> option specifying registry info. Ex: &lt;code>npx pepr build --registry-info docker.io/cmwylie19&lt;/code>&lt;/li>
 &lt;li>Pepr builds and pushes a custom image that is used in the &lt;code>Deployment&lt;/code>.&lt;/li>
 &lt;/ul>
 &lt;h2 id="using-wasm-support">Using WASM Support&lt;/h2>
@@ -930,7 +930,7 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>});
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="run-pepr-build">Run Pepr Build&lt;/h3>
 &lt;p>Build your Pepr module with the registry specified.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr build -r docker.io/defenseunicorns
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr build --registry-info docker.io/defenseunicorns
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Main: Customization</title><link>/main/user-guide/customization/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/customization/</guid><description>
 &lt;p>This document outlines how to customize the build output through Helm overrides and &lt;code>package.json&lt;/code> configurations.&lt;/p>
 &lt;h2 id="redact-store-values-from-logs">Redact Store Values from Logs&lt;/h2>
