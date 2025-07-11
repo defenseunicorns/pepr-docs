@@ -926,8 +926,8 @@ password: secret&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --name operator &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --uuid my-operator-uuid &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --description &lt;span style="color:#f1fa8c">&amp;#34;Kubernetes Controller for WebApp Resources&amp;#34;&lt;/span> &lt;span style="color:#f1fa8c">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --errorBehavior reject &lt;span style="color:#f1fa8c">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --confirm &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span>
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --error-behavior reject &lt;span style="color:#f1fa8c">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --yes &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">cd&lt;/span> operator &lt;span style="color:#6272a4"># set working directory as the new pepr module&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>To track your progress in this tutorial, let&amp;rsquo;s treat it as a &lt;code>git&lt;/code> repository:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>git init &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span> git add --all &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span> git commit -m &lt;span style="color:#f1fa8c">&amp;#34;npx pepr init&amp;#34;&lt;/span>

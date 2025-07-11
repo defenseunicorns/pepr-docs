@@ -105,12 +105,12 @@ help [command] display help for command&lt;/p>
 &lt;p>Initialize a new Pepr Module.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>--confirm&lt;/code> - Skip verification prompt when creating a new module.&lt;/li>
-&lt;li>&lt;code>--description &amp;lt;string&amp;gt;&lt;/code> - Explain the purpose of the new module.&lt;/li>
-&lt;li>&lt;code>--name &amp;lt;string&amp;gt;&lt;/code> - Set the name of the new module.&lt;/li>
-&lt;li>&lt;code>--skip-post-init&lt;/code> - Skip npm install, git init, and VSCode launch.&lt;/li>
-&lt;li>&lt;code>--errorBehavior &amp;lt;audit|ignore|reject&amp;gt;&lt;/code> - Set an errorBehavior.&lt;/li>
-&lt;li>&lt;code>--uuid [string]&lt;/code> - Unique identifier for your module with a max length of 36 characters.&lt;/li>
+&lt;li>&lt;code>-d, --description &amp;lt;string&amp;gt;&lt;/code> - Explain the purpose of the new module.&lt;/li>
+&lt;li>&lt;code>-e, --error-behavior &amp;lt;behavior&amp;gt;&lt;/code> - Set an error behavior. (choices: &amp;ldquo;audit&amp;rdquo;, &amp;ldquo;ignore&amp;rdquo;, &amp;ldquo;reject&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-n, --name &amp;lt;string&amp;gt;&lt;/code> - Set the name of the new module.&lt;/li>
+&lt;li>&lt;code>-s, --skip-post-init&lt;/code> - Skip npm install, git init, and VSCode launch.&lt;/li>
+&lt;li>&lt;code>-u, --uuid &amp;lt;string&amp;gt;&lt;/code> - Unique identifier for your module with a max length of 36 characters.&lt;/li>
+&lt;li>&lt;code>-y, --yes&lt;/code> - Skip verification prompt when creating a new module.&lt;/li>
 &lt;li>&lt;code>-h, --help&lt;/code> - display help for command&lt;/li>
 &lt;/ul>
 &lt;h2 id="npx-pepr-kfc">&lt;code>npx pepr kfc&lt;/code>&lt;/h2>
