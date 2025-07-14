@@ -140,7 +140,7 @@ help [command] display help for command&lt;/p>
 &lt;p>Update the current Pepr Module to the latest SDK version. This command is not recommended for production use, instead, we recommend Renovate or Dependabot for automated updates.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>--skip-template-update&lt;/code> - Skip updating the template files&lt;/li>
+&lt;li>&lt;code>-s, --skip-template-update&lt;/code> - Do not update template files&lt;/li>
 &lt;li>&lt;code>-h, --help&lt;/code> - display help for command&lt;/li>
 &lt;/ul>
 &lt;h2 id="npx-pepr-uuid">&lt;code>npx pepr uuid&lt;/code>&lt;/h2>
