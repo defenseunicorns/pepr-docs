@@ -62,7 +62,7 @@ help [command] display help for command&lt;/p>
 &lt;p>Generate CRD manifests from TypeScript definitions&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>--output &amp;lt;output&amp;gt;&lt;/code> - Output directory for generated CRDs (default: &amp;ldquo;./crds&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-o, --output &amp;lt;directory&amp;gt;&lt;/code> - Output directory for generated CRDs (default: &amp;ldquo;./crds&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-h, --help&lt;/code> - display help for command&lt;/li>
 &lt;/ul>
 &lt;h2 id="npx-pepr-deploy">&lt;code>npx pepr deploy&lt;/code>&lt;/h2>
