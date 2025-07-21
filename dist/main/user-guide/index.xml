@@ -21,14 +21,14 @@ crd Scaffold and generate Kubernetes CRDs from structured TypeScript definitions
 &lt;p>Build a Pepr Module for deployment.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>-M, --rbac-mode &amp;lt;admin|scoped&amp;gt;&lt;/code> - Set RBAC mode. (choices: &amp;ldquo;admin&amp;rdquo;, &amp;ldquo;scoped&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-M, --rbac-mode &amp;lt;mode&amp;gt;&lt;/code> - Override module config and set RBAC mode. (choices: &amp;ldquo;admin&amp;rdquo;, &amp;ldquo;scoped&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-I, --registry-info &amp;lt;registry/username&amp;gt;&lt;/code> - Provide the image registry and username for building and pushing a custom WASM container. Requires authentication. Conflicts with &amp;ndash;custom-image and &amp;ndash;registry. Builds and pushes &lt;code>'&amp;lt;registry/username&amp;gt;/custom-pepr-controller:&amp;lt;current-version&amp;gt;'&lt;/code>.&lt;/li>
 &lt;li>&lt;code>-P, --with-pull-secret &amp;lt;name&amp;gt;&lt;/code> - Use image pull secret for controller Deployment. (default: &amp;ldquo;&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-c, --custom-name &amp;lt;name&amp;gt;&lt;/code> - Set name for zarf component and service monitors in helm charts.&lt;/li>
 &lt;li>&lt;code>-e, --entry-point &amp;lt;file&amp;gt;&lt;/code> - Specify the entry point file to build with. (default: &amp;ldquo;pepr.ts&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-i, --custom-image &amp;lt;image&amp;gt;&lt;/code> - Specify a custom image with version for deployments. Conflicts with &amp;ndash;registry-info and &amp;ndash;registry. Example: &amp;lsquo;docker.io/username/custom-pepr-controller:v1.0.0&amp;rsquo;&lt;/li>
 &lt;li>&lt;code>-n, --no-embed&lt;/code> - Disable embedding of deployment files into output module. Useful when creating library modules intended solely for reuse/distribution via NPM.&lt;/li>
-&lt;li>&lt;code>-o, --output &amp;lt;directory&amp;gt;&lt;/code> - Set output directory.&lt;/li>
+&lt;li>&lt;code>-o, --output &amp;lt;directory&amp;gt;&lt;/code> - Set output directory. (default: &amp;ldquo;dist&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-r, --registry &amp;lt;GitHub|Iron Bank&amp;gt;&lt;/code> - Container registry: Choose container registry for deployment manifests. Conflicts with &amp;ndash;custom-image and &amp;ndash;registry-info. (choices: &amp;ldquo;GitHub&amp;rdquo;, &amp;ldquo;Iron Bank&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-t, --timeout &amp;lt;seconds&amp;gt;&lt;/code> - How long the API server should wait for a webhook to respond before treating the call as a failure.&lt;/li>
 &lt;li>&lt;code>-z, --zarf &amp;lt;manifest|chart&amp;gt;&lt;/code> - Set Zarf package type (choices: &amp;ldquo;manifest&amp;rdquo;, &amp;ldquo;chart&amp;rdquo;, default: &amp;ldquo;manifest&amp;rdquo;)&lt;/li>
