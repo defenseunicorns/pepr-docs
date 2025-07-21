@@ -15,7 +15,7 @@ update [options] Update this Pepr module. Not recommended for prod as it may cha
 format [options] Lint and format this Pepr module
 monitor [module-uuid] Monitor a Pepr Module
 uuid [uuid] Module UUID(s) currently deployed in the cluster
-kfc [args&amp;hellip;] Execute Kubernetes Fluent Client commands
+kfc [options] [args&amp;hellip;] Execute Kubernetes Fluent Client commands
 crd Scaffold and generate Kubernetes CRDs from structured TypeScript definitions&lt;/p>
 &lt;h2 id="npx-pepr-build">&lt;code>npx pepr build&lt;/code>&lt;/h2>
 &lt;p>Build a Pepr Module for deployment.&lt;/p>
@@ -117,6 +117,7 @@ help [command] display help for command&lt;/p>
 &lt;p>Execute a &lt;code>kubernetes-fluent-client&lt;/code> command. This command is a wrapper around &lt;code>kubernetes-fluent-client&lt;/code>.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
 &lt;ul>
+&lt;li>&lt;code>-y, --yes&lt;/code> - Skip confirmation prompt.&lt;/li>
 &lt;li>&lt;code>-h, --help&lt;/code> - display help for command&lt;/li>
 &lt;/ul>
 &lt;p>Usage:&lt;/p>
