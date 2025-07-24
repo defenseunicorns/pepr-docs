@@ -7,7 +7,8 @@
 &lt;li>&lt;code>-h, --help&lt;/code> - display help for command&lt;/li>
 &lt;/ul>
 &lt;p>&lt;strong>Commands:&lt;/strong>&lt;/p>
-&lt;p>init [options] Initialize a new Pepr Module
+&lt;p>crd Scaffold and generate Kubernetes CRDs from structured TypeScript definitions
+init [options] Initialize a new Pepr Module
 build [options] Build a Pepr Module for deployment
 deploy [options] Deploy a Pepr Module
 dev [options] Setup a local webhook development environment
@@ -15,8 +16,7 @@ update [options] Update this Pepr module. Not recommended for prod as it may cha
 format [options] Lint and format this Pepr module
 monitor [module-uuid] Monitor a Pepr Module
 uuid [uuid] Module UUID(s) currently deployed in the cluster
-kfc [options] [args&amp;hellip;] Execute Kubernetes Fluent Client commands
-crd Scaffold and generate Kubernetes CRDs from structured TypeScript definitions&lt;/p>
+kfc [options] [args&amp;hellip;] Execute Kubernetes Fluent Client commands&lt;/p>
 &lt;h2 id="npx-pepr-build">&lt;code>npx pepr build&lt;/code>&lt;/h2>
 &lt;p>Build a Pepr Module for deployment.&lt;/p>
 &lt;p>&lt;strong>Options:&lt;/strong>&lt;/p>
@@ -54,7 +54,7 @@ help [command] display help for command&lt;/p>
 &lt;li>&lt;code>-g, --group &amp;lt;group&amp;gt;&lt;/code> - API group (e.g. cache)&lt;/li>
 &lt;li>&lt;code>-k, --kind &amp;lt;kind&amp;gt;&lt;/code> - Kind name (e.g. memcached)&lt;/li>
 &lt;li>&lt;code>-p, --plural &amp;lt;plural&amp;gt;&lt;/code> - Plural name for CRD (e.g. memcacheds)&lt;/li>
-&lt;li>&lt;code>-s, --short-name &amp;lt;name&amp;gt;&lt;/code> - Short name for CRD (e.g. mc) (default: &amp;ldquo;&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-s, --short-name &amp;lt;name&amp;gt;&lt;/code> - Short name for CRD (e.g. mc)&lt;/li>
 &lt;li>&lt;code>-v, --version &amp;lt;version&amp;gt;&lt;/code> - API version (e.g. v1alpha1)&lt;/li>
 &lt;li>&lt;code>-h, --help&lt;/code> - display help for command&lt;/li>
 &lt;/ul>
@@ -1290,7 +1290,7 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --group cache &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --version v1alpha1 &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --kind Memcache &lt;span style="color:#f1fa8c">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --shortName mc &lt;span style="color:#f1fa8c">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --short-name mc &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --plural memcaches &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --scope Namespaced
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This command will create a TypeScript file in the &lt;code>crds&lt;/code> directory with the generated types for the specified CRD. The generated file will include the necessary type definitions for the CRD.&lt;/p>
