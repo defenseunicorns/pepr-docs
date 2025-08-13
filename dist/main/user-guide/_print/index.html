@@ -17,11 +17,10 @@
 <a href=#pg-d967d72fdc3e2a04c434f5f0a2285b00>OnSchedule</a></li><li>9:
 <a href=#pg-739c88966564914932cacdd63c3b555a>RBAC Modes</a></li><li>10:
 <a href=#pg-06c2729db2a1390eaaa4066f8a474422>Metrics Endpoints</a></li><li>11:
-<a href=#pg-e7b6d1b8c4128f9cbfde49b6521b3dfd>WASM Support</a></li><li>12:
-<a href=#pg-ccf1899f8fd9eefde68c1576e051b52d>Customization</a></li><li>13:
-<a href=#pg-84664c1bd51f702d53a952f553854f2d>Pepr Filters</a></li><li>14:
-<a href=#pg-72cbc2f5d71077cd8ed5f8c2afa627d6>Generating CRDs</a></li><li>15:
-<a href=#pg-2ab9e65cf8a1174ad324adf59f714218>Generating Custom Metrics</a></li></ul><div class=content><p>In this section you can find detailed information about Pepr and how to use it.</p><h1 id=sections>Sections</h1><p>You can find the following information in this section:</p><h3 id=pepr-clipepr-cli><a href=pepr-cli/>Pepr CLI</a></h3><h3 id=pepr-modulespepr-modules><a href=pepr-modules/>Pepr Modules</a></h3><h3 id=pepr-actionsactions><a href=actions/>Pepr Actions</a></h3><h3 id=pepr-capabilitiescapabilities><a href=capabilities/>Pepr Capabilities</a></h3><h3 id=pepr-storestore><a href=store/>Pepr Store</a></h3><h3 id=custom-resourcescustom-resources><a href=custom-resources/>Custom Resources</a></h3><h3 id=onscheduleonschedule><a href=onschedule/>OnSchedule</a></h3><h3 id=rbacrbac><a href=rbac/>RBAC</a></h3><h3 id=metricsmetrics><a href=metrics/>Metrics</a></h3><h3 id=webassemblywebassembly><a href=webassembly/>Webassembly</a></h3></div></div><div class=td-content><h1 id=pg-38d627e982f5369945f26045a0704899>1 -
+<a href=#pg-ccf1899f8fd9eefde68c1576e051b52d>Customization</a></li><li>12:
+<a href=#pg-84664c1bd51f702d53a952f553854f2d>Pepr Filters</a></li><li>13:
+<a href=#pg-72cbc2f5d71077cd8ed5f8c2afa627d6>Generating CRDs</a></li><li>14:
+<a href=#pg-2ab9e65cf8a1174ad324adf59f714218>Generating Custom Metrics</a></li></ul><div class=content><p>In this section you can find detailed information about Pepr and how to use it.</p><h1 id=sections>Sections</h1><p>You can find the following information in this section:</p><h3 id=pepr-clipepr-cli><a href=pepr-cli/>Pepr CLI</a></h3><h3 id=sdksdk><a href=sdk/>SDK</a></h3><h3 id=pepr-modulespepr-modules><a href=pepr-modules/>Pepr Modules</a></h3><h3 id=pepr-actionsactions><a href=actions/>Pepr Actions</a></h3><h3 id=pepr-capabilitiescapabilities><a href=capabilities/>Pepr Capabilities</a></h3><h3 id=pepr-storestore><a href=store/>Pepr Store</a></h3><h3 id=custom-resourcescustom-resources><a href=custom-resources/>Custom Resources</a></h3><h3 id=onscheduleonschedule><a href=onschedule/>OnSchedule</a></h3><h3 id=rbacrbac><a href=rbac/>RBAC</a></h3><h3 id=metricsmetrics><a href=metrics/>Metrics</a></h3><h3 id=customizationcustomization><a href=customization/>Customization</a></h3><h3 id=filtersfilters><a href=filters/>Filters</a></h3><h3 id=generating-crdsgenerating-crds><a href=generating-crds/>Generating CRDs</a></h3><h3 id=custom-metricsgenerating_custom_metrics><a href=generating_custom_metrics/>Custom Metrics</a></h3></div></div><div class=td-content><h1 id=pg-38d627e982f5369945f26045a0704899>1 -
 Pepr CLI</h1><h2 id=npx-pepr><code>npx pepr</code></h2><p>Type safe K8s middleware for humans</p><p><strong>Options:</strong></p><ul><li><code>-V, --version</code> - output the version number</li><li><code>-h, --help</code> - display help for command</li></ul><p><strong>Commands:</strong></p><p>crd Scaffold and generate Kubernetes CRDs from structured TypeScript definitions
 init [options] Initialize a new Pepr Module
 build [options] Build a Pepr Module for deployment
@@ -698,120 +697,7 @@ The response body is a plain text representation of the metrics data, according 
 </span></span><span style=display:flex><span>    <span style=color:#ff79c6>scheme</span>: https
 </span></span><span style=display:flex><span>    <span style=color:#ff79c6>tlsConfig</span>:
 </span></span><span style=display:flex><span>      <span style=color:#ff79c6>insecureSkipVerify</span>: <span style=color:#ff79c6>true</span>
-</span></span></code></pre></div></div><div class=td-content style=page-break-before:always><h1 id=pg-e7b6d1b8c4128f9cbfde49b6521b3dfd>11 -
-WASM Support</h1><p>Pepr fully supports WebAssembly. Depending on the language used to generate the WASM, certain files can be too large to fit into a <code>Secret</code> or <code>ConfigMap</code>. Due to this limitation, users have the ability to incorporate <code>*.wasm</code> and any other essential files during the build phase, which are then embedded into the Pepr Controller container. This is achieved through adding an array of files to the <code>includedFiles</code> section under <code>pepr</code> in the <code>package.json</code>.</p><blockquote><p><strong>NOTE -</strong> In order to instantiate the WebAsembly module in TypeScript, you need the WebAssembly type. This is accomplished through add the &ldquo;DOM&rdquo; to the <code>lib</code> array in the <code>compilerOptions</code> section of the <code>tsconfig.json</code>. Ex: <code>"lib": ["ES2022", "DOM"]</code>. Be aware that adding the DOM will add a lot of extra types to your project and your developer experience will be impacted in terms of the intellisense.</p></blockquote><h2 id=high-level-overview>High-Level Overview</h2><p>WASM support is achieved through adding files as layers atop the Pepr controller image, these files are then able to be read by the individual capabilities. The key components of WASM support are:</p><ul><li>Add files to the <strong>base</strong> of the Pepr module.</li><li>Reference the files in the <code>includedFiles</code> section of the <code>pepr</code> block of the <code>package.json</code></li><li>Run <code>npx pepr build</code> with the <code>--registry-info</code> option specifying registry info. Ex: <code>npx pepr build --registry-info docker.io/cmwylie19</code></li><li>Pepr builds and pushes a custom image that is used in the <code>Deployment</code>.</li></ul><h2 id=using-wasm-support>Using WASM Support</h2><h3 id=creating-a-wasm-module-in-go>Creating a WASM Module in Go</h3><p>Create a simple Go function that you want to call from your Pepr module</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#ff79c6>package</span> main
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> (
-</span></span><span style=display:flex><span> <span style=color:#f1fa8c>&#34;fmt&#34;</span>
-</span></span><span style=display:flex><span> <span style=color:#f1fa8c>&#34;syscall/js&#34;</span>
-</span></span><span style=display:flex><span>)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>concats</span>(this js.Value, args []js.Value) <span style=color:#8be9fd;font-style:italic>interface</span>{} {
-</span></span><span style=display:flex><span>    fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;PeprWASM!&#34;</span>)
-</span></span><span style=display:flex><span> stringOne <span style=color:#ff79c6>:=</span> args[<span style=color:#bd93f9>0</span>].<span style=color:#50fa7b>String</span>()
-</span></span><span style=display:flex><span> stringTwo <span style=color:#ff79c6>:=</span> args[<span style=color:#bd93f9>1</span>].<span style=color:#50fa7b>String</span>()
-</span></span><span style=display:flex><span> <span style=color:#ff79c6>return</span> fmt.<span style=color:#50fa7b>Sprintf</span>(<span style=color:#f1fa8c>&#34;%s%s&#34;</span>, stringOne, stringTwo)
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>main</span>() {
-</span></span><span style=display:flex><span> done <span style=color:#ff79c6>:=</span> <span style=color:#8be9fd;font-style:italic>make</span>(<span style=color:#8be9fd;font-style:italic>chan</span> <span style=color:#8be9fd;font-style:italic>struct</span>{}, <span style=color:#bd93f9>0</span>)
-</span></span><span style=display:flex><span> js.<span style=color:#50fa7b>Global</span>().<span style=color:#50fa7b>Set</span>(<span style=color:#f1fa8c>&#34;concats&#34;</span>, js.<span style=color:#50fa7b>FuncOf</span>(concats))
-</span></span><span style=display:flex><span> <span style=color:#ff79c6>&lt;-</span>done
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>Compile it to a wasm target and move it to your Pepr module</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>GOOS</span><span style=color:#ff79c6>=</span>js <span style=color:#8be9fd;font-style:italic>GOARCH</span><span style=color:#ff79c6>=</span>wasm go build -o main.wasm
-</span></span><span style=display:flex><span>cp main.wasm <span style=color:#8be9fd;font-style:italic>$YOUR_PEPR_MODULE</span>/
-</span></span></code></pre></div><p>Copy the <code>wasm_exec.js</code> from <code>GOROOT</code> to your Pepr Module</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>cp <span style=color:#f1fa8c>&#34;</span><span style=color:#ff79c6>$(</span>go env GOROOT<span style=color:#ff79c6>)</span><span style=color:#f1fa8c>/misc/wasm/wasm_exec.js&#34;</span> <span style=color:#8be9fd;font-style:italic>$YOUR_PEPR_MODULE</span>/
-</span></span></code></pre></div><p>Update the polyfill to add <code>globalThis.crypto</code> in the <code>wasm_exec.js</code> since we are not running in the browser. This is needed directly under: <code>(() => {</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-javascript data-lang=javascript><span style=display:flex><span><span style=color:#6272a4>// Initialize the polyfill
-</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#ff79c6>if</span> (<span style=color:#ff79c6>typeof</span> globalThis.crypto <span style=color:#ff79c6>===</span> <span style=color:#f1fa8c>&#39;undefined&#39;</span>) {
-</span></span><span style=display:flex><span>    globalThis.crypto <span style=color:#ff79c6>=</span> {
-</span></span><span style=display:flex><span>        getRandomValues<span style=color:#ff79c6>:</span> (array) =&gt; {
-</span></span><span style=display:flex><span>        <span style=color:#ff79c6>for</span> (<span style=color:#8be9fd;font-style:italic>let</span> i <span style=color:#ff79c6>=</span> <span style=color:#bd93f9>0</span>; i <span style=color:#ff79c6>&lt;</span> array.length; i<span style=color:#ff79c6>++</span>) {
-</span></span><span style=display:flex><span>            array[i] <span style=color:#ff79c6>=</span> <span style=color:#8be9fd;font-style:italic>Math</span>.floor(<span style=color:#8be9fd;font-style:italic>Math</span>.random() <span style=color:#ff79c6>*</span> <span style=color:#bd93f9>256</span>);
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        },
-</span></span><span style=display:flex><span>    };
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=configure-pepr-to-use-wasm>Configure Pepr to use WASM</h3><p>After adding the files to the root of the Pepr module, reference those files in the <code>package.json</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-json data-lang=json><span style=display:flex><span>{
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;name&#34;</span>: <span style=color:#f1fa8c>&#34;pepr-test-module&#34;</span>,
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;version&#34;</span>: <span style=color:#f1fa8c>&#34;0.0.1&#34;</span>,
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;description&#34;</span>: <span style=color:#f1fa8c>&#34;A test module for Pepr&#34;</span>,
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;keywords&#34;</span>: [
-</span></span><span style=display:flex><span>    <span style=color:#f1fa8c>&#34;pepr&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#f1fa8c>&#34;k8s&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#f1fa8c>&#34;policy-engine&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#f1fa8c>&#34;pepr-module&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#f1fa8c>&#34;security&#34;</span>
-</span></span><span style=display:flex><span>  ],
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;engines&#34;</span>: {
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;node&#34;</span>: <span style=color:#f1fa8c>&#34;&gt;=18.0.0&#34;</span>
-</span></span><span style=display:flex><span>  },
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;pepr&#34;</span>: {
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;name&#34;</span>: <span style=color:#f1fa8c>&#34;pepr-test-module&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;uuid&#34;</span>: <span style=color:#f1fa8c>&#34;static-test&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;onError&#34;</span>: <span style=color:#f1fa8c>&#34;ignore&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;alwaysIgnore&#34;</span>: {
-</span></span><span style=display:flex><span>      <span style=color:#ff79c6>&#34;namespaces&#34;</span>: [],
-</span></span><span style=display:flex><span>      <span style=color:#ff79c6>&#34;labels&#34;</span>: []
-</span></span><span style=display:flex><span>    },
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;includedFiles&#34;</span>:[
-</span></span><span style=display:flex><span>      <span style=color:#f1fa8c>&#34;main.wasm&#34;</span>,
-</span></span><span style=display:flex><span>      <span style=color:#f1fa8c>&#34;wasm_exec.js&#34;</span>
-</span></span><span style=display:flex><span>    ]
-</span></span><span style=display:flex><span>  },
-</span></span><span style=display:flex><span>  ...
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>Update the <code>tsconfig.json</code> to add &ldquo;DOM&rdquo; to the <code>compilerOptions</code> lib:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-json data-lang=json><span style=display:flex><span>{
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;compilerOptions&#34;</span>: {
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;allowSyntheticDefaultImports&#34;</span>: <span style=color:#ff79c6>true</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;declaration&#34;</span>: <span style=color:#ff79c6>true</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;declarationMap&#34;</span>: <span style=color:#ff79c6>true</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;emitDeclarationOnly&#34;</span>: <span style=color:#ff79c6>true</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;esModuleInterop&#34;</span>: <span style=color:#ff79c6>true</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;lib&#34;</span>: [
-</span></span><span style=display:flex><span>      <span style=color:#f1fa8c>&#34;ES2022&#34;</span>,
-</span></span><span style=display:flex><span>      <span style=color:#f1fa8c>&#34;DOM&#34;</span> <span style=color:#6272a4>// &lt;- Add this
-</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    ],
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;module&#34;</span>: <span style=color:#f1fa8c>&#34;CommonJS&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;moduleResolution&#34;</span>: <span style=color:#f1fa8c>&#34;node&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;outDir&#34;</span>: <span style=color:#f1fa8c>&#34;dist&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;resolveJsonModule&#34;</span>: <span style=color:#ff79c6>true</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;rootDir&#34;</span>: <span style=color:#f1fa8c>&#34;.&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;strict&#34;</span>: <span style=color:#ff79c6>false</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;target&#34;</span>: <span style=color:#f1fa8c>&#34;ES2022&#34;</span>,
-</span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;useUnknownInCatchVariables&#34;</span>: <span style=color:#ff79c6>false</span>
-</span></span><span style=display:flex><span>  },
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;include&#34;</span>: [
-</span></span><span style=display:flex><span>    <span style=color:#f1fa8c>&#34;**/*.ts&#34;</span>
-</span></span><span style=display:flex><span>  ]
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=call-wasm-functions-from-typescript>Call WASM functions from TypeScript</h3><p>Import the <code>wasm_exec.js</code> in the <code>pepr.ts</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-javascript data-lang=javascript><span style=display:flex><span><span style=color:#ff79c6>import</span> <span style=color:#f1fa8c>&#34;./wasm_exec.js&#34;</span>;
-</span></span></code></pre></div><p>Create a helper function to load the wasm file in a capability and call it during an event of your choice</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>async</span> <span style=color:#8be9fd;font-style:italic>function</span> callWASM(a,b) {
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> go <span style=color:#ff79c6>=</span> <span style=color:#ff79c6>new</span> globalThis.Go();
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>const</span> wasmData <span style=color:#ff79c6>=</span> readFileSync(<span style=color:#f1fa8c>&#34;main.wasm&#34;</span>);
-</span></span><span style=display:flex><span>  <span style=color:#8be9fd;font-style:italic>var</span> concated: <span style=color:#8be9fd>string</span>;
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>await</span> WebAssembly.instantiate(wasmData, go.importObject).then(wasmModule <span style=color:#ff79c6>=&gt;</span> {
-</span></span><span style=display:flex><span>    go.run(wasmModule.instance);
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    concated <span style=color:#ff79c6>=</span> <span style=color:#ff79c6>global</span>.concats(a,b);
-</span></span><span style=display:flex><span>  });
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>return</span> concated;
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>When(a.Pod)
-</span></span><span style=display:flex><span>.IsCreated()
-</span></span><span style=display:flex><span>.Mutate(<span style=color:#ff79c6>async</span> pod <span style=color:#ff79c6>=&gt;</span> {
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>try</span> {
-</span></span><span style=display:flex><span>    <span style=color:#8be9fd;font-style:italic>let</span> label_value <span style=color:#ff79c6>=</span> <span style=color:#ff79c6>await</span> callWASM(<span style=color:#f1fa8c>&#34;loves&#34;</span>,<span style=color:#f1fa8c>&#34;wasm&#34;</span>)
-</span></span><span style=display:flex><span>    pod.SetLabel(<span style=color:#f1fa8c>&#34;pepr&#34;</span>,label_value)
-</span></span><span style=display:flex><span>  }
-</span></span><span style=display:flex><span>  <span style=color:#ff79c6>catch</span>(err) {
-</span></span><span style=display:flex><span>    Log.error(err);
-</span></span><span style=display:flex><span>  }
-</span></span><span style=display:flex><span>});
-</span></span></code></pre></div><h3 id=run-pepr-build>Run Pepr Build</h3><p>Build your Pepr module with the registry specified.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx pepr build --registry-info docker.io/defenseunicorns
-</span></span></code></pre></div></div><div class=td-content style=page-break-before:always><h1 id=pg-ccf1899f8fd9eefde68c1576e051b52d>12 -
+</span></span></code></pre></div></div><div class=td-content style=page-break-before:always><h1 id=pg-ccf1899f8fd9eefde68c1576e051b52d>11 -
 Customization</h1><p>This document outlines how to customize the build output through Helm overrides and <code>package.json</code> configurations.</p><h2 id=redact-store-values-from-logs>Redact Store Values from Logs</h2><p>By default, the store values are displayed in logs, to redact them you can set the <code>PEPR_STORE_REDACT_VALUES</code> environment variable to <code>true</code> in the <code>package.json</code> file or directly on the Watcher or Admission <code>Deployment</code>. The default value is <code>undefined</code>.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#ff79c6>&#34;env&#34;</span>: {
 </span></span><span style=display:flex><span>    <span style=color:#ff79c6>&#34;PEPR_STORE_REDACT_VALUES&#34;</span>: <span style=color:#f1fa8c>&#34;true&#34;</span>
@@ -846,7 +732,7 @@ Customization</h1><p>This document outlines how to customize the build output th
 </span></span><span style=display:flex><span>    ]
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div></div><div class=td-content style=page-break-before:always><h1 id=pg-84664c1bd51f702d53a952f553854f2d>13 -
+</span></span></code></pre></div></div><div class=td-content style=page-break-before:always><h1 id=pg-84664c1bd51f702d53a952f553854f2d>12 -
 Pepr Filters</h1><p>Filters are functions that take a <code>AdmissionReview</code> or Watch event and return a boolean. They are used to filter out resources that do not meet certain criteria. Filters are used in the package to filter out resources that are not relevant to the user-defined admission or watch process.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-ts data-lang=ts><span style=display:flex><span>When(a.ConfigMap)
 </span></span><span style=display:flex><span>  <span style=color:#6272a4>// This limits the action to only act on new resources.
 </span></span></span><span style=display:flex><span><span style=color:#6272a4></span>  .IsCreated()
@@ -862,7 +748,7 @@ Pepr Filters</h1><p>Filters are functions that take a <code>AdmissionReview</cod
 </span></span><span style=display:flex><span>      .SetLabel(<span style=color:#f1fa8c>&#34;pepr&#34;</span>, <span style=color:#f1fa8c>&#34;was-here&#34;</span>)
 </span></span><span style=display:flex><span>      .SetAnnotation(<span style=color:#f1fa8c>&#34;pepr.dev&#34;</span>, <span style=color:#f1fa8c>&#34;annotations-work-too&#34;</span>);
 </span></span><span style=display:flex><span>  });
-</span></span></code></pre></div><h2 id=filters><code>Filters</code></h2><ul><li><code>.WithName("name")</code>: Filters resources by name.</li><li><code>.WithNameRegex(/^pepr/)</code>: Filters resources by name using a regex.</li><li><code>.InNamespace("namespace")</code>: Filters resources by namespace.</li><li><code>.InNamespaceRegex(/(.*)-system/)</code>: Filters resources by namespace using a regex.</li><li><code>.WithLabel("key", "value")</code>: Filters resources by label. (Can be multiple)</li><li><code>.WithDeletionTimestamp()</code>: Filters resources that have a deletion timestamp.</li></ul><p>Notes:</p><ul><li><code>WithDeletionTimestamp()</code> is does not work on Delete through the <code>Mutate</code> or <code>Validate</code> methods because the Kubernetes Admission Process does not fire the DELETE event with a deletion timestamp on the resource.</li><li><code>WithDeletionTimestamp()</code> <em>will</em> match on an Update event during Admission (<code>Mutate</code> or <code>Validate</code>) when pending-deletion permitted changes (like removing a finalizer) occur.</li></ul></div><div class=td-content style=page-break-before:always><h1 id=pg-72cbc2f5d71077cd8ed5f8c2afa627d6>14 -
+</span></span></code></pre></div><h2 id=filters><code>Filters</code></h2><ul><li><code>.WithName("name")</code>: Filters resources by name.</li><li><code>.WithNameRegex(/^pepr/)</code>: Filters resources by name using a regex.</li><li><code>.InNamespace("namespace")</code>: Filters resources by namespace.</li><li><code>.InNamespaceRegex(/(.*)-system/)</code>: Filters resources by namespace using a regex.</li><li><code>.WithLabel("key", "value")</code>: Filters resources by label. (Can be multiple)</li><li><code>.WithDeletionTimestamp()</code>: Filters resources that have a deletion timestamp.</li></ul><p>Notes:</p><ul><li><code>WithDeletionTimestamp()</code> is does not work on Delete through the <code>Mutate</code> or <code>Validate</code> methods because the Kubernetes Admission Process does not fire the DELETE event with a deletion timestamp on the resource.</li><li><code>WithDeletionTimestamp()</code> <em>will</em> match on an Update event during Admission (<code>Mutate</code> or <code>Validate</code>) when pending-deletion permitted changes (like removing a finalizer) occur.</li></ul></div><div class=td-content style=page-break-before:always><h1 id=pg-72cbc2f5d71077cd8ed5f8c2afa627d6>13 -
 Generating CRDs</h1><p>Pepr comes with the ability to generate Kubernetes Custom Resource Definitions (CRDs) from TypeScript types. This feature is particularly useful for operator developers who are creating Operators that utilize CRDs.</p><p>To generate a TypeScript types for a CRD, you can use the <code>pepr crd create</code> command. This command allows you to specify the group, version, kind, short name, plural name, and scope of the CRD.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx pepr crd create <span style=color:#f1fa8c>\
 </span></span></span><span style=display:flex><span><span style=color:#f1fa8c></span>  --group cache <span style=color:#f1fa8c>\
 </span></span></span><span style=display:flex><span><span style=color:#f1fa8c></span>  --version v1alpha1 <span style=color:#f1fa8c>\
@@ -873,7 +759,7 @@ Generating CRDs</h1><p>Pepr comes with the ability to generate Kubernetes Custom
 </span></span></code></pre></div><p>This command will create a TypeScript file in the <code>crds</code> directory with the generated types for the specified CRD. The generated file will include the necessary type definitions for the CRD.</p><blockquote><p>Note: The comments in the interface spec and condition type become descriptions for the CRD properties, so you can add comments to your properties to provide additional context or documentation for the generated types.</p></blockquote><p>After adding the required types for your CRD, you can then generate the CRD YAML file using the <code>pepr crd generate</code> command. This command will create a YAML file that defines the CRD in Kubernetes format.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>npx pepr crd generate
 </span></span></code></pre></div><p>You can control the output directory for the generated CRD YAML file by using the <code>--output</code> option. If not, it will be generated in the crds directory by default.</p><p>At this point, you can apply the generated CRD to your Kubernetes cluster using <code>kubectl apply -f crds/your-crd-file.yaml</code>.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>&gt; kubectl apply -f crds
 </span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/memcaches.cache.pepr.dev created
-</span></span></code></pre></div></div><div class=td-content style=page-break-before:always><h1 id=pg-2ab9e65cf8a1174ad324adf59f714218>15 -
+</span></span></code></pre></div></div><div class=td-content style=page-break-before:always><h1 id=pg-2ab9e65cf8a1174ad324adf59f714218>14 -
 Generating Custom Metrics</h1><p>Pepr provides a <code>metricCollector</code> utility that lets you define custom metrics such as counters and gauges for your module.</p><p>For example, to track how often a specific event occurs, you can create a custom counter and gauge like this:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#ff79c6>import</span> { Capability, a, metricsCollector } <span style=color:#ff79c6>from</span> <span style=color:#f1fa8c>&#34;pepr&#34;</span>;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#ff79c6>export</span> <span style=color:#ff79c6>const</span> HelloPepr <span style=color:#ff79c6>=</span> <span style=color:#ff79c6>new</span> Capability({
