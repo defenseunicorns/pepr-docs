@@ -12,6 +12,8 @@ You can find the following information in this section:
 
 ### [Pepr CLI](pepr-cli/)
 
+### [SDK](sdk/)
+
 ### [Pepr Modules](pepr-modules/)
 
 ### [Pepr Actions](actions/)
@@ -28,4 +30,10 @@ You can find the following information in this section:
 
 ### [Metrics](metrics/)
 
-### [Webassembly](webassembly/)
+### [Customization](customization/)
+
+### [Filters](filters/)
+
+### [Generating CRDs](generating-crds/)
+
+### [Custom Metrics](generating_custom_metrics/)
