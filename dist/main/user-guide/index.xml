@@ -1091,6 +1091,11 @@ The response body is a plain text representation of the metrics data, according 
 &lt;td>Configures module to build binding RBAC with principal of least privilege&lt;/td>
 &lt;td>&lt;code>scoped&lt;/code>, &lt;code>admin&lt;/code>&lt;/td>
 &lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>additionalWebhooks&lt;/code>&lt;/td>
+&lt;td>Additional webhooks configuration&lt;/td>
+&lt;td>&lt;code>[{&amp;quot;failurePolicy&amp;quot;: &amp;quot;Fail&amp;quot;, &amp;quot;namespace&amp;quot;: &amp;quot;example-namespace&amp;quot;}]&lt;/code>&lt;/td>
+&lt;/tr>
 &lt;/tbody>
 &lt;/table>
 &lt;p>&lt;strong>admission.alwaysIgnore &amp;amp;&amp;amp; watcher.alwaysIgnore&lt;/strong>: These configurations cannot be used with the global &lt;code>alwaysIgnore&lt;/code> field. They are used to specify namespaces that should always be ignored by the admission controller or watcher, respectively.
