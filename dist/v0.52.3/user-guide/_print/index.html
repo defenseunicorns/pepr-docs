@@ -194,12 +194,12 @@ Validate</h1><p>After the Mutation phase comes the Validation phase where the va
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#6272a4>// Check for deprecated fields
 </span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    <span style=color:#ff79c6>if</span> (request.Raw.data <span style=color:#ff79c6>&amp;&amp;</span> request.Raw.data[<span style=color:#f1fa8c>&#34;deprecated-field&#34;</span>]) {
-</span></span><span style=display:flex><span>      warnings.push(<span style=color:#f1fa8c>&#34;Warning: The &#39;deprecated-field&#39; is being used and will be removed in future versions&#34;</span>);
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#6272a4>// Check for missing app label
-</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    <span style=color:#ff79c6>if</span> (<span style=color:#ff79c6>!</span>request.HasLabel(<span style=color:#f1fa8c>&#34;app&#34;</span>)) {
-</span></span><span style=display:flex><span>      warnings.push(<span style=color:#f1fa8c>&#34;Warning: Best practice is to include an &#39;app&#39; label for resource identification&#34;</span>);
+</span></span><span style=display:flex><span>      warnings.push(&#34;Warning: <span style=color:#8be9fd>The</span> <span style=color:#f1fa8c>&#39;deprecated-field&#39;</span> <span style=color:#ff79c6>is</span> being used and will be removed <span style=color:#ff79c6>in</span> future versions<span style=color:#f1fa8c>&#34;);
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    }
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    // Check for missing app label
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>    if (!request.HasLabel(&#34;</span>app<span style=color:#f1fa8c>&#34;)) {
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>      warnings.push(&#34;</span>Warning: <span style=color:#8be9fd>Best</span> practice <span style=color:#ff79c6>is</span> to include an <span style=color:#f1fa8c>&#39;app&#39;</span> label <span style=color:#ff79c6>for</span> resource identification&#34;);
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#6272a4>// Return approval with warnings if any were generated

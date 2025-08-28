@@ -922,6 +922,7 @@ password: secret&lt;/p>
 &lt;h2 id="create-a-new-pepr-module">Create a new Pepr Module&lt;/h2>
 &lt;p>&lt;strong>[🟢⚪⚪⚪⚪⚪] Step 1 of 6&lt;/strong>&lt;/p>
 &lt;p>First, create a new Pepr module for your operator:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr init &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --name operator &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --uuid my-operator-uuid &lt;span style="color:#f1fa8c">\
@@ -929,15 +930,18 @@ password: secret&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --error-behavior reject &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> --yes &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">cd&lt;/span> operator &lt;span style="color:#6272a4"># set working directory as the new pepr module&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>To track your progress in this tutorial, let&amp;rsquo;s treat it as a &lt;code>git&lt;/code> repository:&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>To track your progress in this tutorial, let&amp;rsquo;s treat it as a &lt;code>git&lt;/code> repository:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>git init &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span> git add --all &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span> git commit -m &lt;span style="color:#f1fa8c">&amp;#34;npx pepr init&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;a href="#building-a-kubernetes-operator-with-pepr">Back to top&lt;/a>&lt;/p>
 &lt;h2 id="create-crd">Create CRD&lt;/h2>
 &lt;p>&lt;strong>[🟢🟢⚪⚪⚪⚪] Step 2 of 6&lt;/strong>&lt;/p>
 &lt;p>The WebApp Custom Resource Definition (CRD) specifies the structure and validation for your custom resource.
 Create the necessary directory structure:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>mkdir -p capabilities/crd/generated capabilities/crd/source
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Generate a class based on the WebApp CRD using &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">kubernetes-fluent-client&lt;/a>.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Generate a class based on the WebApp CRD using &lt;a href="https://github.com/defenseunicorns/kubernetes-fluent-client">kubernetes-fluent-client&lt;/a>.
 This allows us to react to the CRD fields in a type-safe manner.
 Create a CRD named &lt;code>crd.yaml&lt;/code> for the WebApp that includes:&lt;/p>
 &lt;ul>
@@ -946,33 +950,43 @@ Create a CRD named &lt;code>crd.yaml&lt;/code> for the WebApp that includes:&lt;
 &lt;li>Configurable replica count&lt;/li>
 &lt;li>Status tracking&lt;/li>
 &lt;/ul>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/crd/source/crd.yaml &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> -o capabilities/crd/source/crd.yaml
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Examine the contents of &lt;code>capabilities/crd/source/crd.yaml&lt;/code>.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Examine the contents of &lt;code>capabilities/crd/source/crd.yaml&lt;/code>.
 Note that the status should be listed under &lt;code>subresources&lt;/code> to make it writable.
 We provide descriptions for each property to clarify their purpose.
 Enums are used to restrict the values that can be assigned to a property.&lt;/p>
 &lt;p>Create an interface for the CRD spec with the following command:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/crd/generated/webapp-v1alpha1.ts &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> -o capabilities/crd/generated/webapp-v1alpha1.ts
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Examine the contents of &lt;code>capabilities/crd/generated/webapp-v1alpha1.ts&lt;/code>.&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Examine the contents of &lt;code>capabilities/crd/generated/webapp-v1alpha1.ts&lt;/code>.&lt;/p>
 &lt;p>Create a TypeScript file that contains the WebApp CRD named &lt;code>webapp.crd.ts&lt;/code>.
 This will enable the controller to automatically create the CRD on startup.
 Use the command:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/crd/source/webapp.crd.ts &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> -o capabilities/crd/source/webapp.crd.ts
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Take a moment to commit your changes for CRD creation:&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Take a moment to commit your changes for CRD creation:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>git add capabilities/crd/ &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span> git commit -m &lt;span style="color:#f1fa8c">&amp;#34;Create WebApp CRD&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>webapp.crd.ts&lt;/code> file defines the structure of our CRD, including the validation rules and schema that Kubernetes will use when WebApp resources are created or modified.&lt;/p>
 &lt;p>Create a file that will automatically register the CRD on startup named &lt;code>capabilities/crd/register.ts&lt;/code>:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/crd/register.ts &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> -o capabilities/crd/register.ts
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>register.ts&lt;/code> file contains logic to ensure our CRD is created in the cluster when the operator starts up, avoiding the need for manual CRD installation.&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>The &lt;code>register.ts&lt;/code> file contains logic to ensure our CRD is created in the cluster when the operator starts up, avoiding the need for manual CRD installation.&lt;/p>
 &lt;p>Create a file to validate that WebApp instances are in valid namespaces and have a maximum of &lt;code>7&lt;/code> replicas.
 Create a &lt;code>validator.ts&lt;/code> file with the command:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/crd/validator.ts &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> -o capabilities/crd/validator.ts
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>validator.ts&lt;/code> file implements validation logic for our WebApp resources, ensuring they meet our requirements before they&amp;rsquo;re accepted by the cluster.&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>The &lt;code>validator.ts&lt;/code> file implements validation logic for our WebApp resources, ensuring they meet our requirements before they&amp;rsquo;re accepted by the cluster.&lt;/p>
 &lt;p>In this section, we&amp;rsquo;ve generated the CRD class for WebApp, created a function to automatically register the CRD, and added a validator to ensure WebApp instances are in valid namespaces and don&amp;rsquo;t exceed 7 replicas.&lt;/p>
 &lt;p>Commit your changes for CRD registration &amp;amp; validation:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>git add capabilities/crd/ &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span> git commit -m &lt;span style="color:#f1fa8c">&amp;#34;Create CRD handling logic&amp;#34;&lt;/span>
@@ -981,11 +995,15 @@ Create a &lt;code>validator.ts&lt;/code> file with the command:&lt;/p>
 &lt;p>&lt;strong>[🟢🟢🟢⚪⚪⚪] Step 3 of 6&lt;/strong>&lt;/p>
 &lt;p>Now, let&amp;rsquo;s create helper functions that will generate the Kubernetes resources managed by our operator. These helpers will simplify the creation of Deployments, Services, and ConfigMaps for each WebApp instance.&lt;/p>
 &lt;p>Create a &lt;code>controller&lt;/code> folder in the &lt;code>capabilities&lt;/code> folder and create a &lt;code>generators.ts&lt;/code> file. This file will contain functions that generate Kubernetes objects for the operator to deploy (with the ownerReferences automatically included). Since these resources are owned by the WebApp resource, they will be deleted when the WebApp resource is deleted.&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>mkdir -p capabilities/controller
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Create &lt;code>generators.ts&lt;/code> with the following command:&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Create &lt;code>generators.ts&lt;/code> with the following command:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/controller/generators.ts &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> -o capabilities/controller/generators.ts
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>generators.ts&lt;/code> file contains functions to create all the necessary Kubernetes resources for our WebApp, including properly configured Deployments, Services, and ConfigMaps with appropriate labels and selectors.&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>The &lt;code>generators.ts&lt;/code> file contains functions to create all the necessary Kubernetes resources for our WebApp, including properly configured Deployments, Services, and ConfigMaps with appropriate labels and selectors.&lt;/p>
 &lt;p>Our goal is to simplify WebApp deployment. Instead of requiring users to manage multiple Kubernetes objects, track versions, and handle revisions manually, they can focus solely on the &lt;code>WebApp&lt;/code> instance. The controller reconciles WebApp instances against the actual cluster state to achieve the desired configuration.&lt;/p>
 &lt;p>The controller deploys a &lt;code>ConfigMap&lt;/code> based on the language and theme specified in the WebApp resource and sets the number of replicas according to the WebApp specification.&lt;/p>
 &lt;p>Commit your changes for deployment, service, and configmap generation:&lt;/p>
@@ -995,13 +1013,17 @@ Create a &lt;code>validator.ts&lt;/code> file with the command:&lt;/p>
 &lt;p>&lt;strong>[🟢🟢🟢🟢⚪⚪] Step 4 of 6&lt;/strong>&lt;/p>
 &lt;p>Now, create the function that reacts to changes in WebApp instances. This function will be called and placed into a queue, guaranteeing ordered and synchronous processing of events, even when the system is under heavy load.&lt;/p>
 &lt;p>In the base of the &lt;code>capabilities&lt;/code> folder, create a &lt;code>reconciler.ts&lt;/code> file and add the following:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/reconciler.ts &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> -o capabilities/reconciler.ts
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>reconciler.ts&lt;/code> file contains the core logic of our operator, handling the creation, updating, and deletion of WebApp resources and ensuring the cluster state matches the desired state.&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>The &lt;code>reconciler.ts&lt;/code> file contains the core logic of our operator, handling the creation, updating, and deletion of WebApp resources and ensuring the cluster state matches the desired state.&lt;/p>
 &lt;p>Finally, create the &lt;code>index.ts&lt;/code> file in the &lt;code>capabilities&lt;/code> folder and add the following:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/index.ts &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> -o capabilities/index.ts
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>index.ts&lt;/code> file contains the WebAppController capability and the functions that are used to watch for changes to the WebApp resource and corresponding Kubernetes resources.&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>The &lt;code>index.ts&lt;/code> file contains the WebAppController capability and the functions that are used to watch for changes to the WebApp resource and corresponding Kubernetes resources.&lt;/p>
 &lt;ul>
 &lt;li>When a WebApp is created or updated, validate it, store the name of the instance and enqueue it for processing.&lt;/li>
 &lt;li>If an &amp;ldquo;owned&amp;rdquo; resource (ConfigMap, Service, or Deployment) is deleted, redeploy it.&lt;/li>
@@ -1017,13 +1039,19 @@ The &lt;code>Reconcile&lt;/code> action processes callbacks in a queue, guarante
 &lt;p>Ensure that the PeprModule in &lt;code>pepr.ts&lt;/code> uses &lt;code>WebAppController&lt;/code>. The implementation should look something like this:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">new&lt;/span> PeprModule(cfg, [WebAppController]);
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Using &lt;code>sed&lt;/code>, replace the contents of the file to use our new &lt;code>WebAppController&lt;/code>:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># Use the WebAppController Module&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sed -i &lt;span style="color:#f1fa8c">&amp;#39;&amp;#39;&lt;/span> -e &lt;span style="color:#f1fa8c">&amp;#39;/new PeprModule(cfg, \[/,/\]);/c\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">new PeprModule(cfg, [WebAppController]);&amp;#39;&lt;/span> ./pepr.ts
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># Update Imports&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sed -i &lt;span style="color:#f1fa8c">&amp;#39;&amp;#39;&lt;/span> &lt;span style="color:#f1fa8c">&amp;#39;s|import { HelloPepr } from &amp;#34;./capabilities/hello-pepr&amp;#34;;|import { WebAppController } from &amp;#34;./capabilities&amp;#34;;|&amp;#39;&lt;/span> ./pepr.ts
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Commit your changes now that the WebAppController is part of the Pepr Module:&lt;/p>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">if&lt;/span> &lt;span style="color:#ff79c6">[[&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">$OSTYPE&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;&lt;/span> &lt;span style="color:#ff79c6">==&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;darwin&amp;#34;&lt;/span>* &lt;span style="color:#ff79c6">]]&lt;/span>; &lt;span style="color:#ff79c6">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> sed -i &lt;span style="color:#f1fa8c">&amp;#39;&amp;#39;&lt;/span> &lt;span style="color:#f1fa8c">&amp;#39;s|import { HelloPepr } from &amp;#34;./capabilities/hello-pepr&amp;#34;;|import { WebAppController } from &amp;#34;./capabilities&amp;#34;;|&amp;#39;&lt;/span> ./pepr.ts
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> sed -i &lt;span style="color:#f1fa8c">&amp;#39;s|import { HelloPepr } from &amp;#34;./capabilities/hello-pepr&amp;#34;;|import { WebAppController } from &amp;#34;./capabilities&amp;#34;;|&amp;#39;&lt;/span> ./pepr.ts
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Commit your changes now that the WebAppController is part of the Pepr Module:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>git add pepr.ts &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span> git commit -m &lt;span style="color:#f1fa8c">&amp;#34;Register WebAppController with pepr module&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="build-and-deploy-your-operator">Build and Deploy Your Operator&lt;/h2>
 &lt;p>&lt;strong>[🟢🟢🟢🟢🟢⚪] Step 5 of 6&lt;/strong>&lt;/p>
@@ -1042,9 +1070,11 @@ An ephemeral cluster is a temporary Kubernetes cluster that exists only for test
 &lt;/blockquote>
 &lt;h3 id="building-the-operator">Building the Operator&lt;/h3>
 &lt;p>Build the Pepr module by running:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr format &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>npx pepr build
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Commit your changes after the build completes:&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Commit your changes after the build completes:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>git add capabilities/ package*.json &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span> git commit -m &lt;span style="color:#f1fa8c">&amp;#34;Build pepr module&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>The build process explained&lt;/strong>&lt;/p>
 &lt;p>The &lt;code>pepr build&lt;/code> command performs three critical steps:&lt;/p>
@@ -1078,9 +1108,13 @@ An ephemeral cluster is a temporary Kubernetes cluster that exists only for test
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> └───────────────────┘
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="deploy-to-kubernetes">Deploy to Kubernetes&lt;/h3>
 &lt;p>To deploy your operator to a Kubernetes cluster:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl apply -f dist/pepr-module-my-operator-uuid.yaml &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span>
+&lt;!-- Start Block -->
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl apply -f dist/pepr-module-my-operator-uuid.yaml;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># Wait for pods to have a status so we can check for readiness&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sleep 10;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl &lt;span style="color:#8be9fd;font-style:italic">wait&lt;/span> --for&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">condition&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>Ready pods -l app -n pepr-system --timeout&lt;span style="color:#ff79c6">=&lt;/span>120s
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>What&amp;rsquo;s happening during deployment?&lt;/strong>&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>&lt;strong>What&amp;rsquo;s happening during deployment?&lt;/strong>&lt;/p>
 &lt;ol>
 &lt;li>
 &lt;p>The first command applies all the Kubernetes resources defined in the YAML file, including:&lt;/p>
@@ -1109,13 +1143,24 @@ An ephemeral cluster is a temporary Kubernetes cluster that exists only for test
 &lt;/li>
 &lt;/ol>
 &lt;p>Verify the deployment was successful by checking if the CRD has been properly registered:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl get crd | grep webapp
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You should see &lt;code>webapps.pepr.io&lt;/code> in the output, which confirms your Custom Resource Definition was created successfully.&lt;/p>
+&lt;!-- Start Block -->
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># Wait for crd to be registered&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sleep 10;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl get crd | grep webapp
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>You should see &lt;code>webapps.pepr.io&lt;/code> in the output, which confirms your Custom Resource Definition was created successfully.&lt;/p>
 &lt;h4 id="understanding-the-webapp-resource">Understanding the WebApp Resource&lt;/h4>
 &lt;p>You can use &lt;code>kubectl explain&lt;/code> to see the structure of your custom resource.
 It may take a moment for the cluster to recognize this resource before the following command will work:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl explain wa.spec
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Expected Output:&lt;/p>
+&lt;!-- Start Block -->
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># This command takes a lot of time to succeed the first time after CRD creation&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">until&lt;/span> kubectl explain wa.spec &amp;gt;/dev/null 2&amp;gt;&amp;amp;1; &lt;span style="color:#ff79c6">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> sleep 2;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl explain wa.spec
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Expected Output:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>GROUP: pepr.io
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>KIND: WebApp
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>VERSION: v1alpha1
@@ -1174,13 +1219,17 @@ It may take a moment for the cluster to recognize this resource before the follo
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>└───────────────────┘
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="creating-a-webapp-instance">Creating a WebApp Instance&lt;/h3>
 &lt;p>Let&amp;rsquo;s create an instance of our custom &lt;code>WebApp&lt;/code> resource in English with a light theme and 1 replicas:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/webapp-light-en.yaml &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> -o webapp-light-en.yaml
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Examine the contents of &lt;code>webapp-light-en.yaml&lt;/code>. It defines a WebApp with English language, light theme, and 1 replica.&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Examine the contents of &lt;code>webapp-light-en.yaml&lt;/code>. It defines a WebApp with English language, light theme, and 1 replica.&lt;/p>
 &lt;p>Next, apply it to the cluster:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl create namespace webapps &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl apply -f webapp-light-en.yaml
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>How resource creation works&lt;/strong>&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>&lt;strong>How resource creation works&lt;/strong>&lt;/p>
 &lt;ol>
 &lt;li>Kubernetes API server receives the WebApp resource&lt;/li>
 &lt;li>Our operator&amp;rsquo;s controller (in &lt;code>index.ts&lt;/code>) detects the new resource via its reconcile function&lt;/li>
@@ -1197,8 +1246,10 @@ It may take a moment for the cluster to recognize this resource before the follo
 &lt;p>All this logic is in the code we wrote earlier in the tutorial.&lt;/p>
 &lt;h3 id="verifying-resource-creation">Verifying Resource Creation&lt;/h3>
 &lt;p>Now, verify that the WebApp and its owned resources were created properly:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl get cm,svc,deploy,webapp -n webapps
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Expected Output:&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Expected Output:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>NAME DATA AGE
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>configmap/kube-root-ca.crt &lt;span style="color:#bd93f9">1&lt;/span> 6s
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>configmap/web-content-webapp-light-en &lt;span style="color:#bd93f9">1&lt;/span> 5s
@@ -1213,8 +1264,10 @@ It may take a moment for the cluster to recognize this resource before the follo
 &lt;/blockquote>
 &lt;h3 id="checking-webapp-status">Checking WebApp Status&lt;/h3>
 &lt;p>The status field is how our operator communicates the current state of the WebApp:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl get wa webapp-light-en -n webapps -ojsonpath&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;{.status}&amp;#34;&lt;/span> | jq
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Expected Output:&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Expected Output:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;observedGeneration&amp;#34;&lt;/span>: &lt;span style="color:#bd93f9">1&lt;/span>,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;phase&amp;#34;&lt;/span>: &lt;span style="color:#f1fa8c">&amp;#34;Ready&amp;#34;&lt;/span>
@@ -1226,8 +1279,10 @@ It may take a moment for the cluster to recognize this resource before the follo
 &lt;/ul>
 &lt;p>This status information comes from our reconciler code, which updates these fields during each reconciliation cycle.&lt;/p>
 &lt;p>You can also see events related to your WebApp that provide a timeline of actions taken by the operator:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl describe wa webapp-light-en -n webapps
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Expected Output:&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Expected Output:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>Name: webapp-light-en
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Namespace: webapps
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>API Version: pepr.io/v1alpha1
@@ -1259,10 +1314,12 @@ The browser should display a light theme web application:&lt;/p>
 &lt;p>&lt;img src="resources/create-pepr-operator/light.png" alt="WebApp Light Theme">&lt;/p>
 &lt;h3 id="testing-the-reconciliation-loop">Testing the Reconciliation Loop&lt;/h3>
 &lt;p>A key feature of operators is their ability to automatically repair resources when they&amp;rsquo;re deleted or changed. Let&amp;rsquo;s test this by deleting the ConfigMap:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl delete cm -n webapps --all &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sleep &lt;span style="color:#bd93f9">10&lt;/span> &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl get cm -n webapps
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Expected output:&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Expected output:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>configmap &amp;#34;kube-root-ca.crt&amp;#34; deleted
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>configmap &amp;#34;web-content-webapp-light-en&amp;#34; deleted
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME DATA AGE
@@ -1284,14 +1341,18 @@ The browser should display a light theme web application:&lt;/p>
 &lt;h3 id="updating-the-webapp">Updating the WebApp&lt;/h3>
 &lt;p>Now let&amp;rsquo;s test changing the WebApp&amp;rsquo;s specification.
 Copy down the next WebApp resource with the following command:&lt;/p>
+&lt;!-- Start Block -->
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/webapp-dark-es.yaml &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> -o webapp-dark-es.yaml
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Compare the contents of &lt;code>webapp-light-en.yaml&lt;/code> and &lt;code>webapp-dark-es.yaml&lt;/code> with the command:&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;p>Compare the contents of &lt;code>webapp-light-en.yaml&lt;/code> and &lt;code>webapp-dark-es.yaml&lt;/code> with the command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>diff --side-by-side &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> webapp-light-en.yaml &lt;span style="color:#f1fa8c">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&lt;/span> webapp-dark-es.yaml
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl apply -f webapp-dark-es.yaml
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- Start Block -->
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl apply -f webapp-dark-es.yaml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;!-- End Block -->
+&lt;blockquote>
 &lt;p>💡 &lt;strong>Note&lt;/strong>: We&amp;rsquo;ve changed the theme from light to dark and the language from English (en) to Spanish (es).&lt;/p>
 &lt;/blockquote>
 &lt;p>Your port-forward should still be active, so you can refresh your browser to see the changes.
