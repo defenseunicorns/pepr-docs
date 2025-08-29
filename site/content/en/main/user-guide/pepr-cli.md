@@ -11,6 +11,7 @@ Type safe K8s middleware for humans
 **Options:**
 
 - `-V, --version` - output the version number
+- `--features <features>` - Comma-separated feature flags (feature=value,feature2=value2)
 - `-h, --help` - display help for command
 
 **Commands:**
