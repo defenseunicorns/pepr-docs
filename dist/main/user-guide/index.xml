@@ -26,7 +26,7 @@ kfc [options] [args&amp;hellip;] Execute Kubernetes Fluent Client commands&lt;/p
 &lt;li>&lt;code>-I, --registry-info &amp;lt;registry/username&amp;gt;&lt;/code> - Provide the image registry and username for building and pushing a custom WASM container. Requires authentication. Conflicts with &amp;ndash;custom-image and &amp;ndash;registry. Builds and pushes &lt;code>'&amp;lt;registry/username&amp;gt;/custom-pepr-controller:&amp;lt;current-version&amp;gt;'&lt;/code>.&lt;/li>
 &lt;li>&lt;code>-P, --with-pull-secret &amp;lt;name&amp;gt;&lt;/code> - Use image pull secret for controller Deployment. (default: &amp;ldquo;&amp;rdquo;)&lt;/li>
 &lt;li>&lt;code>-c, --custom-name &amp;lt;name&amp;gt;&lt;/code> - Set name for zarf component and service monitors in helm charts.&lt;/li>
-&lt;li>&lt;code>-e, --entry-point &amp;lt;file&amp;gt;&lt;/code> - Specify the entry point file to build with. (default: &amp;ldquo;pepr.ts&amp;rdquo;)&lt;/li>
+&lt;li>&lt;code>-e, --entry-point &amp;lt;file&amp;gt;&lt;/code> - Specify the entry point file to build with. (default: pepr.ts)&lt;/li>
 &lt;li>&lt;code>-i, --custom-image &amp;lt;image&amp;gt;&lt;/code> - Specify a custom image with version for deployments. Conflicts with &amp;ndash;registry-info and &amp;ndash;registry. Example: &amp;lsquo;docker.io/username/custom-pepr-controller:v1.0.0&amp;rsquo;&lt;/li>
 &lt;li>&lt;code>-n, --no-embed&lt;/code> - Disable embedding of deployment files into output module. Useful when creating library modules intended solely for reuse/distribution via NPM.&lt;/li>
 &lt;li>&lt;code>-o, --output &amp;lt;directory&amp;gt;&lt;/code> - Set output directory. (default: &amp;ldquo;dist&amp;rdquo;)&lt;/li>
