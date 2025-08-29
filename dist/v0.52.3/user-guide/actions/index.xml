@@ -76,12 +76,12 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Check for deprecated fields
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">if&lt;/span> (request.Raw.data &lt;span style="color:#ff79c6">&amp;amp;&amp;amp;&lt;/span> request.Raw.data[&lt;span style="color:#f1fa8c">&amp;#34;deprecated-field&amp;#34;&lt;/span>]) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> warnings.push(&amp;#34;Warning: &lt;span style="color:#8be9fd">The&lt;/span> &lt;span style="color:#f1fa8c">&amp;#39;deprecated-field&amp;#39;&lt;/span> &lt;span style="color:#ff79c6">is&lt;/span> being used and will be removed &lt;span style="color:#ff79c6">in&lt;/span> future versions&lt;span style="color:#f1fa8c">&amp;#34;);
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> }
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> // Check for missing app label
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> if (!request.HasLabel(&amp;#34;&lt;/span>app&lt;span style="color:#f1fa8c">&amp;#34;)) {
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c"> warnings.push(&amp;#34;&lt;/span>Warning: &lt;span style="color:#8be9fd">Best&lt;/span> practice &lt;span style="color:#ff79c6">is&lt;/span> to include an &lt;span style="color:#f1fa8c">&amp;#39;app&amp;#39;&lt;/span> label &lt;span style="color:#ff79c6">for&lt;/span> resource identification&amp;#34;);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> warnings.push(&lt;span style="color:#f1fa8c">&amp;#34;Warning: The &amp;#39;deprecated-field&amp;#39; is being used and will be removed in future versions&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Check for missing app label
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> &lt;span style="color:#ff79c6">if&lt;/span> (&lt;span style="color:#ff79c6">!&lt;/span>request.HasLabel(&lt;span style="color:#f1fa8c">&amp;#34;app&amp;#34;&lt;/span>)) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> warnings.push(&lt;span style="color:#f1fa8c">&amp;#34;Warning: Best practice is to include an &amp;#39;app&amp;#39; label for resource identification&amp;#34;&lt;/span>);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Return approval with warnings if any were generated
