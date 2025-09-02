@@ -1228,4 +1228,154 @@ The response body is a plain text representation of the metrics data, according 
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>pepr_label_guage&lt;span style="color:#ff79c6">{&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">label&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;blue&amp;#34;&lt;/span>&lt;span style="color:#ff79c6">}&lt;/span> &lt;span style="color:#bd93f9">3&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>pepr_label_guage&lt;span style="color:#ff79c6">{&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">label&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;green&amp;#34;&lt;/span>&lt;span style="color:#ff79c6">}&lt;/span> &lt;span style="color:#bd93f9">3&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>pepr_label_guage&lt;span style="color:#ff79c6">{&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">label&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;hello-pepr&amp;#34;&lt;/span>&lt;span style="color:#ff79c6">}&lt;/span> &lt;span style="color:#bd93f9">3&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Main: Feature Flags</title><link>/main/user-guide/feature-flags/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/feature-flags/</guid><description>
+&lt;p>Feature flags allow you to enable, disable, or configure features in Pepr.
+They provide a way to manage feature rollouts, toggle experimental features, and maintain configuration across different environments.
+Feature flags work across both CLI and in-cluster environments, using the same underlying implementation.&lt;/p>
+&lt;p>Pepr&amp;rsquo;s feature flag system supports:&lt;/p>
+&lt;ul>
+&lt;li>Boolean flags&lt;/li>
+&lt;li>String values&lt;/li>
+&lt;li>Numeric values&lt;/li>
+&lt;li>Default values for flags&lt;/li>
+&lt;li>Type safety through TypeScript&lt;/li>
+&lt;li>Configuration via environment variables&lt;/li>
+&lt;li>Configuration via initialization strings&lt;/li>
+&lt;li>Consistent behavior in both CLI and in-cluster environments&lt;/li>
+&lt;/ul>
+&lt;h2 id="best-practices">Best Practices&lt;/h2>
+&lt;ol>
+&lt;li>&lt;strong>Temporary Usage&lt;/strong>: Use feature flags for temporary changes, gradual rollouts, or experimental features. Do NOT use feature flags for permanent configuration.&lt;/li>
+&lt;li>&lt;strong>Descriptive Names&lt;/strong>: Choose descriptive flag names and provide detailed descriptions in the metadata.&lt;/li>
+&lt;li>&lt;strong>Default Values&lt;/strong>: Always provide sensible default values for feature flags.&lt;/li>
+&lt;li>&lt;strong>Type Safety&lt;/strong>: Leverage TypeScript&amp;rsquo;s type system when accessing feature flags.&lt;/li>
+&lt;li>&lt;strong>Cleanup&lt;/strong>: Remove feature flags that are no longer needed to maintain a clean codebase and stay within the feature flag limit.&lt;/li>
+&lt;/ol>
+&lt;h2 id="getting-started">Getting Started&lt;/h2>
+&lt;h3 id="using-feature-flags">Using Feature Flags&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>Enable a CLI feature flag via environment variable:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">PEPR_FEATURE_REFERENCE_FLAG&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">true&lt;/span> npx pepr@latest
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Enable a CLI feature flag via argument:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>npx pepr@latest --features&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;reference_flag=true&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Configure feature flags for a Pepr module:&lt;/strong>
+Add to your &lt;code>package.json&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;env&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;PEPR_FEATURE_REFERENCE_FLAG&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;/ol>
+&lt;h2 id="defining-feature-flags">Defining Feature Flags&lt;/h2>
+&lt;p>Feature flags in Pepr are defined in the &lt;code>FeatureFlags&lt;/code> object.
+The &lt;code>FeatureFlags&lt;/code> object is the source of truth for all available feature flags.&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>Important&lt;/strong>: To reduce complexity, Pepr enforces a limit of 4 active feature flags.
+Exceeding this limit results in an error (e.g., &lt;code>Error: Too many feature flags active: 5 (maximum: 4).&lt;/code>)&lt;/p>
+&lt;/blockquote>
+&lt;p>Feature Flags have:&lt;/p>
+&lt;ul>
+&lt;li>A unique key used for programmatic access&lt;/li>
+&lt;li>Metadata containing name, description, and default value&lt;/li>
+&lt;/ul>
+&lt;p>Feature flag values are converted to appropriate types:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>&amp;quot;true&amp;quot;&lt;/code> and &lt;code>&amp;quot;false&amp;quot;&lt;/code> strings are converted to boolean values&lt;/li>
+&lt;li>Numeric strings are converted to numbers&lt;/li>
+&lt;li>All other values remain as strings&lt;/li>
+&lt;/ul>
+&lt;p>Example definition:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">export&lt;/span> &lt;span style="color:#ff79c6">const&lt;/span> FeatureFlags: &lt;span style="color:#8be9fd">Record&lt;/span>&amp;lt;&lt;span style="color:#ff79c6">string&lt;/span>, &lt;span style="color:#50fa7b">FeatureInfo&lt;/span>&amp;gt; &lt;span style="color:#ff79c6">=&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> REFERENCE_FLAG&lt;span style="color:#ff79c6">:&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> key&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;reference_flag&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> metadata&lt;span style="color:#ff79c6">:&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;Reference Flag&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> description&lt;span style="color:#ff79c6">:&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;A feature flag to show intended usage.&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> defaultValue: &lt;span style="color:#8be9fd">false&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>};
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="configuration-and-workflows">Configuration and Workflows&lt;/h2>
+&lt;p>Feature flags are configured in two ways for either CLI or Module use.
+Only feature flags defined in the &lt;code>FeatureFlags&lt;/code> object can be configured.
+Attempting to use an undefined flag will result in an error.&lt;/p>
+&lt;h3 id="pepr-cli-workflow">Pepr CLI Workflow&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>Using environment variables&lt;/strong> with the format &lt;code>PEPR_FEATURE_&amp;lt;FLAG_NAME&amp;gt;&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># Run Pepr with debug logging to verify feature flags&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">PEPR_FEATURE_REFERENCE_FLAG&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">true&lt;/span> &lt;span style="color:#8be9fd;font-style:italic">LOG_LEVEL&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>debug npx pepr@latest
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Using the &lt;code>--features&lt;/code> CLI argument&lt;/strong>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">LOG_LEVEL&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>debug npx pepr@latest --features&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#f1fa8c">&amp;#34;reference_flag=true&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;/ol>
+&lt;h3 id="pepr-module-deployment-workflow">Pepr Module Deployment Workflow&lt;/h3>
+&lt;p>For deployed modules, configure feature flags in the module&amp;rsquo;s &lt;code>package.json&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f1fa8c">&amp;#34;pepr&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;env&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">&amp;#34;PEPR_FEATURE_REFERENCE_FLAG&amp;#34;&lt;/span>: &lt;span style="color:#ff79c6">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Build and deploy the module once environment variables are set with a known &lt;code>$APP_NAME&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4"># Edit your package.json to include feature flags&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jq &lt;span style="color:#f1fa8c">&amp;#39;.pepr.env.PEPR_FEATURE_REFERENCE_FLAG = true&amp;#39;&lt;/span> package.json
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>npx pepr@latest build
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>npx pepr@latest deploy -i pepr:dev
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8be9fd;font-style:italic">APP_NAME&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>pepr-module-name
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl logs -n pepr-system --selector &lt;span style="color:#8be9fd;font-style:italic">app&lt;/span>&lt;span style="color:#ff79c6">=&lt;/span>&lt;span style="color:#8be9fd;font-style:italic">$APP_NAME&lt;/span> | grep &lt;span style="color:#f1fa8c">&amp;#34;Feature flags store initialized&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="troubleshooting">Troubleshooting&lt;/h2>
+&lt;h3 id="feature-flag-not-recognized">Feature Flag Not Recognized&lt;/h3>
+&lt;p>If your feature flag isn&amp;rsquo;t recognized:&lt;/p>
+&lt;ol>
+&lt;li>Verify the flag is defined in the &lt;code>FeatureFlags&lt;/code> object&lt;/li>
+&lt;li>Check the case of the environment variable (&lt;code>PEPR_FEATURE_REFERENCE_FLAG&lt;/code> vs &lt;code>pepr_feature_reference_flag&lt;/code>)&lt;/li>
+&lt;li>Ensure correct format for CLI flags (&lt;code>reference_flag=true&lt;/code> not &lt;code>REFERENCE_FLAG=true&lt;/code>)&lt;/li>
+&lt;/ol>
+&lt;h3 id="too-many-feature-flags">Too Many Feature Flags&lt;/h3>
+&lt;p>If you receive the error: &lt;code>Error: Too many feature flags active: 5 (maximum: 4)&lt;/code>&lt;/p>
+&lt;ol>
+&lt;li>Review active feature flags using &lt;code>featureFlagStore.getAll()&lt;/code>&lt;/li>
+&lt;li>Remove or consolidate unnecessary feature flags&lt;/li>
+&lt;li>Consider if some flags could be regular configuration instead&lt;/li>
+&lt;/ol>
+&lt;h3 id="flag-value-incorrect-type">Flag Value Incorrect Type&lt;/h3>
+&lt;p>If your feature flag has an unexpected type:&lt;/p>
+&lt;ol>
+&lt;li>Remember that strings &lt;code>&amp;quot;true&amp;quot;&lt;/code> and &lt;code>&amp;quot;false&amp;quot;&lt;/code> are automatically converted to booleans&lt;/li>
+&lt;li>Numeric strings are automatically converted to numbers&lt;/li>
+&lt;li>Use explicit type checking in your code: &lt;code>typeof featureFlagStore.get(...)&lt;/code>&lt;/li>
+&lt;/ol>
+&lt;hr>
+&lt;h2 id="for-maintainers">For Maintainers&lt;/h2>
+&lt;h2 id="development-guidelines">Development Guidelines&lt;/h2>
+&lt;h3 id="accessing-and-implementing-feature-flags">Accessing and Implementing Feature Flags&lt;/h3>
+&lt;p>To add a new feature flag, update the &lt;code>FeatureFlags&lt;/code> object in the source code.
+Any feature flag not defined in this object cannot be used in the application.&lt;/p>
+&lt;p>Access feature flags the same way in both CLI and in-cluster environments using the &lt;code>featureFlagStore&lt;/code>.&lt;/p>
+&lt;p>This snippet shows how to execute different code paths based upon a feature flag value.
+To execute within the Pepr project, save the snippet to &lt;code>file.ts&lt;/code> and run &lt;code>npx tsx file.ts&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-typescript" data-lang="typescript">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> { featureFlagStore } &lt;span style="color:#ff79c6">from&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;./lib/features/store&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">import&lt;/span> { FeatureFlags } &lt;span style="color:#ff79c6">from&lt;/span> &lt;span style="color:#f1fa8c">&amp;#34;./lib/features/FeatureFlags&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// Get a boolean flag
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>&lt;span style="color:#ff79c6">const&lt;/span> isReferenceEnabled &lt;span style="color:#ff79c6">=&lt;/span> featureFlagStore.&lt;span style="color:#ff79c6">get&lt;/span>(FeatureFlags.REFERENCE_FLAG.key);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ff79c6">const&lt;/span> allFlags &lt;span style="color:#ff79c6">=&lt;/span> featureFlagStore.getAll();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">// Use feature flags for conditional logic
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span>&lt;span style="color:#ff79c6">if&lt;/span> (featureFlagStore.&lt;span style="color:#ff79c6">get&lt;/span>(FeatureFlags.REFERENCE_FLAG.key)) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(&lt;span style="color:#f1fa8c">`Flag value: &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>isReferenceEnabled&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c"> of type &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>&lt;span style="color:#ff79c6">typeof&lt;/span> featureFlagStore.&lt;span style="color:#ff79c6">get&lt;/span>(FeatureFlags.REFERENCE_FLAG.key)&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>} &lt;span style="color:#ff79c6">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(&lt;span style="color:#f1fa8c">`All flags: &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>JSON.stringify(allFlags)&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>
