@@ -1,0 +1,83 @@
+<!-- ---
+// See the framework guide here: https://posthog.com/docs/libraries/astro
+---
+
+<script is:inline>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getDistinctId alias set_config get_config get_property get_session_id capture_pageview page_view capture_pageleave register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures LemonSqueezy".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  
+  function initializePostHog() {
+    var hashParams = new URLSearchParams(window.location.hash.substring(1));
+    var distinct_id = hashParams.get('distinct_id');
+    var session_id = hashParams.get('session_id');
+
+    var config = {
+      api_host: 'https://us.i.posthog.com',
+      cross_subdomain_cookie: true
+    };
+
+    if (distinct_id || session_id) {
+      config.bootstrap = {};
+      if (distinct_id) config.bootstrap.distinctID = distinct_id;
+      if (session_id) config.bootstrap.sessionID = session_id;
+    }
+
+    if (window.posthog && typeof window.posthog.init === 'function') {
+      try {
+        window.posthog.init('phc_bXFVKWRZnEDUWbXQf3VjlAHeemyJDSsTqkpvDINHGFG', config);
+      } catch (error) {
+        posthog.init('phc_bXFVKWRZnEDUWbXQf3VjlAHeemyJDSsTqkpvDINHGFG', {api_host: 'https://us.i.posthog.com'});
+      }
+    }
+
+    if (window.location.hash && (distinct_id || session_id)) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+
+    document.addEventListener('click', function(event) {
+      var target = event.target;
+      if (!target) return;
+      
+      var link = target.closest('a');
+      if (!link || !link.href) return;
+
+      try {
+        var url = new URL(link.href);
+        var currentDomain = window.location.hostname;
+
+        if (url.hostname !== currentDomain) {
+          if (!window.posthog || !window.posthog.get_distinct_id) return;
+          
+          var distinctId = window.posthog.get_distinct_id();
+          var sessionId = window.posthog.get_session_id();
+
+          if (distinctId || sessionId) {
+            event.preventDefault();
+
+            var hashParams = new URLSearchParams();
+            if (distinctId) hashParams.set('distinct_id', distinctId);
+            if (sessionId) hashParams.set('session_id', sessionId);
+
+            var trackedUrl = link.href + (link.href.includes('#') ? '&' : '#') + hashParams.toString();
+
+            if (link.target === '_blank' || event.ctrlKey || event.metaKey) {
+              window.open(trackedUrl, '_blank');
+            } else {
+              window.location.href = trackedUrl;
+            }
+          }
+        }
+      } catch (error) {
+      }
+    });
+  }
+
+  function startInit() {
+    setTimeout(initializePostHog, 100);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startInit);
+  } else {
+    startInit();
+  }
+</script> -->

@@ -1,0 +1,83 @@
+<!-- ---
+import 'vanilla-cookieconsent/dist/cookieconsent.css';
+---
+<a type="button" class="text-gray-800 hover:text-gray-500 dark:text-gray-200 dark:hover:text-gray-400 no-underline hover:underline" href="#" data-cc="show-preferencesModal">Cookie Settings</a>
+
+<script>
+    import { run } from 'vanilla-cookieconsent';
+
+    document.documentElement.classList.add('cc--darkmode');
+
+    /**
+     * All config. options available here:
+     * https://cookieconsent.orestbida.com/reference/configuration-reference.html
+     */
+    run({
+
+        guiOptions: {
+            consentModal: {
+                layout: 'box inline',
+                position: 'bottom right',
+                equalWeightButtons: true,
+                flipButtons: false
+            },
+            preferencesModal: {
+                layout: 'box',
+                equalWeightButtons: true,
+                flipButtons: false
+            }
+        },
+
+        categories: {
+            necessary: {
+                enabled: true,  // this category is enabled by default
+                readOnly: true  // this category cannot be disabled
+            },
+            analytics: {}
+        },
+
+        language: {
+            default: 'en',
+            translations: {
+                en: {
+                    consentModal: {
+                        title: 'Cookie Settings',
+                        description: 'Cookies may be used by Defense Unicorns, Inc. to collect Non-personally Identifiable Information regarding site users to aid in improving our developer experience. This website uses Google Analytics and PostHog.',
+                        acceptAllBtn: 'Accept all',
+                        acceptNecessaryBtn: 'Reject all',
+                        showPreferencesBtn: 'Manage individual preferences'
+                    },
+                    preferencesModal: {
+                        title: 'Manage cookie preferences',
+                        acceptAllBtn: 'Accept all',
+                        acceptNecessaryBtn: 'Reject all',
+                        savePreferencesBtn: 'Accept current selection',
+                        closeIconLabel: 'Close modal',
+                        sections: [
+                            {
+                                title: 'About cookie usage',
+                                description: 'Cookies may be used by Defense Unicorns, Inc. to collect Non-personally Identifiable Information regarding site users to aid in improving our developer experience. This website uses Google Analytics and PostHog.'
+                            },
+                            {
+                                title: 'Strictly Necessary cookies',
+                                description: 'These cookies are essential for the proper functioning of the website and cannot be disabled.',
+
+                                //this field will generate a toggle linked to the 'necessary' category
+                                linkedCategory: 'necessary'
+                            },
+                            {
+                                title: 'Performance and Analytics',
+                                description: 'These cookies collect information about how you use our website. All of the data is anonymized and cannot be used to identify you.',
+                                linkedCategory: 'analytics'
+                            },
+                            {
+                                title: 'More information',
+                                description: 'Please <a href="https://defenseunicorns.com/legal/privacypolicy" target="_blank">view our company privacy policy</a> or <a href="https://www.defenseunicorns.com/contactus" target="_blank">contact us</a> for more information.'
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    });
+</script> -->

@@ -1,0 +1,28 @@
+<!-- ---
+import Default from '@astrojs/starlight/components/Head.astro';
+import PostHog from './PostHog.astro';
+---
+
+<link rel="sitemap" href="/sitemap-index.xml" />
+<script
+  is:inline
+  type="text/plain"
+  data-category="analytics"
+  data-service="Google Analytics"
+  async
+  src="https://www.googletagmanager.com/gtag/js?id=G-57TRKPHZXN"
+></script>
+<script
+  is:inline
+  type="text/plain"
+  data-category="analytics"
+>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-57TRKPHZXN');
+</script>
+
+<PostHog/>
+
+<Default><slot /></Default> -->
