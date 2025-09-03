@@ -1,0 +1,104 @@
+// make inline-code color not-to-obnoxious
+code {
+  --bs-code-color: #{$secondary};
+}
+
+// keep the dragon in its box!
+.td-navbar .navbar-brand svg {
+  width: fit-content;
+}
+
+// set dark-mode browser chrome (e.g. scrollbars)
+:root {
+  color-scheme: dark;
+}
+
+nav.td-sidebar-nav a.active {
+  background-color: transparent;
+  font-weight: bold;
+}
+
+// make version dropdown highling not-so-obnoxious
+ul.dropdown-menu {
+  --bs-dropdown-bg: #0f1443;
+}
+
+ul.dropdown-menu > li {
+  --bs-dropdown-link-hover-bg: color-mix(in srgb, #0f1443 95%, white);
+}
+
+// right-align top menu version dropdown
+#main_navbar {
+  margin-right: 0 !important;
+  margin-left: auto !important;
+
+  flex-grow: 1;
+  flex-direction:  row-reverse;
+  display: flex;
+}
+
+// keep video elements width-aligned with content
+video.td-content {
+  max-width: 100%;
+}
+
+// keep right-aligned dragon pic aligned with content
+.td-content > img[align="right"] {
+  margin: 0 2.5em 1em 2.5em; // t-l-b-r
+}
+
+// don't show edit page / print links
+// https://www.docsy.dev/docs/adding-content/repository-links/#disabling-links
+.td-page-meta--view,
+.td-page-meta--edit,
+.td-page-meta--child,
+.td-page-meta--issue,
+.td-page-meta--project-issue,
+.td-page-meta > #print,
+.td-sidebar-toc .panel-line {
+  display: none !important;
+}
+
+// hide section index on list pages
+.section-index {
+  display: none;
+}
+
+// adjust section menu to better visually group long, line-broken line items
+.td-sidebar-link > span {
+  display: block;
+  text-indent: -0.75em;
+  padding: 0.25em 0;
+  padding-left: 0.75em;
+  line-height: 1.5em;
+}
+
+// enable version dropdown on small screens
+@media screen and (max-width: 991.98px) {
+  div#main_navbar {
+    overflow: visible;
+    font-size: 16px;
+  }
+
+  ul.navbar-nav {
+    overflow-x: visible !important;
+    padding-top: 0 !important;
+  }
+
+  li.nav-item {
+    display: inherit !important;
+  }
+
+  nav.td-navbar {
+    min-height: auto;
+    height: 56px;
+  }
+
+  nav.td-navbar > div.container-fluid {
+    flex-direction: row !important;
+  }
+  
+  ul.dropdown-menu {
+    inset: 0px auto auto 0px !important;
+  }
+}
