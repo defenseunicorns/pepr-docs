@@ -190,7 +190,6 @@ Update the current Pepr Module to the latest SDK version. This command is not re
 **Options:**
 
 - `-s, --skip-template-update` - Do not update template files
-- `-y, --yes` - Skip confirmation prompt
 - `-h, --help` - display help for command
 
 ## `npx pepr uuid`
