@@ -1,6 +1,9 @@
 import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
 import starlightVersions from 'starlight-versions';
+import starlightLinksValidator from 'starlight-links-validator';
+import starlightImageZoom from 'starlight-image-zoom';
+import starlightContextualMenu from 'starlight-contextual-menu';
 
 // https://astro.build/config
 export default defineConfig({
@@ -10,15 +13,21 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			plugins: [
+				starlightContextualMenu({
+					actions: ['copy', 'view', 'chatgpt', 'claude'],
+				}),
+				starlightLinksValidator(),
+				starlightImageZoom(),
 				starlightVersions({
 					versions: [
-						{ slug: 'current', label: 'Current' },
-						// { slug: 'v0.53.1', label: 'v0.53.1 (Latest)' },
+						{ slug: 'current', label: 'v0.53.1' },
+						// { slug: 'v0.53.0', label: 'v0.53.0' },
 						// { slug: 'v0.53.0', label: 'v0.53.0' },
 						// { slug: 'v0.52.3', label: 'v0.52.3' },
 						// { slug: 'v0.52.2', label: 'v0.52.2' },
 						// { slug: 'v0.52.1', label: 'v0.52.1' },
 						// { slug: 'v0.52.0', label: 'v0.52.0' },
+						
 					],
 				}),
 			],

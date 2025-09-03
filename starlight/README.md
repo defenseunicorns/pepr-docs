@@ -17,8 +17,17 @@ Inside of your Astro + Starlight project, you'll see the following folders and f
 ├── public/
 ├── src/
 │   ├── assets/
+│   │   └── images/
+│   │       └── 1.0/
+│   │           └── imgV1.0.png/
+│   │       └── img.png/
 │   ├── content/
 │   │   └── docs/
+│   │       └── 1.0/
+│   │           └── getting-started.md
+│   │           └── index.md
+│   │       └── getting-started.md
+│   │       └── index.md
 │   └── content.config.ts
 ├── astro.config.mjs
 ├── package.json
