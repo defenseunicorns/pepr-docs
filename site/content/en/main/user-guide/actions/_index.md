@@ -66,7 +66,7 @@ In this example, a Watch action on the name and phase of any ConfigMap.Watch act
 When(a.ConfigMap)
   // Watch() is where we define the actual behavior of this action.
   .Watch((cm, phase) => {
-    Log.info(cm, `ConfigMap ${cm.metadata.name} was ${phase}`);
+    Log.info({cm}, `ConfigMap ${cm.metadata.name} was ${phase}`);
   });
 ```
 
@@ -85,7 +85,7 @@ When(WebApp)
     const { namespace, name, generation } = instance.metadata;
 
     if (!instance.metadata?.namespace) {
-      Log.error(instance, `Invalid WebApp definition`);
+      Log.error({instance}, `Invalid WebApp definition`);
       return;
     }
 
@@ -93,11 +93,11 @@ When(WebApp)
     const isCurrentGeneration = generation === instance.status?.observedGeneration;
 
     if (isPending || isCurrentGeneration) {
-      Log.debug(instance, `Skipping pending or completed instance`);
+      Log.debug({instance}, `Skipping pending or completed instance`);
       return;
     }
 
-    Log.debug(instance, `Processing instance ${namespace}/${name}`);
+    Log.debug({instance}, `Processing instance ${namespace}/${name}`);
 
 
     try {
