@@ -160,7 +160,7 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#ff79c6">catch&lt;/span> (error) {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// You can use the Log object to log messages to the Pepr controller pod
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> Log.error(error, &lt;span style="color:#f1fa8c">&amp;#34;Failed to apply ConfigMap using server-side apply.&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> Log.error({error}, &lt;span style="color:#f1fa8c">&amp;#34;Failed to apply ConfigMap using server-side apply.&amp;#34;&lt;/span>);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// You can share data between actions using the Store, including between different types of actions
@@ -185,10 +185,10 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .InNamespace(&lt;span style="color:#f1fa8c">&amp;#34;hello-pepr-finalize-create&amp;#34;&lt;/span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .WithName(&lt;span style="color:#f1fa8c">&amp;#34;cm-reconcile-create&amp;#34;&lt;/span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .Reconcile(&lt;span style="color:#8be9fd;font-style:italic">function&lt;/span> reconcileCreate(cm) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(cm, &lt;span style="color:#f1fa8c">&amp;#34;external api call (create): reconcile/callback&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info({cm}, &lt;span style="color:#f1fa8c">&amp;#34;external api call (create): reconcile/callback&amp;#34;&lt;/span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> })
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .Finalize(&lt;span style="color:#8be9fd;font-style:italic">function&lt;/span> finalizeCreate(cm) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(cm, &lt;span style="color:#f1fa8c">&amp;#34;external api call (create): reconcile/finalize&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info({cm}, &lt;span style="color:#f1fa8c">&amp;#34;external api call (create): reconcile/finalize&amp;#34;&lt;/span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Main: Using Alias Child Logger in Actions</title><link>/main/user-guide/actions/using-alias-child-logger/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/main/user-guide/actions/using-alias-child-logger/</guid><description>
 &lt;p>You can use the Alias function to include a user-defined alias in the logs for Mutate, Validate, and Watch actions. This can make for easier debugging since your user-defined alias will be included in the action&amp;rsquo;s logs. This is especially useful when you have multiple actions of the same type in a single module.&lt;/p>

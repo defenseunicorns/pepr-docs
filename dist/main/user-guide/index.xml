@@ -266,7 +266,7 @@ help [command] display help for command&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-ts" data-lang="ts">&lt;span style="display:flex;">&lt;span>When(a.ConfigMap)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6272a4">// Watch() is where we define the actual behavior of this action.
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6272a4">&lt;/span> .Watch((cm, phase) &lt;span style="color:#ff79c6">=&amp;gt;&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info(cm, &lt;span style="color:#f1fa8c">`ConfigMap &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>cm.metadata.name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c"> was &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>phase&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.info({cm}, &lt;span style="color:#f1fa8c">`ConfigMap &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>cm.metadata.name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c"> was &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>phase&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>There are many more examples in the &lt;code>HelloPepr&lt;/code> capability that you can use as a reference when creating your own actions. Note that each time you run &lt;a href="./pepr-cli#pepr-update">&lt;code>npx pepr update&lt;/code>&lt;/a>, Pepr will automatically update the &lt;code>HelloPepr&lt;/code> capability with the latest examples and best practices for you to reference and test directly in your Pepr Module.&lt;/p>
 &lt;hr>
@@ -279,7 +279,7 @@ help [command] display help for command&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">const&lt;/span> { &lt;span style="color:#ff79c6">namespace&lt;/span>, name, generation } &lt;span style="color:#ff79c6">=&lt;/span> instance.metadata;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">if&lt;/span> (&lt;span style="color:#ff79c6">!&lt;/span>instance.metadata&lt;span style="color:#ff79c6">?&lt;/span>.&lt;span style="color:#ff79c6">namespace&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.error(instance, &lt;span style="color:#f1fa8c">`Invalid WebApp definition`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.error({instance}, &lt;span style="color:#f1fa8c">`Invalid WebApp definition`&lt;/span>);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">return&lt;/span>;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
@@ -287,11 +287,11 @@ help [command] display help for command&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">const&lt;/span> isCurrentGeneration &lt;span style="color:#ff79c6">=&lt;/span> generation &lt;span style="color:#ff79c6">===&lt;/span> instance.status&lt;span style="color:#ff79c6">?&lt;/span>.observedGeneration;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">if&lt;/span> (isPending &lt;span style="color:#ff79c6">||&lt;/span> isCurrentGeneration) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.debug(instance, &lt;span style="color:#f1fa8c">`Skipping pending or completed instance`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.debug({instance}, &lt;span style="color:#f1fa8c">`Skipping pending or completed instance`&lt;/span>);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">return&lt;/span>;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.debug(instance, &lt;span style="color:#f1fa8c">`Processing instance &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>&lt;span style="color:#ff79c6">namespace&lt;/span>&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">/&lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Log.debug({instance}, &lt;span style="color:#f1fa8c">`Processing instance &lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>&lt;span style="color:#ff79c6">namespace&lt;/span>&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">/&lt;/span>&lt;span style="color:#f1fa8c">${&lt;/span>name&lt;span style="color:#f1fa8c">}&lt;/span>&lt;span style="color:#f1fa8c">`&lt;/span>);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ff79c6">try&lt;/span> {

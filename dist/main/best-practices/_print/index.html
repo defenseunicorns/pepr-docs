@@ -87,7 +87,7 @@ The difference between reconcile and watch is that <code>Reconcile</code> proces
 </span></span><span style=display:flex><span>  .Mutate(pod <span style=color:#ff79c6>=&gt;</span> <span style=color:#6272a4>// .... )
 </span></span></span><span style=display:flex><span><span style=color:#6272a4></span>  .Validate(pod <span style=color:#ff79c6>=&gt;</span> <span style=color:#6272a4>// .... )
 </span></span></span><span style=display:flex><span><span style=color:#6272a4></span>  .Watch(<span style=color:#ff79c6>async</span> (pod, phase) <span style=color:#ff79c6>=&gt;</span> {
-</span></span><span style=display:flex><span>    Log.info(pod, <span style=color:#f1fa8c>`Pod was </span><span style=color:#f1fa8c>${</span>phase<span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>.`</span>);
+</span></span><span style=display:flex><span>    Log.info({pod}, <span style=color:#f1fa8c>`Pod was </span><span style=color:#f1fa8c>${</span>phase<span style=color:#f1fa8c>}</span><span style=color:#f1fa8c>.`</span>);
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#6272a4>// do consecutive api calls
 </span></span></span></code></pre></div><p><a href=#pepr-best-practices>TOP</a></p></div></div><footer class="td-footer row d-print-none"><div class=container-fluid><div class="row mx-md-2"><div class="td-footer__copyright-etc col-12 text-center py-2 order-sm-2"><span>&copy; 2025
