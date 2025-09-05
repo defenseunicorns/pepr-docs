@@ -22,7 +22,7 @@ env:
   CORE: ./core
   DOCS: ./docs
   DIST: ./docs/dist
-  SITE: ./docs/site
+  SITE: ./docs/src/content/docs
   WORK: ./docs/build/work
 
 jobs:
@@ -50,25 +50,16 @@ jobs:
           cd "$DOCS"
           npm ci
           npm --workspace build run dev -- --site "$SITE" --core "$CORE"
+          npm run build
 
       - name: Commit changes to source!
         if: github.ref_name == 'main'
         run: |
-          HUGO_OLD=$(realpath "$SITE/hugo.yaml")
-          HUGO_NEW=$(realpath "$WORK/hugo.yaml")
-          CONT_OLD=$(realpath "$SITE/content/en")
-          CONT_NEW=$(realpath "$WORK/content/en")
-          STAT_OLD=$(realpath "$SITE/static")
-          STAT_NEW=$(realpath "$WORK/static")
-
-          rm "$HUGO_OLD"
-          cp "$HUGO_NEW" "$HUGO_OLD"
+          CONT_OLD=$(realpath "$SITE")
+          CONT_NEW=$(realpath "$WORK/content")
 
           rm --recursive --force "$CONT_OLD"
           cp --recursive "$CONT_NEW" "$CONT_OLD"
-
-          rm --recursive --force "$STAT_OLD"
-          cp --recursive "$STAT_NEW" "$STAT_OLD"
 
           cd "$DOCS"
           git config user.name "docs.yml"
@@ -104,7 +95,8 @@ jobs:
 
       - name: Clear previously deployed content!
         run: |
-          rm -rf "$DIST"
+          cd "$DOCS"
+          rm -rf dist
 
       - uses: actions/download-artifact@v4
         with:

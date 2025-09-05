@@ -199,7 +199,7 @@ await activity(`Nuke retired version content`, async (log) => {
 
 for (const version of RUN.versions) {
 	RUN.version = version;
-	RUN.verdir = `${RUN.work}/content/en/${RUN.version}`;
+	RUN.verdir = `${RUN.work}/content/${RUN.version}`;
 	RUN.found = false;
 	RUN.coredocs = `${RUN.core}/docs`;
 
@@ -371,7 +371,7 @@ for (const version of RUN.versions) {
 				weight !== null ? fParts.slice(1).join('_').trim() : filename.trim();
 
 			if (newfile === 'README.md') {
-				newfile = newfile.replace('README.md', '_index.md');
+				newfile = newfile.replace('README.md', 'index.md');
 				weight = pWeight;
 			}
 
@@ -384,7 +384,7 @@ for (const version of RUN.versions) {
 			log.push(['newfile', newfile]);
 		});
 
-		await activity(`Inject Hugo front matter`, async () => {
+		await activity(`Inject Starlight front matter`, async () => {
 			// title as sanitized content from first heading
 			const heading = RUN.srcmd.content.match(/#[\s]+(.*)/);
 			const title = heading[1].replaceAll('`', '').replaceAll(':', '');
@@ -393,7 +393,7 @@ for (const version of RUN.versions) {
 			const front = heredoc`
         ---
         title: ${title}
-        weight: ${RUN.srcmd.weight}
+        description: ${title}
         ---
       `;
 			RUN.srcmd.content = [front, RUN.srcmd.content].join('\n');
@@ -438,14 +438,11 @@ for (const version of RUN.versions) {
 	}
 
 	await activity(`Write version layout & landing content`, async (log) => {
-		const idxMd = `${RUN.verdir}/_index.md`;
+		const idxMd = `${RUN.verdir}/index.md`;
 		const idxFront = heredoc`
       ---
       title: Pepr
-      linkTitle: ${RUN.version}
-      cascade:
-        type: docs
-      aliases: []
+      description: Pepr Documentation - ${RUN.version}
       ---
     `;
 		const rootMd = `${RUN.core}/README.md`;
@@ -478,55 +475,14 @@ for (const version of RUN.versions) {
 	});
 }
 
-await activity(`Update version dropdown options`, async (log) => {
-	const hugoFile = `${RUN.work}/hugo.yaml`;
-	const hugoYaml = await fs.readFile(hugoFile, { encoding: 'utf8' });
-	const hugoConf = yaml.parse(hugoYaml);
-
-	const uniques = {};
-	RUN.versions
-		.filter((v) => v !== 'main')
-		.filter((v) => semver.prerelease(v) === null)
-		.forEach((version) => {
-			const mm = majmin(version);
-			if (!uniques.hasOwnProperty(mm)) {
-				uniques[mm] = version;
-			}
-		});
-
-	const opts = Object.entries(uniques).map(([majmin, version]) => ({
-		version: `v${majmin}`,
-		url: `/${version}/`,
-	}));
-	opts.push({ version: 'main', url: '/main/' });
-
-	hugoConf.params.versions = opts;
-	await fs.writeFile(hugoFile, yaml.stringify(hugoConf), { encoding: 'utf8' });
-
-	log.push(['opts', opts.map((o) => o.version)]);
+// Skip Hugo-specific version dropdown - Starlight handles this differently
+await activity(`Skip Hugo version dropdown (Starlight migration)`, async (log) => {
+	log.push(['status', 'Skipped Hugo version config for Starlight']);
 });
 
-await activity(`Clear '/current' version alias`, async () => {
-	for (const version of RUN.versions) {
-		const idxPath = `${RUN.work}/content/en/${version}/_index.md`;
-		let content = await fs.readFile(idxPath, { encoding: 'utf8' });
-
-		content = content.replace(/aliases: \[.*\]/, 'aliases: []');
-
-		await fs.writeFile(idxPath, content, { encoding: 'utf8' });
-	}
-});
-
-await activity(`Set '/current' version alias`, async (log) => {
-	const current = RUN.versions.filter((v) => semver.prerelease(v) === null)[0];
-	const verPath = `${RUN.work}/content/en/${current}/_index.md`;
-	let content = await fs.readFile(verPath, { encoding: 'utf8' });
-
-	content = content.replace(/aliases: \[\]/, 'aliases: ["/current/"]');
-
-	await fs.writeFile(verPath, content, { encoding: 'utf8' });
-
-	log.push(['current', current]);
+// Skip Hugo-specific alias handling - Starlight handles routing differently
+await activity(`Skip Hugo alias handling (Starlight migration)`, async (log) => {
+	log.push(['status', 'Skipped Hugo alias handling for Starlight']);
 });
 
 if (opts.dist) {
@@ -538,11 +494,20 @@ if (opts.dist) {
 		log.push(['dist', RUN.dist]);
 	});
 
-	await activity(`Build site into dist dir`, async () => {
+	await activity(`Build Starlight site into dist dir`, async () => {
+		// Copy content to main docs site and build with Starlight
+		const siteRoot = path.resolve(`${RUN.site}/../..`);
 		await exec(`
-      cd ${RUN.work}
-      npm ci
-      npm run build:production -- --destination ${RUN.dist}
+      # Copy generated content to Starlight content directory
+      rm -rf ${RUN.site}/*
+      cp -r ${RUN.work}/content/* ${RUN.site}/
+      
+      # Build Starlight site
+      cd ${siteRoot}
+      npm run build
+      
+      # Copy built site to dist
+      cp -r ${siteRoot}/dist/* ${RUN.dist}/
     `);
 	});
 }
