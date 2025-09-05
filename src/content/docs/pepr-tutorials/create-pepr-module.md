@@ -1,7 +1,9 @@
 ---
 title: Create a Pepr Module
-description: Learn how to create and deploy a Pepr module from scratch
+description: Create a Pepr Module
 ---
+
+
 
 ## Introduction
 

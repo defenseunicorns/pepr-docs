@@ -1,7 +1,9 @@
 ---
 title: Community and Support
-description: Connect with the Pepr community and learn how to contribute to the project
+description: Community and Support
 ---
+
+
 
 ## Introduction
 

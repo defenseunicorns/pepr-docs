@@ -495,13 +495,31 @@ if (opts.dist) {
 	});
 
 	await activity(`Build Starlight site into dist dir`, async () => {
-		// Copy content to main docs site and build with Starlight
+		// Copy content to Starlight content directories
 		const siteRoot = path.resolve(`${RUN.site}/../..`);
+		const starlightContentDir = `${siteRoot}/src/content/docs`;
+		
+		// Copy main version content to unversioned location
+		if (await fs.stat(`${RUN.work}/content/main`).then(() => true).catch(() => false)) {
+			await fs.rm(starlightContentDir, { recursive: true, force: true });
+			await fs.mkdir(starlightContentDir, { recursive: true });
+			await fs.cp(`${RUN.work}/content/main`, starlightContentDir, { recursive: true });
+		}
+		
+		// Copy versioned content for v0.54 and v0.53
+		for (const version of RUN.versions.filter(v => v !== 'main')) {
+			const versionContentPath = `${RUN.work}/content/${version}`;
+			const versionSlug = version.startsWith('v') ? version : `v${version}`;
+			const starlightVersionDir = `${starlightContentDir}/${versionSlug}`;
+			
+			if (await fs.stat(versionContentPath).then(() => true).catch(() => false)) {
+				await fs.rm(starlightVersionDir, { recursive: true, force: true });
+				await fs.mkdir(starlightVersionDir, { recursive: true });
+				await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
+			}
+		}
+		
 		await exec(`
-      # Copy generated content to Starlight content directory
-      rm -rf ${RUN.site}/*
-      cp -r ${RUN.work}/content/* ${RUN.site}/
-      
       # Build Starlight site
       cd ${siteRoot}
       npm run build

@@ -1,7 +1,9 @@
 ---
 title: Actions
-description: Discrete behaviors that act on Kubernetes resources during admission control and resource lifecycle events
+description: Actions
 ---
+
+
 
 ## Overview
 

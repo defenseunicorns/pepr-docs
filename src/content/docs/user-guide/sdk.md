@@ -1,7 +1,9 @@
 ---
 title: Pepr SDK
-description: Software development kit with helper functions for working with Kubernetes resources in Pepr modules
+description: Pepr SDK
 ---
+
+
 
 To use, import the `sdk` from the `pepr` package:
 

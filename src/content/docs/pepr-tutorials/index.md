@@ -1,7 +1,9 @@
 ---
 title: Pepr Tutorials
-description: Step-by-step guides for creating and deploying Pepr modules, dashboards, and operators
+description: Pepr Tutorials
 ---
+
+
 
 In this section, we provide tutorials for using Pepr. These tutorials are:
 

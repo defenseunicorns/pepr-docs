@@ -1,7 +1,9 @@
 ---
 title: Validate
-description: Enforce custom policies and reject requests with validating admission webhooks
+description: Validate
 ---
+
+
 
 After the Mutation phase comes the Validation phase where the validating admission webhooks are invoked and can reject requests to enforce custom policies.
 

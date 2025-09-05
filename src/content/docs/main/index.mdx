@@ -1,0 +1,93 @@
+---
+title: Pepr
+description: Type safe Kubernetes middleware for humans
+slug: main
+---
+
+import { Card, CardGrid, Badge } from '@astrojs/starlight/components';
+
+**Type safe Kubernetes middleware for humans**
+
+Pepr simplifies Kubernetes management by providing an alternative to complex YAML configurations, custom scripts, and ad-hoc solutions. As a Kubernetes controller, Pepr enables you to define Kubernetes transformations using TypeScript, accessible through straightforward configurations even without extensive development expertise.
+
+## What happened to Pepr's stars?
+
+In February 2025, an accidental change to the repository's visibility reset the star count.
+The visibility issue was quickly resolved, but the stars were unfortunately lost.
+
+Pepr had over 200 stars, demonstrating its recognition and value within the Kubernetes community.
+We're working to rebuild that recognition.
+
+If you've previously starred Pepr, or if you find it a useful project, we would greatly appreciate it if you could re-star the repository.
+We really appreciate your support! ⭐
+
+## Features
+
+<CardGrid stagger>
+  <Card title="Zero-config Webhooks" icon="rocket">
+    Automatic K8s Mutating and Validating Webhooks plus Controller generation.
+  </Card>
+
+  <Card title="Resource Watching" icon="magnifier">
+    Automatic leader-elected K8s resource watching with fluent API.
+  </Card>
+
+  <Card title="Stateful Operations" icon="setting">
+    Lightweight async key-value store backed by K8s for stateful operations.
+  </Card>
+
+  <Card title="TypeScript First" icon="open-book">
+    Human-readable fluent API with full TypeScript support and type safety.
+  </Card>
+</CardGrid>
+
+## Example Pepr Action
+
+This quick sample shows how to react to a ConfigMap being created or updated in the cluster.
+For more details see the [actions](./user-guide/actions/) section.
+
+```ts
+When(a.ConfigMap)
+  .IsCreatedOrUpdated()
+  .InNamespace("pepr-demo")
+  .WithLabel("example", "value")
+  // Create a Mutate Action for the ConfigMap
+  .Mutate(request => {
+    // Add a label and annotation to the ConfigMap
+    request.SetLabel("pepr", "was-here").SetAnnotation("pepr.dev", "annotations-work-too");
+
+    // Add some data to the ConfigMap
+    request.Raw.data["doug-says"] = "Pepr is awesome!";
+
+    // Log a message to the Pepr controller logs
+    Log.info("A ConfigMap was created or updated:");
+  })
+  // Create a Validate Action for the ConfigMap
+  .Validate(request => {
+    // Validate the ConfigMap has a specific label
+    if (request.HasLabel("pepr")) {
+      return request.Approve();
+    }
+
+    // Reject the ConfigMap if it doesn't have the label
+    return request.Deny("ConfigMap must have the required pepr label");
+  });
+```
+
+## Quick Start Guide
+
+```bash
+# Create a new Pepr Module
+npx pepr init
+
+# If you already have a K3d cluster you want to use, skip this step
+npm run k3d-setup
+
+# Start playing with Pepr now!
+npx pepr dev
+kubectl apply -f capabilities/hello-pepr.samples.yaml
+```
+
+## Community
+
+To join our channel go to [Kubernetes Slack](https://communityinviter.com/apps/kubernetes/community) and join the `#pepr` channel.

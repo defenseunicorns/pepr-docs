@@ -181,6 +181,16 @@ declare module 'astro:content' {
   rendered?: RenderedContent;
   filePath?: string;
 }>;
+"versions": Record<string, {
+  id: string;
+  body?: string;
+  collection: "versions";
+  data: {
+    sidebar?: any | undefined;
+};
+  rendered?: RenderedContent;
+  filePath?: string;
+}>;
 
 	};
 

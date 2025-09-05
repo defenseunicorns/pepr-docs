@@ -1,7 +1,9 @@
 ---
 title: Pepr Best Practices
-description: Guidelines and recommendations for developing, deploying, and maintaining Pepr modules
+description: Pepr Best Practices
 ---
+
+
 
 ## Table of Contents
 
