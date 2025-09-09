@@ -4,6 +4,8 @@ description: Connect with the Pepr community and learn how to contribute to the 
 slug: v0.53/community
 ---
 
+
+
 ## Introduction
 
 Pepr is a community-driven project. We welcome contributions of all kinds, from bug reports to feature requests to code changes. We also welcome contributions of documentation, tutorials, and examples.

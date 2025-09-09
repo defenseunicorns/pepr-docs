@@ -1,0 +1,13 @@
+---
+title: Pepr Modules
+description: Pepr Modules
+slug: v0.54/user-guide/pepr-modules
+sidebar:
+  order: 4
+---
+
+
+
+## What is a Pepr Module?
+
+A Pepr Module is a collection of [capabilities](https://docs.pepr.dev/main/user-guide/capabilities/), config and scaffolding in a Pepr Project. To create a module use the `npx pepr init` command.

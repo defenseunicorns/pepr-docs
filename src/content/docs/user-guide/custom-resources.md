@@ -3,8 +3,6 @@ title: Custom Resources
 description: Custom Resources
 ---
 
-
-
 ## Importing Custom Resources
 
 The [Kubernetes Fluent Client](https://github.com/defenseunicorns/kubernetes-fluent-client) supports the creation of TypeScript typings directly from Kubernetes Custom Resource Definitions (CRDs).  The files it generates can be directly incorporated into Pepr capabilities and provide a way to work with strongly-typed CRDs.

@@ -1,6 +1,8 @@
 ---
 title: Pepr SDK
 description: Pepr SDK
+sidebar:
+  order: 3
 ---
 
 

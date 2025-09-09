@@ -1,6 +1,8 @@
 ---
 title: Pepr CLI
 description: Pepr CLI
+sidebar:
+  order: 2
 ---
 
 

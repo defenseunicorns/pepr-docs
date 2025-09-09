@@ -1,8 +1,11 @@
 ---
-title: User Guide
+title: Overview
 description: Detailed information about Pepr and how to use it
-slug: v0.54/user-guide
+slug: v0.53/user-guide
+sidebar:
+    order: 1
 ---
+
 
 In this section you can find detailed information about Pepr and how to use it.
 
@@ -24,3 +27,4 @@ You can find the following information in this section:
 * [Filters](./filters/)
 * [Generating CRDs](./generating-crds/)
 * [Custom Metrics](./generating_custom_metrics/)
+* [Feature Flags](./feature-flags/)

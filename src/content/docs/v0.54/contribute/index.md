@@ -3,26 +3,27 @@ title: Contributor Guide
 description: Guidelines for contributing to Pepr including setup, development
   workflow, and submission process
 slug: v0.54/contribute
+sidebar:
+  order: 1
 ---
-
 Thank you for your interest in contributing to Pepr! We welcome all contributions and are grateful for your help. This guide outlines how to get started with contributing to this project.
 
 ## Table of Contents
 
-* [Contributor Guide](#contributor-guide)
-  * [Table of Contents](#table-of-contents)
-  * [Code of Conduct](#code-of-conduct)
-  * [Getting Started](#getting-started)
-    * [Setup](#setup)
-    * [Kubernetes Fluent Client Contributions](#kubernetes-fluent-client-contributions)
-  * [Submitting a Pull Request](#submitting-a-pull-request)
-    * [PR Requirements](#pr-requirements)
-  * [Coding Guidelines](#coding-guidelines)
-    * [Git Hooks](#git-hooks)
-  * [Running Tests](#running-tests)
-    * [Run Tests Locally](#run-tests-locally)
-    * [Test a Local Development Version](#test-a-local-development-version)
-  * [Contact](#contact)
+- [Contributor Guide](#contributor-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Code of Conduct](#code-of-conduct)
+  - [Getting Started](#getting-started)
+    - [Setup](#setup)
+    - [Kubernetes Fluent Client Contributions](#kubernetes-fluent-client-contributions)
+  - [Submitting a Pull Request](#submitting-a-pull-request)
+    - [PR Requirements](#pr-requirements)
+  - [Coding Guidelines](#coding-guidelines)
+    - [Git Hooks](#git-hooks)
+  - [Running Tests](#running-tests)
+    - [Run Tests Locally](#run-tests-locally)
+    - [Test a Local Development Version](#test-a-local-development-version)
+  - [Contact](#contact)
 
 ## Code of Conduct
 
@@ -30,9 +31,9 @@ Please follow our [Code of Conduct](../code_of_conduct/) to maintain a respectfu
 
 ## Getting Started
 
-* **Repository**: [https://github.com/defenseunicorns/pepr/](https://github.com/defenseunicorns/pepr/)
-* **npm package**: [https://www.npmjs.com/package/pepr](https://www.npmjs.com/package/pepr)
-* **Required Node version**: `>=20.0.0`
+- **Repository**: [https://github.com/defenseunicorns/pepr/](https://github.com/defenseunicorns/pepr/)
+- **npm package**: [https://www.npmjs.com/package/pepr](https://www.npmjs.com/package/pepr)
+- **Required Node version**: `>=20.0.0`
 
 ### Setup
 
@@ -49,10 +50,10 @@ If you are making changes to the Kubernetes Fluent Client, please ensure that yo
 
 To run the Soak Test, you can do the following:
 
-* Go to the [GitHub Actions tab](https://github.com/defenseunicorns/pepr/actions)
-* Select the workflow named "Soak Test"
-* Click on the "Run workflow" button to get the options to run the workflow
-* Select the Kubernetes Fluent Client branch you want to test (`KFC dev branch`) and click "Run workflow"
+- Go to the [GitHub Actions tab](https://github.com/defenseunicorns/pepr/actions)
+- Select the workflow named "Soak Test"
+- Click on the "Run workflow" button to get the options to run the workflow
+- Select the Kubernetes Fluent Client branch you want to test (`KFC dev branch`) and click "Run workflow"
 
 ## Submitting a Pull Request
 
@@ -64,10 +65,10 @@ To run the Soak Test, you can do the following:
 
 ### PR Requirements
 
-* PRs must be against the `main` branch.
-* PRs must pass CI checks.
-* All commits must be signed.
-* PRs should have a related issue, except for trivial fixes.
+- PRs must be against the `main` branch.
+- PRs must pass CI checks.
+- All commits must be signed.
+- PRs should have a related issue, except for trivial fixes.
 
 We take PR reviews seriously and strive to provide a great contributor experience with timely feedback. To help maintain this, we ask external contributors to limit themselves to no more than two open PRs at a time. Having too many open PRs can slow down the review process and impact the quality of feedback
 
@@ -75,24 +76,24 @@ We take PR reviews seriously and strive to provide a great contributor experienc
 
 Please follow the coding conventions and style used in the project. Use ESLint and Prettier for linting and formatting:
 
-* Check formatting: `npm run format:check`
-* Fix formatting: `npm run format:fix`
-* If regex is used, provide a link to regex101.com with an explanation of the regex pattern.
-* Do not use emoji in logs or comments, as it can be distracting and is not consistent with the project's style.
+- Check formatting: `npm run format:check`
+- Fix formatting: `npm run format:fix`
+- If regex is used, provide a link to regex101.com with an explanation of the regex pattern.
+- Do not use emoji in logs or comments, as it can be distracting and is not consistent with the project's style.
 
 ### Git Hooks
 
-* This project uses [husky](https://typicode.github.io/husky/) to manage git hooks for pre-commit and pre-push actions.
-* pre-commit will automatically run linters so that you don't need to remember to run `npm run format:*` commands
-* pre-push will warn you if you've changed lots of lines on a branch and encourage you to optionally present the changes as several smaller PRs to facilitate easier PR reviews.
-  * The pre-push hook is an opinionated way of working, and is therefore optional.
-  * You can opt-in to using the pre-push hook by setting `PEPR_HOOK_OPT_IN=1` as an environment variable.
+- This project uses [husky](https://typicode.github.io/husky/) to manage git hooks for pre-commit and pre-push actions.
+- pre-commit will automatically run linters so that you don't need to remember to run `npm run format:*` commands
+- pre-push will warn you if you've changed lots of lines on a branch and encourage you to optionally present the changes as several smaller PRs to facilitate easier PR reviews.
+  - The pre-push hook is an opinionated way of working, and is therefore optional.
+  - You can opt-in to using the pre-push hook by setting `PEPR_HOOK_OPT_IN=1` as an environment variable.
 
 ## Running Tests
 
 ### Run Tests Locally
 
-* Run all tests: `npm test`
+- Run all tests: `npm test`
 
 ### Test a Local Development Version
 
@@ -104,14 +105,14 @@ Please follow the coding conventions and style used in the project. Use ESLint a
 
 1. Run `npm run build` to build the package.
 2. For running modified pepr, you have two options:
-   1. Using `npx ts-node ./src/cli.ts init` to run the modified code directly, without installing it locally.
+    1. Using `npx ts-node ./src/cli.ts init` to run the modified code directly, without installing it locally.
       You'll need to also run `npx link <your_dev_pepr_location>` inside your pepr module, to link to the
       development version of pepr.
-   2. Install the pre-build package with `npm install pepr-0.0.0-development.tgz`.
+    2. Install the pre-build package with `npm install pepr-0.0.0-development.tgz`.
       You'll need to re-run the installation after every build, though.
 3. Run `npx pepr dev` inside your module's directory to run the modified version of pepr.
 
-> \[!TIP]
+> [!TIP]
 > Make sure to re-run `npm run build` after you modify any of the pepr source files.
 
 ## Contact

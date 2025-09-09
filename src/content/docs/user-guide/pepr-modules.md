@@ -1,6 +1,8 @@
 ---
 title: Pepr Modules
 description: Pepr Modules
+sidebar:
+  order: 4
 ---
 
 

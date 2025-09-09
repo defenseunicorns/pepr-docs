@@ -14,7 +14,7 @@ export default defineConfig({
 						{ slug: 'v0.54', label: 'v0.54' },
 						{ slug: 'v0.53', label: 'v0.53' },
 					],
-					current: { slug: 'main', label: 'main (unreleased)' }
+					current: { slug: 'latest', label: 'Latest' },
 				}),
 			],
 			title: 'Pepr',
@@ -23,11 +23,11 @@ export default defineConfig({
 				src: './src/assets/pepr.svg',
 			},
 			social: [
-				{ 
-					icon: 'github', 
-					label: 'GitHub', 
-					href: 'https://github.com/defenseunicorns/pepr' 
-				}
+				{
+					icon: 'github',
+					label: 'GitHub',
+					href: 'https://github.com/defenseunicorns/pepr',
+				},
 			],
 			editLink: {
 				baseUrl: 'https://github.com/defenseunicorns/pepr-docs/edit/main/',
@@ -38,24 +38,28 @@ export default defineConfig({
 					autogenerate: { directory: 'user-guide' },
 				},
 				{
+					label: 'Actions',
+					autogenerate: { directory: 'actions' },
+				},
+				{
 					label: 'Tutorials',
 					autogenerate: { directory: 'pepr-tutorials' },
 				},
 				{
-					label: 'Best Practices',
-					autogenerate: { directory: 'best-practices' },
+					label: 'Reference',
+					autogenerate: { directory: 'reference' },
 				},
 				{
-					label: 'Module Examples',
-					autogenerate: { directory: 'module-examples' },
-				},
-				{
-					label: 'Community',
+					label: 'Community and Support',
 					autogenerate: { directory: 'community' },
 				},
 				{
 					label: 'Contribute',
 					autogenerate: { directory: 'contribute' },
+				},
+				{
+					label: 'Roadmap for Pepr',
+					slug: 'roadmap',
 				},
 			],
 		}),

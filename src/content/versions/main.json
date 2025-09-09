@@ -7,25 +7,25 @@
       }
     },
     {
+      "label": "Actions",
+      "autogenerate": {
+        "directory": "actions"
+      }
+    },
+    {
       "label": "Tutorials",
       "autogenerate": {
         "directory": "pepr-tutorials"
       }
     },
     {
-      "label": "Best Practices",
+      "label": "Reference",
       "autogenerate": {
-        "directory": "best-practices"
+        "directory": "reference"
       }
     },
     {
-      "label": "Module Examples",
-      "autogenerate": {
-        "directory": "module-examples"
-      }
-    },
-    {
-      "label": "Community",
+      "label": "Community and Support",
       "autogenerate": {
         "directory": "community"
       }
@@ -34,6 +34,12 @@
       "label": "Contribute",
       "autogenerate": {
         "directory": "contribute"
+      }
+    },
+    {
+      "label": "Roadmap for Pepr",
+      "autogenerate": {
+        "directory": "roadmap"
       }
     }
   ]

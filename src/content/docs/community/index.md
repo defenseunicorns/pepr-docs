@@ -1,5 +1,5 @@
 ---
-title: Community and Support
+title: Community
 description: Community and Support
 ---
 

@@ -1,6 +1,8 @@
 ---
-title: User Guide
-description: Detailed information about Pepr and how to use it
+title: Overview
+description: Detailed information about Pepr and how to use it.
+sidebar:
+    order: 1
 ---
 
 In this section you can find detailed information about Pepr and how to use it.

@@ -1,8 +1,38 @@
 ---
-title: example output
-description: example output
+title: RBAC Modes
+description: RBAC Modes
 ---
 
+During the build phase of Pepr (`npx pepr build --rbac-mode [admin|scoped]`), you have the option to specify the desired RBAC mode through specific flags. This allows fine-tuning the level of access granted based on requirements and preferences.
+
+## Modes
+
+### admin
+
+```bash
+npx pepr build --rbac-mode admin
+```
+
+**Description:** The service account is given cluster-admin permissions, granting it full, unrestricted access across the entire cluster. This can be useful for administrative tasks where broad permissions are necessary. However, use this mode with caution, as it can pose security risks if misused. This is the default mode.
+
+### scoped
+
+```bash
+npx pepr build --rbac-mode scoped
+```
+
+**Description:** The service account is provided just enough permissions to perform its required tasks, and no more. This mode is recommended for most use cases as it limits potential attack vectors and aligns with best practices in security. _The admission controller's primary mutating or validating action doesn't require a ClusterRole (as the request is not persisted or executed while passing through admission control), if you have a use case where the admission controller's logic involves reading other Kubernetes resources or taking additional actions beyond just validating, mutating, or watching the incoming request, appropriate RBAC settings should be reflected in the ClusterRole. See how in [Updating the ClusterRole](#updating-the-clusterrole)._
+
+## Debugging RBAC Issues
+
+If encountering unexpected behaviors in Pepr while running in scoped mode, check to see if they are related to RBAC.
+
+1. Check Deployment logs for RBAC errors:
+
+```bash
+kubectl logs -n pepr-system  -l app | jq
+
+# example output
 {
   "level": 50,
   "time": 1697983053758,

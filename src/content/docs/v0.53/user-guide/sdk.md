@@ -3,7 +3,10 @@ title: Pepr SDK
 description: Software development kit with helper functions for working with
   Kubernetes resources in Pepr modules
 slug: v0.53/user-guide/sdk
+sidebar:
+    order: 3
 ---
+
 
 To use, import the `sdk` from the `pepr` package:
 
@@ -15,48 +18,48 @@ import { sdk } from "pepr";
 
 Returns list of all containers in a pod. Accepts the following parameters:
 
-* **@param peprValidationRequest** The request/pod to get the containers from
-* **@param containerType** The type of container to get
+- **@param peprValidationRequest** The request/pod to get the containers from
+- **@param containerType** The type of container to get
 
 **Usage:**
 
-***Get all containers***
+**_Get all containers_**
 
 ```typescript
 const { containers } = sdk;
 let result = containers(peprValidationRequest)
 ```
 
-***Get only the standard containers***
+**_Get only the standard containers_**
 
 ```typescript
 const { containers } = sdk;
 let result = containers(peprValidationRequest, "containers")
 ```
 
-***Get only the init containers***
+**_Get only the init containers_**
 
 ```typescript
 const { containers } = sdk;
 let result = containers(peprValidationRequest, "initContainers")
 ```
 
-***Get only the ephemeral containers***
+**_Get only the ephemeral containers_**
 
 ```typescript
 const { containers } = sdk;
 let result = containers(peprValidationRequest, "ephemeralContainers")
 ```
 
-***
+---
 
 ## `getOwnerRefFrom`
 
 Returns the owner reference for a Kubernetes resource as an array. Accepts the following parameters:
 
-* **@param kubernetesResource: GenericKind** The Kubernetes resource to get the owner reference for
-* **@param blockOwnerDeletion: boolean** If true, AND if the owner has the "foregroundDeletion" finalizer, then the owner cannot be deleted from the key-value store until this reference is removed.
-* **@param controller: boolean** If true, this reference points to the managing controller.
+- **@param kubernetesResource: GenericKind** The Kubernetes resource to get the owner reference for
+- **@param blockOwnerDeletion: boolean** If true, AND if the owner has the "foregroundDeletion" finalizer, then the owner cannot be deleted from the key-value store until this reference is removed.
+- **@param controller: boolean** If true, this reference points to the managing controller.
 
 **Usage:**
 
@@ -65,19 +68,19 @@ const { getOwnerRefFrom } = sdk;
 const ownerRef = getOwnerRefFrom(kubernetesResource);
 ```
 
-***
+---
 
 ## `writeEvent`
 
 Write a K8s event for a CRD. Accepts the following parameters:
 
-* **@param kubernetesResource: GenericKind** The Kubernetes resource to write the event for
-* **@param event** The event to write, should contain a human-readable message for the event
-* **@param options** Configuration options for the event.
-  * eventType: string – The type of event to write, for example "Warning"
-  * eventReason: string – The reason for the event, for example "ReconciliationFailed"
-  * reportingComponent: string – The component that is reporting the event, for example "uds.dev/operator"
-  * reportingInstance: string – The instance of the component that is reporting the event, for example process.env.HOSTNAME
+- **@param kubernetesResource: GenericKind** The Kubernetes resource to write the event for
+- **@param event** The event to write, should contain a human-readable message for the event
+- **@param options** Configuration options for the event.
+  - eventType: string – The type of event to write, for example "Warning"
+  - eventReason: string – The reason for the event, for example "ReconciliationFailed"
+  - reportingComponent: string – The component that is reporting the event, for example "uds.dev/operator"
+  - reportingInstance: string – The instance of the component that is reporting the event, for example process.env.HOSTNAME
 
 **Usage:**
 
@@ -92,13 +95,13 @@ writeEvent(kubernetesResource, event, {
 });
 ```
 
-***
+---
 
 ## `sanitizeResourceName`
 
 Returns a sanitized resource name to make the given name a valid Kubernetes resource name. Accepts the following parameter:
 
-* **@param resourceName** The name of the resource to sanitize
+- **@param resourceName** The name of the resource to sanitize
 
 **Usage:**
 
@@ -107,7 +110,7 @@ const { sanitizeResourceName } = sdk;
 const sanitizedResourceName = sanitizeResourceName(resourceName)
 ```
 
-***
+---
 
 ## See Also
 
