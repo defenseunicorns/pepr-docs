@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightVersions from 'starlight-versions';
-
+import starlightLlmsTxt from 'starlight-llms-txt'
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
@@ -11,7 +11,9 @@ export default defineConfig({
 
   integrations: [
       starlight({
+          favicon: './public/pepr.svg',
           plugins: [
+              starlightLlmsTxt(),
               starlightVersions({
                   versions: [
                       { slug: 'v0.54', label: 'v0.54' },
@@ -26,6 +28,15 @@ export default defineConfig({
           logo: {
               src: './public/assets/pepr.png',
           },
+      head: [
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'stylesheet',
+            href: 'https://fonts.googleapis.com/css2?family=Aldrich&display=swap',
+          },
+        }
+      ],
           social: [
               {
                   icon: 'github',

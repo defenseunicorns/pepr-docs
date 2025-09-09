@@ -3,3 +3,15 @@
 @import '@astrojs/starlight-tailwind';
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
+
+/* In your custom.css */
+@font-face {
+  font-family: 'Aldrich';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/aldrich-regular.woff2') format('woff2');
+}
+
+.site-title {
+  font-family: 'Aldrich', sans-serif !important;
+}
