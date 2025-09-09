@@ -1,6 +1,7 @@
 ---
 title: Pepr
 description: Type safe Kubernetes middleware for humans
+slug: v0.54
 ---
 
 import pepr-arch from '../../../assets/pepr-arch.svg';
