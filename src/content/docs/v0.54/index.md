@@ -4,16 +4,22 @@ description: Type safe Kubernetes middleware for humans
 slug: v0.54
 ---
 
-import pepr-arch from '../../../assets/pepr-arch.svg';
-
 [![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev)
+
 [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr)
+
 [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr)
+
 [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr)
+
 [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr)
+
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://
+securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr)
+
 [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679y9k1hb)](https://codecov.io/github/defenseunicorns/pepr)
-[![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-2.1-4baaaa.svg)](code_of_conduct/)
+
+[![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-2.1-4baaaa.svg)](/contribute/code-of-conduct/)
 
 ## What happened to Pepr's stars?
 
@@ -29,7 +35,7 @@ We really appreciate your support! :star:
 ## **_Type safe Kubernetes middleware for humans_**
 
 <!-- markdownlint-disable MD033 - Image-styling is unsupported on GitHub-flavored markdown -->
-<img alt="The Pepr Logo" align="right" width="40%" src="assets/pepr.png" />
+<img alt="The Pepr Logo" align="right" width="40%" src="/assets/pepr.png" />
 
 Pepr simplifies Kubernetes management by providing an alternative to complex YAML configurations, custom scripts, and ad-hoc solutions.
 As a Kubernetes controller, Pepr enables you to define Kubernetes transformations using TypeScript, accessible through straightforward configurations even without extensive development expertise.
@@ -174,8 +180,8 @@ See [actions](./user-guide/actions) for more details.
 
 ## Logical Pepr Flow
 
-![Arch Diagram]({pepr-arch.src})
-[Source Diagram]({pepr-arch.src})
+![Arch Diagram](/assets/pepr-arch.png)
+![Source Diagram](/assets/pepr-arch.png)
 
 ## TypeScript
 
