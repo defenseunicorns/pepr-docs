@@ -3,10 +3,6 @@ title: Create a Pepr Dashboard
 description: Create a Pepr Dashboard
 ---
 
-import dashboardScreenshot from '../../../assets/pepr-dashboard-screenshot.png';
-import admission-endpoint from '../../../assets/admission-endpoint.png';
-import watcher-endpont from '../../../assets/watcher-endpoint.png';
-
 ## Introduction
 
 This tutorial will walk you through the process of creating a dashboard to display your Pepr metrics. This dashboard will present data such as the number of validation requests processed, the number of mutation requests that were allowed, the number of errors that were processed, the number of alerts that were processed, the status of the Pepr pods, and the scrape duration of the Pepr pods. This dashboard will be created using [Grafana](https://grafana.com/). The dashboard will display data from [Prometheus](https://prometheus.io/), which is a monitoring system that Pepr uses to collect metrics.
@@ -15,7 +11,7 @@ This tutorial is not intended for production, but instead is intended to show ho
 
 An example of what the dashboard will look like is shown below:
 
-![Pepr Dashboard]({dashboardScreenshot.src})
+![Pepr Dashboard](/assets/dashboardScreenshot.png)
 
 ***Note:*** *The dashboard shown above is an example of what the dashboard will look like. The dashboard will be populated with data from your Pepr instance.*
 
@@ -841,8 +837,8 @@ http://localhost:9090/targets
 
 The targets should look something like this:
 
-![Admission Endpoints]({admission-endpoint.src})
-![Watcher Endpoint]({watcher-endpont.src})
+![Admission Endpoints](/assets/admission-endpoint.png)
+![Watcher Endpoint](/assets/watcher-endpoint.png)
 
 ### Step 7: Test the Prometheus Connection in Grafana
 

@@ -3,9 +3,6 @@ title: Create a Pepr Dashboard
 description: Learn how to create a Pepr dashboard.
 slug: v0.53/pepr-tutorials/create-pepr-dashboard
 ---
-import dashboardScreenshot from '../../../assets/pepr-dashboard-screenshot.png';
-import admission-endpoint from '../../../assets/admission-endpoint.png';
-import watcher-endpont from '../../../assets/watcher-endpoint.png';
 
 ## Introduction
 
@@ -15,7 +12,7 @@ This tutorial is not intended for production, but instead is intended to show ho
 
 An example of what the dashboard will look like is shown below:
 
-![Pepr Dashboard]({dashboardScreenshot.src})
+![Pepr Dashboard](/assets/dashboardScreenshot.png)
 
 ***Note:*** *The dashboard shown above is an example of what the dashboard will look like. The dashboard will be populated with data from your Pepr instance.*
 
@@ -841,8 +838,8 @@ http://localhost:9090/targets
 
 The targets should look something like this:
 
-![Admission Endpoints]({admission-endpoint.src})
-![Watcher Endpoint]({watcher-endpont.src})
+![Admission Endpoints](/assets/admission-endpoint.png)
+![Watcher Endpoint](/assets/watcher-endpoint.png)
 
 ### Step 7: Test the Prometheus Connection in Grafana
 

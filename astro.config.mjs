@@ -24,7 +24,7 @@ export default defineConfig({
           title: 'Pepr',
           description: 'Pepr Documentation',
           logo: {
-              src: './src/assets/pepr.svg',
+              src: './public/assets/pepr.png',
           },
           social: [
               {
