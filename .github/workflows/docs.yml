@@ -52,11 +52,11 @@ jobs:
           chmod +x ./docs/.github/workflows/scripts/*.sh
 
       - name: Build the docs!
-        run: ./docs/.github/workflows/scripts/build.sh
+        run: bash ./docs/.github/workflows/scripts/build.sh
 
       - name: Commit changes to source!
         if: github.ref_name == 'main'
-        run: ./docs/.github/workflows/scripts/commit.sh
+        run: bash ./docs/.github/workflows/scripts/commit.sh
           
 
       - name: Upload Artifacts!
