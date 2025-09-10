@@ -1,6 +1,6 @@
 ---
 title: Finalize
-slug: v0.53/user-guide/finalize
+slug: v0.53/actions/finalize
 ---
 
 

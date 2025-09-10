@@ -1,7 +1,7 @@
 ---
 title: Create a Pepr Module
 description: Learn how to create and deploy a Pepr module from scratch
-slug: v0.54/pepr-tutorials/create-pepr-module
+slug: v0.54/tutorials/create-module
 ---
 
 ## Introduction

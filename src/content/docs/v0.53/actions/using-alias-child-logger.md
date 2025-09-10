@@ -1,6 +1,6 @@
 ---
 title: Using Alias Child Logger
-slug: v0.53/user-guide/alias-child-logger
+slug: v0.53/actions/alias-child-logger
 ---
 
 

@@ -1,6 +1,6 @@
 ---
 title: Pepr Store
-slug: v0.53/user-guide/pepr-store
+slug: v0.53/user-guide/store
 ---
 
 

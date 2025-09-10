@@ -1,6 +1,7 @@
 ---
 title: Contributor Covenant Code of Conduct
 description: Contributor Covenant Code of Conduct
+slug: v0.54/contribute/code-of-conduct
 ---
 
 ## Our Pledge

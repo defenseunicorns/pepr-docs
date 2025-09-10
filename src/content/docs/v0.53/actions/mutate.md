@@ -1,7 +1,7 @@
 ---
 title: Mutate
 description: Modify Kubernetes objects during admission control with mutating webhooks
-slug: v0.53/user-guide/actions/mutate
+slug: v0.53/actions/mutate
 ---
 
 Mutating admission webhooks are invoked first and can modify objects sent to the API server to enforce custom defaults. After an object is sent to Pepr's Mutating Admission Webhook, Pepr will [annotate the object](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/mutate-processor.ts#l64) to indicate the status.

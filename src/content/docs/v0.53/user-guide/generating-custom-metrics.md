@@ -1,6 +1,6 @@
 ---
 title: Generating Custom Metrics
-slug: v0.53/user-guide/custom-metrics
+slug: ''
 ---
 
 

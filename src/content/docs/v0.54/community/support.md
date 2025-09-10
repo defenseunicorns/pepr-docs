@@ -1,6 +1,8 @@
 ---
 title: Support
 description: Support
+slug: v0.54/community/support
+
 ---
 
 

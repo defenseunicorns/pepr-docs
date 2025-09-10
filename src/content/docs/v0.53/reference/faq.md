@@ -1,6 +1,7 @@
 ---
 title: Frequently Asked Questions
 description: Frequently Asked Questions
+slug: v0.53/reference/faq
 ---
 
 ## What is the `PEPR_WATCH_MODE` environment variable?

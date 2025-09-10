@@ -1,6 +1,6 @@
 ---
 title: Reconcile
-slug: v0.53/user-guide/reconcile
+slug: v0.53/actions/reconcile
 ---
 
 

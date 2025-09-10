@@ -1,6 +1,7 @@
 ---
 title: Security Policy
 description: Security Policy
+slug: v0.54/community/security-policy
 ---
 
 

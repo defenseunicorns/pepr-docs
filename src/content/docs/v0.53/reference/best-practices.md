@@ -1,6 +1,7 @@
 ---
 title: Best Practices
 description: Pepr Best Practices
+slug: v0.53/reference/best-practices
 ---
 
 ## Table of Contents

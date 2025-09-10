@@ -1,6 +1,7 @@
 ---
 title: Feature Flags
 description: Enable, disable, or configure features in Pepr
+slug: v0.54/user-guide/feature-flags
 ---
 
 Feature flags allow you to enable, disable, or configure features in Pepr.

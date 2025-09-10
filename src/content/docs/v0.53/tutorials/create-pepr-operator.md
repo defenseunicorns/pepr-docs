@@ -1,7 +1,7 @@
 ---
 title: Create a Pepr Operator
 description: Learn how to create a Pepr operator.
-slug: v0.53/pepr-tutorials/create-pepr-operator
+slug: v0.53/tutorials/create-operator
 ---
 
 ## Introduction

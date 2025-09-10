@@ -2,7 +2,7 @@
 title: Overview
 description: Discrete behaviors that act on Kubernetes resources during
   admission control and resource lifecycle events
-slug: v0.53/user-guide/actions
+slug: v0.53/actions
 ---
 
 ## Overview

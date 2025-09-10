@@ -1,7 +1,6 @@
 ---
 title: Pepr
 description: Type safe Kubernetes middleware for humans
-slug: v0.54
 ---
 
 [![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev)
