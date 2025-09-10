@@ -232,7 +232,7 @@ for (const version of RUN.versions) {
 	}
 
 	await activity(`Create version dir`, async (log) => {
-		await fs.mkdir(RUN.verdir);
+		await fs.mkdir(RUN.verdir, { recursive: true });
 		log.push(['dir', RUN.verdir]);
 	});
 
