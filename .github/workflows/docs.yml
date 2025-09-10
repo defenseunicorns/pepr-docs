@@ -48,11 +48,11 @@ jobs:
           sudo apt-get update && sudo apt-get install -y jq
 
       - name: Build the docs!
-        run: ./.github/workflows/scripts/build.sh
+        run: ./docs/.github/workflows/scripts/build.sh
 
       - name: Commit changes to source!
         if: github.ref_name == 'main'
-        run: ./.github/workflows/scripts/commit.sh
+        run: ./docs/.github/workflows/scripts/commit.sh
           
 
       - name: Upload Artifacts!
@@ -89,3 +89,4 @@ jobs:
 
       - name: Deploy the docs!
         run: ./.github/workflows/scripts/deploy.sh
+        
