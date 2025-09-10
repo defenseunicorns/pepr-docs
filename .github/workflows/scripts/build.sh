@@ -5,7 +5,7 @@ cd "$DOCS"
 npm ci
         
 # Build docs with proper error handling
-if ! node build/index.mjs --core "$CORE" --site "$SITE"; then
+if ! node build/index.mjs --core "$CORE" --site ./src/content/docs; then
   echo "Error: Documentation build failed"
   exit 1
 fi
