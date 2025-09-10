@@ -520,14 +520,21 @@ if (opts.dist) {
 			}
 		}
 		
-		await exec(`
-      # Build Starlight site
-      cd ${siteRoot}
-      npm run build
-      
-      # Copy built site to dist
-      cp -r ${siteRoot}/dist/* ${RUN.dist}/
-    `);
+		try {
+			await exec(`
+				# Build Starlight site
+				cd ${siteRoot}
+				npm run build
+			`);
+			
+			await exec(`
+				# Copy built site to dist
+				cp -r ${siteRoot}/dist/* ${RUN.dist}/
+			`);
+		} catch (error) {
+			console.error('Build or copy failed:', error);
+			throw error;
+		}
 	});
 }
 
