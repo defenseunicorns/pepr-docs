@@ -487,7 +487,7 @@ await activity(`Skip Hugo alias handling (Starlight migration)`, async (log) => 
 
 if (opts.dist) {
 	await activity(`Clean dist dir`, async (log) => {
-		RUN.dist = path.resolve(`${RUN.site}/../dist`);
+		RUN.dist = path.resolve(`./dist`);
 		await fs.rm(RUN.dist, { recursive: true, force: true });
 		await fs.mkdir(RUN.dist);
 
@@ -499,10 +499,12 @@ if (opts.dist) {
 		const siteRoot = process.cwd(); // We're already in the docs directory
 		const starlightContentDir = `${siteRoot}/src/content/docs`;
 		
+		// Clear existing content directory
+		await fs.rm(starlightContentDir, { recursive: true, force: true });
+		await fs.mkdir(starlightContentDir, { recursive: true });
+		
 		// Copy main version content to unversioned location
 		if (await fs.stat(`${RUN.work}/content/main`).then(() => true).catch(() => false)) {
-			await fs.rm(starlightContentDir, { recursive: true, force: true });
-			await fs.mkdir(starlightContentDir, { recursive: true });
 			await fs.cp(`${RUN.work}/content/main`, starlightContentDir, { recursive: true });
 		}
 		
@@ -513,7 +515,6 @@ if (opts.dist) {
 			const starlightVersionDir = `${starlightContentDir}/${versionSlug}`;
 			
 			if (await fs.stat(versionContentPath).then(() => true).catch(() => false)) {
-				await fs.rm(starlightVersionDir, { recursive: true, force: true });
 				await fs.mkdir(starlightVersionDir, { recursive: true });
 				await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
 			}
