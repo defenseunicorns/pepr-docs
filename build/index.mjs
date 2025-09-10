@@ -165,11 +165,10 @@ await activity(`Search core repo versions`, async (log) => {
 	let ongoing = majmins.slice(0, RUN.cutoff);
 	RUN.retired = majmins.slice(RUN.cutoff);
 
-	RUN.versions = sort.reduce((list, ver) => {
-		const mm = majmin(ver);
-		ongoing.includes(mm) ? list.push(ver) : null;
-		return list;
-	}, []);
+	// Only process the latest version of each major.minor to reduce build time
+	RUN.versions = ongoing.map(mm => {
+		return sort.find(ver => majmin(ver) === mm);
+	}).filter(Boolean);
 	RUN.versions.push('main');
 
 	log.push(['ongoing', ongoing]);
@@ -228,8 +227,11 @@ for (const version of RUN.versions) {
 	});
 
 	if (RUN.found) {
+		console.log(`Skipping ${RUN.version} - already built`);
 		continue;
 	}
+	
+	console.log(`Processing version ${RUN.version}...`);
 
 	await activity(`Create version dir`, async (log) => {
 		await fs.mkdir(RUN.verdir, { recursive: true });
@@ -516,21 +518,14 @@ if (opts.dist) {
 		}
 		
 		// Copy versioned content only for versions declared in astro.config.mjs
-		const configuredVersions = ['v0.54.0', 'v0.53.1']; // Match the first version of each major.minor
 		for (const version of RUN.versions.filter(v => v !== 'main')) {
-			// Only copy if this version matches our configured versions
+			const versionContentPath = `${RUN.work}/content/${version}`;
 			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
-			const shouldCopy = version === 'v0.54.0' || version === 'v0.53.1'; // Only latest patch of each
+			const starlightVersionDir = `${starlightContentDir}/${versionMajMin}`;
 			
-			if (shouldCopy) {
-				const versionContentPath = `${RUN.work}/content/${version}`;
-				const versionSlug = versionMajMin; // Use major.minor (v0.54, v0.53)
-				const starlightVersionDir = `${starlightContentDir}/${versionSlug}`;
-				
-				if (await fs.stat(versionContentPath).then(() => true).catch(() => false)) {
-					await fs.mkdir(starlightVersionDir, { recursive: true });
-					await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
-				}
+			if (await fs.stat(versionContentPath).then(() => true).catch(() => false)) {
+				await fs.mkdir(starlightVersionDir, { recursive: true });
+				await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
 			}
 		}
 		
