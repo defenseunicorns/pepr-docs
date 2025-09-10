@@ -498,10 +498,17 @@ if (opts.dist) {
 		// Copy content to Starlight content directories  
 		const siteRoot = process.cwd(); // We're already in the docs directory
 		const starlightContentDir = `${siteRoot}/src/content/docs`;
+		const publicDir = `${siteRoot}/public`;
 		
 		// Clear existing content directory
 		await fs.rm(starlightContentDir, { recursive: true, force: true });
 		await fs.mkdir(starlightContentDir, { recursive: true });
+		
+		// Copy images from work/static to public directory for Starlight
+		await fs.rm(`${publicDir}/_images`, { recursive: true, force: true });
+		if (await fs.stat(`${RUN.work}/static/main/_images`).then(() => true).catch(() => false)) {
+			await fs.cp(`${RUN.work}/static/main/_images`, `${publicDir}/_images`, { recursive: true });
+		}
 		
 		// Copy main version content to unversioned location (current/latest)
 		if (await fs.stat(`${RUN.work}/content/main`).then(() => true).catch(() => false)) {
