@@ -180,7 +180,6 @@ See [actions](./user-guide/actions) for more details.
 ## Logical Pepr Flow
 
 ![Arch Diagram](/assets/pepr-arch.png)
-![Source Diagram](/assets/pepr-arch.png)
 
 ## TypeScript
 

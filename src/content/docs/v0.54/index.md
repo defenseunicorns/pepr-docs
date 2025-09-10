@@ -1,6 +1,7 @@
 ---
 title: Pepr
 description: Type safe Kubernetes middleware for humans
+slug: v0.54
 ---
 
 [![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev)
@@ -13,8 +14,7 @@ description: Type safe Kubernetes middleware for humans
 
 [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr)
 
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://
-securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr)
 
 [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679y9k1hb)](https://codecov.io/github/defenseunicorns/pepr)
 
@@ -180,7 +180,6 @@ See [actions](./user-guide/actions) for more details.
 ## Logical Pepr Flow
 
 ![Arch Diagram](/assets/pepr-arch.png)
-![Source Diagram](/assets/pepr-arch.png)
 
 ## TypeScript
 

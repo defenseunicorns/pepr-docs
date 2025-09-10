@@ -1,15 +1,23 @@
 ---
 title: Pepr
 description: Type safe Kubernetes middleware for humans
+slug: v0.53
 ---
 
 [![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev)
+
 [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr)
+
 [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr)
+
 [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr)
+
 [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr)
+
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr)
+
 [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679y9k1hb)](https://codecov.io/github/defenseunicorns/pepr)
+
 [![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-2.1-4baaaa.svg)](/contribute/code-of-conduct/)
 
 ## What happened to Pepr's stars?
@@ -172,7 +180,6 @@ See [actions](./user-guide/actions) for more details.
 ## Logical Pepr Flow
 
 ![Arch Diagram](/assets/pepr-arch.png)
-![Source Diagram](/assets/pepr-arch.png)
 
 ## TypeScript
 
