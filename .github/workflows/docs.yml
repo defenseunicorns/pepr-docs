@@ -48,7 +48,15 @@ jobs:
           sudo apt-get update && sudo apt-get install -y jq
 
       - name: Build the docs!
-        run: ls -al "$DOCS/.github/workflows/scripts/build.sh"
+        run: |
+          echo "Current directory contents:"
+          ls -la
+          echo "Docs directory contents:"
+          ls -la ./docs/
+          echo "Looking for .github in docs:"
+          find ./docs -name ".github" -type d
+          echo "Looking for build.sh:"
+          find . -name "build.sh" -type f
 
       - name: Commit changes to source!
         if: github.ref_name == 'main'
