@@ -503,20 +503,27 @@ if (opts.dist) {
 		await fs.rm(starlightContentDir, { recursive: true, force: true });
 		await fs.mkdir(starlightContentDir, { recursive: true });
 		
-		// Copy main version content to unversioned location
+		// Copy main version content to unversioned location (current/latest)
 		if (await fs.stat(`${RUN.work}/content/main`).then(() => true).catch(() => false)) {
 			await fs.cp(`${RUN.work}/content/main`, starlightContentDir, { recursive: true });
 		}
 		
-		// Copy versioned content for v0.54 and v0.53
+		// Copy versioned content only for versions declared in astro.config.mjs
+		const configuredVersions = ['v0.54.0', 'v0.53.1']; // Match the first version of each major.minor
 		for (const version of RUN.versions.filter(v => v !== 'main')) {
-			const versionContentPath = `${RUN.work}/content/${version}`;
-			const versionSlug = version.startsWith('v') ? version : `v${version}`;
-			const starlightVersionDir = `${starlightContentDir}/${versionSlug}`;
+			// Only copy if this version matches our configured versions
+			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
+			const shouldCopy = version === 'v0.54.0' || version === 'v0.53.1'; // Only latest patch of each
 			
-			if (await fs.stat(versionContentPath).then(() => true).catch(() => false)) {
-				await fs.mkdir(starlightVersionDir, { recursive: true });
-				await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
+			if (shouldCopy) {
+				const versionContentPath = `${RUN.work}/content/${version}`;
+				const versionSlug = versionMajMin; // Use major.minor (v0.54, v0.53)
+				const starlightVersionDir = `${starlightContentDir}/${versionSlug}`;
+				
+				if (await fs.stat(versionContentPath).then(() => true).catch(() => false)) {
+					await fs.mkdir(starlightVersionDir, { recursive: true });
+					await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
+				}
 			}
 		}
 		
