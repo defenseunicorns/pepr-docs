@@ -495,8 +495,8 @@ if (opts.dist) {
 	});
 
 	await activity(`Build Starlight site into dist dir`, async () => {
-		// Copy content to Starlight content directories
-		const siteRoot = path.resolve(`${RUN.site}/../..`);
+		// Copy content to Starlight content directories  
+		const siteRoot = process.cwd(); // We're already in the docs directory
 		const starlightContentDir = `${siteRoot}/src/content/docs`;
 		
 		// Copy main version content to unversioned location
