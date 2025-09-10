@@ -507,9 +507,27 @@ if (opts.dist) {
 		await fs.mkdir(starlightContentDir, { recursive: true });
 		
 		// Copy images from work/static to public directory for Starlight
+		console.log('Copying images to public directory...');
 		await fs.rm(`${publicDir}/_images`, { recursive: true, force: true });
-		if (await fs.stat(`${RUN.work}/static/main/_images`).then(() => true).catch(() => false)) {
-			await fs.cp(`${RUN.work}/static/main/_images`, `${publicDir}/_images`, { recursive: true });
+		
+		// Check what image directories exist
+		const staticDirs = await fs.readdir(`${RUN.work}/static`).catch(() => []);
+		console.log('Available static directories:', staticDirs);
+		
+		// Try to copy images from any available version
+		let imagesCopied = false;
+		for (const version of ['main', 'v0.54.0', 'v0.53.1']) {
+			const imagesPath = `${RUN.work}/static/${version}/_images`;
+			if (await fs.stat(imagesPath).then(() => true).catch(() => false)) {
+				console.log(`Copying images from ${imagesPath} to ${publicDir}/_images`);
+				await fs.cp(imagesPath, `${publicDir}/_images`, { recursive: true });
+				imagesCopied = true;
+				break;
+			}
+		}
+		
+		if (!imagesCopied) {
+			console.log('Warning: No images found to copy');
 		}
 		
 		// Copy main version content to unversioned location (current/latest)
