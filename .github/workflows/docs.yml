@@ -47,10 +47,6 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Make scripts executable
-        run: |
-          chmod +x ./docs/.github/workflows/scripts/*.sh
-
       - name: Build the docs!
         run: bash ./docs/.github/workflows/scripts/build.sh
 
