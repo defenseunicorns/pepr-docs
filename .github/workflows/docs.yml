@@ -48,7 +48,7 @@ jobs:
           sudo apt-get update && sudo apt-get install -y jq
 
       - name: Build the docs!
-        run: bash ./.github/workflows/scripts/build.sh
+        run: ls -al "$DOCS/.github/workflows/scripts/build.sh"
 
       - name: Commit changes to source!
         if: github.ref_name == 'main'
@@ -88,5 +88,5 @@ jobs:
           path: ./docs/dist
 
       - name: Deploy the docs!
-        run: ./.github/workflows/scripts/deploy.sh
+        run: ../.github/workflows/scripts/deploy.sh
         
