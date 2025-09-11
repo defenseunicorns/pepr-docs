@@ -606,10 +606,12 @@ if (opts.dist) {
 			const content = await fs.readFile(contentFile, 'utf8');
 			// Replace _images/pepr-arch.svg with /assets/pepr-arch.png for better compatibility
 			// Also replace resource images to use assets directory
+			// And replace relative image paths from tutorials
 			const updatedContent = content
 				.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
 				.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
-				.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png');
+				.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png')
+				.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
 			if (content !== updatedContent) {
 				await fs.writeFile(contentFile, updatedContent);
 				console.log(`Updated image paths in ${contentFile}`);
@@ -644,7 +646,8 @@ if (opts.dist) {
 					const updatedContent = content
 						.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
 						.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
-						.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png');
+						.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png')
+						.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
 					if (content !== updatedContent) {
 						await fs.writeFile(contentFile, updatedContent);
 						console.log(`Updated image paths in ${contentFile}`);
