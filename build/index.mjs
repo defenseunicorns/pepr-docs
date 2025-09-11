@@ -665,12 +665,8 @@ if (opts.dist) {
 			`);
 			console.log('Build completed, output:', buildResult.stdout);
 			
-			console.log('Copying built site to dist...');
-			const copyResult = await exec(`
-				# Copy built site to dist
-				cp -r ${siteRoot}/dist/* ${RUN.dist}/
-			`);
-			console.log('Copy completed, output:', copyResult.stdout);
+			// Note: No need to copy since siteRoot/dist and RUN.dist are the same directory
+			console.log('Build completed successfully. Files are already in the correct location.');
 		} catch (error) {
 			console.error('Build or copy failed:', error);
 			console.error('Error stdout:', error.stdout);
