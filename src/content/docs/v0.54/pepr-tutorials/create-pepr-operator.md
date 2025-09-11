@@ -631,7 +631,7 @@ Port-forwarding creates a secure tunnel from your local machine to a pod or serv
 Now open [http://localhost:3000](http://localhost:3000) in your browser or run `curl http://localhost:3000` to see the response in a terminal.
 The browser should display a light theme web application:
 
-![WebApp Light Theme](resources/create-pepr-operator/light.png)
+![WebApp Light Theme](/assets/light.png)
 
 ### Testing the Reconciliation Loop
 
@@ -712,7 +712,7 @@ echo "Port-forward PID: $PID"
 Now open [http://localhost:3000](http://localhost:3000) in your browser or run `curl http://localhost:3000` to see the response in a terminal.
 The browser should display a dark theme web application:
 
-![WebApp Dark Theme](resources/create-pepr-operator/dark.png)
+![WebApp Dark Theme](/assets/dark.png)
 
 Now that we've successfully updated a WebApp, commit your changes:
 

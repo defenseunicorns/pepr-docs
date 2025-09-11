@@ -544,13 +544,46 @@ if (opts.dist) {
 				console.log(`Copying images from ${imagesPath} to public and src directories`);
 				await fs.cp(imagesPath, `${publicDir}/_images`, { recursive: true });
 				await fs.cp(imagesPath, `${siteRoot}/src/_images`, { recursive: true });
+				
+				// Ensure both PNG and SVG versions of pepr-arch exist
+				const publicImagesDir = `${publicDir}/_images`;
+				const srcImagesDir = `${siteRoot}/src/_images`;
+				const assetsPeprArch = `${publicDir}/assets/pepr-arch.png`;
+				
+				// If PNG doesn't exist but SVG does, and we have PNG in assets, copy it
+				if (await fs.stat(`${srcImagesDir}/pepr-arch.svg`).then(() => true).catch(() => false) &&
+				    !await fs.stat(`${srcImagesDir}/pepr-arch.png`).then(() => true).catch(() => false) &&
+				    await fs.stat(assetsPeprArch).then(() => true).catch(() => false)) {
+					console.log('Adding PNG version of pepr-arch from assets');
+					await fs.cp(assetsPeprArch, `${publicImagesDir}/pepr-arch.png`);
+					await fs.cp(assetsPeprArch, `${srcImagesDir}/pepr-arch.png`);
+				}
+				
+				// If PNG exists but SVG doesn't, and we have SVG in the copied files, ensure both exist
+				if (!await fs.stat(`${srcImagesDir}/pepr-arch.svg`).then(() => true).catch(() => false) &&
+				    await fs.stat(`${srcImagesDir}/pepr-arch.png`).then(() => true).catch(() => false)) {
+					console.log('PNG exists but SVG missing, this should not happen');
+				}
+				
 				resourcesCopied = true;
 			}
 			
 			if (await fs.stat(resourcesPath).then(() => true).catch(() => false)) {
 				console.log(`Copying resources from ${resourcesPath} to src directories`);
 				await fs.mkdir(`${siteRoot}/src/content/docs/resources`, { recursive: true });
-				await fs.cp(resourcesPath, `${siteRoot}/src/content/docs/resources`, { recursive: true });
+				
+				// Copy each subdirectory but flatten the numbered prefix
+				const resourceSubdirs = await fs.readdir(resourcesPath, { withFileTypes: true });
+				for (const dirent of resourceSubdirs) {
+					if (dirent.isDirectory()) {
+						const srcDir = path.join(resourcesPath, dirent.name);
+						// Remove numbered prefix (e.g., "030_create-pepr-operator" -> "create-pepr-operator")
+						const cleanName = dirent.name.replace(/^\d+_/, '');
+						const dstDir = path.join(`${siteRoot}/src/content/docs/resources`, cleanName);
+						await fs.cp(srcDir, dstDir, { recursive: true });
+						console.log(`Copied ${srcDir} -> ${dstDir}`);
+					}
+				}
 				resourcesCopied = true;
 			}
 			
@@ -566,6 +599,33 @@ if (opts.dist) {
 			await fs.cp(`${RUN.work}/content/main`, starlightContentDir, { recursive: true });
 		}
 		
+		// Fix image paths in content files to use assets directory
+		console.log('Fixing image paths in content files...');
+		const contentFiles = await glob(`${starlightContentDir}/**/*.md`);
+		for (const contentFile of contentFiles) {
+			const content = await fs.readFile(contentFile, 'utf8');
+			// Replace _images/pepr-arch.svg with /assets/pepr-arch.png for better compatibility
+			// Also replace resource images to use assets directory
+			const updatedContent = content
+				.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
+				.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
+				.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png');
+			if (content !== updatedContent) {
+				await fs.writeFile(contentFile, updatedContent);
+				console.log(`Updated image paths in ${contentFile}`);
+			}
+		}
+		
+		// Copy resource images to assets directory for better compatibility
+		console.log('Copying resource images to assets directory...');
+		const resourceImages = await glob(`${siteRoot}/src/content/docs/resources/**/*.png`);
+		for (const resourceImage of resourceImages) {
+			const imageName = path.basename(resourceImage);
+			const destPath = `${publicDir}/assets/${imageName}`;
+			await fs.cp(resourceImage, destPath);
+			console.log(`Copied ${resourceImage} -> ${destPath}`);
+		}
+		
 		// Copy versioned content only for versions declared in astro.config.mjs
 		for (const version of RUN.versions.filter(v => v !== 'main')) {
 			const versionContentPath = `${RUN.work}/content/${version}`;
@@ -575,6 +635,21 @@ if (opts.dist) {
 			if (await fs.stat(versionContentPath).then(() => true).catch(() => false)) {
 				await fs.mkdir(starlightVersionDir, { recursive: true });
 				await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
+				
+				// Fix image paths in versioned content files too
+				console.log(`Fixing image paths in versioned content ${versionMajMin}...`);
+				const versionContentFiles = await glob(`${starlightVersionDir}/**/*.md`);
+				for (const contentFile of versionContentFiles) {
+					const content = await fs.readFile(contentFile, 'utf8');
+					const updatedContent = content
+						.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
+						.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
+						.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png');
+					if (content !== updatedContent) {
+						await fs.writeFile(contentFile, updatedContent);
+						console.log(`Updated image paths in ${contentFile}`);
+					}
+				}
 			}
 		}
 		
