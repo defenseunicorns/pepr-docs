@@ -1,8 +1,8 @@
 ---
-title:  Pepr Media
-description:  Pepr Media
-slug: v0.53/community/media
+title: Pepr Media
+description: Pepr Media
 ---
+
 
 ## 2025
 

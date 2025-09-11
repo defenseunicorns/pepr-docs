@@ -284,6 +284,21 @@ for (const version of RUN.versions) {
 		log.push(['dst', dstimgs]);
 	});
 
+	await activity(`Copy repo resources`, async (log) => {
+		const srcresources = `${RUN.core}/docs`;
+		const dstresources = `${RUN.work}/static/${RUN.version}`;
+		
+		// Copy all resource directories from docs
+		const resourceDirs = await glob(`${srcresources}/**/resources`, { onlyDirectories: true });
+		for (const resourceDir of resourceDirs) {
+			const relativePath = path.relative(srcresources, resourceDir);
+			const dstPath = path.join(dstresources, relativePath);
+			await fs.mkdir(path.dirname(dstPath), { recursive: true });
+			await fs.cp(resourceDir, dstPath, { recursive: true });
+			log.push(['copied', `${resourceDir} -> ${dstPath}`]);
+		}
+	});
+
 	await activity('Process root level markdown files', async () => {
 		const rootMdFiles = ['SECURITY.md', 'CODE_OF_CONDUCT.md', 'SUPPORT.md'];
     let rootMdDir = '';
@@ -507,27 +522,43 @@ if (opts.dist) {
 		await fs.mkdir(starlightContentDir, { recursive: true });
 		
 		// Copy images from work/static to public directory for Starlight
-		console.log('Copying images to public directory...');
-		await fs.rm(`${publicDir}/_images`, { recursive: true, force: true });
+		console.log('Copying images and resources to src and public directories...');
 		
-		// Check what image directories exist
+		// Check what static directories exist
 		const staticDirs = await fs.readdir(`${RUN.work}/static`).catch(() => []);
 		console.log('Available static directories:', staticDirs);
 		
-		// Try to copy images from any available version
-		let imagesCopied = false;
+		// Clean existing directories
+		await fs.rm(`${publicDir}/_images`, { recursive: true, force: true });
+		await fs.rm(`${siteRoot}/src/_images`, { recursive: true, force: true });
+		await fs.rm(`${siteRoot}/src/content/docs/resources`, { recursive: true, force: true });
+		
+		// Try to copy images and resources from any available version
+		let resourcesCopied = false;
 		for (const version of ['main', 'v0.54.0', 'v0.53.1']) {
-			const imagesPath = `${RUN.work}/static/${version}/_images`;
+			const staticVersionPath = `${RUN.work}/static/${version}`;
+			const imagesPath = `${staticVersionPath}/_images`;
+			const resourcesPath = `${staticVersionPath}/040_pepr-tutorials/resources`;
+			
 			if (await fs.stat(imagesPath).then(() => true).catch(() => false)) {
-				console.log(`Copying images from ${imagesPath} to ${publicDir}/_images`);
+				console.log(`Copying images from ${imagesPath} to public and src directories`);
 				await fs.cp(imagesPath, `${publicDir}/_images`, { recursive: true });
-				imagesCopied = true;
-				break;
+				await fs.cp(imagesPath, `${siteRoot}/src/_images`, { recursive: true });
+				resourcesCopied = true;
 			}
+			
+			if (await fs.stat(resourcesPath).then(() => true).catch(() => false)) {
+				console.log(`Copying resources from ${resourcesPath} to src directories`);
+				await fs.mkdir(`${siteRoot}/src/content/docs/resources`, { recursive: true });
+				await fs.cp(resourcesPath, `${siteRoot}/src/content/docs/resources`, { recursive: true });
+				resourcesCopied = true;
+			}
+			
+			if (resourcesCopied) break;
 		}
 		
-		if (!imagesCopied) {
-			console.log('Warning: No images found to copy');
+		if (!resourcesCopied) {
+			console.log('Warning: No images or resources found to copy');
 		}
 		
 		// Copy main version content to unversioned location (current/latest)

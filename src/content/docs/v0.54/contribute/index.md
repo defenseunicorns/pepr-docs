@@ -1,11 +1,9 @@
 ---
 title: Contributor Guide
-description: Guidelines for contributing to Pepr including setup, development
-  workflow, and submission process
-slug: v0.54/contribute
-sidebar:
-  order: 1
+description: Contributor Guide
 ---
+
+
 Thank you for your interest in contributing to Pepr! We welcome all contributions and are grateful for your help. This guide outlines how to get started with contributing to this project.
 
 ## Table of Contents

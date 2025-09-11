@@ -1,10 +1,6 @@
 ---
 title: Pepr SDK
-description: Software development kit with helper functions for working with
-  Kubernetes resources in Pepr modules
-slug: v0.54/user-guide/sdk
-sidebar:
-    order: 3
+description: Pepr SDK
 ---
 
 

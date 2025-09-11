@@ -1,7 +1,8 @@
 ---
 title: Pepr Store
-slug: v0.54/user-guide/store
+description: Pepr Store
 ---
+
 
 ## A Lightweight Key-Value Store for Pepr Modules
 

@@ -1,7 +1,6 @@
 ---
-title:  Pepr Media
-description:  Pepr Media
-slug: v0.54/community/media
+title: Pepr Media
+description: Pepr Media
 ---
 
 

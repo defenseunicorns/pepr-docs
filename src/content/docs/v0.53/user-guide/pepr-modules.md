@@ -1,11 +1,7 @@
 ---
 title: Pepr Modules
 description: Pepr Modules
-slug: v0.53/user-guide/pepr-modules
-sidebar:
-  order: 4
 ---
-
 
 
 ## What is a Pepr Module?

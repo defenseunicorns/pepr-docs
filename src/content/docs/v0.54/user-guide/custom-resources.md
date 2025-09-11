@@ -1,7 +1,8 @@
 ---
 title: Custom Resources
-slug: v0.54/user-guide/custom-resources
+description: Custom Resources
 ---
+
 
 ## Importing Custom Resources
 

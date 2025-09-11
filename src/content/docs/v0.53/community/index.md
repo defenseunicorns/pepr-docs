@@ -1,9 +1,7 @@
 ---
 title: Community and Support
-description: Connect with the Pepr community and learn how to contribute to the project
-slug: v0.53/community
+description: Community and Support
 ---
-
 
 
 ## Introduction

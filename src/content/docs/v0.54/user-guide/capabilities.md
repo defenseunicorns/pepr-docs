@@ -1,11 +1,9 @@
 ---
 title: Pepr Capabilities
-description: User-defined collections of related actions that work together to
-  transform Kubernetes resources
-slug: v0.54/user-guide/capabilities
-sidebar:
-    order: 5
+description: Pepr Capabilities
 ---
+
+
 A capability is set of related [actions](../actions/) that work together to achieve a specific transformation or operation on Kubernetes resources. Capabilities are user-defined and can include one or more actions. They are defined within a Pepr module and can be used in both MutatingWebhookConfigurations and ValidatingWebhookConfigurations. A Capability can have a specific scope, such as mutating or validating, and can be reused in multiple Pepr modules.
 
 When you [`npx pepr init`](../pepr-cli#pepr-init), a `capabilities` directory is created for you. This directory is where you will define your capabilities. You can create as many capabilities as you need, and each capability can contain one or more actions. Pepr also automatically creates a `HelloPepr` capability with a number of example actions to help you get started.
