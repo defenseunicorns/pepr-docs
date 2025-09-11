@@ -5,12 +5,19 @@ import * as fs from 'node:fs/promises';
 import * as util from 'node:util';
 import * as child_process from 'node:child_process';
 import * as semver from 'semver';
-import * as yaml from 'yaml';
 import { glob } from 'glob';
 import { heredoc } from './heredoc.mjs';
-import { dir } from 'node:console';
 
 const exec = util.promisify(child_process.exec);
+
+// Normalize all image paths to use /assets/ directory for better compatibility
+function fixImagePaths(content) {
+	return content
+		.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
+		.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
+		.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png')
+		.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
+}
 
 program
 	.version('0.0.0', '-v, --version')
@@ -599,33 +606,31 @@ if (opts.dist) {
 			await fs.cp(`${RUN.work}/content/main`, starlightContentDir, { recursive: true });
 		}
 		
-		// Fix image paths in content files to use assets directory
+		// Fix image paths in main content files
 		console.log('Fixing image paths in content files...');
 		const contentFiles = await glob(`${starlightContentDir}/**/*.md`);
+		let updatedFilesCount = 0;
 		for (const contentFile of contentFiles) {
 			const content = await fs.readFile(contentFile, 'utf8');
-			// Replace _images/pepr-arch.svg with /assets/pepr-arch.png for better compatibility
-			// Also replace resource images to use assets directory
-			// And replace relative image paths from tutorials
-			const updatedContent = content
-				.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
-				.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
-				.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png')
-				.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
+			const updatedContent = fixImagePaths(content);
 			if (content !== updatedContent) {
 				await fs.writeFile(contentFile, updatedContent);
-				console.log(`Updated image paths in ${contentFile}`);
+				updatedFilesCount++;
 			}
 		}
+		if (updatedFilesCount > 0) {
+			console.log(`Updated image paths in ${updatedFilesCount} files`);
+		}
 		
-		// Copy resource images to assets directory for better compatibility
-		console.log('Copying resource images to assets directory...');
+		// Copy resource images to assets directory
 		const resourceImages = await glob(`${siteRoot}/src/content/docs/resources/**/*.png`);
-		for (const resourceImage of resourceImages) {
-			const imageName = path.basename(resourceImage);
-			const destPath = `${publicDir}/assets/${imageName}`;
-			await fs.cp(resourceImage, destPath);
-			console.log(`Copied ${resourceImage} -> ${destPath}`);
+		if (resourceImages.length > 0) {
+			console.log(`Copying ${resourceImages.length} resource images to assets directory...`);
+			for (const resourceImage of resourceImages) {
+				const imageName = path.basename(resourceImage);
+				const destPath = `${publicDir}/assets/${imageName}`;
+				await fs.cp(resourceImage, destPath);
+			}
 		}
 		
 		// Copy versioned content only for versions declared in astro.config.mjs
@@ -638,20 +643,20 @@ if (opts.dist) {
 				await fs.mkdir(starlightVersionDir, { recursive: true });
 				await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
 				
-				// Fix image paths in versioned content files too
+				// Fix image paths in versioned content files
 				console.log(`Fixing image paths in versioned content ${versionMajMin}...`);
 				const versionContentFiles = await glob(`${starlightVersionDir}/**/*.md`);
+				let versionUpdatedCount = 0;
 				for (const contentFile of versionContentFiles) {
 					const content = await fs.readFile(contentFile, 'utf8');
-					const updatedContent = content
-						.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
-						.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
-						.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png')
-						.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
+					const updatedContent = fixImagePaths(content);
 					if (content !== updatedContent) {
 						await fs.writeFile(contentFile, updatedContent);
-						console.log(`Updated image paths in ${contentFile}`);
+						versionUpdatedCount++;
 					}
+				}
+				if (versionUpdatedCount > 0) {
+					console.log(`Updated image paths in ${versionUpdatedCount} versioned files`);
 				}
 			}
 		}
