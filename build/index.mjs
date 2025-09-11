@@ -535,9 +535,7 @@ if (opts.dist) {
 		const staticDirs = await fs.readdir(`${RUN.work}/static`).catch(() => []);
 		console.log('Available static directories:', staticDirs);
 		
-		// Clean existing directories
-		await fs.rm(`${publicDir}/_images`, { recursive: true, force: true });
-		await fs.rm(`${siteRoot}/src/_images`, { recursive: true, force: true });
+		// Clean existing directories (only need resources since we use assets for images)
 		await fs.rm(`${siteRoot}/src/content/docs/resources`, { recursive: true, force: true });
 		
 		// Try to copy images and resources from any available version
@@ -548,30 +546,14 @@ if (opts.dist) {
 			const resourcesPath = `${staticVersionPath}/040_pepr-tutorials/resources`;
 			
 			if (await fs.stat(imagesPath).then(() => true).catch(() => false)) {
-				console.log(`Copying images from ${imagesPath} to public and src directories`);
-				await fs.cp(imagesPath, `${publicDir}/_images`, { recursive: true });
-				await fs.cp(imagesPath, `${siteRoot}/src/_images`, { recursive: true });
-				
-				// Ensure both PNG and SVG versions of pepr-arch exist
-				const publicImagesDir = `${publicDir}/_images`;
-				const srcImagesDir = `${siteRoot}/src/_images`;
-				const assetsPeprArch = `${publicDir}/assets/pepr-arch.png`;
-				
-				// If PNG doesn't exist but SVG does, and we have PNG in assets, copy it
-				if (await fs.stat(`${srcImagesDir}/pepr-arch.svg`).then(() => true).catch(() => false) &&
-				    !await fs.stat(`${srcImagesDir}/pepr-arch.png`).then(() => true).catch(() => false) &&
-				    await fs.stat(assetsPeprArch).then(() => true).catch(() => false)) {
-					console.log('Adding PNG version of pepr-arch from assets');
-					await fs.cp(assetsPeprArch, `${publicImagesDir}/pepr-arch.png`);
-					await fs.cp(assetsPeprArch, `${srcImagesDir}/pepr-arch.png`);
+				console.log(`Copying images from ${imagesPath} to assets directory`);
+				// Copy all images directly to assets directory
+				const imageFiles = await fs.readdir(imagesPath);
+				for (const imageFile of imageFiles) {
+					const srcFile = path.join(imagesPath, imageFile);
+					const destFile = path.join(`${publicDir}/assets`, imageFile);
+					await fs.cp(srcFile, destFile);
 				}
-				
-				// If PNG exists but SVG doesn't, and we have SVG in the copied files, ensure both exist
-				if (!await fs.stat(`${srcImagesDir}/pepr-arch.svg`).then(() => true).catch(() => false) &&
-				    await fs.stat(`${srcImagesDir}/pepr-arch.png`).then(() => true).catch(() => false)) {
-					console.log('PNG exists but SVG missing, this should not happen');
-				}
-				
 				resourcesCopied = true;
 			}
 			
