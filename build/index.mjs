@@ -701,21 +701,32 @@ if (opts.dist) {
 		}
 		
 		try {
-			console.log('Building Starlight site...');
+			console.log(`Building Starlight site from directory: ${siteRoot}`);
+			console.log(`Expected dist output: ${siteRoot}/dist`);
+			
 			const buildResult = await exec(`
 				# Build Starlight site
 				cd ${siteRoot}
+				pwd
+				ls -la
 				npm run build
+				echo "Build completed, checking for dist directory..."
+				ls -la dist/ || echo "No dist directory found"
+				find . -name "dist" -type d || echo "No dist directories found anywhere"
 			`);
 			console.log('Build completed, output:', buildResult.stdout);
 			
 			// Copy the built site from Astro's output directory to our dist directory
 			const astroDist = `${siteRoot}/dist`;
+			console.log(`Checking for Astro dist directory at: ${astroDist}`);
 			if (await fs.stat(astroDist).then(() => true).catch(() => false)) {
 				await fs.cp(astroDist, RUN.dist, { recursive: true });
 				console.log(`Copied built site from ${astroDist} to ${RUN.dist}`);
 			} else {
 				console.error(`Astro dist directory not found: ${astroDist}`);
+				console.log('Checking what directories exist in siteRoot:');
+				const files = await fs.readdir(siteRoot);
+				console.log('Files in siteRoot:', files);
 				throw new Error('Astro build did not produce expected output directory');
 			}
 		} catch (error) {
