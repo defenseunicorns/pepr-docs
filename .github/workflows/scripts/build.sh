@@ -6,7 +6,7 @@ npm ci
         
 # Build docs with proper error handling
 echo "Starting documentation generation..."
-node build/index.mjs --core "$CORE" --site ./src/content/docs 2>&1 | tee /tmp/build.log
+node build/index.mjs --core "$CORE" --site ./src/content/docs --dist 2>&1 | tee /tmp/build.log
 BUILD_EXIT_CODE=${PIPESTATUS[0]}
 if [ $BUILD_EXIT_CODE -ne 0 ]; then
   echo "Error: Documentation build failed with exit code: $BUILD_EXIT_CODE"

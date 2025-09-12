@@ -88,5 +88,5 @@ jobs:
           path: ./docs/dist
 
       - name: Deploy the docs!
-        run: ./.github/workflows/scripts/deploy.sh
+        run: bash ./docs/.github/workflows/scripts/deploy.sh
         

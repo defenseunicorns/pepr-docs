@@ -74,32 +74,30 @@ fi
 echo "Updating Astro configuration..."
 cd "$DOCS"
 
-# Discover all version directories
-VERSIONS_JSON="["
+# Discover all version directories and build properly formatted JS array
+VERSIONS_ARRAY=""
 FIRST=true
 for version_dir in "$CONT_OLD"/v0.*; do
 if [ -d "$version_dir" ]; then
     version=$(basename "$version_dir")
     if [ "$FIRST" = true ]; then
     FIRST=false
+    VERSIONS_ARRAY="                      { slug: '$version', label: '$version' }"
     else
-    VERSIONS_JSON+=","
+    VERSIONS_ARRAY="$VERSIONS_ARRAY,\n                      { slug: '$version', label: '$version' }"
     fi
-    VERSIONS_JSON+="{\"slug\":\"$version\",\"label\":\"$version\"}"
 fi
 done
-VERSIONS_JSON+="]"
 
 # Update astro.config.mjs with new versions
 if [ -f "astro.config.mjs" ]; then
 # Create backup
 cp astro.config.mjs astro.config.mjs.bak
 
-# Replace versions array using sed
-sed -i.tmp "s/versions: \[.*\]/versions: $VERSIONS_JSON/" astro.config.mjs
-rm astro.config.mjs.tmp
+# Use perl for more reliable multiline replacement
+perl -i -pe "BEGIN{undef $/;} s/versions: \[.*?\]/versions: [\n$VERSIONS_ARRAY\n                  ]/smg" astro.config.mjs
 
-echo "Updated Astro config with versions: $VERSIONS_JSON"
+echo "Updated Astro config with discovered versions"
 else
 echo "Warning: astro.config.mjs not found"
 fi
