@@ -750,20 +750,26 @@ if (opts.dist) {
 					console.log(`Could not read dist contents:`, e.message);
 				}
 				
-				// Ensure target directory exists and is empty
-				try {
-					await fs.rm(RUN.dist, { recursive: true, force: true });
-					await fs.mkdir(path.dirname(RUN.dist), { recursive: true });
-				} catch (e) {
-					console.log(`Error preparing target directory:`, e.message);
-				}
-				
-				try {
-					await fs.cp(astroDist, RUN.dist, { recursive: true });
-					console.log(`Successfully copied built site from ${astroDist} to ${RUN.dist}`);
-				} catch (copyError) {
-					console.error(`Copy failed:`, copyError);
-					throw copyError;
+				// Check if source and destination are the same
+				if (path.resolve(astroDist) === path.resolve(RUN.dist)) {
+					console.log(`Astro output is already in the correct location: ${RUN.dist}`);
+					console.log(`No copying needed - build is complete!`);
+				} else {
+					// Ensure target directory exists and is empty
+					try {
+						await fs.rm(RUN.dist, { recursive: true, force: true });
+						await fs.mkdir(path.dirname(RUN.dist), { recursive: true });
+					} catch (e) {
+						console.log(`Error preparing target directory:`, e.message);
+					}
+					
+					try {
+						await fs.cp(astroDist, RUN.dist, { recursive: true });
+						console.log(`Successfully copied built site from ${astroDist} to ${RUN.dist}`);
+					} catch (copyError) {
+						console.error(`Copy failed:`, copyError);
+						throw copyError;
+					}
 				}
 			} else {
 				console.error(`Astro dist directory not found: ${astroDist}`);
