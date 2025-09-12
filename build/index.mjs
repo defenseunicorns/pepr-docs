@@ -734,11 +734,57 @@ if (opts.dist) {
 			// Copy the built site from Astro's output directory to our dist directory
 			const astroDist = `${siteRoot}/dist`;
 			console.log(`Checking for Astro dist directory at: ${astroDist}`);
-			if (await fs.stat(astroDist).then(() => true).catch(() => false)) {
-				await fs.cp(astroDist, RUN.dist, { recursive: true });
-				console.log(`Copied built site from ${astroDist} to ${RUN.dist}`);
+			console.log(`Target dist directory: ${RUN.dist}`);
+			
+			const astroDistExists = await fs.stat(astroDist).then(() => true).catch((e) => {
+				console.log(`Astro dist stat error:`, e.message);
+				return false;
+			});
+			
+			if (astroDistExists) {
+				console.log(`Astro dist directory found, contents:`);
+				try {
+					const distContents = await fs.readdir(astroDist);
+					console.log(distContents);
+				} catch (e) {
+					console.log(`Could not read dist contents:`, e.message);
+				}
+				
+				// Ensure target directory exists and is empty
+				try {
+					await fs.rm(RUN.dist, { recursive: true, force: true });
+					await fs.mkdir(path.dirname(RUN.dist), { recursive: true });
+				} catch (e) {
+					console.log(`Error preparing target directory:`, e.message);
+				}
+				
+				try {
+					await fs.cp(astroDist, RUN.dist, { recursive: true });
+					console.log(`Successfully copied built site from ${astroDist} to ${RUN.dist}`);
+				} catch (copyError) {
+					console.error(`Copy failed:`, copyError);
+					throw copyError;
+				}
 			} else {
 				console.error(`Astro dist directory not found: ${astroDist}`);
+				// Let's see what actually exists in siteRoot
+				try {
+					const rootContents = await fs.readdir(siteRoot);
+					console.log(`Contents of siteRoot (${siteRoot}):`, rootContents);
+					
+					// Check if there's a dist directory anywhere else
+					for (const item of rootContents) {
+						const itemPath = `${siteRoot}/${item}`;
+						const stat = await fs.stat(itemPath).catch(() => null);
+						if (stat?.isDirectory() && item.includes('dist')) {
+							console.log(`Found potential dist directory: ${itemPath}`);
+							const contents = await fs.readdir(itemPath).catch(() => []);
+							console.log(`Contents:`, contents);
+						}
+					}
+				} catch (e) {
+					console.log(`Could not inspect siteRoot:`, e.message);
+				}
 				throw new Error('Astro build did not produce expected output directory');
 			}
 		} catch (error) {
