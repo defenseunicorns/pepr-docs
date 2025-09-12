@@ -1,6 +1,7 @@
 ---
 title: Contributor Covenant Code of Conduct
 description: Contributor Covenant Code of Conduct
+slug: v0.54/code_of_conduct
 ---
 
 

@@ -1,6 +1,7 @@
 ---
 title: Building a Kubernetes Operator with Pepr
 description: Building a Kubernetes Operator with Pepr
+slug: v0.53/pepr-tutorials/create-pepr-operator
 ---
 
 

@@ -1,6 +1,7 @@
 ---
 title: Custom Resources
 description: Custom Resources
+slug: v0.53/user-guide/custom-resources
 ---
 
 

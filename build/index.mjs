@@ -414,10 +414,24 @@ for (const version of RUN.versions) {
 			const title = heading[1].replaceAll('`', '').replaceAll(':', '');
 			RUN.srcmd.content = RUN.srcmd.content.replaceAll(heading[0], '');
 
+			// Generate slug for versioned content
+			let slugField = '';
+			if (RUN.version !== 'main') {
+				const versionMajMin = RUN.version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
+				let slugPath = RUN.srcmd.newfile.replace(/\.md$/, '');
+				// For index files, use the directory path
+				if (slugPath.endsWith('/index')) {
+					slugPath = slugPath.replace('/index', '');
+				}
+				// Prepend version to create full slug path
+				const fullSlug = slugPath === 'index' ? versionMajMin : `${versionMajMin}/${slugPath}`;
+				slugField = `slug: ${fullSlug}`;
+			}
+
 			const front = heredoc`
         ---
         title: ${title}
-        description: ${title}
+        description: ${title}${slugField ? `\n        ${slugField}` : ''}
         ---
       `;
 			RUN.srcmd.content = [front, RUN.srcmd.content].join('\n');
@@ -463,10 +477,18 @@ for (const version of RUN.versions) {
 
 	await activity(`Write version layout & landing content`, async (log) => {
 		const idxMd = `${RUN.verdir}/index.md`;
+		
+		// Generate slug for versioned index pages
+		let slugField = '';
+		if (RUN.version !== 'main') {
+			const versionMajMin = RUN.version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
+			slugField = `slug: ${versionMajMin}`;
+		}
+		
 		const idxFront = heredoc`
       ---
       title: Pepr
-      description: Pepr Documentation - ${RUN.version}
+      description: Pepr Documentation - ${RUN.version}${slugField ? `\n      ${slugField}` : ''}
       ---
     `;
 		const rootMd = `${RUN.core}/README.md`;
@@ -520,7 +542,7 @@ if (opts.dist) {
 
 	await activity(`Build Starlight site into dist dir`, async () => {
 		// Copy content to Starlight content directories  
-		const siteRoot = process.cwd(); // We're already in the docs directory
+		const siteRoot = RUN.site; // Use the properly configured site directory
 		const starlightContentDir = `${siteRoot}/src/content/docs`;
 		const publicDir = `${siteRoot}/public`;
 		

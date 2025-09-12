@@ -1,6 +1,7 @@
 ---
 title: Pepr Filters
 description: Pepr Filters
+slug: v0.54/user-guide/filters
 ---
 
 

@@ -1,6 +1,7 @@
 ---
 title: Pepr SDK
 description: Pepr SDK
+slug: v0.53/user-guide/sdk
 ---
 
 

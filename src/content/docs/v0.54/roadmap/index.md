@@ -1,6 +1,7 @@
 ---
 title: Roadmap for Pepr
 description: Roadmap for Pepr
+slug: v0.54/roadmap
 ---
 
 

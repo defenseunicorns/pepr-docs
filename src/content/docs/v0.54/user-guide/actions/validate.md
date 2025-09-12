@@ -1,6 +1,7 @@
 ---
 title: Validate
 description: Validate
+slug: v0.54/user-guide/actions/validate
 ---
 
 

@@ -1,6 +1,7 @@
 ---
 title: Module Examples
 description: Module Examples
+slug: v0.53/module-examples
 ---
 
 

@@ -1,6 +1,7 @@
 ---
 title: Pepr Capabilities
 description: Pepr Capabilities
+slug: v0.53/user-guide/capabilities
 ---
 
 

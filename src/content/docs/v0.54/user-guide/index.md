@@ -1,6 +1,7 @@
 ---
 title: User Guide
 description: User Guide
+slug: v0.54/user-guide
 ---
 
 

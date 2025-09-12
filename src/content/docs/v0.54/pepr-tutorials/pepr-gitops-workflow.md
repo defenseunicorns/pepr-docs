@@ -1,6 +1,7 @@
 ---
 title: Using Pepr in a GitOps Workflow
 description: Using Pepr in a GitOps Workflow
+slug: v0.54/pepr-tutorials/pepr-gitops-workflow
 ---
 
 

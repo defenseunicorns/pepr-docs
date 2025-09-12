@@ -1,6 +1,7 @@
 ---
 title: Generating CRDs
 description: Generating CRDs
+slug: v0.53/user-guide/generating-crds
 ---
 
 

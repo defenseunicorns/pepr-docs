@@ -1,6 +1,7 @@
 ---
 title: Pepr Modules
 description: Pepr Modules
+slug: v0.53/user-guide/pepr-modules
 ---
 
 

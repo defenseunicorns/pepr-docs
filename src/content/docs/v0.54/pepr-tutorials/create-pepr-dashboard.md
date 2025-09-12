@@ -1,6 +1,7 @@
 ---
 title: Create a Pepr Dashboard
 description: Create a Pepr Dashboard
+slug: v0.54/pepr-tutorials/create-pepr-dashboard
 ---
 
 

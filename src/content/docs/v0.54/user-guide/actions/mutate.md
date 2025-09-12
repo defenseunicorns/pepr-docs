@@ -1,6 +1,7 @@
 ---
 title: Mutate
 description: Mutate
+slug: v0.54/user-guide/actions/mutate
 ---
 
 

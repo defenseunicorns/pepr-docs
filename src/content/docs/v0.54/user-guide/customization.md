@@ -1,6 +1,7 @@
 ---
 title: Customization
 description: Customization
+slug: v0.54/user-guide/customization
 ---
 
 

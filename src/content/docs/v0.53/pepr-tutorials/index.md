@@ -1,6 +1,7 @@
 ---
 title: Pepr Tutorials
 description: Pepr Tutorials
+slug: v0.53/pepr-tutorials
 ---
 
 

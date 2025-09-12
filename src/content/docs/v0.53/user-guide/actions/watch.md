@@ -1,6 +1,7 @@
 ---
 title: Watch
 description: Watch
+slug: v0.53/user-guide/actions/watch
 ---
 
 

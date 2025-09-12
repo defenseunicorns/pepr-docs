@@ -1,6 +1,7 @@
 ---
 title: Pepr Media
 description: Pepr Media
+slug: v0.54/community/pepr-media
 ---
 
 

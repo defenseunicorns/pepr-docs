@@ -1,6 +1,7 @@
 ---
 title: Community and Support
 description: Community and Support
+slug: v0.53/community
 ---
 
 

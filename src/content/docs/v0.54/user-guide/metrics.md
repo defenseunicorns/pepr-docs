@@ -1,6 +1,7 @@
 ---
 title: Metrics Endpoints
 description: Metrics Endpoints
+slug: v0.54/user-guide/metrics
 ---
 
 

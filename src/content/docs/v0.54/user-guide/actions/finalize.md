@@ -1,6 +1,7 @@
 ---
 title: Finalize
 description: Finalize
+slug: v0.54/user-guide/actions/finalize
 ---
 
 

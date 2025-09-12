@@ -1,6 +1,7 @@
 ---
 title: Pepr CLI
 description: Pepr CLI
+slug: v0.54/user-guide/pepr-cli
 ---
 
 

@@ -1,6 +1,7 @@
 ---
 title: Contributor Guide
 description: Contributor Guide
+slug: v0.53/contribute
 ---
 
 

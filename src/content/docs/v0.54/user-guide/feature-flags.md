@@ -1,6 +1,7 @@
 ---
 title: Feature Flags
 description: Feature Flags
+slug: v0.54/user-guide/feature-flags
 ---
 
 

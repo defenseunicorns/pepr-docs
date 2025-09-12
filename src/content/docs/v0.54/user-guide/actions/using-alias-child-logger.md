@@ -1,6 +1,7 @@
 ---
 title: Using Alias Child Logger in Actions
 description: Using Alias Child Logger in Actions
+slug: v0.54/user-guide/actions/using-alias-child-logger
 ---
 
 

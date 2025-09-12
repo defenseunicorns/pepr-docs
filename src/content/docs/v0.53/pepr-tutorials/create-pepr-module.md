@@ -1,6 +1,7 @@
 ---
 title: Create a Pepr Module
 description: Create a Pepr Module
+slug: v0.53/pepr-tutorials/create-pepr-module
 ---
 
 

@@ -1,6 +1,7 @@
 ---
 title: RBAC Modes
 description: RBAC Modes
+slug: v0.54/user-guide/rbac
 ---
 
 

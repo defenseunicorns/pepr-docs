@@ -27,7 +27,7 @@ We really appreciate your support! :star:
 ## **_Type safe Kubernetes middleware for humans_**
 
 <!-- markdownlint-disable MD033 - Image-styling is unsupported on GitHub-flavored markdown -->
-<img alt="The Pepr Logo" align="right" width="40%" src="_images/pepr.png" />
+<img alt="The Pepr Logo" align="right" width="40%" src="/assets/pepr.png" />
 
 Pepr simplifies Kubernetes management by providing an alternative to complex YAML configurations, custom scripts, and ad-hoc solutions.
 As a Kubernetes controller, Pepr enables you to define Kubernetes transformations using TypeScript, accessible through straightforward configurations even without extensive development expertise.
