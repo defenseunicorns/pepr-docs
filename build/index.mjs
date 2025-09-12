@@ -704,17 +704,31 @@ if (opts.dist) {
 			console.log(`Building Starlight site from directory: ${siteRoot}`);
 			console.log(`Expected dist output: ${siteRoot}/dist`);
 			
-			const buildResult = await exec(`
-				# Build Starlight site
-				cd ${siteRoot}
-				pwd
-				ls -la
-				npm run build
-				echo "Build completed, checking for dist directory..."
-				ls -la dist/ || echo "No dist directory found"
-				find . -name "dist" -type d || echo "No dist directories found anywhere"
-			`);
-			console.log('Build completed, output:', buildResult.stdout);
+			// Check what's in siteRoot before building
+			try {
+				const files = await fs.readdir(siteRoot);
+				console.log('Files in siteRoot before build:', files);
+			} catch (e) {
+				console.error('Failed to read siteRoot directory:', e.message);
+			}
+			
+			// Execute build with better error handling
+			const buildResult = await exec(`cd ${siteRoot} && npm run build`, { 
+				maxBuffer: 1024 * 1024 * 10 // 10MB buffer
+			});
+			
+			console.log('Build stdout:', buildResult.stdout);
+			if (buildResult.stderr) {
+				console.log('Build stderr:', buildResult.stderr);
+			}
+			
+			// Check what's in siteRoot after building
+			try {
+				const filesAfter = await fs.readdir(siteRoot);
+				console.log('Files in siteRoot after build:', filesAfter);
+			} catch (e) {
+				console.error('Failed to read siteRoot directory after build:', e.message);
+			}
 			
 			// Copy the built site from Astro's output directory to our dist directory
 			const astroDist = `${siteRoot}/dist`;
@@ -724,15 +738,12 @@ if (opts.dist) {
 				console.log(`Copied built site from ${astroDist} to ${RUN.dist}`);
 			} else {
 				console.error(`Astro dist directory not found: ${astroDist}`);
-				console.log('Checking what directories exist in siteRoot:');
-				const files = await fs.readdir(siteRoot);
-				console.log('Files in siteRoot:', files);
 				throw new Error('Astro build did not produce expected output directory');
 			}
 		} catch (error) {
-			console.error('Build or copy failed:', error);
-			console.error('Error stdout:', error.stdout);
-			console.error('Error stderr:', error.stderr);
+			console.error('Build or copy failed:', error.message);
+			if (error.stdout) console.error('Error stdout:', error.stdout);
+			if (error.stderr) console.error('Error stderr:', error.stderr);
 			throw error;
 		}
 	});
