@@ -140,7 +140,8 @@ await activity(`Validate args`, async (log) => {
 	log.push(['core', RUN.core]);
 });
 
-RUN.work = path.resolve('./work');
+// Ensure work directory is created relative to the docs directory, not wherever the script runs from
+RUN.work = path.resolve(path.dirname(RUN.site), '../../work');
 
 await activity(`Clean work dir`, async (log) => {
 	await fs.rm(RUN.work, { recursive: true, force: true });
