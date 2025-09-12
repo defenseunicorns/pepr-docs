@@ -365,7 +365,10 @@ for (const version of RUN.versions) {
 			if (
 				RUN.srcmd.file.endsWith('910_security/README.md') ||
 				RUN.srcmd.file.endsWith('900_code_of_conduct/README.md') ||
-				RUN.srcmd.file.endsWith('920_support/README.md')
+				RUN.srcmd.file.endsWith('920_support/README.md') ||
+				RUN.srcmd.file.endsWith('090_community/security.md') ||
+				RUN.srcmd.file.endsWith('100_contribute/code_of_conduct.md') ||
+				RUN.srcmd.file.endsWith('090_community/support.md')
 			){
 				src = `${RUN.srcmd.file}`;
 			} else {
