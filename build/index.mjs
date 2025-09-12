@@ -577,7 +577,8 @@ if (opts.dist) {
 
 	await activity(`Build Starlight site into dist dir`, async () => {
 		// Copy content to Starlight content directories  
-		const siteRoot = path.dirname(path.dirname(RUN.site)); // Go up from src/content/docs to site root
+		// RUN.site is ./src/content/docs, we need to go up 3 levels to get to the project root
+		const siteRoot = path.dirname(path.dirname(path.dirname(RUN.site)));
 		const starlightContentDir = `${siteRoot}/src/content/docs`;
 		const publicDir = `${siteRoot}/public`;
 		
