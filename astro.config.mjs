@@ -4,7 +4,7 @@ import starlight from '@astrojs/starlight';
 import starlightVersions from 'starlight-versions';
 import starlightLlmsTxt from 'starlight-llms-txt'
 import tailwindcss from '@tailwindcss/vite';
-// import starlightLinksValidator from 'starlight-links-validator';
+import starlightLinksValidator from 'starlight-links-validator';
 import { redirects } from './redirects.js';
 
 // https://astro.build/config
@@ -15,7 +15,7 @@ export default defineConfig({
       starlight({
           favicon: './public/pepr.svg',
           plugins: [
-            //   starlightLinksValidator(),
+              ...(process.env.CHECK_LINKS ? [starlightLinksValidator()] : []),
               starlightLlmsTxt(),
               starlightVersions({
                   versions: [

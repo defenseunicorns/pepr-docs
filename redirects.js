@@ -49,6 +49,10 @@ export const redirects = {
 	'/main/contribute/': '/contribute/contributor-guide/',
 	'/main/code_of_conduct/': '/contribute/code-of-conduct/',
 	'/main/roadmap/': '/roadmap/',
+	'/code_of_conduct/': '/contribute/code-of-conduct/',
+	'/support/': '/community/support/',
+	'/security/': '/community/security/',
+	'/contribute/': '/contribute/contributor-guide/',
 
 	// v0.54.0 to v0.54
 	'/v0.54.0/user-guide/': '/v0.54/user-guide/',
@@ -142,6 +146,15 @@ export const redirects = {
 	'/v0.53.1/code_of_conduct/': '/v0.53/contribute/code-of-conduct/',
 	'/v0.53.1/roadmap/': '/v0.53/roadmap/',
 
+	//Versioned Internal Links redirects
+	'/v0.53/code_of_conduct/': '/v0.53/contribute/code-of-conduct/',
+	'/v0.53/support/': '/v0.53/community/support/',
+	'/v0.53/security/': '/v0.53/community/security/',
+	'/v0.53/contribute/': '/v0.53/contribute/contributor-guide/',
+	'/v0.54/code_of_conduct/': '/v0.54/contribute/code-of-conductor/',
+	'/v0.54/support/': '/v0.54/community/support/',
+	'/v0.54/security/': '/v0.54/community/security/',
+	'/v0.54/contribute/': '/v0.54/contribute/contributor-guide/',
 	// Version-specific redirects
 	'/v0.54.0/': '/v0.54/',
 	'/v0.53.0/': '/v0.53/',
