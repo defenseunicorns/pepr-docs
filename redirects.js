@@ -1,4 +1,4 @@
-// export const redirects = {
+export const redirects = {
   
 // //Legacy Doc Conversion Redirects
 //    // Redirect /main
@@ -43,5 +43,5 @@
 //   '/v0.54.0/': '/v0.54/',
 //   '/v0.53.0/': '/v0.53/',
   
-// };
+};
 

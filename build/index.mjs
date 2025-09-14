@@ -249,9 +249,10 @@ for (const version of RUN.versions) {
 	});
 
 	await activity(`Checkout core version`, async (log) => {
+		const checkoutTarget = RUN.version === 'latest' ? 'main' : RUN.version;
 		await exec(`
       cd ${RUN.core}
-      git checkout ${RUN.version}
+      git checkout ${checkoutTarget}
     `);
 
 		let result =
