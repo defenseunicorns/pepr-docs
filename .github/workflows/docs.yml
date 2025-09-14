@@ -1,4 +1,5 @@
 name: docs
+run-name: docs
 
 # declare default permissions
 permissions: read-all

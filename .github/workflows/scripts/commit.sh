@@ -12,9 +12,9 @@ echo "Error: Source content directory $CONT_NEW does not exist"
 exit 1
 fi
 
-# Copy main version content to root docs directory
-if [ -d "$CONT_NEW/main" ]; then
-echo "Copying main content..."
+# Copy latest version content to root docs directory
+if [ -d "$CONT_NEW/latest" ]; then
+echo "Copying latest content..."
 
 # Create backup of existing content
 BACKUP_DIR="$(mktemp -d)"
@@ -30,11 +30,11 @@ for item in "$CONT_OLD"/*; do
 done
 
 # Copy main content with verification
-if cp -r "$CONT_NEW/main"/* "$CONT_OLD/" 2>/dev/null; then
-    echo "Main content copied successfully"
+if cp -r "$CONT_NEW/latest"/* "$CONT_OLD/" 2>/dev/null; then
+    echo "Latest content copied successfully"
     rm -rf "$BACKUP_DIR"
 else
-    echo "Error: Failed to copy main content, attempting restore"
+    echo "Error: Failed to copy latest content, attempting restore"
     if [ -d "$BACKUP_DIR/content_backup" ]; then
     cp -r "$BACKUP_DIR/content_backup"/* "$CONT_OLD/" || echo "Error: Restore failed"
     fi
@@ -42,7 +42,7 @@ else
     exit 1
 fi
 else
-echo "Warning: No main content found at $CONT_NEW/main"
+echo "Warning: No latest content found at $CONT_NEW/latest"
 fi
 
 # Copy versioned content dynamically

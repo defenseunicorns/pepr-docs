@@ -177,7 +177,7 @@ await activity(`Search core repo versions`, async (log) => {
 	RUN.versions = ongoing.map(mm => {
 		return sort.find(ver => majmin(ver) === mm);
 	}).filter(Boolean);
-	RUN.versions.push('main');
+	RUN.versions.push('latest');
 
 	log.push(['ongoing', ongoing]);
 	log.push(['retired', RUN.retired]);
@@ -228,7 +228,7 @@ for (const version of RUN.versions) {
 		RUN.found = await dirExists(RUN.verdir);
 
 		// always rebuild main
-		if (RUN.found && RUN.version === 'main') {
+		if (RUN.found && RUN.version === 'latest') {
 			await fs.rm(RUN.verdir, { recursive: true, force: true });
 			RUN.found = false;
 		}
@@ -255,14 +255,14 @@ for (const version of RUN.versions) {
     `);
 
 		let result =
-			RUN.version === 'main'
+			RUN.version === 'latest'
 				? await exec(`cd ${RUN.core} ; git branch --show-current`)
 				: await exec(`cd ${RUN.core} ; git describe --tags`);
 
 		result = result.stdout.trim();
 
 		log.push(['repo', RUN.core]);
-		RUN.version === 'main'
+		RUN.version === 'latest'
 			? log.push(['branch', result])
 			: log.push(['tag', result]);
 	});
@@ -432,7 +432,7 @@ for (const version of RUN.versions) {
 
 			// Generate slug for versioned content
 			let slugField = '';
-			if (RUN.version !== 'main') {
+			if (RUN.version !== 'latest') {
 				const versionMajMin = RUN.version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
 				let slugPath = RUN.srcmd.newfile.replace(/\.md$/, '');
 				// For index files, use the directory path
@@ -493,7 +493,7 @@ for (const version of RUN.versions) {
 		
 		// Generate slug for versioned index pages
 		let slugField = '';
-		if (RUN.version !== 'main') {
+		if (RUN.version !== 'latest') {
 			const versionMajMin = RUN.version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
 			slugField = `slug: ${versionMajMin}`;
 		}
@@ -535,7 +535,7 @@ for (const version of RUN.versions) {
 
 await activity(`Set current version alias`, async (log) => {
 	// Find the latest stable version (non-prerelease)
-	const stableVersions = RUN.versions.filter(v => v !== 'main' && semver.prerelease(v) === null);
+	const stableVersions = RUN.versions.filter(v => v !== 'latest' && semver.prerelease(v) === null);
 	if (stableVersions.length === 0) {
 		log.push(['current', 'no stable versions found']);
 		return;
@@ -643,8 +643,8 @@ if (opts.dist) {
 		}
 		
 		// Copy main version content to unversioned location (current/latest)
-		if (await fs.stat(`${RUN.work}/content/main`).then(() => true).catch(() => false)) {
-			await fs.cp(`${RUN.work}/content/main`, starlightContentDir, { recursive: true });
+		if (await fs.stat(`${RUN.work}/content/latest`).then(() => true).catch(() => false)) {
+			await fs.cp(`${RUN.work}/content/latest`, starlightContentDir, { recursive: true });
 		}
 		
 		// Fix image paths in main content files
@@ -675,7 +675,7 @@ if (opts.dist) {
 		}
 		
 		// Copy versioned content only for versions declared in astro.config.mjs
-		for (const version of RUN.versions.filter(v => v !== 'main')) {
+		for (const version of RUN.versions.filter(v => v !== 'latest')) {
 			const versionContentPath = `${RUN.work}/content/${version}`;
 			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
 			const starlightVersionDir = `${starlightContentDir}/${versionMajMin}`;

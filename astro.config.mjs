@@ -4,22 +4,25 @@ import starlight from '@astrojs/starlight';
 import starlightVersions from 'starlight-versions';
 import starlightLlmsTxt from 'starlight-llms-txt'
 import tailwindcss from '@tailwindcss/vite';
+// import starlightLinksValidator from 'starlight-links-validator';
+import { redirects } from './redirects';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://docs.pepr.dev',
-
+  redirects,
   integrations: [
       starlight({
           favicon: './public/pepr.svg',
           plugins: [
+            //   starlightLinksValidator(),
               starlightLlmsTxt(),
               starlightVersions({
                   versions: [
                       { slug: 'v0.54', label: 'v0.54' },
                       { slug: 'v0.53', label: 'v0.53' },
                   ],
-                  current: { slug: 'latest', label: 'Latest' },
+                  current: { label: 'Latest' },
               }),
           ],
           customCss:['./src/styles/global.css'],
