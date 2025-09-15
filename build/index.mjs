@@ -5,12 +5,20 @@ import * as fs from 'node:fs/promises';
 import * as util from 'node:util';
 import * as child_process from 'node:child_process';
 import * as semver from 'semver';
-import * as yaml from 'yaml';
 import { glob } from 'glob';
 import { heredoc } from './heredoc.mjs';
-import { dir } from 'node:console';
 
 const exec = util.promisify(child_process.exec);
+
+// Normalize all image paths to use /assets/ directory for better compatibility
+function fixImagePaths(content) {
+	return content
+		.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
+		.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
+		.replace(/_images\/pepr\.png/g, '/assets/pepr.png')
+		.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png')
+		.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
+}
 
 program
 	.version('0.0.0', '-v, --version')
@@ -133,7 +141,8 @@ await activity(`Validate args`, async (log) => {
 	log.push(['core', RUN.core]);
 });
 
-RUN.work = path.resolve('./work');
+// Ensure work directory is created relative to the docs directory, not wherever the script runs from
+RUN.work = path.resolve(path.dirname(RUN.site), '../../work');
 
 await activity(`Clean work dir`, async (log) => {
 	await fs.rm(RUN.work, { recursive: true, force: true });
@@ -165,12 +174,11 @@ await activity(`Search core repo versions`, async (log) => {
 	let ongoing = majmins.slice(0, RUN.cutoff);
 	RUN.retired = majmins.slice(RUN.cutoff);
 
-	RUN.versions = sort.reduce((list, ver) => {
-		const mm = majmin(ver);
-		ongoing.includes(mm) ? list.push(ver) : null;
-		return list;
-	}, []);
-	RUN.versions.push('main');
+	// Only process the latest version of each major.minor to reduce build time
+	RUN.versions = ongoing.map(mm => {
+		return sort.find(ver => majmin(ver) === mm);
+	}).filter(Boolean);
+	RUN.versions.push('latest');
 
 	log.push(['ongoing', ongoing]);
 	log.push(['retired', RUN.retired]);
@@ -179,27 +187,29 @@ await activity(`Search core repo versions`, async (log) => {
 
 await activity(`Nuke retired version content`, async (log) => {
 	for (const majmin of RUN.retired) {
-		const contentGlob = `${RUN.work}/content/en/v${majmin}.*`;
-		const staticGlob = `${RUN.work}/static/v${majmin}.*`;
+		// Clean up Starlight content directories
+		const contentGlob = `${RUN.site}/src/content/docs/v${majmin}.*`;
+		// Clean up static assets if they exist
+		const staticGlob = `${RUN.site}/public/assets/v${majmin}.*`;
 
 		const contentDirs = await glob(contentGlob);
 		const staticDirs = await glob(staticGlob);
 
-		contentDirs.forEach(async (path) => {
-			await fs.rm(path, { recursive: true, force: true });
-			log.push([majmin, path]);
-		});
+		for (const dirPath of contentDirs) {
+			await fs.rm(dirPath, { recursive: true, force: true });
+			log.push(['content', `removed v${majmin} content: ${dirPath}`]);
+		}
 
-		staticDirs.forEach(async (path) => {
-			await fs.rm(path, { recursive: true, force: true });
-			log.push([majmin, path]);
-		});
+		for (const dirPath of staticDirs) {
+			await fs.rm(dirPath, { recursive: true, force: true });
+			log.push(['static', `removed v${majmin} assets: ${dirPath}`]);
+		}
 	}
 });
 
 for (const version of RUN.versions) {
 	RUN.version = version;
-	RUN.verdir = `${RUN.work}/content/en/${RUN.version}`;
+	RUN.verdir = `${RUN.work}/content/${RUN.version}`;
 	RUN.found = false;
 	RUN.coredocs = `${RUN.core}/docs`;
 
@@ -219,7 +229,7 @@ for (const version of RUN.versions) {
 		RUN.found = await dirExists(RUN.verdir);
 
 		// always rebuild main
-		if (RUN.found && RUN.version === 'main') {
+		if (RUN.found && RUN.version === 'latest') {
 			await fs.rm(RUN.verdir, { recursive: true, force: true });
 			RUN.found = false;
 		}
@@ -228,29 +238,33 @@ for (const version of RUN.versions) {
 	});
 
 	if (RUN.found) {
+		console.log(`Skipping ${RUN.version} - already built`);
 		continue;
 	}
+	
+	console.log(`Processing version ${RUN.version}...`);
 
 	await activity(`Create version dir`, async (log) => {
-		await fs.mkdir(RUN.verdir);
+		await fs.mkdir(RUN.verdir, { recursive: true });
 		log.push(['dir', RUN.verdir]);
 	});
 
 	await activity(`Checkout core version`, async (log) => {
+		const checkoutTarget = RUN.version === 'latest' ? 'main' : RUN.version;
 		await exec(`
       cd ${RUN.core}
-      git checkout ${RUN.version}
+      git checkout ${checkoutTarget}
     `);
 
 		let result =
-			RUN.version === 'main'
+			RUN.version === 'latest'
 				? await exec(`cd ${RUN.core} ; git branch --show-current`)
 				: await exec(`cd ${RUN.core} ; git describe --tags`);
 
 		result = result.stdout.trim();
 
 		log.push(['repo', RUN.core]);
-		RUN.version === 'main'
+		RUN.version === 'latest'
 			? log.push(['branch', result])
 			: log.push(['tag', result]);
 	});
@@ -282,6 +296,21 @@ for (const version of RUN.versions) {
 		log.push(['dst', dstimgs]);
 	});
 
+	await activity(`Copy repo resources`, async (log) => {
+		const srcresources = `${RUN.core}/docs`;
+		const dstresources = `${RUN.work}/static/${RUN.version}`;
+		
+		// Copy all resource directories from docs
+		const resourceDirs = await glob(`${srcresources}/**/resources`, { onlyDirectories: true });
+		for (const resourceDir of resourceDirs) {
+			const relativePath = path.relative(srcresources, resourceDir);
+			const dstPath = path.join(dstresources, relativePath);
+			await fs.mkdir(path.dirname(dstPath), { recursive: true });
+			await fs.cp(resourceDir, dstPath, { recursive: true });
+			log.push(['copied', `${resourceDir} -> ${dstPath}`]);
+		}
+	});
+
 	await activity('Process root level markdown files', async () => {
 		const rootMdFiles = ['SECURITY.md', 'CODE_OF_CONDUCT.md', 'SUPPORT.md'];
     let rootMdDir = '';
@@ -294,26 +323,30 @@ for (const version of RUN.versions) {
 					.catch(() => false);
 
 				if (rootMdExists) {
+          let targetFileName;
           if (rootMdFile === 'SECURITY.md') {
-            rootMdDir = `910_security`;
+            rootMdDir = `090_community`;
+            targetFileName = 'security.md';
           } else if (rootMdFile === 'CODE_OF_CONDUCT.md') {
-            rootMdDir = `900_code_of_conduct`;
+            rootMdDir = `100_contribute`;
+            targetFileName = 'code_of_conduct.md';
           } else if (rootMdFile === 'SUPPORT.md') {
-            rootMdDir = `920_support`;
+            rootMdDir = `090_community`;
+            targetFileName = 'support.md';
           }
 
-					const indexFilePath = `${rootMdDir}/README.md`;
+					const indexFilePath = `${rootMdDir}/${targetFileName}`;
 
 					// Create the directory if it does not exist
 					await fs.mkdir(rootMdDir, { recursive: true });
 
-					// Read content from SECURITY.md
+					// Read content from root markdown file
 					const content = await fs.readFile(rootMdPath, 'utf8');
 
-					// Write content to new index.md inside the folder
+					// Write content to community folder with appropriate filename
 					await fs.writeFile(indexFilePath, content);
 
-					// Add new index.md path to RUN.srcmds
+					// Add new community file path to RUN.srcmds
 					if (!RUN.srcmds) {
 						RUN.srcmds = [];
 					}
@@ -335,7 +368,10 @@ for (const version of RUN.versions) {
 			if (
 				RUN.srcmd.file.endsWith('910_security/README.md') ||
 				RUN.srcmd.file.endsWith('900_code_of_conduct/README.md') ||
-				RUN.srcmd.file.endsWith('920_support/README.md')
+				RUN.srcmd.file.endsWith('920_support/README.md') ||
+				RUN.srcmd.file.endsWith('090_community/security.md') ||
+				RUN.srcmd.file.endsWith('100_contribute/code_of_conduct.md') ||
+				RUN.srcmd.file.endsWith('090_community/support.md')
 			){
 				src = `${RUN.srcmd.file}`;
 			} else {
@@ -358,12 +394,36 @@ for (const version of RUN.versions) {
 
 			const pParts = parent.split('_');
 			const pWeight = isInt(pParts[0]) ? Number.parseInt(pParts[0]) : null;
-			let newdir =
+			let rawdir =
 				pWeight !== null
 					? [ancestors, pParts.slice(1).join('_').trim()]
 							.filter((f) => f)
 							.join('/')
 					: [ancestors, pParts.join('_').trim()].filter((f) => f).join('/');
+
+			// Map old structure to new structure for consistency
+			const structureMapping = {
+				'pepr-tutorials': 'tutorials',
+				'user-guide/actions': 'actions'
+			};
+
+			// Handle single-file mappings (README.md files that should become direct .md files)
+			const singleFileMapping = {
+				'best-practices': 'reference/best-practices.md',
+				'module-examples': 'reference/module-examples.md',
+				'faq': 'reference/faq.md',
+				'roadmap': 'roadmap.md'
+			};
+
+			let newdir = rawdir;
+
+			// Apply folder structure mappings first
+			for (const [oldPath, newPath] of Object.entries(structureMapping)) {
+				if (rawdir.startsWith(oldPath)) {
+					newdir = rawdir.replace(oldPath, newPath);
+					break;
+				}
+			}
 
 			const fParts = filename.split('_');
 			let weight = isInt(fParts[0]) ? Number.parseInt(fParts[0]) : null;
@@ -371,8 +431,20 @@ for (const version of RUN.versions) {
 				weight !== null ? fParts.slice(1).join('_').trim() : filename.trim();
 
 			if (newfile === 'README.md') {
-				newfile = newfile.replace('README.md', '_index.md');
+				newfile = newfile.replace('README.md', 'index.md');
 				weight = pWeight;
+			}
+
+			// Check if this is a single file that should be mapped directly (after processing filename)
+			if (newfile === 'index.md') {
+				for (const [oldPath, newPath] of Object.entries(singleFileMapping)) {
+					if (rawdir === oldPath) {
+						// This is a single file, return the direct path without directory
+						newdir = '';
+						newfile = newPath;
+						break;
+					}
+				}
 			}
 
 			newfile = newdir === '.' ? newfile : [newdir, newfile].join('/');
@@ -384,16 +456,36 @@ for (const version of RUN.versions) {
 			log.push(['newfile', newfile]);
 		});
 
-		await activity(`Inject Hugo front matter`, async () => {
+		await activity(`Inject Starlight front matter`, async () => {
 			// title as sanitized content from first heading
 			const heading = RUN.srcmd.content.match(/#[\s]+(.*)/);
-			const title = heading[1].replaceAll('`', '').replaceAll(':', '');
+			let title = heading[1].replaceAll('`', '').replaceAll(':', '');
+			
+			// Override title to "Overview" for README.md files
+			if (RUN.srcmd.newfile.endsWith('/README.md') || RUN.srcmd.newfile === 'README.md') {
+				title = 'Overview';
+			}
+			
 			RUN.srcmd.content = RUN.srcmd.content.replaceAll(heading[0], '');
+
+			// Generate slug for versioned content
+			let slugField = '';
+			if (RUN.version !== 'latest') {
+				const versionMajMin = RUN.version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
+				let slugPath = RUN.srcmd.newfile.replace(/\.md$/, '');
+				// For index files, use the directory path
+				if (slugPath.endsWith('/index')) {
+					slugPath = slugPath.replace('/index', '');
+				}
+				// Prepend version to create full slug path
+				const fullSlug = slugPath === 'index' ? versionMajMin : `${versionMajMin}/${slugPath}`;
+				slugField = `slug: ${fullSlug}`;
+			}
 
 			const front = heredoc`
         ---
         title: ${title}
-        weight: ${RUN.srcmd.weight}
+        description: ${title}${slugField ? `\n        ${slugField}` : ''}
         ---
       `;
 			RUN.srcmd.content = [front, RUN.srcmd.content].join('\n');
@@ -404,7 +496,6 @@ for (const version of RUN.versions) {
 
 			const baseFile = path.basename(RUN.srcmd.file);
 
-			// rewrite relative .md link paths to compensate Hugo-gen'd pretty path, except for README.md/_index.md files
 			if (baseFile !== 'README.md') {
 				RUN.srcmd.content = RUN.srcmd.content
 					.replaceAll('](../', '](../../')
@@ -417,10 +508,16 @@ for (const version of RUN.versions) {
 
 			RUN.srcmd.content = rewriteFileLinksAsLowerCase(RUN.srcmd.content);
 
-			// rewrite .md link paths to match Hugo's pretty link format
+			// Rewrite internal links to use new structure
+			RUN.srcmd.content = RUN.srcmd.content
+				.replaceAll('](/pepr-tutorials/', '](/tutorials/')
+				.replaceAll('](/best-practices/', '](/reference/best-practices/')
+				.replaceAll('](/module-examples/', '](/reference/module-examples/')
+				.replaceAll('](/faq/', '](/reference/faq/')
+				.replaceAll('](/user-guide/actions/', '](/actions/');
+
 			RUN.srcmd.content = RUN.srcmd.content.replaceAll('.md)', '/)');
 
-			// rewrite anchored .md link paths to match Hugo's pretty link format
 			RUN.srcmd.content = RUN.srcmd.content.replaceAll(
 				/.md#(.*)\)/g,
 				(_, group) => `#${group})`
@@ -438,14 +535,19 @@ for (const version of RUN.versions) {
 	}
 
 	await activity(`Write version layout & landing content`, async (log) => {
-		const idxMd = `${RUN.verdir}/_index.md`;
+		const idxMd = `${RUN.verdir}/index.md`;
+		
+		// Generate slug for versioned index pages
+		let slugField = '';
+		if (RUN.version !== 'latest') {
+			const versionMajMin = RUN.version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
+			slugField = `slug: ${versionMajMin}`;
+		}
+		
 		const idxFront = heredoc`
       ---
       title: Pepr
-      linkTitle: ${RUN.version}
-      cascade:
-        type: docs
-      aliases: []
+      description: Pepr Documentation - ${RUN.version}${slugField ? `\n      ${slugField}` : ''}
       ---
     `;
 		const rootMd = `${RUN.core}/README.md`;
@@ -462,7 +564,6 @@ for (const version of RUN.versions) {
 
 		idxBody = rewriteFileLinksAsLowerCase(idxBody);
 
-		// rewrite .md link paths to match Hugo's pretty link format
 		idxBody = idxBody.replaceAll('.md)', '/)');
 
 		// rewrite raw githubusercontent video links into video tags
@@ -478,72 +579,273 @@ for (const version of RUN.versions) {
 	});
 }
 
-await activity(`Update version dropdown options`, async (log) => {
-	const hugoFile = `${RUN.work}/hugo.yaml`;
-	const hugoYaml = await fs.readFile(hugoFile, { encoding: 'utf8' });
-	const hugoConf = yaml.parse(hugoYaml);
-
-	const uniques = {};
-	RUN.versions
-		.filter((v) => v !== 'main')
-		.filter((v) => semver.prerelease(v) === null)
-		.forEach((version) => {
-			const mm = majmin(version);
-			if (!uniques.hasOwnProperty(mm)) {
-				uniques[mm] = version;
-			}
-		});
-
-	const opts = Object.entries(uniques).map(([majmin, version]) => ({
-		version: `v${majmin}`,
-		url: `/${version}/`,
-	}));
-	opts.push({ version: 'main', url: '/main/' });
-
-	hugoConf.params.versions = opts;
-	await fs.writeFile(hugoFile, yaml.stringify(hugoConf), { encoding: 'utf8' });
-
-	log.push(['opts', opts.map((o) => o.version)]);
-});
-
-await activity(`Clear '/current' version alias`, async () => {
-	for (const version of RUN.versions) {
-		const idxPath = `${RUN.work}/content/en/${version}/_index.md`;
-		let content = await fs.readFile(idxPath, { encoding: 'utf8' });
-
-		content = content.replace(/aliases: \[.*\]/, 'aliases: []');
-
-		await fs.writeFile(idxPath, content, { encoding: 'utf8' });
+await activity(`Set current version alias`, async (log) => {
+	// Find the latest stable version (non-prerelease)
+	const stableVersions = RUN.versions.filter(v => v !== 'latest' && semver.prerelease(v) === null);
+	if (stableVersions.length === 0) {
+		log.push(['current', 'no stable versions found']);
+		return;
 	}
-});
-
-await activity(`Set '/current' version alias`, async (log) => {
-	const current = RUN.versions.filter((v) => semver.prerelease(v) === null)[0];
-	const verPath = `${RUN.work}/content/en/${current}/_index.md`;
-	let content = await fs.readFile(verPath, { encoding: 'utf8' });
-
-	content = content.replace(/aliases: \[\]/, 'aliases: ["/current/"]');
-
-	await fs.writeFile(verPath, content, { encoding: 'utf8' });
-
-	log.push(['current', current]);
+	
+	const currentVersion = stableVersions[0]; // Already sorted by rsort, so first is latest
+	const currentMajMin = majmin(currentVersion);
+	
+	// Create a "current" symlink/copy pointing to the latest stable version
+	const currentDir = `${RUN.site}/src/content/docs/current`;
+	const targetDir = `${RUN.site}/src/content/docs/v${currentMajMin}`;
+	
+	// Remove existing current directory if it exists
+	try {
+		await fs.rm(currentDir, { recursive: true, force: true });
+	} catch (e) {
+		// Directory might not exist, that's fine
+	}
+	
+	// Check if target version directory exists
+	if (await fs.stat(targetDir).then(() => true).catch(() => false)) {
+		// Copy the content instead of symlink for better compatibility
+		await fs.cp(targetDir, currentDir, { recursive: true });
+		log.push(['current', `v${currentMajMin} (${currentVersion})`]);
+		log.push(['target', targetDir]);
+		log.push(['alias', currentDir]);
+	} else {
+		log.push(['error', `target version directory not found: ${targetDir}`]);
+	}
 });
 
 if (opts.dist) {
 	await activity(`Clean dist dir`, async (log) => {
-		RUN.dist = path.resolve(`${RUN.site}/../dist`);
+		RUN.dist = path.resolve(`./dist`);
 		await fs.rm(RUN.dist, { recursive: true, force: true });
 		await fs.mkdir(RUN.dist);
 
 		log.push(['dist', RUN.dist]);
 	});
 
-	await activity(`Build site into dist dir`, async () => {
-		await exec(`
-      cd ${RUN.work}
-      npm ci
-      npm run build:production -- --destination ${RUN.dist}
-    `);
+	await activity(`Build Starlight site into dist dir`, async () => {
+		// Copy content to Starlight content directories  
+		// RUN.site is ./src/content/docs, we need to go up 3 levels to get to the project root
+		const siteRoot = path.dirname(path.dirname(path.dirname(RUN.site)));
+		const starlightContentDir = `${siteRoot}/src/content/docs`;
+		const publicDir = `${siteRoot}/public`;
+		
+		// Clear existing content directory
+		await fs.rm(starlightContentDir, { recursive: true, force: true });
+		await fs.mkdir(starlightContentDir, { recursive: true });
+		
+		// Copy images from work/static to public directory for Starlight
+		console.log('Copying images and resources to src and public directories...');
+		
+		// Check what static directories exist
+		const staticDirs = await fs.readdir(`${RUN.work}/static`).catch(() => []);
+		console.log('Available static directories:', staticDirs);
+		
+		// Clean existing directories (only need resources since we use assets for images)
+		await fs.rm(`${siteRoot}/src/content/docs/resources`, { recursive: true, force: true });
+		
+		// Try to copy images and resources from any available version
+		let resourcesCopied = false;
+		for (const version of ['main', 'v0.54.0', 'v0.53.1']) {
+			const staticVersionPath = `${RUN.work}/static/${version}`;
+			const imagesPath = `${staticVersionPath}/_images`;
+			const resourcesPath = `${staticVersionPath}/040_pepr-tutorials/resources`;
+			
+			if (await fs.stat(imagesPath).then(() => true).catch(() => false)) {
+				console.log(`Copying images from ${imagesPath} to assets directory`);
+				// Copy all images directly to assets directory
+				const imageFiles = await fs.readdir(imagesPath);
+				for (const imageFile of imageFiles) {
+					const srcFile = path.join(imagesPath, imageFile);
+					const destFile = path.join(`${publicDir}/assets`, imageFile);
+					await fs.cp(srcFile, destFile);
+				}
+				resourcesCopied = true;
+			}
+			
+			if (await fs.stat(resourcesPath).then(() => true).catch(() => false)) {
+				console.log(`Copying resources from ${resourcesPath} to src directories`);
+				await fs.mkdir(`${siteRoot}/src/content/docs/resources`, { recursive: true });
+				
+				// Copy each subdirectory but flatten the numbered prefix
+				const resourceSubdirs = await fs.readdir(resourcesPath, { withFileTypes: true });
+				for (const dirent of resourceSubdirs) {
+					if (dirent.isDirectory()) {
+						const srcDir = path.join(resourcesPath, dirent.name);
+						// Remove numbered prefix (e.g., "030_create-pepr-operator" -> "create-pepr-operator")
+						const cleanName = dirent.name.replace(/^\d+_/, '');
+						const dstDir = path.join(`${siteRoot}/src/content/docs/resources`, cleanName);
+						await fs.cp(srcDir, dstDir, { recursive: true });
+						console.log(`Copied ${srcDir} -> ${dstDir}`);
+					}
+				}
+				resourcesCopied = true;
+			}
+			
+			if (resourcesCopied) break;
+		}
+		
+		if (!resourcesCopied) {
+			console.log('Warning: No images or resources found to copy');
+		}
+		
+		// Copy main version content to unversioned location (current/latest)
+		if (await fs.stat(`${RUN.work}/content/latest`).then(() => true).catch(() => false)) {
+			await fs.cp(`${RUN.work}/content/latest`, starlightContentDir, { recursive: true });
+		}
+		
+		// Fix image paths in main content files
+		console.log('Fixing image paths in content files...');
+		const contentFiles = await glob(`${starlightContentDir}/**/*.md`);
+		let updatedFilesCount = 0;
+		for (const contentFile of contentFiles) {
+			const content = await fs.readFile(contentFile, 'utf8');
+			const updatedContent = fixImagePaths(content);
+			if (content !== updatedContent) {
+				await fs.writeFile(contentFile, updatedContent);
+				updatedFilesCount++;
+			}
+		}
+		if (updatedFilesCount > 0) {
+			console.log(`Updated image paths in ${updatedFilesCount} files`);
+		}
+		
+		// Copy resource images to assets directory
+		const resourceImages = await glob(`${siteRoot}/src/content/docs/resources/**/*.png`);
+		if (resourceImages.length > 0) {
+			console.log(`Copying ${resourceImages.length} resource images to assets directory...`);
+			for (const resourceImage of resourceImages) {
+				const imageName = path.basename(resourceImage);
+				const destPath = `${publicDir}/assets/${imageName}`;
+				await fs.cp(resourceImage, destPath);
+			}
+		}
+		
+		// Copy versioned content only for versions declared in astro.config.mjs
+		for (const version of RUN.versions.filter(v => v !== 'latest')) {
+			const versionContentPath = `${RUN.work}/content/${version}`;
+			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
+			const starlightVersionDir = `${starlightContentDir}/${versionMajMin}`;
+			
+			if (await fs.stat(versionContentPath).then(() => true).catch(() => false)) {
+				await fs.mkdir(starlightVersionDir, { recursive: true });
+				await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
+				
+				// Fix image paths in versioned content files
+				console.log(`Fixing image paths in versioned content ${versionMajMin}...`);
+				const versionContentFiles = await glob(`${starlightVersionDir}/**/*.md`);
+				let versionUpdatedCount = 0;
+				for (const contentFile of versionContentFiles) {
+					const content = await fs.readFile(contentFile, 'utf8');
+					const updatedContent = fixImagePaths(content);
+					if (content !== updatedContent) {
+						await fs.writeFile(contentFile, updatedContent);
+						versionUpdatedCount++;
+					}
+				}
+				if (versionUpdatedCount > 0) {
+					console.log(`Updated image paths in ${versionUpdatedCount} versioned files`);
+				}
+			}
+		}
+		
+		try {
+			console.log(`Building Starlight site from directory: ${siteRoot}`);
+			console.log(`Expected dist output: ${siteRoot}/dist`);
+			
+			// Check what's in siteRoot before building
+			try {
+				const files = await fs.readdir(siteRoot);
+				console.log('Files in siteRoot before build:', files);
+			} catch (e) {
+				console.error('Failed to read siteRoot directory:', e.message);
+			}
+			
+			// Execute build with better error handling
+			const buildResult = await exec(`cd ${siteRoot} && npm run build`, { 
+				maxBuffer: 1024 * 1024 * 10 // 10MB buffer
+			});
+			
+			console.log('Build stdout:', buildResult.stdout);
+			if (buildResult.stderr) {
+				console.log('Build stderr:', buildResult.stderr);
+			}
+			
+			// Check what's in siteRoot after building
+			try {
+				const filesAfter = await fs.readdir(siteRoot);
+				console.log('Files in siteRoot after build:', filesAfter);
+			} catch (e) {
+				console.error('Failed to read siteRoot directory after build:', e.message);
+			}
+			
+			// Copy the built site from Astro's output directory to our dist directory
+			const astroDist = `${siteRoot}/dist`;
+			console.log(`Checking for Astro dist directory at: ${astroDist}`);
+			console.log(`Target dist directory: ${RUN.dist}`);
+			
+			const astroDistExists = await fs.stat(astroDist).then(() => true).catch((e) => {
+				console.log(`Astro dist stat error:`, e.message);
+				return false;
+			});
+			
+			if (astroDistExists) {
+				console.log(`Astro dist directory found, contents:`);
+				try {
+					const distContents = await fs.readdir(astroDist);
+					console.log(distContents);
+				} catch (e) {
+					console.log(`Could not read dist contents:`, e.message);
+				}
+				
+				// Check if source and destination are the same
+				if (path.resolve(astroDist) === path.resolve(RUN.dist)) {
+					console.log(`Astro output is already in the correct location: ${RUN.dist}`);
+					console.log(`No copying needed - build is complete!`);
+				} else {
+					// Ensure target directory exists and is empty
+					try {
+						await fs.rm(RUN.dist, { recursive: true, force: true });
+						await fs.mkdir(path.dirname(RUN.dist), { recursive: true });
+					} catch (e) {
+						console.log(`Error preparing target directory:`, e.message);
+					}
+					
+					try {
+						await fs.cp(astroDist, RUN.dist, { recursive: true });
+						console.log(`Successfully copied built site from ${astroDist} to ${RUN.dist}`);
+					} catch (copyError) {
+						console.error(`Copy failed:`, copyError);
+						throw copyError;
+					}
+				}
+			} else {
+				console.error(`Astro dist directory not found: ${astroDist}`);
+				// Let's see what actually exists in siteRoot
+				try {
+					const rootContents = await fs.readdir(siteRoot);
+					console.log(`Contents of siteRoot (${siteRoot}):`, rootContents);
+					
+					// Check if there's a dist directory anywhere else
+					for (const item of rootContents) {
+						const itemPath = `${siteRoot}/${item}`;
+						const stat = await fs.stat(itemPath).catch(() => null);
+						if (stat?.isDirectory() && item.includes('dist')) {
+							console.log(`Found potential dist directory: ${itemPath}`);
+							const contents = await fs.readdir(itemPath).catch(() => []);
+							console.log(`Contents:`, contents);
+						}
+					}
+				} catch (e) {
+					console.log(`Could not inspect siteRoot:`, e.message);
+				}
+				throw new Error('Astro build did not produce expected output directory');
+			}
+		} catch (error) {
+			console.error('Build or copy failed:', error.message);
+			if (error.stdout) console.error('Error stdout:', error.stdout);
+			if (error.stderr) console.error('Error stderr:', error.stderr);
+			throw error;
+		}
 	});
 }
 

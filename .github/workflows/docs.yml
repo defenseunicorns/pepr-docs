@@ -1,4 +1,5 @@
 name: docs
+run-name: docs
 
 # declare default permissions
 permissions: read-all
@@ -6,27 +7,26 @@ permissions: read-all
 on:
   # enable manual run via GitHub UI
   workflow_dispatch:
-  
+
   # enable trigger via remote call webhook
   repository_dispatch:
     types: update-docs
 
   # enable run on "standard" updates to main branch
   push:
-    branches: ["main"]
+    branches: ['main']
 
   pull_request:
-    branches: ["main"]
+    branches: ['main']
 
 env:
   CORE: ./core
   DOCS: ./docs
   DIST: ./docs/dist
-  SITE: ./docs/site
-  WORK: ./docs/build/work
+  SITE: ./docs/src/content/docs
+  WORK: ./docs/work
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     permissions:
@@ -36,58 +36,31 @@ jobs:
         with:
           repository: defenseunicorns/pepr
           path: ./core
-          fetch-depth: 0  # pull history to get version tags
+          fetch-depth: 0 # pull history to get version tags
 
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr-docs
           path: ./docs
 
-      - name: Build the docs!
+      - name: Install dependencies
         run: |
-          SITE=$(realpath "$SITE")
-          CORE=$(realpath "$CORE")
-          cd "$DOCS"
-          npm ci
-          npm --workspace build run dev -- --site "$SITE" --core "$CORE"
+          sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Build the docs
+        run: '$DOCS/.github/workflows/scripts/build.sh'
 
       - name: Commit changes to source!
         if: github.ref_name == 'main'
-        run: |
-          HUGO_OLD=$(realpath "$SITE/hugo.yaml")
-          HUGO_NEW=$(realpath "$WORK/hugo.yaml")
-          CONT_OLD=$(realpath "$SITE/content/en")
-          CONT_NEW=$(realpath "$WORK/content/en")
-          STAT_OLD=$(realpath "$SITE/static")
-          STAT_NEW=$(realpath "$WORK/static")
+        run: bash ./docs/.github/workflows/scripts/commit.sh
 
-          rm "$HUGO_OLD"
-          cp "$HUGO_NEW" "$HUGO_OLD"
-
-          rm --recursive --force "$CONT_OLD"
-          cp --recursive "$CONT_NEW" "$CONT_OLD"
-
-          rm --recursive --force "$STAT_OLD"
-          cp --recursive "$STAT_NEW" "$STAT_OLD"
-
-          cd "$DOCS"
-          git config user.name "docs.yml"
-          git config user.email "<>"
-          git add --all
-
-          if ! git diff-index --quiet HEAD; then
-            git commit -m "docs.yml"
-            git push origin main
-          fi
-
-      - name: Upload Artifacts!
+      - name: Upload Artifacts
         if: github.ref_name == 'main'
         uses: actions/upload-artifact@v4
         with:
           name: dist
           retention-days: 1
           path: ./docs/dist
-
 
   deploy:
     if: github.ref_name == 'main'
@@ -104,7 +77,8 @@ jobs:
 
       - name: Clear previously deployed content!
         run: |
-          rm -rf "$DIST"
+          cd "$DOCS"
+          rm -rf dist
 
       - uses: actions/download-artifact@v4
         with:
@@ -112,15 +86,4 @@ jobs:
           path: ./docs/dist
 
       - name: Deploy the docs!
-        run: |
-          BRANCH=deploy
-
-          cd "$DOCS"
-          git config user.name "docs.yml"
-          git config user.email "<>"
-
-          git add --all
-          if ! git diff-index --quiet HEAD; then
-            git commit -m "docs.yml"
-            git push origin "$BRANCH"
-          fi
+        run: bash ./docs/.github/workflows/scripts/deploy.sh

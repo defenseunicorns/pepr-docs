@@ -1,4 +1,30 @@
 {
   "name": "pepr-docs",
-  "workspaces": [ "build", "site" ]
+  "type": "module",
+  "version": "0.0.1",
+  "workspaces": [
+    "build",
+    "site"
+  ],
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "linkcheck": "CHECK_LINKS=true astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "test": "npm run test -w build",
+    "test:watch": "npm run test:watch -w build"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.35.2",
+    "@astrojs/starlight-tailwind": "^4.0.1",
+    "@tailwindcss/vite": "^4.1.13",
+    "astro": "^5.6.1",
+    "sharp": "^0.34.2",
+    "starlight-links-validator": "^0.17.2",
+    "starlight-llms-txt": "^0.6.0",
+    "starlight-versions": "^0.5.4",
+    "tailwindcss": "^4.1.13"
+  }
 }
