@@ -72,7 +72,6 @@ fi
 
 # Update Astro config with discovered versions
 echo "Updating Astro configuration..."
-cd "$DOCS" || exit
 
 # Discover all version directories and build properly formatted JS array
 VERSIONS_ARRAY=""
@@ -102,7 +101,7 @@ else
 echo "Warning: astro.config.mjs not found"
 fi
 
-cd "$DOCS" || exit
+
 git config user.name "GitHub Actions"
 git config user.email "actions@github.com"
 git add --all
