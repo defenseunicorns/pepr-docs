@@ -1,6 +1,10 @@
 ---
 title: Pepr Filters
+<<<<<<< HEAD:src/content/docs/user-guide/filters.md
 description: Pepr Filters
+=======
+weight: 80
+>>>>>>> origin:site/content/en/main/user-guide/filters.md
 ---
 
 

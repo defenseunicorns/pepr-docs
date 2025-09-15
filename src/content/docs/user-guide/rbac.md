@@ -1,6 +1,10 @@
 ---
 title: RBAC Modes
+<<<<<<< HEAD:src/content/docs/user-guide/rbac.md
 description: RBAC Modes
+=======
+weight: 130
+>>>>>>> origin:site/content/en/main/user-guide/rbac.md
 ---
 
 

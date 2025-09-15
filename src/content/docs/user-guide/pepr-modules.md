@@ -1,6 +1,10 @@
 ---
 title: Pepr Modules
+<<<<<<< HEAD:src/content/docs/user-guide/pepr-modules.md
 description: Pepr Modules
+=======
+weight: 30
+>>>>>>> origin:site/content/en/main/user-guide/pepr-modules.md
 ---
 
 

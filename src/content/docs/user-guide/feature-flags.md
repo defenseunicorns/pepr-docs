@@ -1,6 +1,10 @@
 ---
 title: Feature Flags
+<<<<<<< HEAD:src/content/docs/user-guide/feature-flags.md
 description: Feature Flags
+=======
+weight: 70
+>>>>>>> origin:site/content/en/main/user-guide/feature-flags.md
 ---
 
 

@@ -1,6 +1,10 @@
 ---
 title: Pepr Store
+<<<<<<< HEAD:src/content/docs/user-guide/store.md
 description: Pepr Store
+=======
+weight: 140
+>>>>>>> origin:site/content/en/main/user-guide/store.md
 ---
 
 

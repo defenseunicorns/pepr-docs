@@ -1,6 +1,10 @@
 ---
 title: Generating CRDs
+<<<<<<< HEAD:src/content/docs/user-guide/generating-crds.md
 description: Generating CRDs
+=======
+weight: 100
+>>>>>>> origin:site/content/en/main/user-guide/generating-crds.md
 ---
 
 

@@ -1,6 +1,10 @@
 ---
 title: Pepr Media
+<<<<<<< HEAD:src/content/docs/community/pepr-media.md
 description: Pepr Media
+=======
+weight: 20
+>>>>>>> origin:site/content/en/main/community/pepr-media.md
 ---
 
 

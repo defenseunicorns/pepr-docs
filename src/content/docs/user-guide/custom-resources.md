@@ -1,6 +1,10 @@
 ---
 title: Custom Resources
+<<<<<<< HEAD:src/content/docs/user-guide/custom-resources.md
 description: Custom Resources
+=======
+weight: 50
+>>>>>>> origin:site/content/en/main/user-guide/custom-resources.md
 ---
 
 

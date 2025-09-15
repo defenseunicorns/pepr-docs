@@ -1,6 +1,10 @@
 ---
 title: OnSchedule
+<<<<<<< HEAD:src/content/docs/user-guide/onschedule.md
 description: OnSchedule
+=======
+weight: 120
+>>>>>>> origin:site/content/en/main/user-guide/onschedule.md
 ---
 
 
