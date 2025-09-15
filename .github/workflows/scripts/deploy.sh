@@ -2,6 +2,8 @@
 
 BRANCH=deploy
 
+# Change to docs directory for git operations
+cd docs || exit
 git config user.name "GitHub Actions"
 git config user.email "actions@github.com"
 
