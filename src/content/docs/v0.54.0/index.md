@@ -1,6 +1,7 @@
 ---
 title: Pepr
-description: Pepr Documentation - latest
+description: Pepr Documentation - v0.54.0
+slug: v0.54
 ---
 
 
@@ -11,7 +12,7 @@ description: Pepr Documentation - latest
 [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr)
 [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679y9k1hb)](https://codecov.io/github/defenseunicorns/pepr)
-[![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-2.1-4baaaa.svg)](/contribute/code-of-conduct)
+[![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-2.1-4baaaa.svg)](code_of_conduct/)
 
 ## What happened to Pepr's stars?
 
@@ -38,7 +39,7 @@ With Pepr, you can efficiently convert organizational knowledge into code, impro
 
 - Zero-config K8s Mutating and Validating Webhooks plus Controller generation
 - Automatic leader-elected K8s resource watching
-- Lightweight async key-value store backed by K8s for stateful operations with the [Pepr Store](/user-guide/store)
+- Lightweight async key-value store backed by K8s for stateful operations with the [Pepr Store](./user-guide/store/)
 - Human-readable fluent API for generating [Pepr Capabilities](#capability)
 - A fluent API for creating/modifying/watching and server-side applying K8s resources via [Kubernetes Fluent Client](https://github.com/defenseunicorns/kubernetes-fluent-client)
 - Generate new K8s resources based off of cluster resource changes
@@ -47,7 +48,7 @@ With Pepr, you can efficiently convert organizational knowledge into code, impro
 - Entire NPM ecosystem available for advanced operations
 - Realtime K8s debugging system for testing/reacting to cluster changes
 - Controller network isolation and tamper-resistant module execution
-- Least-privilege [RBAC](/user-guide/rbac) generation
+- Least-privilege [RBAC](./user-guide/rbac/) generation
 - AMD64 and ARM64 support
 
 ## Example Pepr Action
@@ -56,7 +57,7 @@ This quick sample shows how to react to a ConfigMap being created or updated in 
 It adds a label and annotation to the ConfigMap and adds some data to the ConfigMap.
 It also creates a Validating Webhook to make sure the "pepr" label still exists.
 Finally, after the ConfigMap is created, it logs a message to the Pepr controller and creates or updates a separate ConfigMap with the [kubernetes-fluent-client](https://github.com/defenseunicorns/kubernetes-fluent-client) using server-side apply.
-For more details see [actions](/actions/) section.
+For more details see [actions](./user-guide/actions/) section.
 
 ```ts
 When(a.ConfigMap)
@@ -104,7 +105,7 @@ When(a.ConfigMap)
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/en/) v20.0.0+ (even-numbered releases only)
-  - To ensure compatibility and optimal performance, it is recommended to use even-numbered releases of Node.js as they are stable releases and receive long-term support for three years.
+  - To ensure compatability and optimal performance, it is recommended to use even-numbered releases of Node.js as they are stable releases and receive long-term support for three years.
     Odd-numbered releases are experimental and may not be supported by certain libraries utilized in Pepr.
 
 - [npm](https://www.npmjs.com/) v10.1.0+
@@ -145,7 +146,7 @@ It is a single, complete TypeScript project that includes an entry point to load
 During the Pepr build process, each module produces a unique Kubernetes MutatingWebhookConfiguration and ValidatingWebhookConfiguration, along with a secret containing the transpiled and compressed TypeScript code.
 The webhooks and secret are deployed into the Kubernetes cluster with their own isolated controller.
 
-See [Module](/user-guide/pepr-modules) for more details.
+See [Module](./user-guide/pepr-modules/) for more details.
 
 ### Capability
 
@@ -154,7 +155,7 @@ Capabilities are user-defined and can include one or more actions.
 They are defined within a Pepr module and can be used in both MutatingWebhookConfigurations and ValidatingWebhookConfigurations.
 A Capability can have a specific scope, such as mutating or validating, and can be reused in multiple Pepr modules.
 
-See [Capabilities](/user-guide/capabilities) for more details.
+See [Capabilities](./user-guide/capabilities/) for more details.
 
 ### Action
 
@@ -168,11 +169,12 @@ There are both `Mutate()` and `Validate()` Actions that can be used to modify or
 There are also `Watch()` and `Reconcile()` actions that can be used to watch for changes to Kubernetes resources that already exist.
 Finally, the `Finalize()` can be used after `Watch()` or `Reconcile()` to perform cleanup operations when the resource is deleted.
 
-See [actions](/actions/) for more details.
+See [actions](./user-guide/actions) for more details.
 
 ## Logical Pepr Flow
 
-![Arch Diagram](_images/pepr-arch.png)
+![Arch Diagram](_images/pepr-arch.svg)
+[Source Diagram](_images/pepr-arch.svg)
 
 ## TypeScript
 
