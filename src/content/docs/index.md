@@ -1,6 +1,6 @@
 ---
 title: Pepr
-description: Pepr Documentation - main
+description: Pepr Documentation - latest
 ---
 
 
@@ -172,12 +172,7 @@ See [actions](/actions/) for more details.
 
 ## Logical Pepr Flow
 
-<<<<<<< HEAD:src/content/docs/index.md
 ![Arch Diagram](/assets/pepr-arch.png)
-[Source Diagram](/assets/pepr-arch.png)
-=======
-![Arch Diagram](_images/pepr-arch.png)
->>>>>>> origin:site/content/en/main/_index.md
 
 ## TypeScript
 

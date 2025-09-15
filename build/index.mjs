@@ -15,6 +15,7 @@ function fixImagePaths(content) {
 	return content
 		.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
 		.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
+		.replace(/_images\/pepr\.png/g, '/assets/pepr.png')
 		.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png')
 		.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
 }
@@ -393,12 +394,36 @@ for (const version of RUN.versions) {
 
 			const pParts = parent.split('_');
 			const pWeight = isInt(pParts[0]) ? Number.parseInt(pParts[0]) : null;
-			let newdir =
+			let rawdir =
 				pWeight !== null
 					? [ancestors, pParts.slice(1).join('_').trim()]
 							.filter((f) => f)
 							.join('/')
 					: [ancestors, pParts.join('_').trim()].filter((f) => f).join('/');
+
+			// Map old structure to new structure for consistency
+			const structureMapping = {
+				'pepr-tutorials': 'tutorials',
+				'user-guide/actions': 'actions'
+			};
+
+			// Handle single-file mappings (README.md files that should become direct .md files)
+			const singleFileMapping = {
+				'best-practices': 'reference/best-practices.md',
+				'module-examples': 'reference/module-examples.md',
+				'faq': 'reference/faq.md',
+				'roadmap': 'roadmap.md'
+			};
+
+			let newdir = rawdir;
+
+			// Apply folder structure mappings first
+			for (const [oldPath, newPath] of Object.entries(structureMapping)) {
+				if (rawdir.startsWith(oldPath)) {
+					newdir = rawdir.replace(oldPath, newPath);
+					break;
+				}
+			}
 
 			const fParts = filename.split('_');
 			let weight = isInt(fParts[0]) ? Number.parseInt(fParts[0]) : null;
@@ -408,6 +433,18 @@ for (const version of RUN.versions) {
 			if (newfile === 'README.md') {
 				newfile = newfile.replace('README.md', 'index.md');
 				weight = pWeight;
+			}
+
+			// Check if this is a single file that should be mapped directly (after processing filename)
+			if (newfile === 'index.md') {
+				for (const [oldPath, newPath] of Object.entries(singleFileMapping)) {
+					if (rawdir === oldPath) {
+						// This is a single file, return the direct path without directory
+						newdir = '';
+						newfile = newPath;
+						break;
+					}
+				}
 			}
 
 			newfile = newdir === '.' ? newfile : [newdir, newfile].join('/');
@@ -470,6 +507,14 @@ for (const version of RUN.versions) {
 			RUN.srcmd.content = rewriteReadmeFileLinks(RUN.srcmd.content);
 
 			RUN.srcmd.content = rewriteFileLinksAsLowerCase(RUN.srcmd.content);
+
+			// Rewrite internal links to use new structure
+			RUN.srcmd.content = RUN.srcmd.content
+				.replaceAll('](/pepr-tutorials/', '](/tutorials/')
+				.replaceAll('](/best-practices/', '](/reference/best-practices/')
+				.replaceAll('](/module-examples/', '](/reference/module-examples/')
+				.replaceAll('](/faq/', '](/reference/faq/')
+				.replaceAll('](/user-guide/actions/', '](/actions/');
 
 			RUN.srcmd.content = RUN.srcmd.content.replaceAll('.md)', '/)');
 

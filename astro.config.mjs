@@ -61,7 +61,7 @@ export default defineConfig({
               },
               {
                   label: 'Tutorials',
-                  autogenerate: { directory: 'pepr-tutorials' },
+                  autogenerate: { directory: 'tutorials' },
               },
               {
                   label: 'Reference',

@@ -7,17 +7,17 @@ permissions: read-all
 on:
   # enable manual run via GitHub UI
   workflow_dispatch:
-  
+
   # enable trigger via remote call webhook
   repository_dispatch:
     types: update-docs
 
   # enable run on "standard" updates to main branch
   push:
-    branches: ["main"]
+    branches: ['main']
 
   pull_request:
-    branches: ["main"]
+    branches: ['main']
 
 env:
   CORE: ./core
@@ -27,7 +27,6 @@ env:
   WORK: ./docs/work
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     permissions:
@@ -37,7 +36,7 @@ jobs:
         with:
           repository: defenseunicorns/pepr
           path: ./core
-          fetch-depth: 0  # pull history to get version tags
+          fetch-depth: 0 # pull history to get version tags
 
       - uses: actions/checkout@v4
         with:
@@ -49,12 +48,11 @@ jobs:
           sudo apt-get update && sudo apt-get install -y jq
 
       - name: Build the docs
-        run: "$DOCS/.github/workflows/scripts/build.sh"
+        run: '$DOCS/.github/workflows/scripts/build.sh'
 
       - name: Commit changes to source!
         if: github.ref_name == 'main'
         run: bash ./docs/.github/workflows/scripts/commit.sh
-          
 
       - name: Upload Artifacts
         if: github.ref_name == 'main'
@@ -63,7 +61,6 @@ jobs:
           name: dist
           retention-days: 1
           path: ./docs/dist
-
 
   deploy:
     if: github.ref_name == 'main'
@@ -90,4 +87,3 @@ jobs:
 
       - name: Deploy the docs!
         run: bash ./docs/.github/workflows/scripts/deploy.sh
-        
