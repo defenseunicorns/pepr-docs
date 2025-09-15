@@ -89,19 +89,20 @@ fi
 done
 
 # Update astro.config.mjs with new versions
-if [ -f "astro.config.mjs" ]; then
+if [ -f "docs/astro.config.mjs" ]; then
 # Create backup
-cp astro.config.mjs astro.config.mjs.bak
+cp docs/astro.config.mjs docs/astro.config.mjs.bak
 
 # Use perl for more reliable multiline replacement
-perl -i -pe "BEGIN{undef $/;} s/versions: \[.*?\]/versions: [\n$VERSIONS_ARRAY\n                  ]/smg" astro.config.mjs
+perl -i -pe "BEGIN{undef $/;} s/versions: \[.*?\]/versions: [\n$VERSIONS_ARRAY\n                  ]/smg" docs/astro.config.mjs
 
 echo "Updated Astro config with discovered versions"
 else
 echo "Warning: astro.config.mjs not found"
 fi
 
-
+# Change to docs directory for git operations
+cd docs || exit
 git config user.name "GitHub Actions"
 git config user.email "actions@github.com"
 git add --all
