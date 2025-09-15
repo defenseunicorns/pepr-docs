@@ -1,6 +1,6 @@
 ---
 title: Pepr Media
-weight: 50
+weight: 20
 ---
 
 

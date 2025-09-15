@@ -1,6 +1,6 @@
 ---
 title: Community and Support
-weight: 100
+weight: 10
 ---
 
 
@@ -12,16 +12,16 @@ Pepr is a community-driven project. We welcome contributions of all kinds, from 
 
 You can find all the details on contributing to Pepr at:
 
-* [Contributing to Pepr](../contribute)
+* [Contributing to Pepr](/contribute/contributor-guide)
 
 ### Reporting Bugs
 
 Information on reporting bugs can be found at:
 
-* [Reporting Bugs](../support/)
+* [Reporting Bugs](/community/support)
 
 ### Reporting Security Issues
 
 Information on reporting security issues can be found at:
 
-* [Reporting Security Issues](../security/)
+* [Reporting Security Issues](/community/security)

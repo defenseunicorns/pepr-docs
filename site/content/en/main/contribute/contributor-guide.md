@@ -1,6 +1,6 @@
 ---
 title: Contributor Guide
-weight: 120
+weight: 10
 ---
 
 
@@ -25,7 +25,7 @@ Thank you for your interest in contributing to Pepr! We welcome all contribution
 
 ## Code of Conduct
 
-Please follow our [Code of Conduct](../code_of_conduct/) to maintain a respectful and collaborative environment.
+Please follow our [Code of Conduct](/contribute/code-of-conduct) to maintain a respectful and collaborative environment.
 
 ## Getting Started
 

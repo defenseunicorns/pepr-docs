@@ -1,6 +1,6 @@
 ---
 title: Pepr SDK
-weight: 15
+weight: 20
 ---
 
 
@@ -110,4 +110,4 @@ const sanitizedResourceName = sanitizeResourceName(resourceName)
 
 ## See Also
 
-Looking for information on the Pepr mutate helpers? See [Mutate Helpers](../actions/mutate#mutate-helpers) for information on those.
+Looking for information on the Pepr mutate helpers? See [Mutate Helpers](/actions/mutate#mutate-helpers) for information on those.

@@ -1,6 +1,6 @@
 ---
 title: User Guide
-weight: 30
+weight: 10
 ---
 
 
@@ -10,30 +10,28 @@ In this section you can find detailed information about Pepr and how to use it.
 
 You can find the following information in this section:
 
-### [Pepr CLI](pepr-cli/)
+### [Pepr CLI](/user-guide/pepr-cli)
 
-### [SDK](sdk/)
+### [SDK](/user-guide/sdk)
 
-### [Pepr Modules](pepr-modules/)
+### [Pepr Modules](/user-guide/pepr-modules)
 
-### [Pepr Actions](actions/)
+### [Pepr Capabilities](/user-guide/capabilities)
 
-### [Pepr Capabilities](capabilities/)
+### [Pepr Store](/user-guide/store)
 
-### [Pepr Store](store/)
+### [Custom Resources](/user-guide/custom-resources)
 
-### [Custom Resources](custom-resources/)
+### [OnSchedule](/user-guide/onschedule)
 
-### [OnSchedule](onschedule/)
+### [RBAC](/user-guide/rbac)
 
-### [RBAC](rbac/)
+### [Metrics](/user-guide/metrics)
 
-### [Metrics](metrics/)
+### [Customization](/user-guide/customization)
 
-### [Customization](customization/)
+### [Filters](/user-guide/filters)
 
-### [Filters](filters/)
+### [Generating CRDs](/user-guide/generating-crds)
 
-### [Generating CRDs](generating-crds/)
-
-### [Custom Metrics](generating_custom_metrics/)
+### [Custom Metrics](/user-guide/generating_custom_metrics)

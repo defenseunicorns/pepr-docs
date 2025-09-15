@@ -1,6 +1,6 @@
 ---
 title: Generating CRDs
-weight: 130
+weight: 100
 ---
 
 

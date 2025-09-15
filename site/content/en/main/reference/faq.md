@@ -1,6 +1,6 @@
 ---
 title: Frequently Asked Questions
-weight: 80
+weight: 30
 ---
 
 
@@ -45,7 +45,7 @@ You can configure `.Reconcile()` with different queue granularities depending on
 
 ## What is a module author?
 
-A module author is someone who creates a [Pepr Module](../user-guide/pepr-modules/) , which defines capabilities to enforce or apply desired state in a Kubernetes cluster.
+A module author is someone who creates a [Pepr Module](/user-guide/pepr-modules) , which defines capabilities to enforce or apply desired state in a Kubernetes cluster.
 If you’ve run `npx pepr init` to create a module, congratulations — you’re a module author.
 
 ## How do I remove the punycode warning?
@@ -80,9 +80,9 @@ Similarities:
 
 Differences:
 
-- **Main Goals**: Operator SDK is mainly focused on building operators and later included support for Webhooks. In contrast, Pepr started out as a framework for building Webhooks and later added support for building operators via [Kubernetes-Fluent-Client](https://github.com/defenseunicorns/kubernetes-fluent-client) through [Watch](../user-guide/actions/watch/) and [Reconcile](../user-guide/actions/reconcile/).
+- **Main Goals**: Operator SDK is mainly focused on building operators and later included support for Webhooks. In contrast, Pepr started out as a framework for building Webhooks and later added support for building operators via [Kubernetes-Fluent-Client](https://github.com/defenseunicorns/kubernetes-fluent-client) through [Watch](/actions/watch) and [Reconcile](/actions/reconcile).
 - **Language Support**: Operator SDK supports Go, Ansible, and Helm, while Pepr is written in TypeScript and designed with an English style fluent API for simplicity.
-- **Lifecycle Management**: Operator SDK provides tools for managing the lifecycle of operators through OLM (Operator Lifecycle Manager), while Pepr relies on [Helm](../user-guide/customization/) for upgrades.
+- **Lifecycle Management**: Operator SDK provides tools for managing the lifecycle of operators through OLM (Operator Lifecycle Manager), while Pepr relies on [Helm](/user-guide/customization) for upgrades.
 - **Complexity**: Operator SDK uses native Kubernetes Go libraries for deep integration with Kubernetes resources, while Pepr exposes a high-level abstraction allowing users to focus on business logic.
 - **Easy Setup**: While both make it easy to initialize a new project, Pepr comes with an out-of-the-box `hello-pepr.ts` example which demonstrates how to use Pepr effectively.
 
@@ -98,7 +98,7 @@ Similarities:
 
 Differences:
 
-- Pepr is more like a "framework" than a tool. In Pepr you create a Pepr [Module](../user-guide/pepr-modules/). In the Pepr module you define [capabilities](../user-guide/capabilities/) that enforce / apply desired cluster state.
+- Pepr is more like a "framework" than a tool. In Pepr you create a Pepr [Module](/user-guide/pepr-modules). In the Pepr module you define [capabilities](/user-guide/capabilities) that enforce / apply desired cluster state.
 - Pepr is written in TypeScript. Kyverno is written in Go.
 - Pepr provides the flexibility of a full-fledged, strongly typed programming language to decide what decisions to make based on events happening in the cluster. With Kyverno, you are limited to the constraints of YAML.
 - Pepr can be used to reconcile events in order, similar to Kube-Builder or Operator SDK.
@@ -108,7 +108,7 @@ Both Pepr and Kyverno are great tools. Which one to use for your project depends
 
 ## How do I add custom labels to Pepr's Kubernetes manifests?
 
-During the build process, custom labels can be added the `pepr-system` namespace based on the `package.json`. Checkout the [Customizing with package.json](../user-guide/customization#packagejson-configurations-table).
+During the build process, custom labels can be added the `pepr-system` namespace based on the `package.json`. Checkout the [Customizing with package.json](/user-guide/customization#packagejson-configurations-table).
 
 The following example shows how to add custom namespace labels.
 
