@@ -54,8 +54,8 @@ for version_dir in "$CONT_NEW"/v0.*; do
     echo "Copying $version content..."
     
     # Remove existing version content
-    rm -rf "$CONT_OLD/$version" 2>/dev/null || true
-    mkdir -p "$CONT_OLD/$version"
+    rm -rf "${CONT_OLD:?}/${version:?}" 2>/dev/null || true
+    mkdir -p "${CONT_OLD:?}/${version:?}"
     
     # Copy version content with verification
     if cp -r "$version_dir"/* "$CONT_OLD/$version/" 2>/dev/null; then
@@ -72,7 +72,7 @@ fi
 
 # Update Astro config with discovered versions
 echo "Updating Astro configuration..."
-cd "$DOCS"
+cd "$DOCS" || exit
 
 # Discover all version directories and build properly formatted JS array
 VERSIONS_ARRAY=""
@@ -102,7 +102,7 @@ else
 echo "Warning: astro.config.mjs not found"
 fi
 
-cd "$DOCS"
+cd "$DOCS" || exit
 git config user.name "GitHub Actions"
 git config user.email "actions@github.com"
 git add --all

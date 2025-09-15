@@ -2,7 +2,7 @@
 
 BRANCH=deploy
 
-cd "$DOCS"
+cd "$DOCS" || exit
 git config user.name "GitHub Actions"
 git config user.email "actions@github.com"
 
