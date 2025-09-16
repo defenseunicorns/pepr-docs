@@ -123,7 +123,8 @@ function rewriteFileLinksAsLowerCase(content) {
 
 function escapeAtParamReferences(content) {
 	// Escape @param in markdown bold syntax to prevent MDX parsing issues
-	return content.replaceAll(/\*\*@param\s/g, '**\\@param ');
+	// This handles patterns like **@param something** with or without spaces
+	return content.replaceAll(/\*\*@param\b/g, '**\\@param');
 }
 
 const TOTAL = 'Total build time';
