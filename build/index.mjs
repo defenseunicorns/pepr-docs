@@ -121,6 +121,11 @@ function rewriteFileLinksAsLowerCase(content) {
 	return content;
 }
 
+function escapeAtParamReferences(content) {
+	// Escape @param in markdown bold syntax to prevent MDX parsing issues
+	return content.replaceAll(/\*\*@param\s/g, '**\\@param ');
+}
+
 const TOTAL = 'Total build time';
 console.time(TOTAL);
 
@@ -507,6 +512,8 @@ for (const version of RUN.versions) {
 			RUN.srcmd.content = rewriteReadmeFileLinks(RUN.srcmd.content);
 
 			RUN.srcmd.content = rewriteFileLinksAsLowerCase(RUN.srcmd.content);
+
+			RUN.srcmd.content = escapeAtParamReferences(RUN.srcmd.content);
 
 			// Rewrite internal links to use new structure
 			RUN.srcmd.content = RUN.srcmd.content
