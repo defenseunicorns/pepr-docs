@@ -888,30 +888,7 @@ if (opts.dist) {
 					}
 				);
 
-				// Escape other problematic exclamation marks that might cause MDX issues
-				const beforeEscape = convertedContent;
-				convertedContent = convertedContent.replace(
-					/!\[(?![^\]]*\]\([^)]*\))/g, // Negative lookahead to avoid breaking image syntax
-					'\\!'
-				);
-
-				// Handle any remaining edge cases with exclamation marks in angle brackets
-				convertedContent = convertedContent.replace(
-					/<([^>]*!)([^>]*)>/g,
-					(match, before, after) => {
-						// If this looks like a valid HTML tag, leave it alone
-						if (/^[a-zA-Z][a-zA-Z0-9]*(\s|$)/.test(before + after)) {
-							return match;
-						}
-						// Otherwise, escape the exclamation mark
-						console.log(`Pre-astro: Escaping exclamation in angle brackets in ${contentFile}`);
-						return `&lt;${before}!${after}&gt;`;
-					}
-				);
-
-				if (beforeEscape !== convertedContent) {
-					preAstroFixCount++;
-				}
+				// Skip additional escaping - just focus on callout conversion
 
 				if (content !== convertedContent) {
 					await fs.writeFile(contentFile, convertedContent);
