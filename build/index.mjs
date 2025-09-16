@@ -749,9 +749,31 @@ if (opts.dist) {
 		console.log('Fixing image paths in content files...');
 		const contentFiles = await glob(`${starlightContentDir}/**/*.md`);
 		let updatedFilesCount = 0;
+		let calloutsFixedCount = 0;
 		for (const contentFile of contentFiles) {
 			const content = await fs.readFile(contentFile, 'utf8');
-			const updatedContent = fixImagePaths(content);
+			let updatedContent = fixImagePaths(content);
+
+			// Convert any remaining GitHub callouts to MDX admonitions
+			const beforeCallouts = updatedContent;
+			updatedContent = updatedContent.replace(
+				/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
+				(match, type, calloutContent) => {
+					const mdxType = type.toLowerCase();
+					const cleanContent = calloutContent
+						.split('\n')
+						.map(line => line.replace(/^> ?/, ''))
+						.filter(line => line.length > 0)
+						.join('\n');
+					console.log(`Final pass: Converting ${type} callout in ${contentFile}`);
+					return `:::${mdxType}\n${cleanContent}\n:::`;
+				}
+			);
+
+			if (beforeCallouts !== updatedContent) {
+				calloutsFixedCount++;
+			}
+
 			if (content !== updatedContent) {
 				await fs.writeFile(contentFile, updatedContent);
 				updatedFilesCount++;
@@ -759,6 +781,9 @@ if (opts.dist) {
 		}
 		if (updatedFilesCount > 0) {
 			console.log(`Updated image paths in ${updatedFilesCount} files`);
+		}
+		if (calloutsFixedCount > 0) {
+			console.log(`Fixed callouts in ${calloutsFixedCount} files during final pass`);
 		}
 		
 		// Copy resource images to assets directory
@@ -786,9 +811,31 @@ if (opts.dist) {
 				console.log(`Fixing image paths in versioned content ${versionMajMin}...`);
 				const versionContentFiles = await glob(`${starlightVersionDir}/**/*.md`);
 				let versionUpdatedCount = 0;
+				let versionCalloutsFixedCount = 0;
 				for (const contentFile of versionContentFiles) {
 					const content = await fs.readFile(contentFile, 'utf8');
-					const updatedContent = fixImagePaths(content);
+					let updatedContent = fixImagePaths(content);
+
+					// Convert any remaining GitHub callouts to MDX admonitions in versioned content
+					const beforeCallouts = updatedContent;
+					updatedContent = updatedContent.replace(
+						/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
+						(match, type, calloutContent) => {
+							const mdxType = type.toLowerCase();
+							const cleanContent = calloutContent
+								.split('\n')
+								.map(line => line.replace(/^> ?/, ''))
+								.filter(line => line.length > 0)
+								.join('\n');
+							console.log(`Final pass: Converting ${type} callout in versioned ${contentFile}`);
+							return `:::${mdxType}\n${cleanContent}\n:::`;
+						}
+					);
+
+					if (beforeCallouts !== updatedContent) {
+						versionCalloutsFixedCount++;
+					}
+
 					if (content !== updatedContent) {
 						await fs.writeFile(contentFile, updatedContent);
 						versionUpdatedCount++;
@@ -797,13 +844,16 @@ if (opts.dist) {
 				if (versionUpdatedCount > 0) {
 					console.log(`Updated image paths in ${versionUpdatedCount} versioned files`);
 				}
+				if (versionCalloutsFixedCount > 0) {
+					console.log(`Fixed callouts in ${versionCalloutsFixedCount} versioned files during final pass`);
+				}
 			}
 		}
 		
 		try {
 			console.log(`Building Starlight site from directory: ${siteRoot}`);
 			console.log(`Expected dist output: ${siteRoot}/dist`);
-			
+
 			// Check what's in siteRoot before building
 			try {
 				const files = await fs.readdir(siteRoot);
@@ -811,9 +861,39 @@ if (opts.dist) {
 			} catch (e) {
 				console.error('Failed to read siteRoot directory:', e.message);
 			}
-			
+
+			// Final safety check: convert any remaining callouts in the entire content directory
+			console.log('Final safety check: scanning all content for remaining callouts...');
+			const allContentFiles = await glob(`${siteRoot}/src/content/**/*.{md,mdx}`);
+			let finalSafetyFixCount = 0;
+			for (const contentFile of allContentFiles) {
+				const content = await fs.readFile(contentFile, 'utf8');
+				const convertedContent = content.replace(
+					/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
+					(match, type, calloutContent) => {
+						const mdxType = type.toLowerCase();
+						const cleanContent = calloutContent
+							.split('\n')
+							.map(line => line.replace(/^> ?/, ''))
+							.filter(line => line.length > 0)
+							.join('\n');
+						console.log(`Final safety: Converting ${type} callout in ${contentFile}`);
+						finalSafetyFixCount++;
+						return `:::${mdxType}\n${cleanContent}\n:::`;
+					}
+				);
+				if (content !== convertedContent) {
+					await fs.writeFile(contentFile, convertedContent);
+				}
+			}
+			if (finalSafetyFixCount > 0) {
+				console.log(`Final safety check fixed ${finalSafetyFixCount} remaining callouts`);
+			} else {
+				console.log('Final safety check: no remaining callouts found');
+			}
+
 			// Execute build with better error handling
-			const buildResult = await exec(`cd ${siteRoot} && npm run build`, { 
+			const buildResult = await exec(`cd ${siteRoot} && npm run build`, {
 				maxBuffer: 1024 * 1024 * 10 // 10MB buffer
 			});
 			
