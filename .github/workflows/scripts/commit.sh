@@ -48,44 +48,64 @@ fi
 # Copy versioned content dynamically
 echo "Discovering available versions..."
 if [ -d "$CONT_NEW" ]; then
-for version_dir in "$CONT_NEW"/v0.*; do
-    if [ -d "$version_dir" ]; then
-    version=$(basename "$version_dir")
-    echo "Copying $version content..."
-    
-    # Remove existing version content
-    rm -rf "${CONT_OLD:?}/${version:?}" 2>/dev/null || true
-    mkdir -p "${CONT_OLD:?}/${version:?}"
-    
-    # Copy version content with verification
-    if cp -r "$version_dir"/* "$CONT_OLD/$version/" 2>/dev/null; then
-        echo "$version content copied successfully"
-    else
-        echo "Error: Failed to copy $version content"
-        exit 1
-    fi
-    fi
-done
+    declare -A latest_versions
+
+    # Get all versions and sort them properly
+    for version_dir in "$CONT_NEW"/v0.*; do
+        if [ -d "$version_dir" ]; then
+            version=$(basename "$version_dir")
+            major_minor=${version%.*}
+
+            # Check if this is the latest version for this major.minor
+            if [[ -z "${latest_versions[$major_minor]}" ]]; then
+                # First version for this major.minor
+                latest_versions["$major_minor"]="$version"
+            else
+                # Compare versions and keep the higher one
+                current_latest="${latest_versions[$major_minor]}"
+                if [[ "$(printf '%s\n' "$current_latest" "$version" | sort -V | tail -n1)" == "$version" ]]; then
+                    latest_versions["$major_minor"]="$version"
+                fi
+            fi
+        fi
+    done
+
+    # Copy only the latest versions, keeping full version numbers
+    for major_minor in "${!latest_versions[@]}"; do
+        latest_version="${latest_versions[$major_minor]}"
+        version_dir="$CONT_NEW/$latest_version"
+
+        echo "Copying $latest_version content to $latest_version (latest for $major_minor series)..."
+
+        # Remove existing version content
+        rm -rf "${CONT_OLD:?}/${latest_version:?}" 2>/dev/null || true
+        mkdir -p "${CONT_OLD:?}/${latest_version:?}"
+
+        # Copy version content with verification
+        if cp -r "$version_dir"/* "$CONT_OLD/$latest_version/" 2>/dev/null; then
+            echo "$latest_version content copied successfully"
+        else
+            echo "Error: Failed to copy $latest_version content"
+            exit 1
+        fi
+    done
 else
-echo "Warning: Content source directory not found"
+    echo "Warning: Content source directory not found"
 fi
 
 # Update Astro config with discovered versions
 echo "Updating Astro configuration..."
 
-# Discover all version directories and build properly formatted JS array
+# Build the versions array from the discovered latest versions
 VERSIONS_ARRAY=""
 FIRST=true
-for version_dir in "$CONT_OLD"/v0.*; do
-if [ -d "$version_dir" ]; then
-    version=$(basename "$version_dir")
+for latest_version in $(printf '%s\n' "${latest_versions[@]}" | sort -V); do
     if [ "$FIRST" = true ]; then
     FIRST=false
-    VERSIONS_ARRAY="                      { slug: '$version', label: '$version' }"
+    VERSIONS_ARRAY="                      { slug: '$latest_version', label: '$latest_version' }"
     else
-    VERSIONS_ARRAY="$VERSIONS_ARRAY,\n                      { slug: '$version', label: '$version' }"
+    VERSIONS_ARRAY="$VERSIONS_ARRAY,\n                      { slug: '$latest_version', label: '$latest_version' }"
     fi
-fi
 done
 
 # Update astro.config.mjs with new versions
