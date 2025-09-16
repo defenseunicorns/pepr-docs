@@ -872,6 +872,12 @@ if (opts.dist) {
 				const content = await fs.readFile(contentFile, 'utf8');
 				let convertedContent = content;
 
+				// First check if this file has any > [! patterns and log them
+				const calloutMatches = content.match(/^> \[!.*$/gm);
+				if (calloutMatches) {
+					console.log(`FOUND CALLOUTS in ${contentFile}:`, calloutMatches);
+				}
+
 				// Convert GitHub callouts
 				convertedContent = convertedContent.replace(
 					/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
@@ -888,7 +894,16 @@ if (opts.dist) {
 					}
 				);
 
-				// Skip additional escaping - just focus on callout conversion
+				// Also escape any problematic standalone exclamation marks that could be interpreted as JSX
+				const beforeEscape = convertedContent;
+				convertedContent = convertedContent.replace(
+					/^(\s*)!([A-Z][a-zA-Z]*\s)/gm,
+					'$1\\!$2'
+				);
+				if (beforeEscape !== convertedContent) {
+					console.log(`Pre-astro: Escaped standalone exclamation marks in ${contentFile}`);
+					preAstroFixCount++;
+				}
 
 				if (content !== convertedContent) {
 					await fs.writeFile(contentFile, convertedContent);
