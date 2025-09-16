@@ -135,6 +135,24 @@ function escapeAtParamReferences(content) {
 	// This catches edge cases like <@something> or <!something> that aren't proper HTML
 	content = content.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
 
+	// Convert GitHub-style callouts to MDX admonitions
+	content = content.replace(
+		/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
+		(match, type, calloutContent) => {
+			const mdxType = type.toLowerCase();
+
+			// Remove the '> ' prefix from each line and clean up
+			const cleanContent = calloutContent
+				.split('\n')
+				.map(line => line.replace(/^> ?/, ''))
+				.filter(line => line.length > 0)
+				.join('\n');
+
+			console.log(`Converting ${type} callout to MDX admonition`);
+			return `:::${mdxType}\n${cleanContent}\n:::`;
+		}
+	);
+
 	return content;
 }
 
@@ -590,6 +608,21 @@ for (const version of RUN.versions) {
 
 		// rewrite numbered file links
 		idxBody = rewriteNumberedFileLinks(idxBody);
+
+		// convert GitHub callouts to MDX admonitions
+		idxBody = idxBody.replace(
+			/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
+			(match, type, calloutContent) => {
+				const mdxType = type.toLowerCase();
+				const cleanContent = calloutContent
+					.split('\n')
+					.map(line => line.replace(/^> ?/, ''))
+					.filter(line => line.length > 0)
+					.join('\n');
+				console.log(`Converting ${type} callout in index to MDX admonition`);
+				return `:::${mdxType}\n${cleanContent}\n:::`;
+			}
+		);
 
 		const idxContent = [idxFront, idxBody].join('\n');
 		await fs.writeFile(idxMd, idxContent, { encoding: 'utf8' });
