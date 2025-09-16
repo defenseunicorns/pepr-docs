@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "node pre-build-convert.js && astro build",
     "linkcheck": "CHECK_LINKS=true astro build",
     "preview": "astro preview",
     "astro": "astro",
