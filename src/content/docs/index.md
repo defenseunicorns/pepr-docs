@@ -129,11 +129,11 @@ npx pepr dev
 kubectl apply -f capabilities/hello-pepr.samples.yaml
 ```
 
-> [!TIP]
-> Don't use IP as your `--host`, it's not supported. Make sure to check your
-> local k8s distro documentation how to reach your localhost, which is where
-> `pepr dev` is serving the code from.
-
+:::tip
+Don't use IP as your `--host`, it's not supported. Make sure to check your
+local k8s distro documentation how to reach your localhost, which is where
+`pepr dev` is serving the code from.
+:::
 <<video class="td-content" controls src="https://user-images.githubusercontent.com/882485/230895880-c5623077-f811-4870-bb9f-9bb8e5edc118.mp4"></video>>
 
 ## Concepts
