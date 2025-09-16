@@ -125,32 +125,18 @@ function escapeAtParamReferences(content) {
 	// Escapes @param in markdown bold syntax to prevent MDX parsing issues
 	content = content.replaceAll(/\*\*@param\b/g, '**\\@param');
 
-	// More defensive approach: escape any angle brackets with @ or ! that could cause MDX issues
-	// First protect legitimate HTML constructs
-	const protectedPatterns = [];
-	let placeholder = '___PROTECTED_PATTERN_';
+	// Escape email addresses in angle brackets that aren't already in links or code
+	content = content.replace(/<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>/g, '&lt;$1&gt;');
 
-	// Protect HTML comments
-	content = content.replace(/<!--[\s\S]*?-->/g, (match) => {
-		const index = protectedPatterns.length;
-		protectedPatterns.push(match);
-		return placeholder + index + '___';
+	// Escape any remaining angle brackets that contain @ or ! characters that could be interpreted as invalid HTML tags
+	// This catches edge cases like <@something> or <!something> that aren't proper HTML
+	content = content.replace(/<([^>]*[@!][^>]*)>/g, (match, innerContent) => {
+		// Skip if it's already a proper HTML comment
+		if (innerContent.startsWith('!--') && innerContent.endsWith('--')) {
+			return match;
+		}
+		return '&lt;' + innerContent + '&gt;';
 	});
-
-	// Protect HTML tags (like <img>, <div>, etc.)
-	content = content.replace(/<\/?[a-zA-Z][a-zA-Z0-9]*[^>]*>/g, (match) => {
-		const index = protectedPatterns.length;
-		protectedPatterns.push(match);
-		return placeholder + index + '___';
-	});
-
-	// Now escape any remaining angle brackets that contain @ or !
-	content = content.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
-
-	// Restore protected patterns
-	content = content.replace(new RegExp(placeholder + '(\\d+)___', 'g'),
-		(match, index) => protectedPatterns[parseInt(index)]
-	);
 
 	return content;
 }
