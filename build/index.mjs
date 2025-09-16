@@ -125,29 +125,31 @@ function escapeAtParamReferences(content) {
 	// Escapes @param in markdown bold syntax to prevent MDX parsing issues
 	content = content.replaceAll(/\*\*@param\b/g, '**\\@param');
 
-	// Escapes angle bracket emails that MDX interprets as invalid HTML tags like <email@domain.com> but excludes HTML comments
-	const commentPlaceholder = '___HTML_COMMENT_PLACEHOLDER_';
-	const comments = [];
+	// More defensive approach: escape any angle brackets with @ or ! that could cause MDX issues
+	// First protect legitimate HTML constructs
+	const protectedPatterns = [];
+	let placeholder = '___PROTECTED_PATTERN_';
 
-	// Protect HTML comments first
+	// Protect HTML comments
 	content = content.replace(/<!--[\s\S]*?-->/g, (match) => {
-		const index = comments.length;
-		comments.push(match);
-		return commentPlaceholder + index + '_END___';
+		const index = protectedPatterns.length;
+		protectedPatterns.push(match);
+		return placeholder + index + '___';
 	});
 
-	// Only escape angle brackets that contain @ and are not part of our protected comments
-	content = content.replace(/<([^>]*@[^>]*)>/g, (match, emailContent) => {
-		// Skip if this looks like a placeholder
-		if (emailContent.includes(commentPlaceholder)) {
-			return match;
-		}
-		return '&lt;' + emailContent + '&gt;';
+	// Protect HTML tags (like <img>, <div>, etc.)
+	content = content.replace(/<\/?[a-zA-Z][a-zA-Z0-9]*[^>]*>/g, (match) => {
+		const index = protectedPatterns.length;
+		protectedPatterns.push(match);
+		return placeholder + index + '___';
 	});
 
-	// Restore HTML comments
-	content = content.replace(new RegExp(commentPlaceholder + '(\\d+)_END___', 'g'),
-		(match, index) => comments[parseInt(index)]
+	// Now escape any remaining angle brackets that contain @ or !
+	content = content.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
+
+	// Restore protected patterns
+	content = content.replace(new RegExp(placeholder + '(\\d+)___', 'g'),
+		(match, index) => protectedPatterns[parseInt(index)]
 	);
 
 	return content;
