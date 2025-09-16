@@ -862,13 +862,18 @@ if (opts.dist) {
 				console.error('Failed to read siteRoot directory:', e.message);
 			}
 
-			// Final safety check: convert any remaining callouts in the entire content directory
-			console.log('Final safety check: scanning all content for remaining callouts...');
+			// CRITICAL: Convert any remaining callouts BEFORE astro build starts
+			// This must happen before starlight-versions plugin scans content
+			console.log('CRITICAL: Pre-astro callout conversion - scanning all content...');
 			const allContentFiles = await glob(`${siteRoot}/src/content/**/*.{md,mdx}`);
-			let finalSafetyFixCount = 0;
+			let preAstroFixCount = 0;
+
 			for (const contentFile of allContentFiles) {
 				const content = await fs.readFile(contentFile, 'utf8');
-				const convertedContent = content.replace(
+				let convertedContent = content;
+
+				// Convert GitHub callouts
+				convertedContent = convertedContent.replace(
 					/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
 					(match, type, calloutContent) => {
 						const mdxType = type.toLowerCase();
@@ -877,19 +882,46 @@ if (opts.dist) {
 							.map(line => line.replace(/^> ?/, ''))
 							.filter(line => line.length > 0)
 							.join('\n');
-						console.log(`Final safety: Converting ${type} callout in ${contentFile}`);
-						finalSafetyFixCount++;
+						console.log(`Pre-astro: Converting ${type} callout in ${contentFile}`);
+						preAstroFixCount++;
 						return `:::${mdxType}\n${cleanContent}\n:::`;
 					}
 				);
+
+				// Escape other problematic exclamation marks that might cause MDX issues
+				const beforeEscape = convertedContent;
+				convertedContent = convertedContent.replace(
+					/!\[(?![^\]]*\]\([^)]*\))/g, // Negative lookahead to avoid breaking image syntax
+					'\\!'
+				);
+
+				// Handle any remaining edge cases with exclamation marks in angle brackets
+				convertedContent = convertedContent.replace(
+					/<([^>]*!)([^>]*)>/g,
+					(match, before, after) => {
+						// If this looks like a valid HTML tag, leave it alone
+						if (/^[a-zA-Z][a-zA-Z0-9]*(\s|$)/.test(before + after)) {
+							return match;
+						}
+						// Otherwise, escape the exclamation mark
+						console.log(`Pre-astro: Escaping exclamation in angle brackets in ${contentFile}`);
+						return `&lt;${before}!${after}&gt;`;
+					}
+				);
+
+				if (beforeEscape !== convertedContent) {
+					preAstroFixCount++;
+				}
+
 				if (content !== convertedContent) {
 					await fs.writeFile(contentFile, convertedContent);
 				}
 			}
-			if (finalSafetyFixCount > 0) {
-				console.log(`Final safety check fixed ${finalSafetyFixCount} remaining callouts`);
+
+			if (preAstroFixCount > 0) {
+				console.log(`CRITICAL: Pre-astro conversion fixed ${preAstroFixCount} potential MDX issues`);
 			} else {
-				console.log('Final safety check: no remaining callouts found');
+				console.log('Pre-astro check: no MDX issues found');
 			}
 
 			// Execute build with better error handling
