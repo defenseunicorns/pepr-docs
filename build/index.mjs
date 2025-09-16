@@ -125,18 +125,15 @@ function escapeAtParamReferences(content) {
 	// Escapes @param in markdown bold syntax to prevent MDX parsing issues
 	content = content.replaceAll(/\*\*@param\b/g, '**\\@param');
 
+	// Convert HTML comments to MDX comments since MDX prefers {/* */} syntax
+	content = content.replace(/<!--([\s\S]*?)-->/g, '{/* $1 */}');
+
 	// Escape email addresses in angle brackets that aren't already in links or code
 	content = content.replace(/<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>/g, '&lt;$1&gt;');
 
 	// Escape any remaining angle brackets that contain @ or ! characters that could be interpreted as invalid HTML tags
 	// This catches edge cases like <@something> or <!something> that aren't proper HTML
-	content = content.replace(/<([^>]*[@!][^>]*)>/g, (match, innerContent) => {
-		// Skip if it's already a proper HTML comment
-		if (innerContent.startsWith('!--') && innerContent.endsWith('--')) {
-			return match;
-		}
-		return '&lt;' + innerContent + '&gt;';
-	});
+	content = content.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
 
 	return content;
 }
