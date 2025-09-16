@@ -126,15 +126,27 @@ function escapeAtParamReferences(content) {
 	content = content.replaceAll(/\*\*@param\b/g, '**\\@param');
 
 	// Escapes angle bracket emails that MDX interprets as invalid HTML tags like <email@domain.com> but excludes HTML comments
-	const commentPlaceholder = '___HTML_COMMENT_PLACEHOLDER___';
+	const commentPlaceholder = '___HTML_COMMENT_PLACEHOLDER_';
 	const comments = [];
+
+	// Protect HTML comments first
 	content = content.replace(/<!--[\s\S]*?-->/g, (match) => {
+		const index = comments.length;
 		comments.push(match);
-		return commentPlaceholder + (comments.length - 1) + commentPlaceholder;
+		return commentPlaceholder + index + '_END___';
 	});
 
-	content = content.replaceAll(/<([^>]*@[^>]*)>/g, '&lt;$1&gt;');
-	content = content.replace(new RegExp(commentPlaceholder + '(\\d+)' + commentPlaceholder, 'g'),
+	// Only escape angle brackets that contain @ and are not part of our protected comments
+	content = content.replace(/<([^>]*@[^>]*)>/g, (match, emailContent) => {
+		// Skip if this looks like a placeholder
+		if (emailContent.includes(commentPlaceholder)) {
+			return match;
+		}
+		return '&lt;' + emailContent + '&gt;';
+	});
+
+	// Restore HTML comments
+	content = content.replace(new RegExp(commentPlaceholder + '(\\d+)_END___', 'g'),
 		(match, index) => comments[parseInt(index)]
 	);
 
