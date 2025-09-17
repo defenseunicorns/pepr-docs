@@ -842,8 +842,16 @@ if (opts.dist) {
 
 				// IMMEDIATELY convert callouts in versioned content
 				const versionedFiles = await glob(`${starlightVersionDir}/**/*.md`);
+				console.log(`Checking ${versionedFiles.length} versioned files (${versionMajMin}) for callouts...`);
 				for (const file of versionedFiles) {
 					const content = await fs.readFile(file, 'utf8');
+
+					// Check for callouts first
+					const hasCallouts = content.includes('> [!');
+					if (hasCallouts) {
+						console.log(`Found callouts in versioned file (${versionMajMin}): ${file}`);
+					}
+
 					const converted = content.replace(
 						/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\](?:\n((?:^>.*\n?)*))?/gm,
 						(match, type, calloutContent) => {
@@ -856,7 +864,7 @@ if (opts.dist) {
 									.filter(line => line.length > 0)
 									.join('\n');
 							}
-							console.log(`Immediate: Converting ${type} callout in versioned ${file}`);
+							console.log(`Immediate: Converting ${type} callout in versioned ${file} (${versionMajMin})`);
 							return cleanContent ? `:::${mdxType}\n${cleanContent}\n:::` : `:::${mdxType}\n:::`;
 						}
 					);
