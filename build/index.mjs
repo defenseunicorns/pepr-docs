@@ -831,7 +831,14 @@ if (opts.dist) {
 		}
 		
 		// Copy versioned content only for versions declared in astro.config.mjs
-		for (const version of RUN.versions.filter(v => v !== 'latest')) {
+		// Filter to only process versions that exist in starlight-versions configuration
+		const configuredVersions = ['v0.54.0', 'v0.53.1']; // Should match astro.config.mjs
+		const availableConfiguredVersions = RUN.versions.filter(v =>
+			v !== 'latest' && configuredVersions.some(cv => v === cv)
+		);
+		console.log(`Processing only configured versions: ${availableConfiguredVersions.join(', ')}`);
+
+		for (const version of availableConfiguredVersions) {
 			const versionContentPath = `${RUN.work}/content/${version}`;
 			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
 			const starlightVersionDir = `${siteRoot}/src/content/docs/${versionMajMin}`;
