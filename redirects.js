@@ -50,7 +50,6 @@ export const redirects = {
 	'/main/code_of_conduct/': '/contribute/code_of_conduct/',
 	'/main/roadmap/': '/roadmap/',
 	'/code_of_conduct/': '/contribute/code_of_conduct/',
-    '/contribute/code-of-conduct/': '/contribute/code_of_conduct/',
 	'/support/': '/community/support/',
 	'/security/': '/community/security/',
 	'/contribute/': '/contribute/contributor-guide/',

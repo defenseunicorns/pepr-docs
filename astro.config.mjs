@@ -6,6 +6,20 @@ import starlightLlmsTxt from 'starlight-llms-txt';
 import tailwindcss from '@tailwindcss/vite';
 import starlightLinksValidator from 'starlight-links-validator';
 import { redirects } from './redirects.js';
+import { getStarlightVersions } from './build/version-discovery.mjs';
+
+// Dynamically discover versions
+const coreRepoPath = process.env.PEPR_CORE_PATH || '../pepr';
+let dynamicVersions = [];
+
+try {
+	// Try to get dynamic versions, fall back to empty array if not available
+	dynamicVersions = await getStarlightVersions(coreRepoPath, 2);
+	console.log('dynamicVersions =', dynamicVersions);
+} catch (error) {
+	console.warn('Could not discover versions dynamically:', error.message);
+	console.warn('Using empty versions array - build will include only latest content');
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,9 +32,7 @@ export default defineConfig({
 				...(process.env.CHECK_LINKS ? [starlightLinksValidator()] : []),
 				starlightLlmsTxt(),
 				starlightVersions({
-					versions: [
-						{ slug: 'v0.54', label: 'v0.54.0' },
-					],
+					versions: dynamicVersions,
 					current: { label: 'Latest' },
 				}),
 			],

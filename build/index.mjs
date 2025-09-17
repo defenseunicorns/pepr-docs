@@ -7,6 +7,7 @@ import * as child_process from 'node:child_process';
 import * as semver from 'semver';
 import { glob } from 'glob';
 import { heredoc } from './heredoc.mjs';
+import { discoverVersions, findCurrentVersion } from './version-discovery.mjs';
 
 const exec = util.promisify(child_process.exec);
 
@@ -46,9 +47,6 @@ async function activity(label, func) {
 	}
 }
 
-function majmin(version) {
-	return `${semver.major(version)}.${semver.minor(version)}`;
-}
 
 function rewriteRemoteVideoLinks(content) {
 	// rewrite raw githubusercontent video links into video tags
@@ -183,33 +181,13 @@ await activity(`Copy site src to work dir`, async () => {
 });
 
 await activity(`Search core repo versions`, async (log) => {
-	let { stdout } = await exec(`
-    cd ${RUN.core}
-    git tag
-  `);
-	const tags = stdout.trim().split('\n');
-	const vers = tags.filter(semver.valid);
-	const sort = semver.rsort(vers);
+	const { versions, retired } = await discoverVersions(RUN.core, RUN.cutoff);
 
-	const majmins = sort
-		.map((v) => majmin(v))
-		.reduce((list, mm) => {
-			list.includes(mm) ? null : list.push(mm);
-			return list;
-		}, []);
+	RUN.versions = versions;
+	RUN.retired = retired;
 
-	let ongoing = majmins.slice(0, RUN.cutoff);
-	RUN.retired = majmins.slice(RUN.cutoff);
-
-	// Only process the latest version of each major.minor to reduce build time
-	RUN.versions = ongoing.map(mm => {
-		return sort.find(ver => majmin(ver) === mm);
-	}).filter(Boolean);
-	RUN.versions.push('latest');
-
-	log.push(['ongoing', ongoing]);
-	log.push(['retired', RUN.retired]);
 	log.push(['versions', RUN.versions]);
+	log.push(['retired', RUN.retired]);
 });
 
 await activity(`Nuke retired version content`, async (log) => {
@@ -339,7 +317,7 @@ for (const version of RUN.versions) {
 	});
 
 	await activity('Process root level markdown files', async () => {
-		const rootMdFiles = ['SECURITY.md', 'CODE_OF_CONDUCT.md', 'SUPPORT.md'];
+		const rootMdFiles = ['SECURITY.md', 'CODE_OF_CONDUCT.md', 'CODE-OF-CONDUCT.md', 'SUPPORT.md'];
     let rootMdDir = '';
 		try {
 			for (let rootMdFile of rootMdFiles) {
@@ -350,11 +328,12 @@ for (const version of RUN.versions) {
 					.catch(() => false);
 
 				if (rootMdExists) {
+					console.log(`Found ${rootMdFile} for version ${RUN.version}`);
           let targetFileName;
           if (rootMdFile === 'SECURITY.md') {
             rootMdDir = `090_community`;
             targetFileName = 'security.md';
-          } else if (rootMdFile === 'CODE_OF_CONDUCT.md') {
+          } else if (rootMdFile === 'CODE_OF_CONDUCT.md' || rootMdFile === 'CODE-OF-CONDUCT.md') {
             rootMdDir = `100_contribute`;
             targetFileName = 'code_of_conduct.md';
           } else if (rootMdFile === 'SUPPORT.md') {
@@ -379,7 +358,7 @@ for (const version of RUN.versions) {
 					}
 					RUN.srcmds.push(indexFilePath);
 				} else {
-					console.log(`${rootMdFile} does not exist.`);
+					console.log(`${rootMdFile} does not exist for version ${RUN.version}.`);
 				}
 			}
 		} catch (error) {
@@ -504,8 +483,10 @@ for (const version of RUN.versions) {
 				if (slugPath.endsWith('/index')) {
 					slugPath = slugPath.replace('/index', '');
 				}
+				// Clean up any leading/trailing slashes and empty parts
+				slugPath = slugPath.replace(/^\/+|\/+$/g, '');
 				// Prepend version to create full slug path
-				const fullSlug = slugPath === 'index' ? versionMajMin : `${versionMajMin}/${slugPath}`;
+				const fullSlug = slugPath === '' || slugPath === 'index' ? versionMajMin : `${versionMajMin}/${slugPath}`;
 				slugField = `slug: ${fullSlug}`;
 			}
 
@@ -624,15 +605,14 @@ for (const version of RUN.versions) {
 }
 
 await activity(`Set current version alias`, async (log) => {
-	// Find the latest stable version (non-prerelease)
-	const stableVersions = RUN.versions.filter(v => v !== 'latest' && semver.prerelease(v) === null);
-	if (stableVersions.length === 0) {
+	// Find the latest stable version using the shared utility
+	const currentVersion = findCurrentVersion(RUN.versions);
+	if (!currentVersion) {
 		log.push(['current', 'no stable versions found']);
 		return;
 	}
-	
-	const currentVersion = stableVersions[0]; // Already sorted by rsort, so first is latest
-	const currentMajMin = majmin(currentVersion);
+
+	const currentMajMin = currentVersion.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
 	
 	// Create a "current" symlink/copy pointing to the latest stable version
 	const currentDir = `${RUN.site}/src/content/docs/current`;
@@ -789,15 +769,73 @@ if (opts.dist) {
 			}
 		}
 		
-		// Copy versioned content only for versions declared in astro.config.mjs
-		// Filter to only process versions that exist in starlight-versions configuration
-		const configuredVersions = ['v0.54.0', 'v0.53.1']; // Should match astro.config.mjs
-		const availableConfiguredVersions = RUN.versions.filter(v =>
-			v !== 'latest' && configuredVersions.some(cv => v === cv)
+		// Auto-generate version JSON config files for starlight-versions
+		console.log('Auto-generating version configuration files...');
+		const stableVersions = RUN.versions.filter(v =>
+			v !== 'latest' && semver.prerelease(v) === null
 		);
-		console.log(`Processing only configured versions: ${availableConfiguredVersions.join(', ')}`);
 
-		for (const version of availableConfiguredVersions) {
+		const versionConfigTemplate = {
+			"sidebar": [
+				{
+					"label": "User Guide",
+					"autogenerate": {
+						"directory": "user-guide"
+					}
+				},
+				{
+					"label": "Actions",
+					"autogenerate": {
+						"directory": "actions"
+					}
+				},
+				{
+					"label": "Tutorials",
+					"autogenerate": {
+						"directory": "tutorials"
+					}
+				},
+				{
+					"label": "Reference",
+					"autogenerate": {
+						"directory": "reference"
+					}
+				},
+				{
+					"label": "Community and Support",
+					"autogenerate": {
+						"directory": "community"
+					}
+				},
+				{
+					"label": "Contribute",
+					"autogenerate": {
+						"directory": "contribute"
+					}
+				},
+				{
+					"label": "Roadmap for Pepr",
+					"slug": "roadmap"
+				}
+			]
+		};
+
+		// Ensure versions directory exists
+		const versionsDir = `${siteRoot}/src/content/versions`;
+		await fs.mkdir(versionsDir, { recursive: true });
+
+		// Generate JSON config for each stable version
+		for (const version of stableVersions) {
+			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
+			const configPath = `${versionsDir}/${versionMajMin}.json`;
+
+			await fs.writeFile(configPath, JSON.stringify(versionConfigTemplate, null, 2));
+			console.log(`Generated version config: ${configPath}`);
+		}
+
+		console.log(`Processing discovered stable versions: ${stableVersions.join(', ')}`);
+
+		for (const version of stableVersions) {
 			const versionContentPath = `${RUN.work}/content/${version}`;
 			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
 			const starlightVersionDir = `${siteRoot}/src/content/docs/${versionMajMin}`;
