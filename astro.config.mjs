@@ -9,7 +9,7 @@ import { redirects } from './redirects.js';
 import { getStarlightVersions } from './build/version-discovery.mjs';
 
 // Dynamically discover versions
-const coreRepoPath = process.env.PEPR_CORE_PATH || '../pepr';
+const coreRepoPath = process.env.CORE || process.env.PEPR_CORE_PATH;
 let dynamicVersions = [];
 
 try {
