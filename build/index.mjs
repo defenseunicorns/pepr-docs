@@ -746,8 +746,16 @@ if (opts.dist) {
 
 			// IMMEDIATELY convert callouts in copied content
 			const copiedFiles = await glob(`${starlightContentDir}/**/*.md`);
+			console.log(`Checking ${copiedFiles.length} copied files for callouts...`);
 			for (const file of copiedFiles) {
 				const content = await fs.readFile(file, 'utf8');
+
+				// Check for callouts first
+				const hasCallouts = content.includes('> [!');
+				if (hasCallouts) {
+					console.log(`Found callouts in copied file: ${file}`);
+				}
+
 				const converted = content.replace(
 					/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\](?:\n((?:^>.*\n?)*))?/gm,
 					(match, type, calloutContent) => {
