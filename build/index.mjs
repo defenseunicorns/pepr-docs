@@ -811,8 +811,12 @@ if (opts.dist) {
 			const starlightVersionDir = `${siteRoot}/src/content/docs/${versionMajMin}`;
 
 			if (await fs.stat(versionContentPath).then(() => true).catch(() => false)) {
+				console.log(`Processing version ${version} - ensuring atomic operations...`);
 				await fs.mkdir(starlightVersionDir, { recursive: true });
 				await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
+
+				// Small delay to ensure file system operations complete
+				await new Promise(resolve => setTimeout(resolve, 100));
 
 				// IMMEDIATELY convert callouts in versioned content
 				const versionedFiles = await glob(`${starlightVersionDir}/**/*.md`);
@@ -934,6 +938,10 @@ if (opts.dist) {
 		} else {
 			console.log('FINAL: No callouts found to convert');
 		}
+
+		// Add delay to prevent race condition with starlight-versions plugin
+		console.log('Waiting for file system operations to stabilize...');
+		await new Promise(resolve => setTimeout(resolve, 500));
 
 		try {
 			console.log(`Building Starlight site from directory: ${siteRoot}`);
