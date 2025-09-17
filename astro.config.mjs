@@ -19,8 +19,9 @@ export default defineConfig({
 				starlightLlmsTxt(),
 				starlightVersions({
 					versions: [
-						{ slug: 'v0.53', label: 'v0.53.1' },
+						{ slug: 'v0.55', label: 'v0.55.0' },
 						{ slug: 'v0.54', label: 'v0.54.0' },
+						{ slug: 'v0.53', label: 'v0.53.1' },
 					],
 					current: { label: 'Latest' },
 				}),
