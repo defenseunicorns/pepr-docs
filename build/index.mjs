@@ -743,39 +743,6 @@ if (opts.dist) {
 		// Copy main version content to unversioned location (current/latest)
 		if (await fs.stat(`${RUN.work}/content/latest`).then(() => true).catch(() => false)) {
 			await fs.cp(`${RUN.work}/content/latest`, starlightContentDir, { recursive: true });
-
-			// IMMEDIATELY convert callouts in copied content
-			const copiedFiles = await glob(`${starlightContentDir}/**/*.md`);
-			console.log(`Checking ${copiedFiles.length} copied files for callouts...`);
-			for (const file of copiedFiles) {
-				const content = await fs.readFile(file, 'utf8');
-
-				// Check for callouts first
-				const hasCallouts = content.includes('> [!');
-				if (hasCallouts) {
-					console.log(`Found callouts in copied file: ${file}`);
-				}
-
-				const converted = content.replace(
-					/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\](?:\n((?:^>.*\n?)*))?/gm,
-					(match, type, calloutContent) => {
-						const mdxType = type.toLowerCase();
-						let cleanContent = '';
-						if (calloutContent) {
-							cleanContent = calloutContent
-								.split('\n')
-								.map(line => line.replace(/^> ?/, ''))
-								.filter(line => line.length > 0)
-								.join('\n');
-						}
-						console.log(`Immediate: Converting ${type} callout in copied ${file}`);
-						return cleanContent ? `:::${mdxType}\n${cleanContent}\n:::` : `:::${mdxType}\n:::`;
-					}
-				);
-				if (content !== converted) {
-					await fs.writeFile(file, converted);
-				}
-			}
 		}
 		
 		// Fix image paths in main content files
@@ -922,7 +889,52 @@ if (opts.dist) {
 				}
 			}
 		}
-		
+
+		// FINAL COMPREHENSIVE CALLOUT CONVERSION
+		// Convert ALL callouts in ALL content before Astro starts
+		console.log('FINAL: Converting all callouts before Astro starts...');
+		const allMarkdownFiles = await glob(`${siteRoot}/src/content/**/*.{md,mdx}`, {
+			ignore: ['**/node_modules/**']
+		});
+
+		let totalConversions = 0;
+		for (const file of allMarkdownFiles) {
+			const content = await fs.readFile(file, 'utf8');
+
+			// Check for any callout patterns
+			if (content.includes('> [!')) {
+				console.log(`FINAL: Found callouts in ${file}`);
+
+				const converted = content.replace(
+					/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\](?:\n((?:^>.*\n?)*))?/gm,
+					(match, type, calloutContent) => {
+						const mdxType = type.toLowerCase();
+						let cleanContent = '';
+						if (calloutContent) {
+							cleanContent = calloutContent
+								.split('\n')
+								.map(line => line.replace(/^> ?/, ''))
+								.filter(line => line.length > 0)
+								.join('\n');
+						}
+						console.log(`FINAL: Converting ${type} callout in ${file}`);
+						totalConversions++;
+						return cleanContent ? `:::${mdxType}\n${cleanContent}\n:::` : `:::${mdxType}\n:::`;
+					}
+				);
+
+				if (content !== converted) {
+					await fs.writeFile(file, converted);
+				}
+			}
+		}
+
+		if (totalConversions > 0) {
+			console.log(`FINAL: Converted ${totalConversions} callouts total`);
+		} else {
+			console.log('FINAL: No callouts found to convert');
+		}
+
 		try {
 			console.log(`Building Starlight site from directory: ${siteRoot}`);
 			console.log(`Expected dist output: ${siteRoot}/dist`);
