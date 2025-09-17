@@ -922,12 +922,15 @@ if (opts.dist) {
 
 			// CRITICAL: Convert any remaining callouts BEFORE astro build starts
 			// This must happen before starlight-versions plugin scans content
-			console.log('CRITICAL: Pre-astro callout conversion - scanning ALL content directories...');
+			console.log('CRITICAL: Pre-astro callout conversion - scanning ALL possible locations...');
 
-			// Scan only content directories that starlight-versions accesses
+			// Scan EVERYWHERE that starlight-versions might look
 			const contentGlobs = [
 				`${siteRoot}/src/content/**/*.{md,mdx}`,
 				`${siteRoot}/src/content/docs/v*/**/*.{md,mdx}`, // versioned content
+				`${siteRoot}/**/*.md`, // Any markdown files anywhere
+				`${siteRoot}/README.md`, // Root readme
+				`${siteRoot}/src/**/*.{md,mdx}`, // Any src markdown
 			];
 
 			let allContentFiles = [];
