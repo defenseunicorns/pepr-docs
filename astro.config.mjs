@@ -12,12 +12,16 @@ import { getStarlightVersions } from './build/version-discovery.mjs';
 const coreRepoPath = process.env.CORE || process.env.PEPR_CORE_PATH;
 let dynamicVersions = [];
 
-try {
-	// Try to get dynamic versions, fall back to empty array if not available
-	dynamicVersions = await getStarlightVersions(coreRepoPath, 2);
-	console.log('dynamicVersions =', dynamicVersions);
-} catch (error) {
-	console.warn('Could not discover versions dynamically:', error.message);
+if (coreRepoPath) {
+	try {
+		dynamicVersions = await getStarlightVersions(coreRepoPath, 2);
+		console.log('dynamicVersions =', dynamicVersions);
+	} catch (error) {
+		console.warn('Could not discover versions dynamically:', error.message);
+		console.warn('Using empty versions array - build will include only latest content');
+	}
+} else {
+	console.warn('No core repository path provided (CORE or PEPR_CORE_PATH environment variable)');
 	console.warn('Using empty versions array - build will include only latest content');
 }
 
@@ -31,10 +35,11 @@ export default defineConfig({
 			plugins: [
 				...(process.env.CHECK_LINKS ? [starlightLinksValidator()] : []),
 				starlightLlmsTxt(),
-				starlightVersions({
+				// Only include starlight-versions if we have versions to configure
+				...(dynamicVersions.length > 0 ? [starlightVersions({
 					versions: dynamicVersions,
 					current: { label: 'Latest' },
-				}),
+				})] : []),
 			],
 			customCss: ['./src/styles/global.css'],
 			title: 'Pepr',
