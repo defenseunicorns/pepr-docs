@@ -20,7 +20,6 @@ export default defineConfig({
 				starlightVersions({
 					versions: [
 						{ slug: 'v0.54', label: 'v0.54.0' },
-						{ slug: 'v0.53', label: 'v0.53.1' },
 					],
 					current: { label: 'Latest' },
 				}),

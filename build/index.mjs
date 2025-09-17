@@ -894,80 +894,8 @@ if (opts.dist) {
 			}
 		}
 
-		// FINAL COMPREHENSIVE CALLOUT CONVERSION
-		// Convert ALL callouts in ALL possible locations before Astro starts
-		console.log('FINAL: Converting all callouts in ALL locations before Astro starts...');
-
-		// Scan ALL possible locations where starlight-versions might look
-		const searchPaths = [
-			`${siteRoot}/src/content/**/*.{md,mdx}`,
-			`${siteRoot}/work/**/*.{md,mdx}`,
-			`${RUN.work}/**/*.{md,mdx}`,
-			`${siteRoot}/**/*.{md,mdx}`
-		];
-
-		let allMarkdownFiles = [];
-		for (const searchPath of searchPaths) {
-			try {
-				const files = await glob(searchPath, {
-					ignore: ['**/node_modules/**', '**/.git/**', '**/dist/**']
-				});
-				allMarkdownFiles.push(...files);
-			} catch (e) {
-				// Path might not exist, continue
-			}
-		}
-
-		// Remove duplicates
-		allMarkdownFiles = [...new Set(allMarkdownFiles)];
-		console.log(`FINAL: Scanning ${allMarkdownFiles.length} markdown files across all locations`);
-
-		let totalConversions = 0;
-		for (const file of allMarkdownFiles) {
-			try {
-				const content = await fs.readFile(file, 'utf8');
-
-				// Check for any callout patterns
-				if (content.includes('> [!')) {
-					console.log(`FINAL: Found callouts in ${file}`);
-
-					const converted = content.replace(
-						/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\](?:\n((?:^>.*\n?)*))?/gm,
-						(match, type, calloutContent) => {
-							const mdxType = type.toLowerCase();
-							let cleanContent = '';
-							if (calloutContent) {
-								cleanContent = calloutContent
-									.split('\n')
-									.map(line => line.replace(/^> ?/, ''))
-									.filter(line => line.length > 0)
-									.join('\n');
-							}
-							console.log(`FINAL: Converting ${type} callout in ${file}`);
-							totalConversions++;
-							return cleanContent ? `:::${mdxType}\n${cleanContent}\n:::` : `:::${mdxType}\n:::`;
-						}
-					);
-
-					if (content !== converted) {
-						await fs.writeFile(file, converted);
-					}
-				}
-			} catch (e) {
-				// File might be locked or not readable, continue
-				console.log(`FINAL: Could not process ${file}: ${e.message}`);
-			}
-		}
-
-		if (totalConversions > 0) {
-			console.log(`FINAL: Converted ${totalConversions} callouts total across all locations`);
-		} else {
-			console.log('FINAL: No callouts found to convert in any location');
-		}
-
-		// Add delay to prevent race condition with starlight-versions plugin
-		console.log('Waiting for file system operations to stabilize...');
-		await new Promise(resolve => setTimeout(resolve, 500));
+		// TEMPORARILY DISABLE ALL CONVERSION LOGIC FOR TESTING
+		console.log('TESTING: Skipping all callout conversion to isolate starlight-versions issue...');
 
 		try {
 			console.log(`Building Starlight site from directory: ${siteRoot}`);
