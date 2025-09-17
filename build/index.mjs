@@ -35,22 +35,14 @@ async function activity(label, func) {
 	let err = '';
 
 	try {
-		console.time(label);
 		await func(log);
 	} catch (e) {
 		err = e;
 	} finally {
-		console.timeEnd(label);
-		log.forEach(([key, val]) => {
-			console.log(' ', key.padEnd(10), ':', val);
-		});
-
 		if (err) {
 			['', err, '', 'State dump:', RUN].forEach((m) => console.error(m));
 			program.error('');
 		}
-
-		console.log();
 	}
 }
 
@@ -387,11 +379,11 @@ for (const version of RUN.versions) {
 					}
 					RUN.srcmds.push(indexFilePath);
 				} else {
-					console.log('${rootMdFile} does not exist.');
+					console.log(`${rootMdFile} does not exist.`);
 				}
 			}
 		} catch (error) {
-			console.error('Failed to process ${rootMdFile}:', error);
+			console.error(`Failed to process ${rootMdFile}:`, error);
 		}
 	});
 
