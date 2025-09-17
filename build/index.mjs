@@ -743,6 +743,31 @@ if (opts.dist) {
 		// Copy main version content to unversioned location (current/latest)
 		if (await fs.stat(`${RUN.work}/content/latest`).then(() => true).catch(() => false)) {
 			await fs.cp(`${RUN.work}/content/latest`, starlightContentDir, { recursive: true });
+
+			// IMMEDIATELY convert callouts in copied content
+			const copiedFiles = await glob(`${starlightContentDir}/**/*.md`);
+			for (const file of copiedFiles) {
+				const content = await fs.readFile(file, 'utf8');
+				const converted = content.replace(
+					/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\](?:\n((?:^>.*\n?)*))?/gm,
+					(match, type, calloutContent) => {
+						const mdxType = type.toLowerCase();
+						let cleanContent = '';
+						if (calloutContent) {
+							cleanContent = calloutContent
+								.split('\n')
+								.map(line => line.replace(/^> ?/, ''))
+								.filter(line => line.length > 0)
+								.join('\n');
+						}
+						console.log(`Immediate: Converting ${type} callout in copied ${file}`);
+						return cleanContent ? `:::${mdxType}\n${cleanContent}\n:::` : `:::${mdxType}\n:::`;
+					}
+				);
+				if (content !== converted) {
+					await fs.writeFile(file, converted);
+				}
+			}
 		}
 		
 		// Fix image paths in main content files
@@ -801,12 +826,37 @@ if (opts.dist) {
 		for (const version of RUN.versions.filter(v => v !== 'latest')) {
 			const versionContentPath = `${RUN.work}/content/${version}`;
 			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
-			const starlightVersionDir = `${starlightContentDir}/${versionMajMin}`;
-			
+			const starlightVersionDir = `${siteRoot}/src/content/docs/${versionMajMin}`;
+
 			if (await fs.stat(versionContentPath).then(() => true).catch(() => false)) {
 				await fs.mkdir(starlightVersionDir, { recursive: true });
 				await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
-				
+
+				// IMMEDIATELY convert callouts in versioned content
+				const versionedFiles = await glob(`${starlightVersionDir}/**/*.md`);
+				for (const file of versionedFiles) {
+					const content = await fs.readFile(file, 'utf8');
+					const converted = content.replace(
+						/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\](?:\n((?:^>.*\n?)*))?/gm,
+						(match, type, calloutContent) => {
+							const mdxType = type.toLowerCase();
+							let cleanContent = '';
+							if (calloutContent) {
+								cleanContent = calloutContent
+									.split('\n')
+									.map(line => line.replace(/^> ?/, ''))
+									.filter(line => line.length > 0)
+									.join('\n');
+							}
+							console.log(`Immediate: Converting ${type} callout in versioned ${file}`);
+							return cleanContent ? `:::${mdxType}\n${cleanContent}\n:::` : `:::${mdxType}\n:::`;
+						}
+					);
+					if (content !== converted) {
+						await fs.writeFile(file, converted);
+					}
+				}
+
 				// Fix image paths in versioned content files
 				console.log(`Fixing image paths in versioned content ${versionMajMin}...`);
 				const versionContentFiles = await glob(`${starlightVersionDir}/**/*.md`);
@@ -866,16 +916,17 @@ if (opts.dist) {
 			// This must happen before starlight-versions plugin scans content
 			console.log('CRITICAL: Pre-astro callout conversion - scanning ALL content directories...');
 
-			// Scan ALL possible content locations that starlight-versions might access
+			// Scan only content directories that starlight-versions accesses
 			const contentGlobs = [
 				`${siteRoot}/src/content/**/*.{md,mdx}`,
 				`${siteRoot}/src/content/docs/v*/**/*.{md,mdx}`, // versioned content
-				`${siteRoot}/**/*.{md,mdx}` // any other markdown files
 			];
 
 			let allContentFiles = [];
 			for (const glob_pattern of contentGlobs) {
-				const files = await glob(glob_pattern);
+				const files = await glob(glob_pattern, {
+					ignore: ['**/node_modules/**', '**/.git/**'] // Exclude node_modules and git
+				});
 				allContentFiles.push(...files);
 			}
 
