@@ -864,49 +864,73 @@ if (opts.dist) {
 
 			// CRITICAL: Convert any remaining callouts BEFORE astro build starts
 			// This must happen before starlight-versions plugin scans content
-			console.log('CRITICAL: Pre-astro callout conversion - scanning all content...');
-			const allContentFiles = await glob(`${siteRoot}/src/content/**/*.{md,mdx}`);
+			console.log('CRITICAL: Pre-astro callout conversion - scanning ALL content directories...');
+
+			// Scan ALL possible content locations that starlight-versions might access
+			const contentGlobs = [
+				`${siteRoot}/src/content/**/*.{md,mdx}`,
+				`${siteRoot}/src/content/docs/v*/**/*.{md,mdx}`, // versioned content
+				`${siteRoot}/**/*.{md,mdx}` // any other markdown files
+			];
+
+			let allContentFiles = [];
+			for (const glob_pattern of contentGlobs) {
+				const files = await glob(glob_pattern);
+				allContentFiles.push(...files);
+			}
+
+			// Remove duplicates
+			allContentFiles = [...new Set(allContentFiles)];
+
+			console.log(`Pre-astro: Found ${allContentFiles.length} markdown files to scan`);
 			let preAstroFixCount = 0;
 
 			for (const contentFile of allContentFiles) {
-				const content = await fs.readFile(contentFile, 'utf8');
-				let convertedContent = content;
+				try {
+					const content = await fs.readFile(contentFile, 'utf8');
+					let convertedContent = content;
 
-				// First check if this file has any > [! patterns and log them
-				const calloutMatches = content.match(/^> \[!.*$/gm);
-				if (calloutMatches) {
-					console.log(`FOUND CALLOUTS in ${contentFile}:`, calloutMatches);
-				}
-
-				// Convert GitHub callouts
-				convertedContent = convertedContent.replace(
-					/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
-					(match, type, calloutContent) => {
-						const mdxType = type.toLowerCase();
-						const cleanContent = calloutContent
-							.split('\n')
-							.map(line => line.replace(/^> ?/, ''))
-							.filter(line => line.length > 0)
-							.join('\n');
-						console.log(`Pre-astro: Converting ${type} callout in ${contentFile}`);
-						preAstroFixCount++;
-						return `:::${mdxType}\n${cleanContent}\n:::`;
+					// First check if this file has any > [! patterns and log them
+					const calloutMatches = content.match(/^> \[!.*$/gm);
+					if (calloutMatches) {
+						console.log(`FOUND CALLOUTS in ${contentFile}:`, calloutMatches);
 					}
-				);
 
-				// Also escape any problematic standalone exclamation marks that could be interpreted as JSX
-				const beforeEscape = convertedContent;
-				convertedContent = convertedContent.replace(
-					/^(\s*)!([A-Z][a-zA-Z]*\s)/gm,
-					'$1\\!$2'
-				);
-				if (beforeEscape !== convertedContent) {
-					console.log(`Pre-astro: Escaped standalone exclamation marks in ${contentFile}`);
-					preAstroFixCount++;
-				}
+					// Convert GitHub callouts with more comprehensive pattern
+					convertedContent = convertedContent.replace(
+						/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\](?:\n((?:^>.*\n?)*))?/gm,
+						(match, type, calloutContent) => {
+							const mdxType = type.toLowerCase();
+							let cleanContent = '';
+							if (calloutContent) {
+								cleanContent = calloutContent
+									.split('\n')
+									.map(line => line.replace(/^> ?/, ''))
+									.filter(line => line.length > 0)
+									.join('\n');
+							}
+							console.log(`Pre-astro: Converting ${type} callout in ${contentFile}`);
+							preAstroFixCount++;
+							return cleanContent ? `:::${mdxType}\n${cleanContent}\n:::` : `:::${mdxType}\n:::`;
+						}
+					);
 
-				if (content !== convertedContent) {
-					await fs.writeFile(contentFile, convertedContent);
+					// Also escape any problematic standalone exclamation marks
+					const beforeEscape = convertedContent;
+					convertedContent = convertedContent.replace(
+						/^(\s*)!([A-Z][a-zA-Z]*\s)/gm,
+						'$1\\!$2'
+					);
+					if (beforeEscape !== convertedContent) {
+						console.log(`Pre-astro: Escaped standalone exclamation marks in ${contentFile}`);
+						preAstroFixCount++;
+					}
+
+					if (content !== convertedContent) {
+						await fs.writeFile(contentFile, convertedContent);
+					}
+				} catch (error) {
+					console.log(`Pre-astro: Could not process ${contentFile}: ${error.message}`);
 				}
 			}
 
