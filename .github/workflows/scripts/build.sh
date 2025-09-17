@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CORE=$(realpath "/Users/amberfryar/workspace/pepr/pepr")
+CORE=$(realpath "$CORE")
 cd "$DOCS" || exit
 npm ci
         
