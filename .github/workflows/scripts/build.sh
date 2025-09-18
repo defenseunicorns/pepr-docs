@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CORE=$(realpath "$CORE")
-export CORE
+# export CORE
 cd "$DOCS" || exit
 npm ci
         
