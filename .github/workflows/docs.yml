@@ -86,4 +86,15 @@ jobs:
           path: ./docs/dist
 
       - name: Deploy the docs!
-        run: bash ./docs/.github/workflows/scripts/deploy.sh
+        run: |
+          BRANCH=deploy
+
+          cd "$DOCS"
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          git add --all
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "Auto-deploy docs"
+            git push origin "$BRANCH"
+          fi
