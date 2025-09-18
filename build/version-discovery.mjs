@@ -3,7 +3,8 @@ import * as util from 'node:util';
 import * as child_process from 'node:child_process';
 import * as fs from 'node:fs/promises';
 
-const exec = util.promisify(child_process.exec);
+const execFile = util.promisify(child_process.execFile);
+
 
 function majmin(version) {
 	return `${semver.major(version)}.${semver.minor(version)}`;
@@ -16,7 +17,7 @@ function majmin(version) {
  * @returns {Promise<{versions: string[], retired: string[]}>}
  */
 export async function discoverVersions(coreRepoPath, cutoff = 2) {
-	let { stdout } = await exec(`cd ${coreRepoPath} && git tag`);
+	let { stdout } = await execFile('git', ['tag'], { cwd: coreRepoPath });
 	const tags = stdout.trim().split('\n').filter(Boolean);
 	const vers = tags.filter(semver.valid);
 	const sort = semver.rsort(vers);
