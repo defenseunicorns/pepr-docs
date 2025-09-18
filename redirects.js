@@ -103,64 +103,11 @@ export const redirects = {
 	'/v0.54.0/roadmap/': '/v0.54/roadmap/',
     '/v0.54/contribute/code_of_conduct/': '/v0.54/contribute/code_of_conduct/',
 
-	// v0.53.1 to v0.53
-	'/v0.53.1/user-guide/': '/v0.53/user-guide/',
-	'/v0.53.1/user-guide/pepr-cli/': '/v0.53/user-guide/pepr-cli/',
-	'/v0.53.1/user-guide/sdk/': '/v0.53/user-guide/sdk/',
-	'/v0.53.1/user-guide/pepr-modules/': '/v0.53/user-guide/pepr-modules/',
-	'/v0.53.1/user-guide/capabilities/': '/v0.53/user-guide/capabilities/',
-	'/v0.53.1/user-guide/custom-resources/':
-		'/v0.53/user-guide/custom-resources/',
-	'/v0.53.1/user-guide/customization/': '/v0.53/user-guide/customization/',
-	'/v0.53.1/user-guide/feature-flags/': '/v0.53/user-guide/feature-flags/',
-	'/v0.53.1/user-guide/filters/': '/v0.53/user-guide/filters/',
-	'/v0.53.1/user-guide/generating_custom_metrics/':
-		'/v0.53/user-guide/generating-custom-metrics/',
-	'/v0.53.1/user-guide/generating-crds/': '/v0.53/user-guide/generating-crds/',
-	'/v0.53.1/user-guide/metrics/': '/v0.53/user-guide/metrics/',
-	'/v0.53.1/user-guide/onschedule/': '/v0.53/user-guide/onschedule/',
-	'/v0.53.1/user-guide/rbac/': '/v0.53/user-guide/rbac/',
-	'/v0.53.1/user-guide/store/': '/v0.53/user-guide/store/',
-	'/v0.53.1/user-guide/actions/': '/v0.53/actions/',
-	'/v0.53.1/user-guide/actions/mutate': '/v0.53/actions/mutate',
-	'/v0.53.1/user-guide/actions/validate': '/v0.53/actions/validate',
-	'/v0.53.1/user-guide/actions/reconcile': '/v0.53/actions/reconcile',
-	'/v0.53.1/user-guide/actions/watch': '/v0.53/actions/watch',
-	'/v0.53.1/user-guide/actions/finalize/': '/v0.53/actions/finalize',
-	'/v0.53.1/user-guide/actions/using-alias-child-logger/':
-		'/v0.53/actions/using-alias-child-logger/',
-	'/v0.53.1/pepr-tutorials/': '/v0.53/tutorials/',
-	'/v0.53.1/pepr-tutorials/create-pepr-module/':
-		'/v0.53/tutorials/create-pepr-module/',
-	'/v0.53.1/pepr-tutorials/create-pepr-dashboard/':
-		'/v0.53/tutorials/create-pepr-dashboard/',
-	'/v0.53.1/pepr-tutorials/create-pepr-operator/':
-		'/v0.53/tutorials/create-pepr-operator/',
-	'/v0.53.1/pepr-tutorials/pepr-gitops-workflow/':
-		'/v0.53/tutorials/pepr-gitops-workflow/',
-	'/v0.53.1/module-examples/': '/v0.53/reference/module-examples/',
-	'/v0.53.1/best-practices/': '/v0.53/reference/best-practices/',
-	'/v0.53.1/faq/': '/v0.53/reference/faq/',
-	'/v0.53.1/community/': '/v0.53/community/',
-	'/v0.53.1/community/pepr-media/': '/v0.53/community/pepr-media/',
-	'/v0.53.1/security/': '/v0.53/community/security/',
-	'/v0.53.1/support/': '/v0.53/community/support/',
-	'/v0.53.1/contribute/': '/v0.53/contribute/contributor-guide/',
-	'/v0.53.1/code_of_conduct/': '/v0.53/contribute/code_of_conduct/',
-	'/v0.53.1/roadmap/': '/v0.53/roadmap/',
-    '/v0.53/contribute/code-of-conduct/': '/v0.53/contribute/code_of_conduct/',
-	//Versioned Internal Links redirects
-	'/v0.53/code_of_conduct/': '/v0.53/contribute/code_of_conduct/',
-	'/v0.53/support/': '/v0.53/community/support/',
-	'/v0.53/security/': '/v0.53/community/security/',
-	'/v0.53/contribute/': '/v0.53/contribute/contributor-guide/',
+	
 	'/v0.54/code_of_conduct/': '/v0.54/contribute/code_of_conduct/',
-    '/v0.54/contribute/code-of-conduct/': '/v0.53/contribute/code_of_conduct/',
-    '/v0.54/contribute/code_of_conduct/': '/v0.53/contribute/code_of_conduct/',
 	'/v0.54/support/': '/v0.54/community/support/',
 	'/v0.54/security/': '/v0.54/community/security/',
 	'/v0.54/contribute/': '/v0.54/contribute/contributor-guide/',
 	// Version-specific redirects
 	'/v0.54.0/': '/v0.54/',
-	'/v0.53.0/': '/v0.53/',
 };

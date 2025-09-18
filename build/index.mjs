@@ -637,6 +637,87 @@ await activity(`Set current version alias`, async (log) => {
 	}
 });
 
+// Auto-generate version JSON config files for starlight-versions (moved outside dist check)
+await activity(`Generate version configuration files`, async (log) => {
+	console.log('Auto-generating version configuration files...');
+	const stableVersions = RUN.versions.filter(v =>
+		v !== 'latest' && semver.prerelease(v) === null
+	);
+
+	const versionConfigTemplate = {
+		"sidebar": [
+			{
+				"label": "User Guide",
+				"autogenerate": {
+					"directory": "user-guide"
+				}
+			},
+			{
+				"label": "Actions",
+				"autogenerate": {
+					"directory": "actions"
+				}
+			},
+			{
+				"label": "Tutorials",
+				"autogenerate": {
+					"directory": "tutorials"
+				}
+			},
+			{
+				"label": "Reference",
+				"autogenerate": {
+					"directory": "reference"
+				}
+			},
+			{
+				"label": "Community and Support",
+				"autogenerate": {
+					"directory": "community"
+				}
+			},
+			{
+				"label": "Contribute",
+				"autogenerate": {
+					"directory": "contribute"
+				}
+			},
+			{
+				"label": "Roadmap for Pepr",
+				"slug": "roadmap"
+			}
+		]
+	};
+
+	// Get the site root directory (3 levels up from RUN.site which is src/content/docs)
+	const siteRoot = path.dirname(path.dirname(path.dirname(RUN.site)));
+	const versionsDir = `${siteRoot}/src/content/versions`;
+
+	// Clear existing version configs
+	await fs.rm(versionsDir, { recursive: true, force: true });
+	await fs.mkdir(versionsDir, { recursive: true });
+
+	// Generate JSON config only for versions that actually have content
+	for (const version of stableVersions) {
+		const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
+		const versionContentPath = `${RUN.work}/content/${version}`;
+
+		// Only create config if content directory exists and has files
+		const contentExists = await fs.stat(versionContentPath).then(async () => {
+			const files = await fs.readdir(versionContentPath, { recursive: true });
+			return files.some(f => f.endsWith('.md'));
+		}).catch(() => false);
+
+		if (contentExists) {
+			const configPath = `${versionsDir}/${versionMajMin}.json`;
+			await fs.writeFile(configPath, JSON.stringify(versionConfigTemplate, null, 2));
+			log.push(['generated', `${versionMajMin}.json`]);
+		} else {
+			log.push(['skipped', `${versionMajMin} (no content)`]);
+		}
+	}
+});
+
 if (opts.dist) {
 	await activity(`Clean dist dir`, async (log) => {
 		RUN.dist = path.resolve(`./dist`);
@@ -769,73 +850,9 @@ if (opts.dist) {
 			}
 		}
 		
-		// Auto-generate version JSON config files for starlight-versions
-		console.log('Auto-generating version configuration files...');
-		const stableVersions = RUN.versions.filter(v =>
-			v !== 'latest' && semver.prerelease(v) === null
-		);
+		console.log(`Processing discovered stable versions: ${RUN.versions.filter(v => v !== 'latest' && semver.prerelease(v) === null).join(', ')}`);
 
-		const versionConfigTemplate = {
-			"sidebar": [
-				{
-					"label": "User Guide",
-					"autogenerate": {
-						"directory": "user-guide"
-					}
-				},
-				{
-					"label": "Actions",
-					"autogenerate": {
-						"directory": "actions"
-					}
-				},
-				{
-					"label": "Tutorials",
-					"autogenerate": {
-						"directory": "tutorials"
-					}
-				},
-				{
-					"label": "Reference",
-					"autogenerate": {
-						"directory": "reference"
-					}
-				},
-				{
-					"label": "Community and Support",
-					"autogenerate": {
-						"directory": "community"
-					}
-				},
-				{
-					"label": "Contribute",
-					"autogenerate": {
-						"directory": "contribute"
-					}
-				},
-				{
-					"label": "Roadmap for Pepr",
-					"slug": "roadmap"
-				}
-			]
-		};
-
-		// Ensure versions directory exists
-		const versionsDir = `${siteRoot}/src/content/versions`;
-		await fs.mkdir(versionsDir, { recursive: true });
-
-		// Generate JSON config for each stable version
-		for (const version of stableVersions) {
-			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
-			const configPath = `${versionsDir}/${versionMajMin}.json`;
-
-			await fs.writeFile(configPath, JSON.stringify(versionConfigTemplate, null, 2));
-			console.log(`Generated version config: ${configPath}`);
-		}
-
-		console.log(`Processing discovered stable versions: ${stableVersions.join(', ')}`);
-
-		for (const version of stableVersions) {
+		for (const version of RUN.versions.filter(v => v !== 'latest' && semver.prerelease(v) === null)) {
 			const versionContentPath = `${RUN.work}/content/${version}`;
 			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
 			const starlightVersionDir = `${siteRoot}/src/content/docs/${versionMajMin}`;
