@@ -31,8 +31,7 @@ export const redirects = {
 	'/main/user-guide/actions/using-alias-child-logger/':
 		'/actions/using-alias-child-logger/',
 	'/main/pepr-tutorials/': '/tutorials/',
-	'/main/pepr-tutorials/create-pepr-module/':
-		'/tutorials/create-pepr-module/',
+	'/main/pepr-tutorials/create-pepr-module/': '/tutorials/create-pepr-module/',
 	'/main/pepr-tutorials/create-pepr-dashboard/':
 		'/tutorials/create-pepr-dashboard/',
 	'/main/pepr-tutorials/create-pepr-operator/':
@@ -47,14 +46,14 @@ export const redirects = {
 	'/main/security/': '/community/security/',
 	'/main/support/': '/community/support/',
 	'/main/contribute/': '/contribute/contributor-guide/',
-	'/main/code_of_conduct/': '/contribute/code_of_conduct/',
+	'/main/code_of_conduct/': '/contribute/code-of-conduct/',
 	'/main/roadmap/': '/roadmap/',
-	'/code_of_conduct/': '/contribute/code_of_conduct/',
+	'/code_of_conduct/': '/contribute/code-of-conduct/',
 	'/support/': '/community/support/',
 	'/security/': '/community/security/',
 	'/contribute/': '/contribute/contributor-guide/',
-    '/metrics-endpoints/': '/metric/',
-    '/user-guide/generating_custom_metrics/': '/user-guide/generating-custom-metrics/',
+	'/metrics-endpoints/': '/metric/',
+	'/user-guide/generating_custom_metrics/': '/user-guide/generating-custom-metrics/',
 
 	// v0.54.0 to v0.54
 	'/v0.54.0/user-guide/': '/v0.54/user-guide/',
@@ -67,8 +66,10 @@ export const redirects = {
 	'/v0.54.0/user-guide/customization/': '/v0.54/user-guide/customization/',
 	'/v0.54.0/user-guide/feature-flags/': '/v0.54/user-guide/feature-flags/',
 	'/v0.54.0/user-guide/filters/': '/v0.54/user-guide/filters/',
-	'/v0.54.0/user-guide/generating_custom_metrics/':
-		'/v0.54/user-guide/generating-custom-metrics/',
+	'/v0.54.0/user-guide/generating-custom-metrics/':
+		'/v0.54/user-guide/generating_custom_metrics/',
+	'/v0.54/user-guide/generating-custom-metrics/':
+		'/v0.54/user-guide/generating_custom_metrics/',
 	'/v0.54.0/user-guide/generating-crds/': '/v0.54/user-guide/generating-crds/',
 	'/v0.54.0/user-guide/metrics/': '/v0.54/user-guide/metrics/',
 	'/v0.54.0/user-guide/onschedule/': '/v0.54/user-guide/onschedule/',
@@ -101,10 +102,7 @@ export const redirects = {
 	'/v0.54.0/contribute/': '/v0.54/contribute/contributor-guide/',
 	'/v0.54.0/code_of_conduct/': '/v0.54/contribute/code_of_conduct/',
 	'/v0.54.0/roadmap/': '/v0.54/roadmap/',
-    '/v0.54/contribute/code_of_conduct/': '/v0.54/contribute/code_of_conduct/',
 
-	
-	'/v0.54/code_of_conduct/': '/v0.54/contribute/code_of_conduct/',
 	'/v0.54/support/': '/v0.54/community/support/',
 	'/v0.54/security/': '/v0.54/community/security/',
 	'/v0.54/contribute/': '/v0.54/contribute/contributor-guide/',

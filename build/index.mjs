@@ -17,7 +17,10 @@ function fixImagePaths(content) {
 		.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
 		.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
 		.replace(/_images\/pepr\.png/g, '/assets/pepr.png')
-		.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png')
+		.replace(
+			/resources\/create-pepr-operator\/(light|dark)\.png/g,
+			'/assets/$1.png'
+		)
 		.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
 }
 
@@ -47,7 +50,6 @@ async function activity(label, func) {
 	}
 }
 
-
 function rewriteRemoteVideoLinks(content) {
 	// rewrite raw githubusercontent video links into video tags
 	return content.replaceAll(
@@ -64,7 +66,13 @@ function rewriteNumberedFileLinks(content) {
 	Array.from(content.matchAll(/\]\([^)]*\)/g), (m) => m[0]).forEach(
 		(mdLink) => {
 			let parts = mdLink.replace('](', '').replace(')', '').split('/');
-			if (parts[0] === '..' && parts[1] === '..' && (parts[2] === 'CODE_OF_CONDUCT.md' || parts[2] === 'SECURITY.md' || parts[2] === 'SUPPORT.md')) {
+			if (
+				parts[0] === '..' &&
+				parts[1] === '..' &&
+				(parts[2] === 'CODE_OF_CONDUCT.md' ||
+					parts[2] === 'SECURITY.md' ||
+					parts[2] === 'SUPPORT.md')
+			) {
 				parts.shift();
 			}
 			if (parts[0].startsWith('http')) {
@@ -119,7 +127,10 @@ function escapeAtParamReferences(content) {
 	content = content.replace(/<!--([\s\S]*?)-->/g, '{/* $1 */}');
 
 	// Escape email addresses in angle brackets that aren't already in links or code
-	content = content.replace(/<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>/g, '&lt;$1&gt;');
+	content = content.replace(
+		/<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>/g,
+		'&lt;$1&gt;'
+	);
 
 	// Escape any remaining angle brackets that contain @ or ! characters that could be interpreted as invalid HTML tags
 	// This catches edge cases like <@something> or <!something> that aren't proper HTML
@@ -134,8 +145,8 @@ function escapeAtParamReferences(content) {
 			// Remove the '> ' prefix from each line and clean up
 			const cleanContent = calloutContent
 				.split('\n')
-				.map(line => line.replace(/^> ?/, ''))
-				.filter(line => line.length > 0)
+				.map((line) => line.replace(/^> ?/, ''))
+				.filter((line) => line.length > 0)
 				.join('\n');
 
 			console.log(`Converting ${type} callout to MDX admonition`);
@@ -246,7 +257,7 @@ for (const version of RUN.versions) {
 		console.log(`Skipping ${RUN.version} - already built`);
 		continue;
 	}
-	
+
 	console.log(`Processing version ${RUN.version}...`);
 
 	await activity(`Create version dir`, async (log) => {
@@ -304,9 +315,11 @@ for (const version of RUN.versions) {
 	await activity(`Copy repo resources`, async (log) => {
 		const srcresources = `${RUN.core}/docs`;
 		const dstresources = `${RUN.work}/static/${RUN.version}`;
-		
+
 		// Copy all resource directories from docs
-		const resourceDirs = await glob(`${srcresources}/**/resources`, { onlyDirectories: true });
+		const resourceDirs = await glob(`${srcresources}/**/resources`, {
+			onlyDirectories: true,
+		});
 		for (const resourceDir of resourceDirs) {
 			const relativePath = path.relative(srcresources, resourceDir);
 			const dstPath = path.join(dstresources, relativePath);
@@ -317,8 +330,13 @@ for (const version of RUN.versions) {
 	});
 
 	await activity('Process root level markdown files', async () => {
-		const rootMdFiles = ['SECURITY.md', 'CODE_OF_CONDUCT.md', 'CODE-OF-CONDUCT.md', 'SUPPORT.md'];
-    let rootMdDir = '';
+		const rootMdFiles = [
+			'SECURITY.md',
+			'CODE_OF_CONDUCT.md',
+			'CODE-OF-CONDUCT.md',
+			'SUPPORT.md',
+		];
+		let rootMdDir = '';
 		try {
 			for (let rootMdFile of rootMdFiles) {
 				const rootMdPath = `${RUN.core}/${rootMdFile}`;
@@ -329,17 +347,20 @@ for (const version of RUN.versions) {
 
 				if (rootMdExists) {
 					console.log(`Found ${rootMdFile} for version ${RUN.version}`);
-          let targetFileName;
-          if (rootMdFile === 'SECURITY.md') {
-            rootMdDir = `090_community`;
-            targetFileName = 'security.md';
-          } else if (rootMdFile === 'CODE_OF_CONDUCT.md' || rootMdFile === 'CODE-OF-CONDUCT.md') {
-            rootMdDir = `100_contribute`;
-            targetFileName = 'code_of_conduct.md';
-          } else if (rootMdFile === 'SUPPORT.md') {
-            rootMdDir = `090_community`;
-            targetFileName = 'support.md';
-          }
+					let targetFileName;
+					if (rootMdFile === 'SECURITY.md') {
+						rootMdDir = `090_community`;
+						targetFileName = 'security.md';
+					} else if (
+						rootMdFile === 'CODE_OF_CONDUCT.md' ||
+						rootMdFile === 'CODE-OF-CONDUCT.md'
+					) {
+						rootMdDir = `100_contribute`;
+						targetFileName = 'code_of_conduct.md';
+					} else if (rootMdFile === 'SUPPORT.md') {
+						rootMdDir = `090_community`;
+						targetFileName = 'support.md';
+					}
 
 					const indexFilePath = `${rootMdDir}/${targetFileName}`;
 
@@ -358,7 +379,9 @@ for (const version of RUN.versions) {
 					}
 					RUN.srcmds.push(indexFilePath);
 				} else {
-					console.log(`${rootMdFile} does not exist for version ${RUN.version}.`);
+					console.log(
+						`${rootMdFile} does not exist for version ${RUN.version}.`
+					);
 				}
 			}
 		} catch (error) {
@@ -378,7 +401,7 @@ for (const version of RUN.versions) {
 				RUN.srcmd.file.endsWith('090_community/security.md') ||
 				RUN.srcmd.file.endsWith('100_contribute/code_of_conduct.md') ||
 				RUN.srcmd.file.endsWith('090_community/support.md')
-			){
+			) {
 				src = `${RUN.srcmd.file}`;
 			} else {
 				src = `${RUN.coredocs}/${RUN.srcmd.file}`;
@@ -410,15 +433,15 @@ for (const version of RUN.versions) {
 			// Map old structure to new structure for consistency
 			const structureMapping = {
 				'pepr-tutorials': 'tutorials',
-				'user-guide/actions': 'actions'
+				'user-guide/actions': 'actions',
 			};
 
 			// Handle single-file mappings (README.md files that should become direct .md files)
 			const singleFileMapping = {
 				'best-practices': 'reference/best-practices.md',
 				'module-examples': 'reference/module-examples.md',
-				'faq': 'reference/faq.md',
-				'roadmap': 'roadmap.md'
+				faq: 'reference/faq.md',
+				roadmap: 'roadmap.md',
 			};
 
 			let newdir = rawdir;
@@ -466,12 +489,15 @@ for (const version of RUN.versions) {
 			// title as sanitized content from first heading
 			const heading = RUN.srcmd.content.match(/#[\s]+(.*)/);
 			let title = heading[1].replaceAll('`', '').replaceAll(':', '');
-			
+
 			// Override title to "Overview" for README.md files
-			if (RUN.srcmd.newfile.endsWith('/README.md') || RUN.srcmd.newfile === 'README.md') {
+			if (
+				RUN.srcmd.newfile.endsWith('/README.md') ||
+				RUN.srcmd.newfile === 'README.md'
+			) {
 				title = 'Overview';
 			}
-			
+
 			RUN.srcmd.content = RUN.srcmd.content.replaceAll(heading[0], '');
 
 			// Generate slug for versioned content
@@ -486,7 +512,10 @@ for (const version of RUN.versions) {
 				// Clean up any leading/trailing slashes and empty parts
 				slugPath = slugPath.replace(/^\/+|\/+$/g, '');
 				// Prepend version to create full slug path
-				const fullSlug = slugPath === '' || slugPath === 'index' ? versionMajMin : `${versionMajMin}/${slugPath}`;
+				const fullSlug =
+					slugPath === '' || slugPath === 'index'
+						? versionMajMin
+						: `${versionMajMin}/${slugPath}`;
 				slugField = `slug: ${fullSlug}`;
 			}
 
@@ -546,18 +575,20 @@ for (const version of RUN.versions) {
 
 	await activity(`Write version layout & landing content`, async (log) => {
 		const idxMd = `${RUN.verdir}/index.md`;
-		
+
 		// Generate slug for versioned index pages
 		let slugField = '';
 		if (RUN.version !== 'latest') {
 			const versionMajMin = RUN.version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
 			slugField = `slug: ${versionMajMin}`;
 		}
-		
+
 		const idxFront = heredoc`
       ---
       title: Pepr
-      description: Pepr Documentation - ${RUN.version}${slugField ? `\n      ${slugField}` : ''}
+      description: Pepr Documentation - ${RUN.version}${
+			slugField ? `\n      ${slugField}` : ''
+		}
       ---
     `;
 		const rootMd = `${RUN.core}/README.md`;
@@ -589,8 +620,8 @@ for (const version of RUN.versions) {
 				const mdxType = type.toLowerCase();
 				const cleanContent = calloutContent
 					.split('\n')
-					.map(line => line.replace(/^> ?/, ''))
-					.filter(line => line.length > 0)
+					.map((line) => line.replace(/^> ?/, ''))
+					.filter((line) => line.length > 0)
 					.join('\n');
 				console.log(`Converting ${type} callout in index to MDX admonition`);
 				return `:::${mdxType}\n${cleanContent}\n:::`;
@@ -613,20 +644,25 @@ await activity(`Set current version alias`, async (log) => {
 	}
 
 	const currentMajMin = currentVersion.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
-	
+
 	// Create a "current" symlink/copy pointing to the latest stable version
 	const currentDir = `${RUN.site}/src/content/docs/current`;
 	const targetDir = `${RUN.site}/src/content/docs/v${currentMajMin}`;
-	
+
 	// Remove existing current directory if it exists
 	try {
 		await fs.rm(currentDir, { recursive: true, force: true });
 	} catch (e) {
 		// Directory might not exist, that's fine
 	}
-	
+
 	// Check if target version directory exists
-	if (await fs.stat(targetDir).then(() => true).catch(() => false)) {
+	if (
+		await fs
+			.stat(targetDir)
+			.then(() => true)
+			.catch(() => false)
+	) {
 		// Copy the content instead of symlink for better compatibility
 		await fs.cp(targetDir, currentDir, { recursive: true });
 		log.push(['current', `v${currentMajMin} (${currentVersion})`]);
@@ -640,53 +676,53 @@ await activity(`Set current version alias`, async (log) => {
 // Auto-generate version JSON config files for starlight-versions (moved outside dist check)
 await activity(`Generate version configuration files`, async (log) => {
 	console.log('Auto-generating version configuration files...');
-	const stableVersions = RUN.versions.filter(v =>
-		v !== 'latest' && semver.prerelease(v) === null
+	const stableVersions = RUN.versions.filter(
+		(v) => v !== 'latest' && semver.prerelease(v) === null
 	);
 
 	const versionConfigTemplate = {
-		"sidebar": [
+		sidebar: [
 			{
-				"label": "User Guide",
-				"autogenerate": {
-					"directory": "user-guide"
-				}
+				label: 'User Guide',
+				autogenerate: {
+					directory: 'user-guide',
+				},
 			},
 			{
-				"label": "Actions",
-				"autogenerate": {
-					"directory": "actions"
-				}
+				label: 'Actions',
+				autogenerate: {
+					directory: 'actions',
+				},
 			},
 			{
-				"label": "Tutorials",
-				"autogenerate": {
-					"directory": "tutorials"
-				}
+				label: 'Tutorials',
+				autogenerate: {
+					directory: 'tutorials',
+				},
 			},
 			{
-				"label": "Reference",
-				"autogenerate": {
-					"directory": "reference"
-				}
+				label: 'Reference',
+				autogenerate: {
+					directory: 'reference',
+				},
 			},
 			{
-				"label": "Community and Support",
-				"autogenerate": {
-					"directory": "community"
-				}
+				label: 'Community and Support',
+				autogenerate: {
+					directory: 'community',
+				},
 			},
 			{
-				"label": "Contribute",
-				"autogenerate": {
-					"directory": "contribute"
-				}
+				label: 'Contribute',
+				autogenerate: {
+					directory: 'contribute',
+				},
 			},
 			{
-				"label": "Roadmap for Pepr",
-				"slug": "roadmap"
-			}
-		]
+				label: 'Roadmap for Pepr',
+				slug: 'roadmap',
+			},
+		],
 	};
 
 	// Get the site root directory (3 levels up from RUN.site which is src/content/docs)
@@ -703,14 +739,20 @@ await activity(`Generate version configuration files`, async (log) => {
 		const versionContentPath = `${RUN.work}/content/${version}`;
 
 		// Only create config if content directory exists and has files
-		const contentExists = await fs.stat(versionContentPath).then(async () => {
-			const files = await fs.readdir(versionContentPath, { recursive: true });
-			return files.some(f => f.endsWith('.md'));
-		}).catch(() => false);
+		const contentExists = await fs
+			.stat(versionContentPath)
+			.then(async () => {
+				const files = await fs.readdir(versionContentPath, { recursive: true });
+				return files.some((f) => f.endsWith('.md'));
+			})
+			.catch(() => false);
 
 		if (contentExists) {
 			const configPath = `${versionsDir}/${versionMajMin}.json`;
-			await fs.writeFile(configPath, JSON.stringify(versionConfigTemplate, null, 2));
+			await fs.writeFile(
+				configPath,
+				JSON.stringify(versionConfigTemplate, null, 2)
+			);
 			log.push(['generated', `${versionMajMin}.json`]);
 		} else {
 			log.push(['skipped', `${versionMajMin} (no content)`]);
@@ -728,34 +770,44 @@ if (opts.dist) {
 	});
 
 	await activity(`Build Starlight site into dist dir`, async () => {
-		// Copy content to Starlight content directories  
+		// Copy content to Starlight content directories
 		// RUN.site is ./src/content/docs, we need to go up 3 levels to get to the project root
 		const siteRoot = path.dirname(path.dirname(path.dirname(RUN.site)));
 		const starlightContentDir = `${siteRoot}/src/content/docs`;
 		const publicDir = `${siteRoot}/public`;
-		
+
 		// Clear existing content directory
 		await fs.rm(starlightContentDir, { recursive: true, force: true });
 		await fs.mkdir(starlightContentDir, { recursive: true });
-		
+
 		// Copy images from work/static to public directory for Starlight
-		console.log('Copying images and resources to src and public directories...');
-		
+		console.log(
+			'Copying images and resources to src and public directories...'
+		);
+
 		// Check what static directories exist
 		const staticDirs = await fs.readdir(`${RUN.work}/static`).catch(() => []);
 		console.log('Available static directories:', staticDirs);
-		
+
 		// Clean existing directories (only need resources since we use assets for images)
-		await fs.rm(`${siteRoot}/src/content/docs/resources`, { recursive: true, force: true });
-		
+		await fs.rm(`${siteRoot}/src/content/docs/resources`, {
+			recursive: true,
+			force: true,
+		});
+
 		// Try to copy images and resources from any available version
 		let resourcesCopied = false;
 		for (const version of ['main', 'v0.54.0', 'v0.53.1']) {
 			const staticVersionPath = `${RUN.work}/static/${version}`;
 			const imagesPath = `${staticVersionPath}/_images`;
 			const resourcesPath = `${staticVersionPath}/040_pepr-tutorials/resources`;
-			
-			if (await fs.stat(imagesPath).then(() => true).catch(() => false)) {
+
+			if (
+				await fs
+					.stat(imagesPath)
+					.then(() => true)
+					.catch(() => false)
+			) {
 				console.log(`Copying images from ${imagesPath} to assets directory`);
 				// Copy all images directly to assets directory
 				const imageFiles = await fs.readdir(imagesPath);
@@ -766,38 +818,59 @@ if (opts.dist) {
 				}
 				resourcesCopied = true;
 			}
-			
-			if (await fs.stat(resourcesPath).then(() => true).catch(() => false)) {
-				console.log(`Copying resources from ${resourcesPath} to src directories`);
-				await fs.mkdir(`${siteRoot}/src/content/docs/resources`, { recursive: true });
-				
+
+			if (
+				await fs
+					.stat(resourcesPath)
+					.then(() => true)
+					.catch(() => false)
+			) {
+				console.log(
+					`Copying resources from ${resourcesPath} to src directories`
+				);
+				await fs.mkdir(`${siteRoot}/src/content/docs/resources`, {
+					recursive: true,
+				});
+
 				// Copy each subdirectory but flatten the numbered prefix
-				const resourceSubdirs = await fs.readdir(resourcesPath, { withFileTypes: true });
+				const resourceSubdirs = await fs.readdir(resourcesPath, {
+					withFileTypes: true,
+				});
 				for (const dirent of resourceSubdirs) {
 					if (dirent.isDirectory()) {
 						const srcDir = path.join(resourcesPath, dirent.name);
 						// Remove numbered prefix (e.g., "030_create-pepr-operator" -> "create-pepr-operator")
 						const cleanName = dirent.name.replace(/^\d+_/, '');
-						const dstDir = path.join(`${siteRoot}/src/content/docs/resources`, cleanName);
+						const dstDir = path.join(
+							`${siteRoot}/src/content/docs/resources`,
+							cleanName
+						);
 						await fs.cp(srcDir, dstDir, { recursive: true });
 						console.log(`Copied ${srcDir} -> ${dstDir}`);
 					}
 				}
 				resourcesCopied = true;
 			}
-			
+
 			if (resourcesCopied) break;
 		}
-		
+
 		if (!resourcesCopied) {
 			console.log('Warning: No images or resources found to copy');
 		}
-		
+
 		// Copy main version content to unversioned location (current/latest)
-		if (await fs.stat(`${RUN.work}/content/latest`).then(() => true).catch(() => false)) {
-			await fs.cp(`${RUN.work}/content/latest`, starlightContentDir, { recursive: true });
+		if (
+			await fs
+				.stat(`${RUN.work}/content/latest`)
+				.then(() => true)
+				.catch(() => false)
+		) {
+			await fs.cp(`${RUN.work}/content/latest`, starlightContentDir, {
+				recursive: true,
+			});
 		}
-		
+
 		// Fix image paths in main content files
 		console.log('Fixing image paths in content files...');
 		const contentFiles = await glob(`${starlightContentDir}/**/*.md`);
@@ -815,10 +888,12 @@ if (opts.dist) {
 					const mdxType = type.toLowerCase();
 					const cleanContent = calloutContent
 						.split('\n')
-						.map(line => line.replace(/^> ?/, ''))
-						.filter(line => line.length > 0)
+						.map((line) => line.replace(/^> ?/, ''))
+						.filter((line) => line.length > 0)
 						.join('\n');
-					console.log(`Final pass: Converting ${type} callout in ${contentFile}`);
+					console.log(
+						`Final pass: Converting ${type} callout in ${contentFile}`
+					);
 					return `:::${mdxType}\n${cleanContent}\n:::`;
 				}
 			);
@@ -836,45 +911,70 @@ if (opts.dist) {
 			console.log(`Updated image paths in ${updatedFilesCount} files`);
 		}
 		if (calloutsFixedCount > 0) {
-			console.log(`Fixed callouts in ${calloutsFixedCount} files during final pass`);
+			console.log(
+				`Fixed callouts in ${calloutsFixedCount} files during final pass`
+			);
 		}
-		
+
 		// Copy resource images to assets directory
-		const resourceImages = await glob(`${siteRoot}/src/content/docs/resources/**/*.png`);
+		const resourceImages = await glob(
+			`${siteRoot}/src/content/docs/resources/**/*.png`
+		);
 		if (resourceImages.length > 0) {
-			console.log(`Copying ${resourceImages.length} resource images to assets directory...`);
+			console.log(
+				`Copying ${resourceImages.length} resource images to assets directory...`
+			);
 			for (const resourceImage of resourceImages) {
 				const imageName = path.basename(resourceImage);
 				const destPath = `${publicDir}/assets/${imageName}`;
 				await fs.cp(resourceImage, destPath);
 			}
 		}
-		
-		console.log(`Processing discovered stable versions: ${RUN.versions.filter(v => v !== 'latest' && semver.prerelease(v) === null).join(', ')}`);
 
-		for (const version of RUN.versions.filter(v => v !== 'latest' && semver.prerelease(v) === null)) {
+		console.log(
+			`Processing discovered stable versions: ${RUN.versions
+				.filter((v) => v !== 'latest' && semver.prerelease(v) === null)
+				.join(', ')}`
+		);
+
+		for (const version of RUN.versions.filter(
+			(v) => v !== 'latest' && semver.prerelease(v) === null
+		)) {
 			const versionContentPath = `${RUN.work}/content/${version}`;
 			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
 			const starlightVersionDir = `${siteRoot}/src/content/docs/${versionMajMin}`;
 
-			if (await fs.stat(versionContentPath).then(() => true).catch(() => false)) {
-				console.log(`Processing version ${version} - ensuring atomic operations...`);
+			if (
+				await fs
+					.stat(versionContentPath)
+					.then(() => true)
+					.catch(() => false)
+			) {
+				console.log(
+					`Processing version ${version} - ensuring atomic operations...`
+				);
 				await fs.mkdir(starlightVersionDir, { recursive: true });
-				await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
+				await fs.cp(versionContentPath, starlightVersionDir, {
+					recursive: true,
+				});
 
 				// Small delay to ensure file system operations complete
-				await new Promise(resolve => setTimeout(resolve, 100));
+				await new Promise((resolve) => setTimeout(resolve, 100));
 
 				// IMMEDIATELY convert callouts in versioned content
 				const versionedFiles = await glob(`${starlightVersionDir}/**/*.md`);
-				console.log(`Checking ${versionedFiles.length} versioned files (${versionMajMin}) for callouts...`);
+				console.log(
+					`Checking ${versionedFiles.length} versioned files (${versionMajMin}) for callouts...`
+				);
 				for (const file of versionedFiles) {
 					const content = await fs.readFile(file, 'utf8');
 
 					// Check for callouts first
 					const hasCallouts = content.includes('> [!');
 					if (hasCallouts) {
-						console.log(`Found callouts in versioned file (${versionMajMin}): ${file}`);
+						console.log(
+							`Found callouts in versioned file (${versionMajMin}): ${file}`
+						);
 					}
 
 					const converted = content.replace(
@@ -885,12 +985,16 @@ if (opts.dist) {
 							if (calloutContent) {
 								cleanContent = calloutContent
 									.split('\n')
-									.map(line => line.replace(/^> ?/, ''))
-									.filter(line => line.length > 0)
+									.map((line) => line.replace(/^> ?/, ''))
+									.filter((line) => line.length > 0)
 									.join('\n');
 							}
-							console.log(`Immediate: Converting ${type} callout in versioned ${file} (${versionMajMin})`);
-							return cleanContent ? `:::${mdxType}\n${cleanContent}\n:::` : `:::${mdxType}\n:::`;
+							console.log(
+								`Immediate: Converting ${type} callout in versioned ${file} (${versionMajMin})`
+							);
+							return cleanContent
+								? `:::${mdxType}\n${cleanContent}\n:::`
+								: `:::${mdxType}\n:::`;
 						}
 					);
 					if (content !== converted) {
@@ -899,8 +1003,12 @@ if (opts.dist) {
 				}
 
 				// Fix image paths in versioned content files
-				console.log(`Fixing image paths in versioned content ${versionMajMin}...`);
-				const versionContentFiles = await glob(`${starlightVersionDir}/**/*.md`);
+				console.log(
+					`Fixing image paths in versioned content ${versionMajMin}...`
+				);
+				const versionContentFiles = await glob(
+					`${starlightVersionDir}/**/*.md`
+				);
 				let versionUpdatedCount = 0;
 				let versionCalloutsFixedCount = 0;
 				for (const contentFile of versionContentFiles) {
@@ -915,10 +1023,12 @@ if (opts.dist) {
 							const mdxType = type.toLowerCase();
 							const cleanContent = calloutContent
 								.split('\n')
-								.map(line => line.replace(/^> ?/, ''))
-								.filter(line => line.length > 0)
+								.map((line) => line.replace(/^> ?/, ''))
+								.filter((line) => line.length > 0)
 								.join('\n');
-							console.log(`Final pass: Converting ${type} callout in versioned ${contentFile}`);
+							console.log(
+								`Final pass: Converting ${type} callout in versioned ${contentFile}`
+							);
 							return `:::${mdxType}\n${cleanContent}\n:::`;
 						}
 					);
@@ -933,16 +1043,22 @@ if (opts.dist) {
 					}
 				}
 				if (versionUpdatedCount > 0) {
-					console.log(`Updated image paths in ${versionUpdatedCount} versioned files`);
+					console.log(
+						`Updated image paths in ${versionUpdatedCount} versioned files`
+					);
 				}
 				if (versionCalloutsFixedCount > 0) {
-					console.log(`Fixed callouts in ${versionCalloutsFixedCount} versioned files during final pass`);
+					console.log(
+						`Fixed callouts in ${versionCalloutsFixedCount} versioned files during final pass`
+					);
 				}
 			}
 		}
 
 		// TEMPORARILY DISABLE ALL CONVERSION LOGIC FOR TESTING
-		console.log('TESTING: Skipping all callout conversion to isolate starlight-versions issue...');
+		console.log(
+			'TESTING: Skipping all callout conversion to isolate starlight-versions issue...'
+		);
 
 		try {
 			console.log(`Building Starlight site from directory: ${siteRoot}`);
@@ -958,7 +1074,9 @@ if (opts.dist) {
 
 			// CRITICAL: Convert any remaining callouts BEFORE astro build starts
 			// This must happen before starlight-versions plugin scans content
-			console.log('CRITICAL: Pre-astro callout conversion - scanning ALL possible locations...');
+			console.log(
+				'CRITICAL: Pre-astro callout conversion - scanning ALL possible locations...'
+			);
 
 			// Scan EVERYWHERE that starlight-versions might look
 			const contentGlobs = [
@@ -972,7 +1090,7 @@ if (opts.dist) {
 			let allContentFiles = [];
 			for (const glob_pattern of contentGlobs) {
 				const files = await glob(glob_pattern, {
-					ignore: ['**/node_modules/**', '**/.git/**'] // Exclude node_modules and git
+					ignore: ['**/node_modules/**', '**/.git/**'], // Exclude node_modules and git
 				});
 				allContentFiles.push(...files);
 			}
@@ -980,7 +1098,9 @@ if (opts.dist) {
 			// Remove duplicates
 			allContentFiles = [...new Set(allContentFiles)];
 
-			console.log(`Pre-astro: Found ${allContentFiles.length} markdown files to scan`);
+			console.log(
+				`Pre-astro: Found ${allContentFiles.length} markdown files to scan`
+			);
 			let preAstroFixCount = 0;
 
 			for (const contentFile of allContentFiles) {
@@ -1003,13 +1123,17 @@ if (opts.dist) {
 							if (calloutContent) {
 								cleanContent = calloutContent
 									.split('\n')
-									.map(line => line.replace(/^> ?/, ''))
-									.filter(line => line.length > 0)
+									.map((line) => line.replace(/^> ?/, ''))
+									.filter((line) => line.length > 0)
 									.join('\n');
 							}
-							console.log(`Pre-astro: Converting ${type} callout in ${contentFile}`);
+							console.log(
+								`Pre-astro: Converting ${type} callout in ${contentFile}`
+							);
 							preAstroFixCount++;
-							return cleanContent ? `:::${mdxType}\n${cleanContent}\n:::` : `:::${mdxType}\n:::`;
+							return cleanContent
+								? `:::${mdxType}\n${cleanContent}\n:::`
+								: `:::${mdxType}\n:::`;
 						}
 					);
 
@@ -1020,7 +1144,9 @@ if (opts.dist) {
 						'$1\\!$2'
 					);
 					if (beforeEscape !== convertedContent) {
-						console.log(`Pre-astro: Escaped standalone exclamation marks in ${contentFile}`);
+						console.log(
+							`Pre-astro: Escaped standalone exclamation marks in ${contentFile}`
+						);
 						preAstroFixCount++;
 					}
 
@@ -1028,44 +1154,59 @@ if (opts.dist) {
 						await fs.writeFile(contentFile, convertedContent);
 					}
 				} catch (error) {
-					console.log(`Pre-astro: Could not process ${contentFile}: ${error.message}`);
+					console.log(
+						`Pre-astro: Could not process ${contentFile}: ${error.message}`
+					);
 				}
 			}
 
 			if (preAstroFixCount > 0) {
-				console.log(`CRITICAL: Pre-astro conversion fixed ${preAstroFixCount} potential MDX issues`);
+				console.log(
+					`CRITICAL: Pre-astro conversion fixed ${preAstroFixCount} potential MDX issues`
+				);
 			} else {
 				console.log('Pre-astro check: no MDX issues found');
 			}
 
 			// Execute build with better error handling
-			const buildResult = await exec(`cd ${siteRoot} && npm run build`, {
-				maxBuffer: 1024 * 1024 * 10 // 10MB buffer
-			});
-			
+			const buildResult = await util.promisify(child_process.execFile)(
+				'npm',
+				['run', 'build'],
+				{
+					cwd: siteRoot,
+					maxBuffer: 1024 * 1024 * 10, // 10MB buffer
+				}
+			);
+
 			console.log('Build stdout:', buildResult.stdout);
 			if (buildResult.stderr) {
 				console.log('Build stderr:', buildResult.stderr);
 			}
-			
+
 			// Check what's in siteRoot after building
 			try {
 				const filesAfter = await fs.readdir(siteRoot);
 				console.log('Files in siteRoot after build:', filesAfter);
 			} catch (e) {
-				console.error('Failed to read siteRoot directory after build:', e.message);
+				console.error(
+					'Failed to read siteRoot directory after build:',
+					e.message
+				);
 			}
-			
+
 			// Copy the built site from Astro's output directory to our dist directory
 			const astroDist = `${siteRoot}/dist`;
 			console.log(`Checking for Astro dist directory at: ${astroDist}`);
 			console.log(`Target dist directory: ${RUN.dist}`);
-			
-			const astroDistExists = await fs.stat(astroDist).then(() => true).catch((e) => {
-				console.log(`Astro dist stat error:`, e.message);
-				return false;
-			});
-			
+
+			const astroDistExists = await fs
+				.stat(astroDist)
+				.then(() => true)
+				.catch((e) => {
+					console.log(`Astro dist stat error:`, e.message);
+					return false;
+				});
+
 			if (astroDistExists) {
 				console.log(`Astro dist directory found, contents:`);
 				try {
@@ -1074,10 +1215,12 @@ if (opts.dist) {
 				} catch (e) {
 					console.log(`Could not read dist contents:`, e.message);
 				}
-				
+
 				// Check if source and destination are the same
 				if (path.resolve(astroDist) === path.resolve(RUN.dist)) {
-					console.log(`Astro output is already in the correct location: ${RUN.dist}`);
+					console.log(
+						`Astro output is already in the correct location: ${RUN.dist}`
+					);
 					console.log(`No copying needed - build is complete!`);
 				} else {
 					// Ensure target directory exists and is empty
@@ -1087,10 +1230,12 @@ if (opts.dist) {
 					} catch (e) {
 						console.log(`Error preparing target directory:`, e.message);
 					}
-					
+
 					try {
 						await fs.cp(astroDist, RUN.dist, { recursive: true });
-						console.log(`Successfully copied built site from ${astroDist} to ${RUN.dist}`);
+						console.log(
+							`Successfully copied built site from ${astroDist} to ${RUN.dist}`
+						);
 					} catch (copyError) {
 						console.error(`Copy failed:`, copyError);
 						throw copyError;
@@ -1102,7 +1247,7 @@ if (opts.dist) {
 				try {
 					const rootContents = await fs.readdir(siteRoot);
 					console.log(`Contents of siteRoot (${siteRoot}):`, rootContents);
-					
+
 					// Check if there's a dist directory anywhere else
 					for (const item of rootContents) {
 						const itemPath = `${siteRoot}/${item}`;
@@ -1116,7 +1261,9 @@ if (opts.dist) {
 				} catch (e) {
 					console.log(`Could not inspect siteRoot:`, e.message);
 				}
-				throw new Error('Astro build did not produce expected output directory');
+				throw new Error(
+					'Astro build did not produce expected output directory'
+				);
 			}
 		} catch (error) {
 			console.error('Build or copy failed:', error.message);
