@@ -53,7 +53,7 @@ All resources will include `ownerReferences`, triggering cascading deletion when
 
 First, create a new Pepr module for your operator:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 npx pepr init \
   --name operator \
@@ -63,7 +63,7 @@ npx pepr init \
   --yes &&
 cd operator # set working directory as the new pepr module
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 To track your progress in this tutorial, let's treat it as a `git` repository:
 
@@ -80,11 +80,11 @@ git init && git add --all && git commit -m "npx pepr init"
 The WebApp Custom Resource Definition (CRD) specifies the structure and validation for your custom resource.
 Create the necessary directory structure:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 mkdir -p capabilities/crd/generated capabilities/crd/source
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Generate a class based on the WebApp CRD using [kubernetes-fluent-client](https://github.com/defenseunicorns/kubernetes-fluent-client).
 This allows us to react to the CRD fields in a type-safe manner.
@@ -95,12 +95,12 @@ Create a CRD named `crd.yaml` for the WebApp that includes:
 - Configurable replica count
 - Status tracking
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/crd/source/crd.yaml \
   -o capabilities/crd/source/crd.yaml
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Examine the contents of `capabilities/crd/source/crd.yaml`.
 Note that the status should be listed under `subresources` to make it writable.
@@ -109,12 +109,12 @@ Enums are used to restrict the values that can be assigned to a property.
 
 Create an interface for the CRD spec with the following command:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/crd/generated/webapp-v1alpha1.ts \
   -o capabilities/crd/generated/webapp-v1alpha1.ts
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Examine the contents of `capabilities/crd/generated/webapp-v1alpha1.ts`.
 
@@ -122,12 +122,12 @@ Create a TypeScript file that contains the WebApp CRD named `webapp.crd.ts`.
 This will enable the controller to automatically create the CRD on startup.
 Use the command:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/crd/source/webapp.crd.ts \
   -o capabilities/crd/source/webapp.crd.ts
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Take a moment to commit your changes for CRD creation:
 
@@ -139,24 +139,24 @@ The `webapp.crd.ts` file defines the structure of our CRD, including the validat
 
 Create a file that will automatically register the CRD on startup named `capabilities/crd/register.ts`:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/crd/register.ts \
   -o capabilities/crd/register.ts
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 The `register.ts` file contains logic to ensure our CRD is created in the cluster when the operator starts up, avoiding the need for manual CRD installation.
 
 Create a file to validate that WebApp instances are in valid namespaces and have a maximum of `7` replicas.
 Create a `validator.ts` file with the command:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/crd/validator.ts \
   -o capabilities/crd/validator.ts
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 The `validator.ts` file implements validation logic for our WebApp resources, ensuring they meet our requirements before they're accepted by the cluster.
 
@@ -178,20 +178,20 @@ Now, let's create helper functions that will generate the Kubernetes resources m
 
 Create a `controller` folder in the `capabilities` folder and create a `generators.ts` file. This file will contain functions that generate Kubernetes objects for the operator to deploy (with the ownerReferences automatically included). Since these resources are owned by the WebApp resource, they will be deleted when the WebApp resource is deleted.
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 mkdir -p capabilities/controller
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Create `generators.ts` with the following command:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/controller/generators.ts \
   -o capabilities/controller/generators.ts
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 The `generators.ts` file contains functions to create all the necessary Kubernetes resources for our WebApp, including properly configured Deployments, Services, and ConfigMaps with appropriate labels and selectors.
 
@@ -215,23 +215,23 @@ Now, create the function that reacts to changes in WebApp instances. This functi
 
 In the base of the `capabilities` folder, create a `reconciler.ts` file and add the following:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/reconciler.ts \
   -o capabilities/reconciler.ts
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 The `reconciler.ts` file contains the core logic of our operator, handling the creation, updating, and deletion of WebApp resources and ensuring the cluster state matches the desired state.
 
 Finally, create the `index.ts` file in the `capabilities` folder and add the following:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/capabilities/index.ts \
   -o capabilities/index.ts
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 The `index.ts` file contains the WebAppController capability and the functions that are used to watch for changes to the WebApp resource and corresponding Kubernetes resources.
 
@@ -261,7 +261,7 @@ new PeprModule(cfg, [WebAppController]);
 
 Using `sed`, replace the contents of the file to use our new `WebAppController`:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 # Use the WebAppController Module
 sed -i '' -e '/new PeprModule(cfg, \[/,/\]);/c\
@@ -274,7 +274,7 @@ else
   sed -i 's|import { HelloPepr } from "./capabilities/hello-pepr";|import { WebAppController } from "./capabilities";|' ./pepr.ts
 fi
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Commit your changes now that the WebAppController is part of the Pepr Module:
 
@@ -313,12 +313,12 @@ npx pepr update --skip-template-update
 
 Build the Pepr module by running:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 npx pepr format && 
 npx pepr build
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Commit your changes after the build completes:
 
@@ -362,14 +362,14 @@ This process creates a self-contained deployment unit that includes everything n
 
 To deploy your operator to a Kubernetes cluster:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 kubectl apply -f dist/pepr-module-my-operator-uuid.yaml;
 # Wait for pods to have a status so we can check for readiness
 sleep 10; 
 kubectl wait --for=condition=Ready pods -l app -n pepr-system --timeout=120s
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 **What's happening during deployment?**  
 
@@ -402,13 +402,13 @@ If your operator doesn't start properly, check these common issues:
 
 Verify the deployment was successful by checking if the CRD has been properly registered:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 # Wait for crd to be registered
 sleep 10;
 kubectl get crd | grep webapp
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 You should see `webapps.pepr.io` in the output, which confirms your Custom Resource Definition was created successfully.
 
@@ -417,7 +417,7 @@ You should see `webapps.pepr.io` in the output, which confirms your Custom Resou
 You can use `kubectl explain` to see the structure of your custom resource.
 It may take a moment for the cluster to recognize this resource before the following command will work:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 # This command takes a lot of time to succeed the first time after CRD creation
 until kubectl explain wa.spec >/dev/null 2>&1; do
@@ -426,7 +426,7 @@ done
 
 kubectl explain wa.spec
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Expected Output:
 
@@ -500,23 +500,23 @@ This continuous loop ensures your application maintains its expected configurati
 
 Let's create an instance of our custom `WebApp` resource in English with a light theme and 1 replicas:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/webapp-light-en.yaml \
   -o webapp-light-en.yaml
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Examine the contents of `webapp-light-en.yaml`. It defines a WebApp with English language, light theme, and 1 replica.
 
 Next, apply it to the cluster:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 kubectl create namespace webapps &&
 kubectl apply -f webapp-light-en.yaml
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 **How resource creation works**  
 
@@ -535,11 +535,11 @@ All this logic is in the code we wrote earlier in the tutorial.
 
 Now, verify that the WebApp and its owned resources were created properly:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 kubectl get cm,svc,deploy,webapp -n webapps
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Expected Output:
 
@@ -561,11 +561,11 @@ deployment.apps/webapp-light-en   1/1     1            1           5s
 
 The status field is how our operator communicates the current state of the WebApp:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 kubectl get wa webapp-light-en -n webapps -ojsonpath="{.status}" | jq
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Expected Output:
 
@@ -585,11 +585,11 @@ This status information comes from our reconciler code, which updates these fiel
 
 You can also see events related to your WebApp that provide a timeline of actions taken by the operator:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 kubectl describe wa webapp-light-en -n webapps
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Expected Output:
 
@@ -638,13 +638,13 @@ The browser should display a light theme web application:
 
 A key feature of operators is their ability to automatically repair resources when they're deleted or changed. Let's test this by deleting the ConfigMap:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 kubectl delete cm -n webapps --all &&
 sleep 10 && 
 kubectl get cm -n webapps 
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Expected output:
 
@@ -677,12 +677,12 @@ git add webapp-light-en.yaml && git commit -m "Add WebApp resource for light mod
 Now let's test changing the WebApp's specification.
 Copy down the next WebApp resource with the following command:
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 curl -s https://raw.githubusercontent.com/defenseunicorns/pepr-excellent-examples/main/pepr-operator/webapp-dark-es.yaml \
   -o webapp-dark-es.yaml
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 Compare the contents of `webapp-light-en.yaml` and `webapp-dark-es.yaml` with the command:
 
@@ -692,11 +692,11 @@ diff --side-by-side \
   webapp-dark-es.yaml
 ```
 
-<!-- Start Block -->
+{/*  Start Block  */}
 ```bash
 kubectl apply -f webapp-dark-es.yaml 
 ```
-<!-- End Block -->
+{/*  End Block  */}
 
 > 💡 **Note**: We've changed the theme from light to dark and the language from English (en) to Spanish (es).
 

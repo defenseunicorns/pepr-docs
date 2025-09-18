@@ -14,8 +14,8 @@ import { sdk } from "pepr";
 
 Returns list of all containers in a pod. Accepts the following parameters:
 
-- **@param peprValidationRequest** The request/pod to get the containers from
-- **@param containerType** The type of container to get
+- **\@param peprValidationRequest** The request/pod to get the containers from
+- **\@param containerType** The type of container to get
 
 **Usage:**
 
@@ -53,9 +53,9 @@ let result = containers(peprValidationRequest, "ephemeralContainers")
 
 Returns the owner reference for a Kubernetes resource as an array. Accepts the following parameters:
 
-- **@param kubernetesResource: GenericKind** The Kubernetes resource to get the owner reference for
-- **@param blockOwnerDeletion: boolean** If true, AND if the owner has the "foregroundDeletion" finalizer, then the owner cannot be deleted from the key-value store until this reference is removed.
-- **@param controller: boolean** If true, this reference points to the managing controller.
+- **\@param kubernetesResource: GenericKind** The Kubernetes resource to get the owner reference for
+- **\@param blockOwnerDeletion: boolean** If true, AND if the owner has the "foregroundDeletion" finalizer, then the owner cannot be deleted from the key-value store until this reference is removed.
+- **\@param controller: boolean** If true, this reference points to the managing controller.
 
 **Usage:**
 
@@ -70,9 +70,9 @@ const ownerRef = getOwnerRefFrom(kubernetesResource);
 
 Write a K8s event for a CRD. Accepts the following parameters:
 
-- **@param kubernetesResource: GenericKind** The Kubernetes resource to write the event for
-- **@param event** The event to write, should contain a human-readable message for the event
-- **@param options** Configuration options for the event.
+- **\@param kubernetesResource: GenericKind** The Kubernetes resource to write the event for
+- **\@param event** The event to write, should contain a human-readable message for the event
+- **\@param options** Configuration options for the event.
   - eventType: string – The type of event to write, for example "Warning"
   - eventReason: string – The reason for the event, for example "ReconciliationFailed"
   - reportingComponent: string – The component that is reporting the event, for example "uds.dev/operator"
@@ -97,7 +97,7 @@ writeEvent(kubernetesResource, event, {
 
 Returns a sanitized resource name to make the given name a valid Kubernetes resource name. Accepts the following parameter:
 
-- **@param resourceName** The name of the resource to sanitize
+- **\@param resourceName** The name of the resource to sanitize
 
 **Usage:**
 
