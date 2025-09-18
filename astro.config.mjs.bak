@@ -31,7 +31,7 @@ export default defineConfig({
 	redirects,
 	integrations: [
 		starlight({
-			favicon: './public/pepr.svg',
+			favicon: '/pepr.svg',
 			plugins: [
 				...(process.env.CHECK_LINKS ? [starlightLinksValidator()] : []),
 				starlightLlmsTxt(),
