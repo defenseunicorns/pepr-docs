@@ -112,94 +112,126 @@ async function activity(label, func) {
 	}
 }
 
-function rewriteRemoteVideoLinks(content) {
-	// rewrite raw githubusercontent video links into video tags
+// Utility function for checking if a string is an integer
+function isInt(str) {
+	return Number.isInteger(Number(str));
+}
+
+// Convert remote video links to video tags
+function convertVideoLinks(content) {
 	return content.replaceAll(
 		/https[\S]*.mp4/g,
 		(url) => `<video class="td-content" controls src="${url}"></video>`
 	);
 }
 
-function isInt(str) {
-	return Number.isInteger(Number(str));
+// Remove numbered prefixes from path parts
+function removeNumberedPrefixes(parts) {
+	return parts.map((part) => {
+		const [prefix, ...rest] = part.split('_');
+		return isInt(prefix) ? rest.join('_') : part;
+	});
 }
 
-function rewriteNumberedFileLinks(content) {
-	Array.from(content.matchAll(/\]\([^)]*\)/g), (m) => m[0]).forEach(
-		(mdLink) => {
-			let parts = mdLink.replace('](', '').replace(')', '').split('/');
-			if (
-				parts[0] === '..' &&
-				parts[1] === '..' &&
-				(parts[2] === 'CODE_OF_CONDUCT.md' ||
-					parts[2] === 'SECURITY.md' ||
-					parts[2] === 'SUPPORT.md')
-			) {
-				parts.shift();
-			}
-			if (parts[0].startsWith('http')) {
-				return;
-			}
+// Handle special community file paths
+function normalizeCommunityFilePaths(parts) {
+	if (
+		parts[0] === '..' &&
+		parts[1] === '..' &&
+		(parts[2] === 'CODE_OF_CONDUCT.md' ||
+			parts[2] === 'SECURITY.md' ||
+			parts[2] === 'SUPPORT.md')
+	) {
+		parts.shift();
+	}
+	return parts;
+}
 
-			parts = parts.map((part) => {
-				const [prefix, ...rest] = part.split('_');
-				return isInt(prefix) ? rest.join('_') : part;
-			});
+// Remove README.md from paths (treat directories as index)
+function removeReadmeFromPaths(parts) {
+	if (parts.at(-1) === 'README.md') {
+		parts.pop();
+	}
+	return parts;
+}
 
-			let newLink = `](${parts.join('/')})`;
+// Handle legacy image paths
+function normalizeLegacyImagePaths(parts) {
+	if (parts[0].startsWith('_images')) {
+		parts[0] = '__images';
+	}
+	return parts;
+}
 
-			content = content.replaceAll(mdLink, newLink);
+// Process markdown links for file path cleanup
+function processMarkdownLinks(content) {
+	const linkMatches = Array.from(content.matchAll(/\]\([^)]*\)/g), (m) => m[0]);
+
+	linkMatches.forEach((mdLink) => {
+		let parts = mdLink.replace('](', '').replace(')', '').split('/');
+
+		// Skip external URLs
+		if (parts[0].startsWith('http')) {
+			return;
 		}
-	);
+
+		// Apply transformations in sequence
+		parts = normalizeCommunityFilePaths(parts);
+		parts = removeNumberedPrefixes(parts);
+		parts = removeReadmeFromPaths(parts);
+		parts = normalizeLegacyImagePaths(parts);
+
+		// Convert to lowercase and create new link
+		const newLink = `](${parts.join('/').toLowerCase()})`;
+		content = content.replaceAll(mdLink, newLink);
+	});
+
 	return content;
 }
 
-function rewriteReadmeFileLinks(content) {
-	Array.from(content.matchAll(/\]\([^)]*\)/g), (m) => m[0]).forEach(
-		(mdLink) => {
-			let parts = mdLink.replace('](', '').replace(')', '').split('/');
-			if (parts.at(-1) === 'README.md') {
-				parts.pop();
-			}
-			if (parts[0].startsWith('_images')) {
-				parts[0] = '__images';
-			}
-			let newLink = `](${parts.join('/')})`;
-			content = content.replaceAll(mdLink, newLink);
-		}
-	);
-	return content;
+// Escape @param in markdown bold syntax
+function escapeAtParams(content) {
+	return content.replaceAll(/\*\*@param\b/g, '**\\@param');
 }
 
-function rewriteFileLinksAsLowerCase(content) {
-	Array.from(content.matchAll(/\]\([^)]*\)/g), (m) => m[0]).forEach(
-		(mdLink) => {
-			let newLink = mdLink.toLowerCase();
-			content = content.replaceAll(mdLink, newLink);
-		}
-	);
-	return content;
+// Convert HTML comments to MDX comments
+function convertHtmlToMdxComments(content) {
+	return content.replace(/<!--([\s\S]*?)-->/g, '{/* $1 */}');
 }
 
-function escapeAtParamReferences(content) {
-	// Escapes @param in markdown bold syntax to prevent MDX parsing issues
-	content = content.replaceAll(/\*\*@param\b/g, '**\\@param');
-
-	// Convert HTML comments to MDX comments since MDX prefers {/* */} syntax
-	content = content.replace(/<!--([\s\S]*?)-->/g, '{/* $1 */}');
-
-	// Escape email addresses in angle brackets that aren't already in links or code
-	content = content.replace(
+// Escape email addresses in angle brackets
+function escapeEmailAddresses(content) {
+	return content.replace(
 		/<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>/g,
 		'&lt;$1&gt;'
 	);
+}
 
-	// Escape any remaining angle brackets that contain @ or ! characters that could be interpreted as invalid HTML tags
-	// This catches edge cases like <@something> or <!something> that aren't proper HTML
-	content = content.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
+// Escape problematic angle bracket content
+function escapeProblematicAngleBrackets(content) {
+	return content.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
+}
 
+// Escape MDX-problematic content
+function escapeMdxContent(content) {
+	return escapeAtParams(
+		convertHtmlToMdxComments(
+			escapeEmailAddresses(
+				escapeProblematicAngleBrackets(content)
+			)
+		)
+	);
+}
 
-	return content;
+// Content transformation pipeline - orchestrates all transformations
+function transformContent(content) {
+	return escapeMdxContent(
+		processMarkdownLinks(
+			convertVideoLinks(
+				fixImagePaths(content)
+			)
+		)
+	);
 }
 
 const TOTAL = 'Total build time';
@@ -574,7 +606,8 @@ for (const version of RUN.versions) {
 		});
 
 		await activity(`Rewrite broken content`, async () => {
-			RUN.srcmd.content = rewriteRemoteVideoLinks(RUN.srcmd.content);
+			// Apply unified content transformation pipeline
+			RUN.srcmd.content = transformContent(RUN.srcmd.content);
 
 			const baseFile = path.basename(RUN.srcmd.file);
 
@@ -583,14 +616,6 @@ for (const version of RUN.versions) {
 					.replaceAll('](../', '](../../')
 					.replaceAll('](./', '](../');
 			}
-
-			RUN.srcmd.content = rewriteNumberedFileLinks(RUN.srcmd.content);
-
-			RUN.srcmd.content = rewriteReadmeFileLinks(RUN.srcmd.content);
-
-			RUN.srcmd.content = rewriteFileLinksAsLowerCase(RUN.srcmd.content);
-
-			RUN.srcmd.content = escapeAtParamReferences(RUN.srcmd.content);
 
 			// Rewrite internal links to use new structure
 			RUN.srcmd.content = RUN.srcmd.content
@@ -647,17 +672,10 @@ for (const version of RUN.versions) {
 		// trim 'docs' out of link paths
 		idxBody = idxBody.replaceAll('](./docs/', '](./');
 
-		idxBody = rewriteReadmeFileLinks(idxBody);
+		// Apply unified content transformation pipeline
+		idxBody = transformContent(idxBody);
 
-		idxBody = rewriteFileLinksAsLowerCase(idxBody);
-
-		idxBody = idxBody.replaceAll('.md)', '/)');
-
-		// rewrite raw githubusercontent video links into video tags
-		idxBody = rewriteRemoteVideoLinks(idxBody);
-
-		// rewrite numbered file links
-		idxBody = rewriteNumberedFileLinks(idxBody);
+		idxBody = idxBody.replaceAll('.md)', '/');
 
 
 		const idxContent = [idxFront, idxBody].join('\n');
