@@ -54,6 +54,15 @@ export const redirects = {
 	'/contribute/': '/contribute/contributor-guide/',
 	'/metrics-endpoints/': '/metric/',
 	'/user-guide/generating_custom_metrics/': '/user-guide/generating-custom-metrics/',
+	'user-guide/metrics/': 'user-guide/metrics-endpoints/',
+	//First Deploy 404s
+	'/reference/best-practices/user-guide/customization/#admission-and-watcher-subparameters': '/user-guide/customization/#admission-and-watcher-subparameters',
+	'/v0.55/reference/best-practices/user-guide/customization/#admission-and-watcher-subparameters': '/v0.55/user-guide/customization/#admission-and-watcher-subparameters',
+	'/v0.54/reference/best-practices/user-guide/customization/#admission-and-watcher-subparameters': '/v0.54/user-guide/customization/#admission-and-watcher-subparameters',
+	'/v0.55/user-guide/generating_custom_metrics/': '/v0.55/user-guide/generating-custom-metrics/',
+	'/v0.55/user-guide/metrics/': '/v0.55/user-guide/metrics-endpoints/',
+	'/v0.54/user-guide/metrics-endpoints/': '/v0.54/user-guide/metrics/',
+	'/v0.55/contribute/': '/v0.55/contribute/contributor-guide/',
 
 	// v0.54.0 to v0.54
 	'/v0.54.0/user-guide/': '/v0.54/user-guide/',
@@ -96,16 +105,18 @@ export const redirects = {
 	'/v0.54.0/best-practices/': '/v0.54/reference/best-practices/',
 	'/v0.54.0/faq/': '/v0.54/reference/faq/',
 	'/v0.54.0/community/': '/v0.54/community/',
+	'/v0.54/community/community': '/v0.54/community',
 	'/v0.54.0/community/pepr-media/': '/v0.54/community/pepr-media/',
 	'/v0.54.0/security/': '/v0.54/community/security/',
 	'/v0.54.0/support/': '/v0.54/community/support/',
-	'/v0.54.0/contribute/': '/v0.54/contribute/contributor-guide/',
+	'/v0.54.0/contribute/': '/v0.54/contribute/',
+	'/v0.54/contribute/contributor-guide/': '/v0.54/contribute/',
 	'/v0.54.0/code_of_conduct/': '/v0.54/contribute/code_of_conduct/',
 	'/v0.54.0/roadmap/': '/v0.54/roadmap/',
 
 	'/v0.54/support/': '/v0.54/community/support/',
 	'/v0.54/security/': '/v0.54/community/security/',
-	'/v0.54/contribute/': '/v0.54/contribute/contributor-guide/',
+	
 	// Version-specific redirects
 	'/v0.54.0/': '/v0.54/',
 };
