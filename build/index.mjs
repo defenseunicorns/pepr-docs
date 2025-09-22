@@ -11,7 +11,7 @@ import { discoverVersions, findCurrentVersion } from './version-discovery.mjs';
 
 const exec = util.promisify(child_process.exec);
 
-// Normalize all image paths to use /assets/ directory for better compatibility
+// Fix image paths in content
 function fixImagePaths(content) {
 	return content
 		.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
@@ -22,6 +22,68 @@ function fixImagePaths(content) {
 			'/assets/$1.png'
 		)
 		.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
+}
+
+// Convert GitHub callouts to MDX admonitions
+function convertCallouts(content, filePath) {
+	return content.replace(
+		/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
+		(match, type, calloutContent) => {
+			const mdxType = type.toLowerCase();
+			const cleanContent = calloutContent
+				.split('\n')
+				.map((line) => line.replace(/^> ?/, ''))
+				.filter((line) => line.length > 0)
+				.join('\n');
+			console.log(
+				`Converting ${type} callout in ${filePath}`
+			);
+			return `:::${mdxType}\n${cleanContent}\n:::`;
+		}
+	);
+}
+
+// Efficient content processing pipeline
+async function processAllContent(contentDir) {
+	const contentFiles = await glob(`${contentDir}/**/*.md`);
+	let updatedFilesCount = 0;
+	let imagePathsFixedCount = 0;
+	let calloutsFixedCount = 0;
+
+	for (const contentFile of contentFiles) {
+		const originalContent = await fs.readFile(contentFile, 'utf8');
+		let processedContent = originalContent;
+
+		// Apply image path fixes
+		const afterImageFix = fixImagePaths(processedContent);
+		if (afterImageFix !== processedContent) {
+			imagePathsFixedCount++;
+			processedContent = afterImageFix;
+		}
+
+		// Apply callout conversion
+		const afterCalloutFix = convertCallouts(processedContent, contentFile);
+		if (afterCalloutFix !== processedContent) {
+			calloutsFixedCount++;
+			processedContent = afterCalloutFix;
+		}
+
+		// Write file only if changes were made
+		if (originalContent !== processedContent) {
+			await fs.writeFile(contentFile, processedContent);
+			updatedFilesCount++;
+		}
+	}
+
+	if (updatedFilesCount > 0) {
+		console.log(`Updated ${updatedFilesCount} files`);
+		if (imagePathsFixedCount > 0) {
+			console.log(`Fixed image paths in ${imagePathsFixedCount} files`);
+		}
+		if (calloutsFixedCount > 0) {
+			console.log(`Fixed callouts in ${calloutsFixedCount} files`);
+		}
+	}
 }
 
 program
@@ -561,6 +623,7 @@ for (const version of RUN.versions) {
 				/.md#(.*)\)/g,
 				(_, group) => `#${group})`
 			);
+
 		});
 
 		await activity(`Write result file`, async (log) => {
@@ -613,6 +676,7 @@ for (const version of RUN.versions) {
 		// rewrite numbered file links
 		idxBody = rewriteNumberedFileLinks(idxBody);
 
+
 		// convert GitHub callouts to MDX admonitions
 		idxBody = idxBody.replace(
 			/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
@@ -634,6 +698,20 @@ for (const version of RUN.versions) {
 		log.push(['dst', idxMd]);
 	});
 }
+
+await activity(`Process all work directory content`, async (log) => {
+	// Process all content in work directory to fix image paths and callouts
+	console.log('Processing work directory content (fixing image paths and callouts)...');
+	const workContentDirs = await glob(`${RUN.work}/content/*`, { onlyDirectories: true });
+
+	for (const workDir of workContentDirs) {
+		const version = path.basename(workDir);
+		console.log(`Processing work content for version: ${version}`);
+		await processAllContent(workDir);
+	}
+
+	log.push(['processed', workContentDirs.length + ' version directories']);
+});
 
 await activity(`Set current version alias`, async (log) => {
 	// Find the latest stable version using the shared utility
@@ -795,6 +873,9 @@ if (opts.dist) {
 			force: true,
 		});
 
+		// Ensure assets directory exists
+		await fs.mkdir(`${publicDir}/assets`, { recursive: true });
+
 		// Try to copy images and resources from any available version
 		let resourcesCopied = false;
 		for (const version of ['main', 'v0.54.0', 'v0.53.1']) {
@@ -870,52 +951,6 @@ if (opts.dist) {
 				recursive: true,
 			});
 		}
-
-		// Fix image paths in main content files
-		console.log('Fixing image paths in content files...');
-		const contentFiles = await glob(`${starlightContentDir}/**/*.md`);
-		let updatedFilesCount = 0;
-		let calloutsFixedCount = 0;
-		for (const contentFile of contentFiles) {
-			const content = await fs.readFile(contentFile, 'utf8');
-			let updatedContent = fixImagePaths(content);
-
-			// Convert any remaining GitHub callouts to MDX admonitions
-			const beforeCallouts = updatedContent;
-			updatedContent = updatedContent.replace(
-				/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
-				(match, type, calloutContent) => {
-					const mdxType = type.toLowerCase();
-					const cleanContent = calloutContent
-						.split('\n')
-						.map((line) => line.replace(/^> ?/, ''))
-						.filter((line) => line.length > 0)
-						.join('\n');
-					console.log(
-						`Final pass: Converting ${type} callout in ${contentFile}`
-					);
-					return `:::${mdxType}\n${cleanContent}\n:::`;
-				}
-			);
-
-			if (beforeCallouts !== updatedContent) {
-				calloutsFixedCount++;
-			}
-
-			if (content !== updatedContent) {
-				await fs.writeFile(contentFile, updatedContent);
-				updatedFilesCount++;
-			}
-		}
-		if (updatedFilesCount > 0) {
-			console.log(`Updated image paths in ${updatedFilesCount} files`);
-		}
-		if (calloutsFixedCount > 0) {
-			console.log(
-				`Fixed callouts in ${calloutsFixedCount} files during final pass`
-			);
-		}
-
 		// Copy resource images to assets directory
 		const resourceImages = await glob(
 			`${siteRoot}/src/content/docs/resources/**/*.png`
@@ -961,6 +996,7 @@ if (opts.dist) {
 				// Small delay to ensure file system operations complete
 				await new Promise((resolve) => setTimeout(resolve, 100));
 
+
 				// IMMEDIATELY convert callouts in versioned content
 				const versionedFiles = await glob(`${starlightVersionDir}/**/*.md`);
 				console.log(
@@ -1002,56 +1038,6 @@ if (opts.dist) {
 					}
 				}
 
-				// Fix image paths in versioned content files
-				console.log(
-					`Fixing image paths in versioned content ${versionMajMin}...`
-				);
-				const versionContentFiles = await glob(
-					`${starlightVersionDir}/**/*.md`
-				);
-				let versionUpdatedCount = 0;
-				let versionCalloutsFixedCount = 0;
-				for (const contentFile of versionContentFiles) {
-					const content = await fs.readFile(contentFile, 'utf8');
-					let updatedContent = fixImagePaths(content);
-
-					// Convert any remaining GitHub callouts to MDX admonitions in versioned content
-					const beforeCallouts = updatedContent;
-					updatedContent = updatedContent.replace(
-						/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
-						(match, type, calloutContent) => {
-							const mdxType = type.toLowerCase();
-							const cleanContent = calloutContent
-								.split('\n')
-								.map((line) => line.replace(/^> ?/, ''))
-								.filter((line) => line.length > 0)
-								.join('\n');
-							console.log(
-								`Final pass: Converting ${type} callout in versioned ${contentFile}`
-							);
-							return `:::${mdxType}\n${cleanContent}\n:::`;
-						}
-					);
-
-					if (beforeCallouts !== updatedContent) {
-						versionCalloutsFixedCount++;
-					}
-
-					if (content !== updatedContent) {
-						await fs.writeFile(contentFile, updatedContent);
-						versionUpdatedCount++;
-					}
-				}
-				if (versionUpdatedCount > 0) {
-					console.log(
-						`Updated image paths in ${versionUpdatedCount} versioned files`
-					);
-				}
-				if (versionCalloutsFixedCount > 0) {
-					console.log(
-						`Fixed callouts in ${versionCalloutsFixedCount} versioned files during final pass`
-					);
-				}
 			}
 		}
 

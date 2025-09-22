@@ -1,4 +1,3 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightVersions from 'starlight-versions';
@@ -8,7 +7,6 @@ import starlightLinksValidator from 'starlight-links-validator';
 import { redirects } from './redirects.js';
 import { getStarlightVersions } from './build/version-discovery.mjs';
 
-// Dynamically discover versions
 const coreRepoPath = process.env.CORE || process.env.PEPR_CORE_PATH;
 let dynamicVersions = [];
 
@@ -35,7 +33,6 @@ export default defineConfig({
 			plugins: [
 				...(process.env.CHECK_LINKS ? [starlightLinksValidator()] : []),
 				starlightLlmsTxt(),
-				// Only include starlight-versions if we have versions to configure
 				...(dynamicVersions.length > 0 ? [starlightVersions({
 					versions: dynamicVersions,
 					current: { label: 'Latest' },
