@@ -11,18 +11,6 @@ import { discoverVersions, findCurrentVersion } from './version-discovery.mjs';
 
 const exec = util.promisify(child_process.exec);
 
-// Fix image paths in content
-function fixImagePaths(content) {
-	return content
-		.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
-		.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
-		.replace(/_images\/pepr\.png/g, '/assets/pepr.png')
-		.replace(
-			/resources\/create-pepr-operator\/(light|dark)\.png/g,
-			'/assets/$1.png'
-		)
-		.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
-}
 
 // Convert GitHub callouts to MDX admonitions
 function convertCallouts(content, filePath) {
@@ -117,122 +105,47 @@ function isInt(str) {
 	return Number.isInteger(Number(str));
 }
 
-// Convert remote video links to video tags
-function convertVideoLinks(content) {
-	return content.replaceAll(
-		/https[\S]*.mp4/g,
-		(url) => `<video class="td-content" controls src="${url}"></video>`
-	);
+// Fix image paths in content
+function fixImagePaths(content) {
+	return content
+		.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
+		.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
+		.replace(/images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
+		.replace(/images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
+		.replace(/_images\/pepr\.png/g, '/assets/pepr.png')
+		.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png')
+		.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
 }
 
-// Remove numbered prefixes from path parts
-function removeNumberedPrefixes(parts) {
-	return parts.map((part) => {
-		const [prefix, ...rest] = part.split('_');
-		return isInt(prefix) ? rest.join('_') : part;
-	});
-}
+// Content transformation pipeline - all transformations in one place
+const transformContent = (content) => {
+	// 1. Fix image paths
+	let result = fixImagePaths(content);
 
-// Handle special community file paths
-function normalizeCommunityFilePaths(parts) {
-	if (
-		parts[0] === '..' &&
-		parts[1] === '..' &&
-		(parts[2] === 'CODE_OF_CONDUCT.md' ||
-			parts[2] === 'SECURITY.md' ||
-			parts[2] === 'SUPPORT.md')
-	) {
-		parts.shift();
-	}
-	return parts;
-}
+	// 2. Convert video links
+	result = result.replaceAll(/https[\S]*.mp4/g, (url) => `<video class="td-content" controls src="${url}"></video>`);
 
-// Remove README.md from paths (treat directories as index)
-function removeReadmeFromPaths(parts) {
-	if (parts.at(-1) === 'README.md') {
-		parts.pop();
-	}
-	return parts;
-}
-
-// Handle legacy image paths
-function normalizeLegacyImagePaths(parts) {
-	if (parts[0].startsWith('_images')) {
-		parts[0] = '__images';
-	}
-	return parts;
-}
-
-// Process markdown links for file path cleanup
-function processMarkdownLinks(content) {
-	const linkMatches = Array.from(content.matchAll(/\]\([^)]*\)/g), (m) => m[0]);
-
-	linkMatches.forEach((mdLink) => {
+	// 3. Process markdown links
+	Array.from(result.matchAll(/\]\([^)]*\)/g), (m) => m[0]).forEach((mdLink) => {
 		let parts = mdLink.replace('](', '').replace(')', '').split('/');
+		if (parts[0].startsWith('http')) return;
 
-		// Skip external URLs
-		if (parts[0].startsWith('http')) {
-			return;
-		}
+		// Apply transformations
+		if (parts[0] === '..' && parts[1] === '..' && ['CODE_OF_CONDUCT.md', 'SECURITY.md', 'SUPPORT.md'].includes(parts[2])) parts.shift();
+		parts = parts.map(p => isInt(p.split('_')[0]) ? p.split('_').slice(1).join('_') : p);
+		if (parts.at(-1) === 'README.md') parts.pop();
+		if (parts[0]?.startsWith('_images')) parts[0] = '__images';
 
-		// Apply transformations in sequence
-		parts = normalizeCommunityFilePaths(parts);
-		parts = removeNumberedPrefixes(parts);
-		parts = removeReadmeFromPaths(parts);
-		parts = normalizeLegacyImagePaths(parts);
-
-		// Convert to lowercase and create new link
-		const newLink = `](${parts.join('/').toLowerCase()})`;
-		content = content.replaceAll(mdLink, newLink);
+		result = result.replaceAll(mdLink, `](${parts.join('/').toLowerCase()})`);
 	});
 
-	return content;
-}
-
-// Escape @param in markdown bold syntax
-function escapeAtParams(content) {
-	return content.replaceAll(/\*\*@param\b/g, '**\\@param');
-}
-
-// Convert HTML comments to MDX comments
-function convertHtmlToMdxComments(content) {
-	return content.replace(/<!--([\s\S]*?)-->/g, '{/* $1 */}');
-}
-
-// Escape email addresses in angle brackets
-function escapeEmailAddresses(content) {
-	return content.replace(
-		/<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>/g,
-		'&lt;$1&gt;'
-	);
-}
-
-// Escape problematic angle bracket content
-function escapeProblematicAngleBrackets(content) {
-	return content.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
-}
-
-// Escape MDX-problematic content
-function escapeMdxContent(content) {
-	return escapeAtParams(
-		convertHtmlToMdxComments(
-			escapeEmailAddresses(
-				escapeProblematicAngleBrackets(content)
-			)
-		)
-	);
-}
-
-// Content transformation pipeline - orchestrates all transformations
-function transformContent(content) {
-	return escapeMdxContent(
-		processMarkdownLinks(
-			convertVideoLinks(
-				fixImagePaths(content)
-			)
-		)
-	);
-}
+	// 4. Escape MDX content
+	return result
+		.replaceAll(/\*\*@param\b/g, '**\\@param')
+		.replace(/<!--([\s\S]*?)-->/g, '{/* $1 */}')
+		.replace(/<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>/g, '&lt;$1&gt;')
+		.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
+};
 
 const TOTAL = 'Total build time';
 console.time(TOTAL);
@@ -300,103 +213,88 @@ await activity(`Nuke retired version content`, async (log) => {
 	}
 });
 
-for (const version of RUN.versions) {
-	RUN.version = version;
-	RUN.verdir = `${RUN.work}/content/${RUN.version}`;
-	RUN.found = false;
-	RUN.coredocs = `${RUN.core}/docs`;
+// Check if version should be skipped (already built)
+async function shouldSkipVersion(version, verdir) {
+	const found = await fs.stat(verdir).then(s => s.isDirectory()).catch(() => false);
 
-	await activity(`Build ${RUN.version}`, async (log) => {
-		let dirExists = async (path) => {
-			try {
-				if (!(await fs.stat(path)).isDirectory()) {
-					return false;
-				}
-			} catch {
-				return false;
-			}
-
-			return true;
-		};
-
-		RUN.found = await dirExists(RUN.verdir);
-
-		// always rebuild main
-		if (RUN.found && RUN.version === 'latest') {
-			await fs.rm(RUN.verdir, { recursive: true, force: true });
-			RUN.found = false;
-		}
-
-		log.push(['skip', RUN.found]);
-	});
-
-	if (RUN.found) {
-		console.log(`Skipping ${RUN.version} - already built`);
-		continue;
+	// Always rebuild latest/main
+	if (found && version === 'latest') {
+		await fs.rm(verdir, { recursive: true, force: true });
+		return false;
 	}
 
-	console.log(`Processing version ${RUN.version}...`);
+	return found;
+}
 
-	await activity(`Create version dir`, async (log) => {
-		await fs.mkdir(RUN.verdir, { recursive: true });
-		log.push(['dir', RUN.verdir]);
+// Create version directory
+const createVersionDirectory = (verdir) =>
+	activity(`Create version dir`, async (log) => {
+		await fs.mkdir(verdir, { recursive: true });
+		log.push(['dir', verdir]);
 	});
 
+// Checkout the appropriate git version
+async function checkoutCoreVersion(core, version) {
 	await activity(`Checkout core version`, async (log) => {
-		const checkoutTarget = RUN.version === 'latest' ? 'main' : RUN.version;
+		const checkoutTarget = version === 'latest' ? 'main' : version;
 		await exec(`
-      cd ${RUN.core}
-      git checkout ${checkoutTarget}
-    `);
+			cd ${core}
+			git checkout ${checkoutTarget}
+		`);
 
-		let result =
-			RUN.version === 'latest'
-				? await exec(`cd ${RUN.core} ; git branch --show-current`)
-				: await exec(`cd ${RUN.core} ; git describe --tags`);
+		let result = version === 'latest'
+			? await exec(`cd ${core} ; git branch --show-current`)
+			: await exec(`cd ${core} ; git describe --tags`);
 
 		result = result.stdout.trim();
 
-		log.push(['repo', RUN.core]);
-		RUN.version === 'latest'
+		log.push(['repo', core]);
+		version === 'latest'
 			? log.push(['branch', result])
 			: log.push(['tag', result]);
 	});
+}
+
+// Find and filter source documentation files
+async function findSourceDocFiles(coredocs) {
+	let srcmds = [];
 
 	await activity(`Find source doc files`, async (log) => {
-		let sources = await fs.readdir(RUN.coredocs, { recursive: true });
+		let sources = await fs.readdir(coredocs, { recursive: true });
 
-		// TBD: impl sub-dir-to-site-menu structures once docs have content needing it
-		// let subdirs = ""
+		// Process only .md files, but not non-root README.md
+		srcmds = sources
+			.filter((f) => f.endsWith('.md'))
+			.filter((f) => !(f === 'README.md'));
 
-		// process only .mds
-		RUN.srcmds = sources.filter((f) => f.endsWith('.md'));
+		const srcign = sources.filter((s) => !srcmds.includes(s));
 
-		// ...but not non-root README.md (they're just sub-menus for GH UI)
-		RUN.srcmds = RUN.srcmds.filter((f) => !(f === 'README.md'));
-
-		const srcign = sources.filter((s) => !RUN.srcmds.includes(s));
-
-		log.push(['sources', RUN.srcmds]);
+		log.push(['sources', srcmds]);
 		log.push(['ignored', srcign]);
 	});
 
-	await activity(`Copy repo images`, async (log) => {
-		const srcimgs = `${RUN.core}/_images`;
-		const dstimgs = `${RUN.work}/static/${RUN.version}/_images`;
-		await fs.cp(srcimgs, dstimgs, { recursive: true });
+	return srcmds;
+}
 
-		log.push(['src', srcimgs]);
-		log.push(['dst', dstimgs]);
+// Copy repository images
+const copyRepoImages = (core, work, version) =>
+	activity(`Copy repo images`, async (log) => {
+		const [src, dst] = [`${core}/_images`, `${work}/static/${version}/_images`];
+		await fs.cp(src, dst, { recursive: true });
+		log.push(['src', src], ['dst', dst]);
 	});
 
+// Copy repository resources
+async function copyRepoResources(core, work, version) {
 	await activity(`Copy repo resources`, async (log) => {
-		const srcresources = `${RUN.core}/docs`;
-		const dstresources = `${RUN.work}/static/${RUN.version}`;
+		const srcresources = `${core}/docs`;
+		const dstresources = `${work}/static/${version}`;
 
 		// Copy all resource directories from docs
 		const resourceDirs = await glob(`${srcresources}/**/resources`, {
 			onlyDirectories: true,
 		});
+
 		for (const resourceDir of resourceDirs) {
 			const relativePath = path.relative(srcresources, resourceDir);
 			const dstPath = path.join(dstresources, relativePath);
@@ -405,284 +303,196 @@ for (const version of RUN.versions) {
 			log.push(['copied', `${resourceDir} -> ${dstPath}`]);
 		}
 	});
+}
+
+// Root markdown file mappings
+const ROOT_MD_MAPPINGS = {
+	'SECURITY.md': '090_community/security.md',
+	'CODE_OF_CONDUCT.md': '100_contribute/code_of_conduct.md',
+	'CODE-OF-CONDUCT.md': '100_contribute/code_of_conduct.md',
+	'SUPPORT.md': '090_community/support.md'
+};
+
+// Process root level markdown files (community files)
+const processRootMarkdownFiles = async (core, version) => {
+	const processedFiles = [];
 
 	await activity('Process root level markdown files', async () => {
-		const rootMdFiles = [
-			'SECURITY.md',
-			'CODE_OF_CONDUCT.md',
-			'CODE-OF-CONDUCT.md',
-			'SUPPORT.md',
-		];
-		let rootMdDir = '';
-		try {
-			for (let rootMdFile of rootMdFiles) {
-				const rootMdPath = `${RUN.core}/${rootMdFile}`;
-				const rootMdExists = await fs
-					.stat(rootMdPath)
-					.then(() => true)
-					.catch(() => false);
-
-				if (rootMdExists) {
-					console.log(`Found ${rootMdFile} for version ${RUN.version}`);
-					let targetFileName;
-					if (rootMdFile === 'SECURITY.md') {
-						rootMdDir = `090_community`;
-						targetFileName = 'security.md';
-					} else if (
-						rootMdFile === 'CODE_OF_CONDUCT.md' ||
-						rootMdFile === 'CODE-OF-CONDUCT.md'
-					) {
-						rootMdDir = `100_contribute`;
-						targetFileName = 'code_of_conduct.md';
-					} else if (rootMdFile === 'SUPPORT.md') {
-						rootMdDir = `090_community`;
-						targetFileName = 'support.md';
-					}
-
-					const indexFilePath = `${rootMdDir}/${targetFileName}`;
-
-					// Create the directory if it does not exist
-					await fs.mkdir(rootMdDir, { recursive: true });
-
-					// Read content from root markdown file
-					const content = await fs.readFile(rootMdPath, 'utf8');
-
-					// Write content to community folder with appropriate filename
-					await fs.writeFile(indexFilePath, content);
-
-					// Add new community file path to RUN.srcmds
-					if (!RUN.srcmds) {
-						RUN.srcmds = [];
-					}
-					RUN.srcmds.push(indexFilePath);
-				} else {
-					console.log(
-						`${rootMdFile} does not exist for version ${RUN.version}.`
-					);
-				}
+		for (const [srcFile, targetPath] of Object.entries(ROOT_MD_MAPPINGS)) {
+			const srcPath = `${core}/${srcFile}`;
+			if (await fs.stat(srcPath).then(() => true).catch(() => false)) {
+				console.log(`Found ${srcFile} for version ${version}`);
+				await fs.mkdir(path.dirname(targetPath), { recursive: true });
+				await fs.copyFile(srcPath, targetPath);
+				processedFiles.push(targetPath);
+			} else {
+				console.log(`${srcFile} does not exist for version ${version}.`);
 			}
-		} catch (error) {
-			console.error(`Failed to process ${rootMdFile}:`, error);
 		}
 	});
 
-	for (const srcmd of RUN.srcmds) {
-		let src = '';
-		RUN.srcmd = { file: srcmd, content: '' };
+	return processedFiles;
+};
 
-		await activity(`Read source file`, async (log) => {
-			if (
-				RUN.srcmd.file.endsWith('910_security/README.md') ||
-				RUN.srcmd.file.endsWith('900_code_of_conduct/README.md') ||
-				RUN.srcmd.file.endsWith('920_support/README.md') ||
-				RUN.srcmd.file.endsWith('090_community/security.md') ||
-				RUN.srcmd.file.endsWith('100_contribute/code_of_conduct.md') ||
-				RUN.srcmd.file.endsWith('090_community/support.md')
-			) {
-				src = `${RUN.srcmd.file}`;
-			} else {
-				src = `${RUN.coredocs}/${RUN.srcmd.file}`;
-			}
-			RUN.srcmd.content = await fs.readFile(src, { encoding: 'utf8' });
-			log.push(['src', src]);
-		});
+// Determine source path for a file (handles special community files)
+const getSourcePath = (file, coredocs) =>
+	['910_security/README.md', '900_code_of_conduct/README.md', '920_support/README.md',
+	 '090_community/security.md', '100_contribute/code_of_conduct.md', '090_community/support.md']
+		.some(cf => file.endsWith(cf)) ? file : `${coredocs}/${file}`;
 
-		await activity(`Gen weight and new file name`, async (log) => {
-			const filename = path.basename(RUN.srcmd.file);
-			let ancestors = path.dirname(RUN.srcmd.file).split('/');
-			let parent = ancestors.pop();
+// File path mappings and utilities
+const PATH_MAPPINGS = {
+	structure: { 'pepr-tutorials': 'tutorials', 'user-guide/actions': 'actions' },
+	singleFile: { 'best-practices': 'reference/best-practices.md', 'module-examples': 'reference/module-examples.md', faq: 'reference/faq.md', roadmap: 'roadmap.md' }
+};
 
-			ancestors = ancestors.map((a) => {
-				const [prefix, ...rest] = a.split('_');
-				return isInt(prefix) ? rest.join('_') : [prefix, ...rest].join('_');
-			});
-			ancestors = ancestors.join('/');
+const cleanPath = (parts) => parts.map(p => isInt(p.split('_')[0]) ? p.split('_').slice(1).join('_') : p).join('/');
+const getWeight = (part) => isInt(part.split('_')[0]) ? Number.parseInt(part.split('_')[0]) : null;
 
-			const pParts = parent.split('_');
-			const pWeight = isInt(pParts[0]) ? Number.parseInt(pParts[0]) : null;
-			let rawdir =
-				pWeight !== null
-					? [ancestors, pParts.slice(1).join('_').trim()]
-							.filter((f) => f)
-							.join('/')
-					: [ancestors, pParts.join('_').trim()].filter((f) => f).join('/');
+// Generate weight and new file name for a source file
+const generateFileMetadata = (file) => {
+	const [dir, filename] = [path.dirname(file), path.basename(file)];
+	const parts = dir.split('/');
+	const parent = parts.pop();
+	const ancestors = cleanPath(parts);
 
-			// Map old structure to new structure for consistency
-			const structureMapping = {
-				'pepr-tutorials': 'tutorials',
-				'user-guide/actions': 'actions',
-			};
+	const pWeight = getWeight(parent);
+	let rawdir = ancestors ? `${ancestors}/${parent.replace(/^\d+_/, '')}` : parent.replace(/^\d+_/, '');
 
-			// Handle single-file mappings (README.md files that should become direct .md files)
-			const singleFileMapping = {
-				'best-practices': 'reference/best-practices.md',
-				'module-examples': 'reference/module-examples.md',
-				faq: 'reference/faq.md',
-				roadmap: 'roadmap.md',
-			};
+	// Apply structure mappings
+	let newdir = Object.entries(PATH_MAPPINGS.structure).reduce((dir, [old, new_]) =>
+		dir.startsWith(old) ? dir.replace(old, new_) : dir, rawdir);
 
-			let newdir = rawdir;
+	// Process filename
+	const fWeight = getWeight(filename);
+	let newfile = filename.replace(/^\d+_/, '') === 'README.md' ? 'index.md' : filename.replace(/^\d+_/, '');
+	const weight = newfile === 'index.md' ? pWeight : fWeight;
 
-			// Apply folder structure mappings first
-			for (const [oldPath, newPath] of Object.entries(structureMapping)) {
-				if (rawdir.startsWith(oldPath)) {
-					newdir = rawdir.replace(oldPath, newPath);
-					break;
-				}
-			}
-
-			const fParts = filename.split('_');
-			let weight = isInt(fParts[0]) ? Number.parseInt(fParts[0]) : null;
-			let newfile =
-				weight !== null ? fParts.slice(1).join('_').trim() : filename.trim();
-
-			if (newfile === 'README.md') {
-				newfile = newfile.replace('README.md', 'index.md');
-				weight = pWeight;
-			}
-
-			// Check if this is a single file that should be mapped directly (after processing filename)
-			if (newfile === 'index.md') {
-				for (const [oldPath, newPath] of Object.entries(singleFileMapping)) {
-					if (rawdir === oldPath) {
-						// This is a single file, return the direct path without directory
-						newdir = '';
-						newfile = newPath;
-						break;
-					}
-				}
-			}
-
-			newfile = newdir === '.' ? newfile : [newdir, newfile].join('/');
-
-			RUN.srcmd.weight = weight;
-			RUN.srcmd.newfile = newfile;
-
-			log.push(['weight', weight]);
-			log.push(['newfile', newfile]);
-		});
-
-		await activity(`Inject Starlight front matter`, async () => {
-			// title as sanitized content from first heading
-			const heading = RUN.srcmd.content.match(/#[\s]+(.*)/);
-			let title = heading[1].replaceAll('`', '').replaceAll(':', '');
-
-			// Override title to "Overview" for README.md files
-			if (
-				RUN.srcmd.newfile.endsWith('/README.md') ||
-				RUN.srcmd.newfile === 'README.md'
-			) {
-				title = 'Overview';
-			}
-
-			RUN.srcmd.content = RUN.srcmd.content.replaceAll(heading[0], '');
-
-			// Generate slug for versioned content
-			let slugField = '';
-			if (RUN.version !== 'latest') {
-				const versionMajMin = RUN.version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
-				let slugPath = RUN.srcmd.newfile.replace(/\.md$/, '');
-				// For index files, use the directory path
-				if (slugPath.endsWith('/index')) {
-					slugPath = slugPath.replace('/index', '');
-				}
-				// Clean up any leading/trailing slashes and empty parts
-				slugPath = slugPath.replace(/^\/+|\/+$/g, '');
-				// Prepend version to create full slug path
-				const fullSlug =
-					slugPath === '' || slugPath === 'index'
-						? versionMajMin
-						: `${versionMajMin}/${slugPath}`;
-				slugField = `slug: ${fullSlug}`;
-			}
-
-			const front = heredoc`
-        ---
-        title: ${title}
-        description: ${title}${slugField ? `\n        ${slugField}` : ''}
-        ---
-      `;
-			RUN.srcmd.content = [front, RUN.srcmd.content].join('\n');
-		});
-
-		await activity(`Rewrite broken content`, async () => {
-			// Apply unified content transformation pipeline
-			RUN.srcmd.content = transformContent(RUN.srcmd.content);
-
-			const baseFile = path.basename(RUN.srcmd.file);
-
-			if (baseFile !== 'README.md') {
-				RUN.srcmd.content = RUN.srcmd.content
-					.replaceAll('](../', '](../../')
-					.replaceAll('](./', '](../');
-			}
-
-			// Rewrite internal links to use new structure
-			RUN.srcmd.content = RUN.srcmd.content
-				.replaceAll('](/pepr-tutorials/', '](/tutorials/')
-				.replaceAll('](/best-practices/', '](/reference/best-practices/')
-				.replaceAll('](/module-examples/', '](/reference/module-examples/')
-				.replaceAll('](/faq/', '](/reference/faq/')
-				.replaceAll('](/user-guide/actions/', '](/actions/');
-
-			RUN.srcmd.content = RUN.srcmd.content.replaceAll('.md)', '/)');
-
-			RUN.srcmd.content = RUN.srcmd.content.replaceAll(
-				/.md#(.*)\)/g,
-				(_, group) => `#${group})`
-			);
-
-		});
-
-		await activity(`Write result file`, async (log) => {
-			const dirname = path.dirname(RUN.srcmd.newfile);
-			await fs.mkdir(`${RUN.verdir}/${dirname}`, { recursive: true });
-
-			const dst = `${RUN.verdir}/${RUN.srcmd.newfile}`;
-			await fs.writeFile(dst, RUN.srcmd.content, { encoding: 'utf8' });
-			log.push(['dst', dst]);
-		});
+	// Handle single file mappings
+	if (newfile === 'index.md' && PATH_MAPPINGS.singleFile[rawdir]) {
+		[newdir, newfile] = ['', PATH_MAPPINGS.singleFile[rawdir]];
 	}
 
-	await activity(`Write version layout & landing content`, async (log) => {
-		const idxMd = `${RUN.verdir}/index.md`;
+	return { weight, newfile: newdir && newdir !== '.' ? `${newdir}/${newfile}` : newfile };
+};
 
-		// Generate slug for versioned index pages
-		let slugField = '';
-		if (RUN.version !== 'latest') {
-			const versionMajMin = RUN.version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
-			slugField = `slug: ${versionMajMin}`;
-		}
+// Generate Starlight front matter for a file
+const generateFrontMatter = (content, newfile, version) => {
+	const heading = content.match(/#[\s]+(.*)/);
+	const title = (newfile.endsWith('/README.md') || newfile === 'README.md')
+		? 'Overview'
+		: heading[1].replaceAll(/[`:]/g, '');
+
+	const slug = version !== 'latest'
+		? `\nslug: ${version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1')}${newfile.replace(/\.md$/, '').replace(/\/index$/, '').replace(/^\/+|\/+$/g, '') ? `/${newfile.replace(/\.md$/, '').replace(/\/index$/, '').replace(/^\/+|\/+$/g, '')}` : ''}`
+		: '';
+
+	return {
+		front: `---\ntitle: ${title}\ndescription: ${title}${slug}\n---`,
+		contentWithoutHeading: content.replaceAll(heading[0], '')
+	};
+};
+
+// Content link transformations
+const LINK_MAPPINGS = {
+	'](/pepr-tutorials/': '](/tutorials/',
+	'](/best-practices/': '](/reference/best-practices/',
+	'](/module-examples/': '](/reference/module-examples/',
+	'](/faq/': '](/reference/faq/',
+	'](/user-guide/actions/': '](/actions/'
+};
+
+// Apply content transformations and link fixes
+const processContentLinks = (content, file) => {
+	let result = transformContent(content);
+
+	// Adjust relative links for non-README files
+	if (path.basename(file) !== 'README.md') {
+		result = result.replaceAll('](../', '](../../').replaceAll('](./', '](../');
+	}
+
+	// Apply all link mappings and cleanup
+	return Object.entries(LINK_MAPPINGS)
+		.reduce((acc, [old, new_]) => acc.replaceAll(old, new_), result)
+		.replaceAll('.md)', '/)')
+		.replaceAll(/.md#(.*)\)/g, (_, group) => `#${group})`);
+};
+
+// Process a single source file
+const processSingleSourceFile = async (file, coredocs, verdir) => {
+	const src = getSourcePath(file, coredocs);
+	const content = await fs.readFile(src, 'utf8');
+	const { weight, newfile } = generateFileMetadata(file);
+	const { front, contentWithoutHeading } = generateFrontMatter(content, newfile, RUN.version);
+	const processedContent = processContentLinks([front, contentWithoutHeading].join('\n'), file);
+
+	await fs.mkdir(`${verdir}/${path.dirname(newfile)}`, { recursive: true });
+	await fs.writeFile(`${verdir}/${newfile}`, processedContent, 'utf8');
+};
+
+// Write version layout and landing content
+const writeVersionLandingPage = async (version, verdir, core) => {
+	await activity(`Write version layout & landing content`, async (log) => {
+		const idxMd = `${verdir}/index.md`;
+		const slugField = version !== 'latest'
+			? `slug: ${version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1')}`
+			: '';
 
 		const idxFront = heredoc`
-      ---
-      title: Pepr
-      description: Pepr Documentation - ${RUN.version}${
-			slugField ? `\n      ${slugField}` : ''
-		}
-      ---
-    `;
-		const rootMd = `${RUN.core}/README.md`;
-		let idxBody = await fs.readFile(rootMd, { encoding: 'utf8' });
+			---
+			title: Pepr
+			description: Pepr Documentation - ${version}${slugField ? `\n			${slugField}` : ''}
+			---
+		`;
 
-		// strip first heading
+		let idxBody = await fs.readFile(`${core}/README.md`, 'utf8');
 		const headings = idxBody.match(/#[\s]+(.*)/);
-		idxBody = idxBody.replaceAll(headings[0], '');
+		idxBody = idxBody
+			.replaceAll(headings[0], '')
+			.replaceAll('](./docs/', '](./');
 
-		// trim 'docs' out of link paths
-		idxBody = idxBody.replaceAll('](./docs/', '](./');
+		idxBody = transformContent(idxBody).replaceAll('.md)', '/');
 
-		// Apply unified content transformation pipeline
-		idxBody = transformContent(idxBody);
-
-		idxBody = idxBody.replaceAll('.md)', '/');
-
-
-		const idxContent = [idxFront, idxBody].join('\n');
-		await fs.writeFile(idxMd, idxContent, { encoding: 'utf8' });
-
+		await fs.writeFile(idxMd, [idxFront, idxBody].join('\n'), 'utf8');
 		log.push(['dst', idxMd]);
 	});
+};
+
+// Process each version
+for (const version of RUN.versions) {
+	RUN.version = version;
+	RUN.verdir = `${RUN.work}/content/${RUN.version}`;
+	RUN.coredocs = `${RUN.core}/docs`;
+
+	// Check if version should be skipped
+	if (await shouldSkipVersion(RUN.version, RUN.verdir)) {
+		console.log(`Skipping ${RUN.version} - already built`);
+		continue;
+	}
+
+	console.log(`Processing version ${RUN.version}...`);
+
+	// Set up version infrastructure
+	await createVersionDirectory(RUN.verdir);
+	await checkoutCoreVersion(RUN.core, RUN.version);
+	RUN.srcmds = await findSourceDocFiles(RUN.coredocs);
+	await copyRepoImages(RUN.core, RUN.work, RUN.version);
+	await copyRepoResources(RUN.core, RUN.work, RUN.version);
+
+	// Process root markdown files and add them to source files list
+	const rootMarkdownFiles = await processRootMarkdownFiles(RUN.core, RUN.version);
+	if (!RUN.srcmds) RUN.srcmds = [];
+	if (rootMarkdownFiles && Array.isArray(rootMarkdownFiles)) {
+		RUN.srcmds.push(...rootMarkdownFiles);
+	}
+
+	// Process all source files
+	for (const srcmd of RUN.srcmds) {
+		await processSingleSourceFile(srcmd, RUN.coredocs, RUN.verdir);
+	}
+
+	// Write version landing page
+	await writeVersionLandingPage(RUN.version, RUN.verdir, RUN.core);
 }
 
 await activity(`Process all work directory content`, async (log) => {
@@ -864,7 +674,7 @@ if (opts.dist) {
 
 		// Try to copy images and resources from any available version
 		let resourcesCopied = false;
-		for (const version of ['main', 'v0.54.0', 'v0.53.1']) {
+		for (const version of RUN.versions) {
 			const staticVersionPath = `${RUN.work}/static/${version}`;
 			const imagesPath = `${staticVersionPath}/_images`;
 			const resourcesPath = `${staticVersionPath}/040_pepr-tutorials/resources`;
