@@ -198,23 +198,6 @@ function escapeAtParamReferences(content) {
 	// This catches edge cases like <@something> or <!something> that aren't proper HTML
 	content = content.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
 
-	// Convert GitHub-style callouts to MDX admonitions
-	content = content.replace(
-		/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
-		(match, type, calloutContent) => {
-			const mdxType = type.toLowerCase();
-
-			// Remove the '> ' prefix from each line and clean up
-			const cleanContent = calloutContent
-				.split('\n')
-				.map((line) => line.replace(/^> ?/, ''))
-				.filter((line) => line.length > 0)
-				.join('\n');
-
-			console.log(`Converting ${type} callout to MDX admonition`);
-			return `:::${mdxType}\n${cleanContent}\n:::`;
-		}
-	);
 
 	return content;
 }
@@ -677,21 +660,6 @@ for (const version of RUN.versions) {
 		idxBody = rewriteNumberedFileLinks(idxBody);
 
 
-		// convert GitHub callouts to MDX admonitions
-		idxBody = idxBody.replace(
-			/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
-			(match, type, calloutContent) => {
-				const mdxType = type.toLowerCase();
-				const cleanContent = calloutContent
-					.split('\n')
-					.map((line) => line.replace(/^> ?/, ''))
-					.filter((line) => line.length > 0)
-					.join('\n');
-				console.log(`Converting ${type} callout in index to MDX admonition`);
-				return `:::${mdxType}\n${cleanContent}\n:::`;
-			}
-		);
-
 		const idxContent = [idxFront, idxBody].join('\n');
 		await fs.writeFile(idxMd, idxContent, { encoding: 'utf8' });
 
@@ -997,162 +965,13 @@ if (opts.dist) {
 				await new Promise((resolve) => setTimeout(resolve, 100));
 
 
-				// IMMEDIATELY convert callouts in versioned content
-				const versionedFiles = await glob(`${starlightVersionDir}/**/*.md`);
-				console.log(
-					`Checking ${versionedFiles.length} versioned files (${versionMajMin}) for callouts...`
-				);
-				for (const file of versionedFiles) {
-					const content = await fs.readFile(file, 'utf8');
-
-					// Check for callouts first
-					const hasCallouts = content.includes('> [!');
-					if (hasCallouts) {
-						console.log(
-							`Found callouts in versioned file (${versionMajMin}): ${file}`
-						);
-					}
-
-					const converted = content.replace(
-						/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\](?:\n((?:^>.*\n?)*))?/gm,
-						(match, type, calloutContent) => {
-							const mdxType = type.toLowerCase();
-							let cleanContent = '';
-							if (calloutContent) {
-								cleanContent = calloutContent
-									.split('\n')
-									.map((line) => line.replace(/^> ?/, ''))
-									.filter((line) => line.length > 0)
-									.join('\n');
-							}
-							console.log(
-								`Immediate: Converting ${type} callout in versioned ${file} (${versionMajMin})`
-							);
-							return cleanContent
-								? `:::${mdxType}\n${cleanContent}\n:::`
-								: `:::${mdxType}\n:::`;
-						}
-					);
-					if (content !== converted) {
-						await fs.writeFile(file, converted);
-					}
-				}
 
 			}
 		}
 
-		// TEMPORARILY DISABLE ALL CONVERSION LOGIC FOR TESTING
-		console.log(
-			'TESTING: Skipping all callout conversion to isolate starlight-versions issue...'
-		);
-
 		try {
 			console.log(`Building Starlight site from directory: ${siteRoot}`);
 			console.log(`Expected dist output: ${siteRoot}/dist`);
-
-			// Check what's in siteRoot before building
-			try {
-				const files = await fs.readdir(siteRoot);
-				console.log('Files in siteRoot before build:', files);
-			} catch (e) {
-				console.error('Failed to read siteRoot directory:', e.message);
-			}
-
-			// CRITICAL: Convert any remaining callouts BEFORE astro build starts
-			// This must happen before starlight-versions plugin scans content
-			console.log(
-				'CRITICAL: Pre-astro callout conversion - scanning ALL possible locations...'
-			);
-
-			// Scan EVERYWHERE that starlight-versions might look
-			const contentGlobs = [
-				`${siteRoot}/src/content/**/*.{md,mdx}`,
-				`${siteRoot}/src/content/docs/v*/**/*.{md,mdx}`, // versioned content
-				`${siteRoot}/**/*.md`, // Any markdown files anywhere
-				`${siteRoot}/README.md`, // Root readme
-				`${siteRoot}/src/**/*.{md,mdx}`, // Any src markdown
-			];
-
-			let allContentFiles = [];
-			for (const glob_pattern of contentGlobs) {
-				const files = await glob(glob_pattern, {
-					ignore: ['**/node_modules/**', '**/.git/**'], // Exclude node_modules and git
-				});
-				allContentFiles.push(...files);
-			}
-
-			// Remove duplicates
-			allContentFiles = [...new Set(allContentFiles)];
-
-			console.log(
-				`Pre-astro: Found ${allContentFiles.length} markdown files to scan`
-			);
-			let preAstroFixCount = 0;
-
-			for (const contentFile of allContentFiles) {
-				try {
-					const content = await fs.readFile(contentFile, 'utf8');
-					let convertedContent = content;
-
-					// First check if this file has any > [! patterns and log them
-					const calloutMatches = content.match(/^> \[!.*$/gm);
-					if (calloutMatches) {
-						console.log(`FOUND CALLOUTS in ${contentFile}:`, calloutMatches);
-					}
-
-					// Convert GitHub callouts with more comprehensive pattern
-					convertedContent = convertedContent.replace(
-						/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\](?:\n((?:^>.*\n?)*))?/gm,
-						(match, type, calloutContent) => {
-							const mdxType = type.toLowerCase();
-							let cleanContent = '';
-							if (calloutContent) {
-								cleanContent = calloutContent
-									.split('\n')
-									.map((line) => line.replace(/^> ?/, ''))
-									.filter((line) => line.length > 0)
-									.join('\n');
-							}
-							console.log(
-								`Pre-astro: Converting ${type} callout in ${contentFile}`
-							);
-							preAstroFixCount++;
-							return cleanContent
-								? `:::${mdxType}\n${cleanContent}\n:::`
-								: `:::${mdxType}\n:::`;
-						}
-					);
-
-					// Also escape any problematic standalone exclamation marks
-					const beforeEscape = convertedContent;
-					convertedContent = convertedContent.replace(
-						/^(\s*)!([A-Z][a-zA-Z]*\s)/gm,
-						'$1\\!$2'
-					);
-					if (beforeEscape !== convertedContent) {
-						console.log(
-							`Pre-astro: Escaped standalone exclamation marks in ${contentFile}`
-						);
-						preAstroFixCount++;
-					}
-
-					if (content !== convertedContent) {
-						await fs.writeFile(contentFile, convertedContent);
-					}
-				} catch (error) {
-					console.log(
-						`Pre-astro: Could not process ${contentFile}: ${error.message}`
-					);
-				}
-			}
-
-			if (preAstroFixCount > 0) {
-				console.log(
-					`CRITICAL: Pre-astro conversion fixed ${preAstroFixCount} potential MDX issues`
-				);
-			} else {
-				console.log('Pre-astro check: no MDX issues found');
-			}
 
 			// Execute build with better error handling
 			const buildResult = await util.promisify(child_process.execFile)(
