@@ -9,15 +9,15 @@ description: Pepr Media
 ### Presentations
 
 - Building Smarter Kubernetes Workflows: Pepr for the modern SRE
-- [Shipping Software faster and Safer with Pepr](https://open.spotify.com/episode/3ztxklcsmn0hfhxcinczvt?si=c824f1ace8ca4960)
+- [Shipping Software faster and Safer with Pepr](https://open.spotify.com/episode/3ZtXKLCsMN0hFHXCinCZVT?si=c824f1ace8ca4960)
 
 ## 2024
 
 ### Session Recordings
 
-- [Leveraging Fluent Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhsjpmtbu&t=25s)
-- [Optimizing Kubernetes Operators and Admission Control - Open Source Summit NA 2024](https://www.youtube.com/watch?v=sqjfvq1frr4)
-- [Pepr Analysis and Demo - YouTube](https://www.youtube.com/watch?v=kgsfs68hzby)
+- [Leveraging Fluent Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhSJPMtBU&t=25s)
+- [Optimizing Kubernetes Operators and Admission Control - Open Source Summit NA 2024](https://www.youtube.com/watch?v=SqJfvQ1frr4)
+- [Pepr Analysis and Demo - YouTube](https://www.youtube.com/watch?v=kgSfS68hzbY)
 
 ### Workshops
 
@@ -32,5 +32,5 @@ description: Pepr Media
 
 ### Session Recordings
 
-- [Optimizing Kubernetes Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhsjpmtbu&t=12s)
-- [Getting Started with Defense Unicorns Integrating Capabilities with Pepr](https://www.youtube.com/watch?v=2khimo0ito4)
+- [Optimizing Kubernetes Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhSJPMtBU&t=12s)
+- [Getting Started with Defense Unicorns Integrating Capabilities with Pepr](https://www.youtube.com/watch?v=2kHIMo0ITo4)

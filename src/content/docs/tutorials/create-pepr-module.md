@@ -101,4 +101,4 @@ module.start();
 
 ## Summary
 
-Checkout some examples of Pepr modules in the [excellent examples repo](https://github.com/defenseunicorns/pepr-excellent-examples). If you have questions after that, please reach out to us on [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
+Checkout some examples of Pepr modules in the [excellent examples repo](https://github.com/defenseunicorns/pepr-excellent-examples). If you have questions after that, please reach out to us on [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)

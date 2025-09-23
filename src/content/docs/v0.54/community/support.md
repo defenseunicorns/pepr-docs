@@ -16,6 +16,6 @@ If you find a bug in Pepr, please report it by opening an issue in the [Pepr Git
 
 You can contact the Pepr team in the following ways:
 
-* [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb)
+* [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB)
 * [GitHub](https://github.com/defenseunicorns/pepr)
 * [Email](mailto:pepr@defenseunicorns.com)

@@ -12,7 +12,7 @@ This tutorial is not intended for production, but instead is intended to show ho
 
 An example of what the dashboard will look like is shown below:
 
-![Pepr Dashboard](../../../images/pepr-dashboard-screenshot.png)
+![Pepr Dashboard](/assets/pepr-dashboard-screenshot.png)
 
 ***Note:*** *The dashboard shown above is an example of what the dashboard will look like. The dashboard will be populated with data from your Pepr instance.*
 
@@ -838,8 +838,8 @@ http://localhost:9090/targets
 
 The targets should look something like this:
 
-![Admission Endpoints](../../../images/admission-endpoint.png)
-![Watcher Endpoint](../../../images/watcher-endpoint.png)
+![Admission Endpoints](/assets/admission-endpoint.png)
+![Watcher Endpoint](/assets/watcher-endpoint.png)
 
 ### Step 7: Test the Prometheus Connection in Grafana
 
@@ -864,4 +864,4 @@ Note: The dashboard may take a few minutes to populate with data.
 
 ## Summary
 
-This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
+This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)

@@ -549,85 +549,47 @@ await executeWithErrorHandling(`Set current version alias`, async (log) => {
 	}
 });
 
-// Auto-generate version JSON config files for starlight-versions (moved outside dist check)
+// Starlight sidebar configuration template
+const STARLIGHT_SIDEBAR_CONFIG = {
+	sidebar: [
+		{ label: 'User Guide', autogenerate: { directory: 'user-guide' } },
+		{ label: 'Actions', autogenerate: { directory: 'actions' } },
+		{ label: 'Tutorials', autogenerate: { directory: 'tutorials' } },
+		{ label: 'Reference', autogenerate: { directory: 'reference' } },
+		{ label: 'Community and Support', autogenerate: { directory: 'community' } },
+		{ label: 'Contribute', autogenerate: { directory: 'contribute' } },
+		{ label: 'Roadmap for Pepr', slug: 'roadmap' },
+	],
+};
+
+// Check if version directory has markdown content
+const hasMarkdownContent = async (versionPath) => {
+	try {
+		const files = await fs.readdir(versionPath, { recursive: true });
+		return files.some((f) => f.endsWith('.md'));
+	} catch {
+		return false;
+	}
+};
+
+// Auto-generate version JSON config files for starlight-versions
 await executeWithErrorHandling(`Generate version configuration files`, async (log) => {
 	console.log('Auto-generating version configuration files...');
-	const stableVersions = RUN.versions.filter(
-		(v) => v !== 'latest' && semver.prerelease(v) === null
-	);
-
-	const versionConfigTemplate = {
-		sidebar: [
-			{
-				label: 'User Guide',
-				autogenerate: {
-					directory: 'user-guide',
-				},
-			},
-			{
-				label: 'Actions',
-				autogenerate: {
-					directory: 'actions',
-				},
-			},
-			{
-				label: 'Tutorials',
-				autogenerate: {
-					directory: 'tutorials',
-				},
-			},
-			{
-				label: 'Reference',
-				autogenerate: {
-					directory: 'reference',
-				},
-			},
-			{
-				label: 'Community and Support',
-				autogenerate: {
-					directory: 'community',
-				},
-			},
-			{
-				label: 'Contribute',
-				autogenerate: {
-					directory: 'contribute',
-				},
-			},
-			{
-				label: 'Roadmap for Pepr',
-				slug: 'roadmap',
-			},
-		],
-	};
-
-	// Get the site root directory (3 levels up from RUN.site which is src/content/docs)
+	const stableVersions = RUN.versions.filter(v => v !== 'latest' && semver.prerelease(v) === null);
 	const siteRoot = path.dirname(path.dirname(path.dirname(RUN.site)));
 	const versionsDir = `${siteRoot}/src/content/versions`;
 
-	// Clear existing version configs
 	await fs.rm(versionsDir, { recursive: true, force: true });
 	await fs.mkdir(versionsDir, { recursive: true });
 
-	// Generate JSON config only for versions that actually have content
 	for (const version of stableVersions) {
 		const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
 		const versionContentPath = `${RUN.work}/content/${version}`;
 
-		// Only create config if content directory exists and has files
-		const contentExists = await fs
-			.stat(versionContentPath)
-			.then(async () => {
-				const files = await fs.readdir(versionContentPath, { recursive: true });
-				return files.some((f) => f.endsWith('.md'));
-			})
-			.catch(() => false);
-
-		if (contentExists) {
-			const configPath = `${versionsDir}/${versionMajMin}.json`;
+		if (await hasMarkdownContent(versionContentPath)) {
 			await fs.writeFile(
-				configPath,
-				JSON.stringify(versionConfigTemplate, null, 2)
+				`${versionsDir}/${versionMajMin}.json`,
+				JSON.stringify(STARLIGHT_SIDEBAR_CONFIG, null, 2)
 			);
 			log.push(['generated', `${versionMajMin}.json`]);
 		} else {
