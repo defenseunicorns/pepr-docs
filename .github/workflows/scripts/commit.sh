@@ -5,13 +5,11 @@ CONT_NEW=$(realpath "$WORK/content")
 
 echo "Content source: $CONT_NEW"
 echo "Content target: $CONT_OLD"
-
 # Verify source content exists
 if [ ! -d "$CONT_NEW" ]; then
 echo "Error: Source content directory $CONT_NEW does not exist"
 exit 1
 fi
-
 # Copy latest version content to root docs directory
 if [ -d "$CONT_NEW/latest" ]; then
 echo "Copying latest content..."
