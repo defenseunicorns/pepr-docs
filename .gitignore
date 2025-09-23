@@ -1,3 +1,13 @@
 dist/
 node_modules/
 work/
+.DS_Store
+.astro/
+.vscode/
+*.tmp
+*.temp
+*.bak  
+# Generated content (overwritten on each build when -dist is true)
+src/content/docs/
+src/content/versions/
+[0-9]*_*/
