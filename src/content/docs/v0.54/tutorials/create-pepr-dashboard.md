@@ -865,4 +865,4 @@ Note: The dashboard may take a few minutes to populate with data.
 
 ## Summary
 
-This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
+This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
