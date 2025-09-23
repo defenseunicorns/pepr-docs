@@ -245,14 +245,11 @@ const createVersionDirectory = (verdir) =>
 async function checkoutCoreVersion(core, version) {
 	await executeWithErrorHandling(`Checkout core version`, async (log) => {
 		const checkoutTarget = version === 'latest' ? 'main' : version;
-		await exec(`
-			cd ${core}
-			git checkout ${checkoutTarget}
-		`);
+		await exec(`git checkout ${checkoutTarget}`, { cwd: core });
 
 		let result = version === 'latest'
-			? await exec(`cd ${core} ; git branch --show-current`)
-			: await exec(`cd ${core} ; git describe --tags`);
+			? await exec('git branch --show-current', { cwd: core })
+			: await exec('git describe --tags', { cwd: core });
 
 		result = result.stdout.trim();
 
