@@ -1,6 +1,5 @@
 import { program } from 'commander';
 import * as path from 'node:path';
-import * as process from 'node:process';
 import * as fs from 'node:fs/promises';
 import * as util from 'node:util';
 import * as child_process from 'node:child_process';
@@ -11,6 +10,51 @@ import { discoverVersions, findCurrentVersion } from './version-discovery.mjs';
 
 const exec = util.promisify(child_process.exec);
 
+
+
+program
+	.version('0.0.0', '-v, --version')
+	.requiredOption('-c, --core <path>', 'path to core project folder')
+	.requiredOption('-s, --site <path>', 'path to docs site folder')
+	.option('-n, --no-dist', 'do not generate /dist output')
+	.parse();
+const opts = program.opts();
+
+const RUN = { cutoff: 2 }; // Global build state. cutoff: minimum versions to keep before retiring
+
+// Error-handling wrapper that captures logs and provides structured error reporting
+async function executeWithErrorHandling(label, func) {
+	let log = [];
+	let err = '';
+
+	try {
+		await func(log);
+	} catch (e) {
+		err = e;
+	} finally {
+		if (err) {
+			['', err, '', 'State dump:', RUN].forEach((m) => console.error(m));
+			program.error('');
+		}
+	}
+}
+
+// Check if a string starts with a numeric prefix (e.g., "010_filename")
+function hasNumericPrefix(str) {
+	return Number.isInteger(Number(str));
+}
+
+// Fix image paths in content
+function fixImagePaths(content) {
+	return content
+		.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
+		.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
+		.replace(/images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
+		.replace(/images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
+		.replace(/_images\/pepr\.png/g, '/assets/pepr.png')
+		.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png')
+		.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
+}
 
 // Convert GitHub callouts to MDX admonitions
 function convertCallouts(content, filePath) {
@@ -31,92 +75,6 @@ function convertCallouts(content, filePath) {
 	);
 }
 
-// Efficient content processing pipeline
-async function processAllContent(contentDir) {
-	const contentFiles = await glob(`${contentDir}/**/*.md`);
-	let updatedFilesCount = 0;
-	let imagePathsFixedCount = 0;
-	let calloutsFixedCount = 0;
-
-	for (const contentFile of contentFiles) {
-		const originalContent = await fs.readFile(contentFile, 'utf8');
-		let processedContent = originalContent;
-
-		// Apply image path fixes
-		const afterImageFix = fixImagePaths(processedContent);
-		if (afterImageFix !== processedContent) {
-			imagePathsFixedCount++;
-			processedContent = afterImageFix;
-		}
-
-		// Apply callout conversion
-		const afterCalloutFix = convertCallouts(processedContent, contentFile);
-		if (afterCalloutFix !== processedContent) {
-			calloutsFixedCount++;
-			processedContent = afterCalloutFix;
-		}
-
-		// Write file only if changes were made
-		if (originalContent !== processedContent) {
-			await fs.writeFile(contentFile, processedContent);
-			updatedFilesCount++;
-		}
-	}
-
-	if (updatedFilesCount > 0) {
-		console.log(`Updated ${updatedFilesCount} files`);
-		if (imagePathsFixedCount > 0) {
-			console.log(`Fixed image paths in ${imagePathsFixedCount} files`);
-		}
-		if (calloutsFixedCount > 0) {
-			console.log(`Fixed callouts in ${calloutsFixedCount} files`);
-		}
-	}
-}
-
-program
-	.version('0.0.0', '-v, --version')
-	.requiredOption('-c, --core <path>', 'path to core project folder')
-	.requiredOption('-s, --site <path>', 'path to docs site folder')
-	.option('-n, --no-dist', 'do not generate /dist output')
-	.parse(process.argv);
-const opts = program.opts();
-
-const RUN = { cutoff: 2 }; // global state bucket!
-
-async function activity(label, func) {
-	let log = [];
-	let err = '';
-
-	try {
-		await func(log);
-	} catch (e) {
-		err = e;
-	} finally {
-		if (err) {
-			['', err, '', 'State dump:', RUN].forEach((m) => console.error(m));
-			program.error('');
-		}
-	}
-}
-
-// Utility function for checking if a string is an integer
-function isInt(str) {
-	return Number.isInteger(Number(str));
-}
-
-// Fix image paths in content
-function fixImagePaths(content) {
-	return content
-		.replace(/_images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
-		.replace(/_images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
-		.replace(/images\/pepr-arch\.png/g, '/assets/pepr-arch.png')
-		.replace(/images\/pepr-arch\.svg/g, '/assets/pepr-arch.png')
-		.replace(/_images\/pepr\.png/g, '/assets/pepr.png')
-		.replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, '/assets/$1.png')
-		.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
-}
-
 // Content transformation pipeline - all transformations in one place
 const transformContent = (content) => {
 	// 1. Fix image paths
@@ -132,7 +90,7 @@ const transformContent = (content) => {
 
 		// Apply transformations
 		if (parts[0] === '..' && parts[1] === '..' && ['CODE_OF_CONDUCT.md', 'SECURITY.md', 'SUPPORT.md'].includes(parts[2])) parts.shift();
-		parts = parts.map(p => isInt(p.split('_')[0]) ? p.split('_').slice(1).join('_') : p);
+		parts = parts.map(p => hasNumericPrefix(p.split('_')[0]) ? p.split('_').slice(1).join('_') : p);
 		if (parts.at(-1) === 'README.md') parts.pop();
 		if (parts[0]?.startsWith('_images')) parts[0] = '__images';
 
@@ -147,10 +105,60 @@ const transformContent = (content) => {
 		.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
 };
 
+// Efficient content processing pipeline with parallel file processing
+async function processAllContent(contentDir) {
+	const contentFiles = await glob(`${contentDir}/**/*.md`);
+
+	// Process files in parallel and collect results
+	const results = await Promise.all(contentFiles.map(async (contentFile) => {
+		const originalContent = await fs.readFile(contentFile, 'utf8');
+		let processedContent = originalContent;
+		let imagePathsFixed = false;
+		let calloutsFixed = false;
+
+		// Apply image path fixes
+		const afterImageFix = fixImagePaths(processedContent);
+		if (afterImageFix !== processedContent) {
+			imagePathsFixed = true;
+			processedContent = afterImageFix;
+		}
+
+		// Apply callout conversion
+		const afterCalloutFix = convertCallouts(processedContent, contentFile);
+		if (afterCalloutFix !== processedContent) {
+			calloutsFixed = true;
+			processedContent = afterCalloutFix;
+		}
+
+		// Write file only if changes were made
+		if (originalContent !== processedContent) {
+			await fs.writeFile(contentFile, processedContent);
+			return { updated: true, imagePathsFixed, calloutsFixed };
+		}
+
+		return { updated: false, imagePathsFixed: false, calloutsFixed: false };
+	}));
+
+	// Aggregate results
+	const updatedFilesCount = results.filter(r => r.updated).length;
+	const imagePathsFixedCount = results.filter(r => r.imagePathsFixed).length;
+	const calloutsFixedCount = results.filter(r => r.calloutsFixed).length;
+
+	if (updatedFilesCount > 0) {
+		console.log(`Updated ${updatedFilesCount} files`);
+		if (imagePathsFixedCount > 0) {
+			console.log(`Fixed image paths in ${imagePathsFixedCount} files`);
+		}
+		if (calloutsFixedCount > 0) {
+			console.log(`Fixed callouts in ${calloutsFixedCount} files`);
+		}
+	}
+}
+
 const TOTAL = 'Total build time';
 console.time(TOTAL);
 
-await activity(`Validate args`, async (log) => {
+await executeWithErrorHandling(`Validate args`, async (log) => {
 	const dirOrDie = async (path) => {
 		if (!(await fs.stat(path)).isDirectory()) {
 			throw new Error(`Not a directory: '${path}'`);
@@ -170,18 +178,18 @@ await activity(`Validate args`, async (log) => {
 // Ensure work directory is created relative to the docs directory, not wherever the script runs from
 RUN.work = path.resolve(path.dirname(RUN.site), '../../work');
 
-await activity(`Clean work dir`, async (log) => {
+await executeWithErrorHandling(`Clean work dir`, async (log) => {
 	await fs.rm(RUN.work, { recursive: true, force: true });
 	await fs.mkdir(RUN.work);
 
 	log.push(['work', RUN.work]);
 });
 
-await activity(`Copy site src to work dir`, async () => {
+await executeWithErrorHandling(`Copy site src to work dir`, async () => {
 	await fs.cp(RUN.site, RUN.work, { recursive: true });
 });
 
-await activity(`Search core repo versions`, async (log) => {
+await executeWithErrorHandling(`Search core repo versions`, async (log) => {
 	const { versions, retired } = await discoverVersions(RUN.core, RUN.cutoff);
 
 	RUN.versions = versions;
@@ -191,7 +199,7 @@ await activity(`Search core repo versions`, async (log) => {
 	log.push(['retired', RUN.retired]);
 });
 
-await activity(`Nuke retired version content`, async (log) => {
+await executeWithErrorHandling(`Nuke retired version content`, async (log) => {
 	for (const majmin of RUN.retired) {
 		// Clean up Starlight content directories
 		const contentGlob = `${RUN.site}/src/content/docs/v${majmin}.*`;
@@ -213,7 +221,7 @@ await activity(`Nuke retired version content`, async (log) => {
 	}
 });
 
-// Check if version should be skipped (already built)
+// Check if version should be skipped (already built). Always rebuilds 'latest' to ensure freshness
 async function shouldSkipVersion(version, verdir) {
 	const found = await fs.stat(verdir).then(s => s.isDirectory()).catch(() => false);
 
@@ -228,14 +236,14 @@ async function shouldSkipVersion(version, verdir) {
 
 // Create version directory
 const createVersionDirectory = (verdir) =>
-	activity(`Create version dir`, async (log) => {
+	executeWithErrorHandling(`Create version dir`, async (log) => {
 		await fs.mkdir(verdir, { recursive: true });
 		log.push(['dir', verdir]);
 	});
 
 // Checkout the appropriate git version
 async function checkoutCoreVersion(core, version) {
-	await activity(`Checkout core version`, async (log) => {
+	await executeWithErrorHandling(`Checkout core version`, async (log) => {
 		const checkoutTarget = version === 'latest' ? 'main' : version;
 		await exec(`
 			cd ${core}
@@ -259,7 +267,7 @@ async function checkoutCoreVersion(core, version) {
 async function findSourceDocFiles(coredocs) {
 	let srcmds = [];
 
-	await activity(`Find source doc files`, async (log) => {
+	await executeWithErrorHandling(`Find source doc files`, async (log) => {
 		let sources = await fs.readdir(coredocs, { recursive: true });
 
 		// Process only .md files, but not non-root README.md
@@ -278,7 +286,7 @@ async function findSourceDocFiles(coredocs) {
 
 // Copy repository images
 const copyRepoImages = (core, work, version) =>
-	activity(`Copy repo images`, async (log) => {
+	executeWithErrorHandling(`Copy repo images`, async (log) => {
 		const [src, dst] = [`${core}/_images`, `${work}/static/${version}/_images`];
 		await fs.cp(src, dst, { recursive: true });
 		log.push(['src', src], ['dst', dst]);
@@ -286,7 +294,7 @@ const copyRepoImages = (core, work, version) =>
 
 // Copy repository resources
 async function copyRepoResources(core, work, version) {
-	await activity(`Copy repo resources`, async (log) => {
+	await executeWithErrorHandling(`Copy repo resources`, async (log) => {
 		const srcresources = `${core}/docs`;
 		const dstresources = `${work}/static/${version}`;
 
@@ -305,7 +313,7 @@ async function copyRepoResources(core, work, version) {
 	});
 }
 
-// Root markdown file mappings
+// Map community files from repository root to their destination paths in docs
 const ROOT_MD_MAPPINGS = {
 	'SECURITY.md': '090_community/security.md',
 	'CODE_OF_CONDUCT.md': '100_contribute/code_of_conduct.md',
@@ -317,7 +325,7 @@ const ROOT_MD_MAPPINGS = {
 const processRootMarkdownFiles = async (core, version) => {
 	const processedFiles = [];
 
-	await activity('Process root level markdown files', async () => {
+	await executeWithErrorHandling('Process root level markdown files', async () => {
 		for (const [srcFile, targetPath] of Object.entries(ROOT_MD_MAPPINGS)) {
 			const srcPath = `${core}/${srcFile}`;
 			if (await fs.stat(srcPath).then(() => true).catch(() => false)) {
@@ -340,23 +348,21 @@ const getSourcePath = (file, coredocs) =>
 	 '090_community/security.md', '100_contribute/code_of_conduct.md', '090_community/support.md']
 		.some(cf => file.endsWith(cf)) ? file : `${coredocs}/${file}`;
 
-// File path mappings and utilities
+// Directory restructuring rules for organizing content into logical sections
 const PATH_MAPPINGS = {
 	structure: { 'pepr-tutorials': 'tutorials', 'user-guide/actions': 'actions' },
 	singleFile: { 'best-practices': 'reference/best-practices.md', 'module-examples': 'reference/module-examples.md', faq: 'reference/faq.md', roadmap: 'roadmap.md' }
 };
 
-const cleanPath = (parts) => parts.map(p => isInt(p.split('_')[0]) ? p.split('_').slice(1).join('_') : p).join('/');
-const getWeight = (part) => isInt(part.split('_')[0]) ? Number.parseInt(part.split('_')[0]) : null;
+const removeNumberPrefixes = (parts) => parts.map(p => hasNumericPrefix(p.split('_')[0]) ? p.split('_').slice(1).join('_') : p).join('/');
 
-// Generate weight and new file name for a source file
+// Generate new file path for a source file
 const generateFileMetadata = (file) => {
 	const [dir, filename] = [path.dirname(file), path.basename(file)];
 	const parts = dir.split('/');
 	const parent = parts.pop();
-	const ancestors = cleanPath(parts);
+	const ancestors = removeNumberPrefixes(parts);
 
-	const pWeight = getWeight(parent);
 	let rawdir = ancestors ? `${ancestors}/${parent.replace(/^\d+_/, '')}` : parent.replace(/^\d+_/, '');
 
 	// Apply structure mappings
@@ -364,16 +370,14 @@ const generateFileMetadata = (file) => {
 		dir.startsWith(old) ? dir.replace(old, new_) : dir, rawdir);
 
 	// Process filename
-	const fWeight = getWeight(filename);
 	let newfile = filename.replace(/^\d+_/, '') === 'README.md' ? 'index.md' : filename.replace(/^\d+_/, '');
-	const weight = newfile === 'index.md' ? pWeight : fWeight;
 
 	// Handle single file mappings
 	if (newfile === 'index.md' && PATH_MAPPINGS.singleFile[rawdir]) {
 		[newdir, newfile] = ['', PATH_MAPPINGS.singleFile[rawdir]];
 	}
 
-	return { weight, newfile: newdir && newdir !== '.' ? `${newdir}/${newfile}` : newfile };
+	return { newfile: newdir && newdir !== '.' ? `${newdir}/${newfile}` : newfile };
 };
 
 // Generate Starlight front matter for a file
@@ -422,7 +426,7 @@ const processContentLinks = (content, file) => {
 const processSingleSourceFile = async (file, coredocs, verdir) => {
 	const src = getSourcePath(file, coredocs);
 	const content = await fs.readFile(src, 'utf8');
-	const { weight, newfile } = generateFileMetadata(file);
+	const { newfile } = generateFileMetadata(file);
 	const { front, contentWithoutHeading } = generateFrontMatter(content, newfile, RUN.version);
 	const processedContent = processContentLinks([front, contentWithoutHeading].join('\n'), file);
 
@@ -432,7 +436,7 @@ const processSingleSourceFile = async (file, coredocs, verdir) => {
 
 // Write version layout and landing content
 const writeVersionLandingPage = async (version, verdir, core) => {
-	await activity(`Write version layout & landing content`, async (log) => {
+	await executeWithErrorHandling(`Write version layout & landing content`, async (log) => {
 		const idxMd = `${verdir}/index.md`;
 		const slugField = version !== 'latest'
 			? `slug: ${version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1')}`
@@ -486,30 +490,31 @@ for (const version of RUN.versions) {
 		RUN.srcmds.push(...rootMarkdownFiles);
 	}
 
-	// Process all source files
-	for (const srcmd of RUN.srcmds) {
-		await processSingleSourceFile(srcmd, RUN.coredocs, RUN.verdir);
-	}
+	// Process all source files in parallel
+	await Promise.all(RUN.srcmds.map(srcmd =>
+		processSingleSourceFile(srcmd, RUN.coredocs, RUN.verdir)
+	));
 
 	// Write version landing page
 	await writeVersionLandingPage(RUN.version, RUN.verdir, RUN.core);
 }
 
-await activity(`Process all work directory content`, async (log) => {
+await executeWithErrorHandling(`Process all work directory content`, async (log) => {
 	// Process all content in work directory to fix image paths and callouts
 	console.log('Processing work directory content (fixing image paths and callouts)...');
 	const workContentDirs = await glob(`${RUN.work}/content/*`, { onlyDirectories: true });
 
-	for (const workDir of workContentDirs) {
+	// Process all version directories in parallel
+	await Promise.all(workContentDirs.map(async (workDir) => {
 		const version = path.basename(workDir);
 		console.log(`Processing work content for version: ${version}`);
 		await processAllContent(workDir);
-	}
+	}));
 
 	log.push(['processed', workContentDirs.length + ' version directories']);
 });
 
-await activity(`Set current version alias`, async (log) => {
+await executeWithErrorHandling(`Set current version alias`, async (log) => {
 	// Find the latest stable version using the shared utility
 	const currentVersion = findCurrentVersion(RUN.versions);
 	if (!currentVersion) {
@@ -548,7 +553,7 @@ await activity(`Set current version alias`, async (log) => {
 });
 
 // Auto-generate version JSON config files for starlight-versions (moved outside dist check)
-await activity(`Generate version configuration files`, async (log) => {
+await executeWithErrorHandling(`Generate version configuration files`, async (log) => {
 	console.log('Auto-generating version configuration files...');
 	const stableVersions = RUN.versions.filter(
 		(v) => v !== 'latest' && semver.prerelease(v) === null
@@ -635,7 +640,7 @@ await activity(`Generate version configuration files`, async (log) => {
 });
 
 if (opts.dist) {
-	await activity(`Clean dist dir`, async (log) => {
+	await executeWithErrorHandling(`Clean dist dir`, async (log) => {
 		RUN.dist = path.resolve(`./dist`);
 		await fs.rm(RUN.dist, { recursive: true, force: true });
 		await fs.mkdir(RUN.dist);
@@ -643,7 +648,7 @@ if (opts.dist) {
 		log.push(['dist', RUN.dist]);
 	});
 
-	await activity(`Build Starlight site into dist dir`, async () => {
+	await executeWithErrorHandling(`Build Starlight site into dist dir`, async () => {
 		// Copy content to Starlight content directories
 		// RUN.site is ./src/content/docs, we need to go up 3 levels to get to the project root
 		const siteRoot = path.dirname(path.dirname(path.dirname(RUN.site)));
@@ -672,7 +677,8 @@ if (opts.dist) {
 		// Ensure assets directory exists
 		await fs.mkdir(`${publicDir}/assets`, { recursive: true });
 
-		// Try to copy images and resources from any available version
+		// Try to copy images and resources from any available version (fallback strategy)
+		// This ensures assets are available even if the primary version lacks them
 		let resourcesCopied = false;
 		for (const version of RUN.versions) {
 			const staticVersionPath = `${RUN.work}/static/${version}`;
@@ -797,6 +803,9 @@ if (opts.dist) {
 			}
 		}
 
+		// Execute Astro build and handle the complex copy sequence:
+		// 1. Astro builds from src/content/docs to dist/
+		// 2. We copy that to our target dist directory if different
 		try {
 			console.log(`Building Starlight site from directory: ${siteRoot}`);
 			console.log(`Expected dist output: ${siteRoot}/dist`);
