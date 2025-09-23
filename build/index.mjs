@@ -562,6 +562,9 @@ const STARLIGHT_SIDEBAR_CONFIG = {
 	],
 };
 
+// Check if a path exists and is accessible
+const pathExists = async (path) => fs.stat(path).then(() => true).catch(() => false);
+
 // Check if version directory has markdown content
 const hasMarkdownContent = async (versionPath) => {
 	try {
@@ -572,10 +575,102 @@ const hasMarkdownContent = async (versionPath) => {
 	}
 };
 
+// Filter stable versions (non-latest, non-prerelease)
+const getStableVersions = (versions) => versions.filter(v => v !== 'latest' && semver.prerelease(v) === null);
+
+// Helper function to copy images from a version
+const copyImagesFromVersion = async (version, publicDir) => {
+	const imagesPath = `${RUN.work}/static/${version}/_images`;
+	if (await pathExists(imagesPath)) {
+		console.log(`Copying images from ${imagesPath} to assets directory`);
+		const imageFiles = await fs.readdir(imagesPath);
+		await Promise.all(imageFiles.map(async (imageFile) => {
+			try {
+				await fs.cp(
+					path.join(imagesPath, imageFile),
+					path.join(`${publicDir}/assets`, imageFile)
+				);
+			} catch (e) {
+				console.warn(`Failed to copy image ${imageFile}: ${e.message}`);
+			}
+		}));
+		console.log(`Copied ${imageFiles.length} images from version ${version}`);
+		return true;
+	}
+	return false;
+};
+
+// Helper function to copy resources from a version
+const copyResourcesFromVersion = async (version, siteRoot) => {
+	const resourcesPath = `${RUN.work}/static/${version}/040_pepr-tutorials/resources`;
+	if (await pathExists(resourcesPath)) {
+		console.log(`Copying resources from ${resourcesPath} to src directories`);
+		await fs.mkdir(`${siteRoot}/src/content/docs/resources`, { recursive: true });
+
+		const resourceSubdirs = await fs.readdir(resourcesPath, { withFileTypes: true });
+		const directoriesOnly = resourceSubdirs.filter(dirent => dirent.isDirectory());
+
+		await Promise.all(directoriesOnly.map(async (dirent) => {
+			try {
+				const srcDir = path.join(resourcesPath, dirent.name);
+				const cleanName = dirent.name.replace(/^\d+_/, '');
+				const dstDir = path.join(`${siteRoot}/src/content/docs/resources`, cleanName);
+				await fs.cp(srcDir, dstDir, { recursive: true });
+				console.log(`Copied ${srcDir} -> ${dstDir}`);
+			} catch (e) {
+				console.warn(`Failed to copy resource directory ${dirent.name}: ${e.message}`);
+			}
+		}));
+		console.log(`Copied ${directoriesOnly.length} resource directories from version ${version}`);
+		return true;
+	}
+	return false;
+};
+
+// Helper function to execute Astro build and handle dist copying
+const executeBuild = async (siteRoot, targetDist) => {
+	console.log(`Building Starlight site from directory: ${siteRoot}`);
+
+	try {
+		const buildResult = await util.promisify(child_process.execFile)(
+			'npm', ['run', 'build'],
+			{ cwd: siteRoot, maxBuffer: 1024 * 1024 * 10 }
+		);
+
+		console.log('Build completed successfully');
+		if (buildResult.stderr) {
+			console.log('Build warnings:', buildResult.stderr);
+		}
+
+		const astroDist = `${siteRoot}/dist`;
+		const astroDistExists = await pathExists(astroDist);
+
+		if (!astroDistExists) {
+			throw new Error(`Astro build did not produce expected output directory: ${astroDist}`);
+		}
+
+		if (path.resolve(astroDist) !== path.resolve(targetDist)) {
+			await fs.rm(targetDist, { recursive: true, force: true });
+			await fs.mkdir(path.dirname(targetDist), { recursive: true });
+			await fs.cp(astroDist, targetDist, { recursive: true });
+			console.log(`Successfully copied built site from ${astroDist} to ${targetDist}`);
+		} else {
+			console.log(`Build output is already in target location: ${targetDist}`);
+		}
+
+		return buildResult;
+	} catch (error) {
+		console.error('Build failed:', error.message);
+		if (error.stdout) console.error('Build stdout:', error.stdout);
+		if (error.stderr) console.error('Build stderr:', error.stderr);
+		throw error;
+	}
+};
+
 // Auto-generate version JSON config files for starlight-versions
 await executeWithErrorHandling(`Generate version configuration files`, async (log) => {
 	console.log('Auto-generating version configuration files...');
-	const stableVersions = RUN.versions.filter(v => v !== 'latest' && semver.prerelease(v) === null);
+	const stableVersions = getStableVersions(RUN.versions);
 	const siteRoot = path.dirname(path.dirname(path.dirname(RUN.site)));
 	const versionsDir = `${siteRoot}/src/content/versions`;
 
@@ -598,6 +693,8 @@ await executeWithErrorHandling(`Generate version configuration files`, async (lo
 	}
 });
 
+// Generate final distribution build by copying processed content to Starlight directories
+// and running the Astro build process to create the static site
 if (opts.dist) {
 	await executeWithErrorHandling(`Clean dist dir`, async (log) => {
 		RUN.dist = path.resolve(`./dist`);
@@ -608,270 +705,76 @@ if (opts.dist) {
 	});
 
 	await executeWithErrorHandling(`Build Starlight site into dist dir`, async () => {
-		// Copy content to Starlight content directories
-		// RUN.site is ./src/content/docs, we need to go up 3 levels to get to the project root
 		const siteRoot = path.dirname(path.dirname(path.dirname(RUN.site)));
 		const starlightContentDir = `${siteRoot}/src/content/docs`;
 		const publicDir = `${siteRoot}/public`;
 
-		// Clear existing content directory
+		// Prepare directories
 		await fs.rm(starlightContentDir, { recursive: true, force: true });
 		await fs.mkdir(starlightContentDir, { recursive: true });
-
-		// Copy images from work/static to public directory for Starlight
-		console.log(
-			'Copying images and resources to src and public directories...'
-		);
-
-		// Check what static directories exist
-		const staticDirs = await fs.readdir(`${RUN.work}/static`).catch(() => []);
-		console.log('Available static directories:', staticDirs);
-
-		// Clean existing directories (only need resources since we use assets for images)
-		await fs.rm(`${siteRoot}/src/content/docs/resources`, {
-			recursive: true,
-			force: true,
-		});
-
-		// Ensure assets directory exists
+		await fs.rm(`${siteRoot}/src/content/docs/resources`, { recursive: true, force: true });
 		await fs.mkdir(`${publicDir}/assets`, { recursive: true });
 
-		// Try to copy images and resources from any available version (fallback strategy)
-		// This ensures assets are available even if the primary version lacks them
-		let resourcesCopied = false;
+		console.log('Copying images and resources to src and public directories...');
+
+		// Copy assets from first available version (images and resources)
+		let assetsCopied = false;
 		for (const version of RUN.versions) {
-			const staticVersionPath = `${RUN.work}/static/${version}`;
-			const imagesPath = `${staticVersionPath}/_images`;
-			const resourcesPath = `${staticVersionPath}/040_pepr-tutorials/resources`;
+			const imagesCopied = await copyImagesFromVersion(version, publicDir);
+			const resourcesCopied = await copyResourcesFromVersion(version, siteRoot);
 
-			if (
-				await fs
-					.stat(imagesPath)
-					.then(() => true)
-					.catch(() => false)
-			) {
-				console.log(`Copying images from ${imagesPath} to assets directory`);
-				// Copy all images directly to assets directory
-				const imageFiles = await fs.readdir(imagesPath);
-				for (const imageFile of imageFiles) {
-					const srcFile = path.join(imagesPath, imageFile);
-					const destFile = path.join(`${publicDir}/assets`, imageFile);
-					await fs.cp(srcFile, destFile);
-				}
-				resourcesCopied = true;
+			if (imagesCopied || resourcesCopied) {
+				console.log(`Assets copied from version: ${version}`);
+				assetsCopied = true;
+				break;
 			}
-
-			if (
-				await fs
-					.stat(resourcesPath)
-					.then(() => true)
-					.catch(() => false)
-			) {
-				console.log(
-					`Copying resources from ${resourcesPath} to src directories`
-				);
-				await fs.mkdir(`${siteRoot}/src/content/docs/resources`, {
-					recursive: true,
-				});
-
-				// Copy each subdirectory but flatten the numbered prefix
-				const resourceSubdirs = await fs.readdir(resourcesPath, {
-					withFileTypes: true,
-				});
-				for (const dirent of resourceSubdirs) {
-					if (dirent.isDirectory()) {
-						const srcDir = path.join(resourcesPath, dirent.name);
-						// Remove numbered prefix (e.g., "030_create-pepr-operator" -> "create-pepr-operator")
-						const cleanName = dirent.name.replace(/^\d+_/, '');
-						const dstDir = path.join(
-							`${siteRoot}/src/content/docs/resources`,
-							cleanName
-						);
-						await fs.cp(srcDir, dstDir, { recursive: true });
-						console.log(`Copied ${srcDir} -> ${dstDir}`);
-					}
-				}
-				resourcesCopied = true;
-			}
-
-			if (resourcesCopied) break;
 		}
 
-		if (!resourcesCopied) {
+		if (!assetsCopied) {
 			console.log('Warning: No images or resources found to copy');
 		}
 
 		// Copy main version content to unversioned location (current/latest)
-		if (
-			await fs
-				.stat(`${RUN.work}/content/latest`)
-				.then(() => true)
-				.catch(() => false)
-		) {
-			await fs.cp(`${RUN.work}/content/latest`, starlightContentDir, {
-				recursive: true,
-			});
+		if (await pathExists(`${RUN.work}/content/latest`)) {
+			await fs.cp(`${RUN.work}/content/latest`, starlightContentDir, { recursive: true });
 		}
+
 		// Copy resource images to assets directory
-		const resourceImages = await glob(
-			`${siteRoot}/src/content/docs/resources/**/*.png`
-		);
+		const resourceImages = await glob(`${siteRoot}/src/content/docs/resources/**/*.png`);
 		if (resourceImages.length > 0) {
-			console.log(
-				`Copying ${resourceImages.length} resource images to assets directory...`
-			);
-			for (const resourceImage of resourceImages) {
-				const imageName = path.basename(resourceImage);
-				const destPath = `${publicDir}/assets/${imageName}`;
-				await fs.cp(resourceImage, destPath);
-			}
-		}
-
-		console.log(
-			`Processing discovered stable versions: ${RUN.versions
-				.filter((v) => v !== 'latest' && semver.prerelease(v) === null)
-				.join(', ')}`
-		);
-
-		for (const version of RUN.versions.filter(
-			(v) => v !== 'latest' && semver.prerelease(v) === null
-		)) {
-			const versionContentPath = `${RUN.work}/content/${version}`;
-			const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
-			const starlightVersionDir = `${siteRoot}/src/content/docs/${versionMajMin}`;
-
-			if (
-				await fs
-					.stat(versionContentPath)
-					.then(() => true)
-					.catch(() => false)
-			) {
-				console.log(
-					`Processing version ${version} - ensuring atomic operations...`
-				);
-				await fs.mkdir(starlightVersionDir, { recursive: true });
-				await fs.cp(versionContentPath, starlightVersionDir, {
-					recursive: true,
-				});
-
-				// Small delay to ensure file system operations complete
-				await new Promise((resolve) => setTimeout(resolve, 100));
-
-
-
-			}
-		}
-
-		// Execute Astro build and handle the complex copy sequence:
-		// 1. Astro builds from src/content/docs to dist/
-		// 2. We copy that to our target dist directory if different
-		try {
-			console.log(`Building Starlight site from directory: ${siteRoot}`);
-			console.log(`Expected dist output: ${siteRoot}/dist`);
-
-			// Execute build with better error handling
-			const buildResult = await util.promisify(child_process.execFile)(
-				'npm',
-				['run', 'build'],
-				{
-					cwd: siteRoot,
-					maxBuffer: 1024 * 1024 * 10, // 10MB buffer
+			console.log(`Copying ${resourceImages.length} resource images to assets directory...`);
+			await Promise.all(resourceImages.map(async (resourceImage) => {
+				try {
+					const imageName = path.basename(resourceImage);
+					await fs.cp(resourceImage, `${publicDir}/assets/${imageName}`);
+				} catch (e) {
+					console.warn(`Failed to copy resource image ${path.basename(resourceImage)}: ${e.message}`);
 				}
-			);
+			}));
+		}
 
-			console.log('Build stdout:', buildResult.stdout);
-			if (buildResult.stderr) {
-				console.log('Build stderr:', buildResult.stderr);
-			}
+		// Copy stable version content
+		const stableVersions = getStableVersions(RUN.versions);
+		console.log(`Processing discovered stable versions: ${stableVersions.join(', ')}`);
 
-			// Check what's in siteRoot after building
+		await Promise.all(stableVersions.map(async (version) => {
 			try {
-				const filesAfter = await fs.readdir(siteRoot);
-				console.log('Files in siteRoot after build:', filesAfter);
+				const versionContentPath = `${RUN.work}/content/${version}`;
+				const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
+				const starlightVersionDir = `${siteRoot}/src/content/docs/${versionMajMin}`;
+
+				if (await pathExists(versionContentPath)) {
+					console.log(`Processing version ${version}...`);
+					await fs.mkdir(starlightVersionDir, { recursive: true });
+					await fs.cp(versionContentPath, starlightVersionDir, { recursive: true });
+				}
 			} catch (e) {
-				console.error(
-					'Failed to read siteRoot directory after build:',
-					e.message
-				);
+				console.warn(`Failed to process version ${version}: ${e.message}`);
 			}
+		}));
 
-			// Copy the built site from Astro's output directory to our dist directory
-			const astroDist = `${siteRoot}/dist`;
-			console.log(`Checking for Astro dist directory at: ${astroDist}`);
-			console.log(`Target dist directory: ${RUN.dist}`);
-
-			const astroDistExists = await fs
-				.stat(astroDist)
-				.then(() => true)
-				.catch((e) => {
-					console.log(`Astro dist stat error:`, e.message);
-					return false;
-				});
-
-			if (astroDistExists) {
-				console.log(`Astro dist directory found, contents:`);
-				try {
-					const distContents = await fs.readdir(astroDist);
-					console.log(distContents);
-				} catch (e) {
-					console.log(`Could not read dist contents:`, e.message);
-				}
-
-				// Check if source and destination are the same
-				if (path.resolve(astroDist) === path.resolve(RUN.dist)) {
-					console.log(
-						`Astro output is already in the correct location: ${RUN.dist}`
-					);
-					console.log(`No copying needed - build is complete!`);
-				} else {
-					// Ensure target directory exists and is empty
-					try {
-						await fs.rm(RUN.dist, { recursive: true, force: true });
-						await fs.mkdir(path.dirname(RUN.dist), { recursive: true });
-					} catch (e) {
-						console.log(`Error preparing target directory:`, e.message);
-					}
-
-					try {
-						await fs.cp(astroDist, RUN.dist, { recursive: true });
-						console.log(
-							`Successfully copied built site from ${astroDist} to ${RUN.dist}`
-						);
-					} catch (copyError) {
-						console.error(`Copy failed:`, copyError);
-						throw copyError;
-					}
-				}
-			} else {
-				console.error(`Astro dist directory not found: ${astroDist}`);
-				// Let's see what actually exists in siteRoot
-				try {
-					const rootContents = await fs.readdir(siteRoot);
-					console.log(`Contents of siteRoot (${siteRoot}):`, rootContents);
-
-					// Check if there's a dist directory anywhere else
-					for (const item of rootContents) {
-						const itemPath = `${siteRoot}/${item}`;
-						const stat = await fs.stat(itemPath).catch(() => null);
-						if (stat?.isDirectory() && item.includes('dist')) {
-							console.log(`Found potential dist directory: ${itemPath}`);
-							const contents = await fs.readdir(itemPath).catch(() => []);
-							console.log(`Contents:`, contents);
-						}
-					}
-				} catch (e) {
-					console.log(`Could not inspect siteRoot:`, e.message);
-				}
-				throw new Error(
-					'Astro build did not produce expected output directory'
-				);
-			}
-		} catch (error) {
-			console.error('Build or copy failed:', error.message);
-			if (error.stdout) console.error('Error stdout:', error.stdout);
-			if (error.stderr) console.error('Error stderr:', error.stderr);
-			throw error;
-		}
+		// Execute Astro build
+		await executeBuild(siteRoot, RUN.dist);
 	});
 }
 
