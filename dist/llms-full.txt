@@ -4,7 +4,7 @@
 
 > Pepr Documentation - latest
 
-[![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev) [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr) [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr) [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr) [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr) [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679y9k1hb)](https://codecov.io/github/defenseunicorns/pepr) [![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-2.1-4baaaa.svg)](/contribute/code-of-conduct)
+[![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev) [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr) [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr) [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr) [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr) [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679Y9K1HB)](https://codecov.io/github/defenseunicorns/pepr) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](/contribute/code-of-conduct)
 
 ## What happened to Pepr’s stars?
 
@@ -20,9 +20,7 @@ If you’ve previously starred Pepr, or if you find it a useful project, we woul
 
 [Section titled “Type safe Kubernetes middleware for humans”](#type-safe-kubernetes-middleware-for-humans)
 
-<!-- markdownlint-disable MD033 - Image-styling is unsupported on GitHub-flavored markdown -->
-
-![The Pepr Logo](/assets/pepr.png)
+{/\* markdownlint-disable MD033 - Image-styling is unsupported on GitHub-flavored markdown \*/} ![The Pepr Logo](/assets/pepr.png)
 
 Pepr simplifies Kubernetes management by providing an alternative to complex YAML configurations, custom scripts, and ad-hoc solutions. As a Kubernetes controller, Pepr enables you to define Kubernetes transformations using TypeScript, accessible through straightforward configurations even without extensive development expertise. Pepr transforms disparate implementation approaches into a cohesive, well-structured, and maintainable system. With Pepr, you can efficiently convert organizational knowledge into code, improving documentation, testing, validation, and change management for more predictable outcomes.
 
@@ -361,7 +359,7 @@ When(a.ConfigMap)
 
 > Mutate
 
-Mutating admission webhooks are invoked first and can modify objects sent to the API server to enforce custom defaults. After an object is sent to Pepr’s Mutating Admission Webhook, Pepr will [annotate the object](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/mutate-processor.ts#l64) to indicate the status.
+Mutating admission webhooks are invoked first and can modify objects sent to the API server to enforce custom defaults. After an object is sent to Pepr’s Mutating Admission Webhook, Pepr will [annotate the object](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/mutate-processor.ts#L64) to indicate the status.
 
 After a successful mutation of an object in a module with UUID static-test, and capability name hello-pepr, expect to see this annotation: `static-test.pepr.dev/hello-pepr: succeeded`.
 
@@ -463,7 +461,7 @@ Looking for some more generic helpers? Check out the [Module Author SDK](/user-g
 
 > Reconcile
 
-Reconcile functions the same as Watch but is tailored for building Kubernetes Controllers and Operators because it processes callback operations in a [Queue](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/watch-processor.ts#l86), guaranteeing ordered and synchronous processing of events, even when the system may be under heavy load.
+Reconcile functions the same as Watch but is tailored for building Kubernetes Controllers and Operators because it processes callback operations in a [Queue](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/watch-processor.ts#L86), guaranteeing ordered and synchronous processing of events, even when the system may be under heavy load.
 
 Ordering can be configured to operate in one of two ways: as a single queue that maintains ordering of operations across all resources of a kind (default) or with separate processing queues per resource instance.
 
@@ -770,7 +768,7 @@ Information on reporting security issues can be found at:
 [Section titled “Presentations”](#presentations)
 
 * Building Smarter Kubernetes Workflows: Pepr for the modern SRE
-* [Shipping Software faster and Safer with Pepr](https://open.spotify.com/episode/3ztxklcsmn0hfhxcinczvt?si=c824f1ace8ca4960)
+* [Shipping Software faster and Safer with Pepr](https://open.spotify.com/episode/3ZtXKLCsMN0hFHXCinCZVT?si=c824f1ace8ca4960)
 
 ## 2024
 
@@ -780,9 +778,9 @@ Information on reporting security issues can be found at:
 
 [Section titled “Session Recordings”](#session-recordings)
 
-* [Leveraging Fluent Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhsjpmtbu\&t=25s)
-* [Optimizing Kubernetes Operators and Admission Control - Open Source Summit NA 2024](https://www.youtube.com/watch?v=sqjfvq1frr4)
-* [Pepr Analysis and Demo - YouTube](https://www.youtube.com/watch?v=kgsfs68hzby)
+* [Leveraging Fluent Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhSJPMtBU\&t=25s)
+* [Optimizing Kubernetes Operators and Admission Control - Open Source Summit NA 2024](https://www.youtube.com/watch?v=SqJfvQ1frr4)
+* [Pepr Analysis and Demo - YouTube](https://www.youtube.com/watch?v=kgSfS68hzbY)
 
 ### Workshops
 
@@ -805,8 +803,8 @@ Information on reporting security issues can be found at:
 
 [Section titled “Session Recordings”](#session-recordings-1)
 
-* [Optimizing Kubernetes Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhsjpmtbu\&t=12s)
-* [Getting Started with Defense Unicorns Integrating Capabilities with Pepr](https://www.youtube.com/watch?v=2khimo0ito4)
+* [Optimizing Kubernetes Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhSJPMtBU\&t=12s)
+* [Getting Started with Defense Unicorns Integrating Capabilities with Pepr](https://www.youtube.com/watch?v=2kHIMo0ITo4)
 
 # Security Policy
 
@@ -851,7 +849,7 @@ If you find a bug in Pepr, please report it by opening an issue in the [Pepr Git
 
 You can contact the Pepr team in the following ways:
 
-* [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb)
+* [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB)
 * [GitHub](https://github.com/defenseunicorns/pepr)
 * [Email](mailto:pepr@defenseunicorns.com)
 
@@ -2738,7 +2736,7 @@ Note: The dashboard may take a few minutes to populate with data.
 
 [Section titled “Summary”](#summary)
 
-This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
+This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
 
 # Create a Pepr Module
 
@@ -2855,7 +2853,7 @@ module.start();
 
 [Section titled “Summary”](#summary)
 
-Checkout some examples of Pepr modules in the [excellent examples repo](https://github.com/defenseunicorns/pepr-excellent-examples). If you have questions after that, please reach out to us on [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
+Checkout some examples of Pepr modules in the [excellent examples repo](https://github.com/defenseunicorns/pepr-excellent-examples). If you have questions after that, please reach out to us on [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
 
 # Building a Kubernetes Operator with Pepr
 
@@ -5370,7 +5368,7 @@ Looking for information on the Pepr mutate helpers? See [Mutate Helpers](/action
 
 The nature of admission controllers and general watch operations (the `Mutate`, `Validate` and `Watch` actions in Pepr) make some types of complex and long-running operations difficult. There are also times when you need to share data between different actions. While you could manually create your own K8s resources and manage their cleanup, this can be very hard to track and keep performant at scale.
 
-The Pepr Store solves this by exposing a simple, [Web Storage API](https://developer.mozilla.org/en-us/docs/web/api/storage)-compatible mechanism for use within capabilities. Additionally, as Pepr runs multiple replicas of the admission controller along with a watch controller, the Pepr Store provides a unique way to share data between these different instances automatically.
+The Pepr Store solves this by exposing a simple, [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Storage)-compatible mechanism for use within capabilities. Additionally, as Pepr runs multiple replicas of the admission controller along with a watch controller, the Pepr Store provides a unique way to share data between these different instances automatically.
 
 Each Pepr Capability has a `Store` instance that can be used to get, set and delete data as well as subscribe to any changes to the Store. Behind the scenes, all capability store instances in a single Pepr Module are stored within a single CRD in the cluster. This CRD is automatically created when the Pepr Module is deployed. Care is taken to make the read and write operations as efficient as possible by using K8s watches, batch processing and patch operations for writes.
 
@@ -5379,7 +5377,7 @@ Each Pepr Capability has a `Store` instance that can be used to get, set and del
 [Section titled “Key Features”](#key-features)
 
 * **Asynchronous Key-Value Store**: Provides an asynchronous interface for storing small amounts of data, making it ideal for sharing information between various actions and capabilities.
-* **Web Storage API Compatibility**: The store’s API is aligned with the standard [Web Storage API](https://developer.mozilla.org/en-us/docs/web/api/storage), simplifying the learning curve.
+* **Web Storage API Compatibility**: The store’s API is aligned with the standard [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Storage), simplifying the learning curve.
 * **Real-time Updates**: The `.subscribe()` and `onReady()` methods enable real-time updates, allowing you to react to changes in the data store instantaneously.
 * **Automatic CRD Management**: Each Pepr Module has its data stored within a single Custom Resource Definition (CRD) that is automatically created upon deployment.
 * **Efficient Operations**: Pepr Store uses Kubernetes watches, batch processing, and patch operations to make read and write operations as efficient as possible.
@@ -5422,7 +5420,7 @@ const unsubscribe = Store.subscribe(data => {
 
 > Pepr Documentation - v0.54.0
 
-[![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev) [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr) [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr) [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr) [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr) [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679y9k1hb)](https://codecov.io/github/defenseunicorns/pepr) [![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-2.1-4baaaa.svg)](code_of_conduct/)
+[![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev) [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr) [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr) [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr) [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr) [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679Y9K1HB)](https://codecov.io/github/defenseunicorns/pepr) \[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)]\(code\_of\_conduct/
 
 ## What happened to Pepr’s stars?
 
@@ -5438,9 +5436,7 @@ If you’ve previously starred Pepr, or if you find it a useful project, we woul
 
 [Section titled “Type safe Kubernetes middleware for humans”](#type-safe-kubernetes-middleware-for-humans)
 
-<!-- markdownlint-disable MD033 - Image-styling is unsupported on GitHub-flavored markdown -->
-
-![The Pepr Logo](/assets/pepr.png)
+{/\* markdownlint-disable MD033 - Image-styling is unsupported on GitHub-flavored markdown \*/} ![The Pepr Logo](/assets/pepr.png)
 
 Pepr simplifies Kubernetes management by providing an alternative to complex YAML configurations, custom scripts, and ad-hoc solutions. As a Kubernetes controller, Pepr enables you to define Kubernetes transformations using TypeScript, accessible through straightforward configurations even without extensive development expertise. Pepr transforms disparate implementation approaches into a cohesive, well-structured, and maintainable system. With Pepr, you can efficiently convert organizational knowledge into code, improving documentation, testing, validation, and change management for more predictable outcomes.
 
@@ -5450,7 +5446,7 @@ Pepr simplifies Kubernetes management by providing an alternative to complex YAM
 
 * Zero-config K8s Mutating and Validating Webhooks plus Controller generation
 * Automatic leader-elected K8s resource watching
-* Lightweight async key-value store backed by K8s for stateful operations with the [Pepr Store](./user-guide/store/)
+* Lightweight async key-value store backed by K8s for stateful operations with the \[Pepr Store]\(./user-guide/store/
 * Human-readable fluent API for generating [Pepr Capabilities](#capability)
 * A fluent API for creating/modifying/watching and server-side applying K8s resources via [Kubernetes Fluent Client](https://github.com/defenseunicorns/kubernetes-fluent-client)
 * Generate new K8s resources based off of cluster resource changes
@@ -5459,7 +5455,7 @@ Pepr simplifies Kubernetes management by providing an alternative to complex YAM
 * Entire NPM ecosystem available for advanced operations
 * Realtime K8s debugging system for testing/reacting to cluster changes
 * Controller network isolation and tamper-resistant module execution
-* Least-privilege [RBAC](./user-guide/rbac/) generation
+* Least-privilege \[RBAC]\(./user-guide/rbac/ generation
 * AMD64 and ARM64 support
 
 ## Example Pepr Action
@@ -5566,7 +5562,7 @@ Don’t use IP as your `--host`, it’s not supported. Make sure to check your l
 
 A module is the top-level collection of capabilities. It is a single, complete TypeScript project that includes an entry point to load all the configuration and capabilities, along with their actions. During the Pepr build process, each module produces a unique Kubernetes MutatingWebhookConfiguration and ValidatingWebhookConfiguration, along with a secret containing the transpiled and compressed TypeScript code. The webhooks and secret are deployed into the Kubernetes cluster with their own isolated controller.
 
-See [Module](./user-guide/pepr-modules/) for more details.
+See \[Module]\(./user-guide/pepr-modules/ for more details.
 
 ### Capability
 
@@ -5574,7 +5570,7 @@ See [Module](./user-guide/pepr-modules/) for more details.
 
 A capability is set of related actions that work together to achieve a specific transformation or operation on Kubernetes resources. Capabilities are user-defined and can include one or more actions. They are defined within a Pepr module and can be used in both MutatingWebhookConfigurations and ValidatingWebhookConfigurations. A Capability can have a specific scope, such as mutating or validating, and can be reused in multiple Pepr modules.
 
-See [Capabilities](./user-guide/capabilities/) for more details.
+See \[Capabilities]\(./user-guide/capabilities/ for more details.
 
 ### Action
 
@@ -5779,7 +5775,7 @@ When(a.ConfigMap)
 
 > Mutate
 
-Mutating admission webhooks are invoked first and can modify objects sent to the API server to enforce custom defaults. After an object is sent to Pepr’s Mutating Admission Webhook, Pepr will [annotate the object](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/mutate-processor.ts#l64) to indicate the status.
+Mutating admission webhooks are invoked first and can modify objects sent to the API server to enforce custom defaults. After an object is sent to Pepr’s Mutating Admission Webhook, Pepr will [annotate the object](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/mutate-processor.ts#L64) to indicate the status.
 
 After a successful mutation of an object in a module with UUID static-test, and capability name hello-pepr, expect to see this annotation: `static-test.pepr.dev/hello-pepr: succeeded`.
 
@@ -5881,7 +5877,7 @@ Looking for some more generic helpers? Check out the [Module Author SDK](../../s
 
 > Reconcile
 
-Reconcile functions the same as Watch but is tailored for building Kubernetes Controllers and Operators because it processes callback operations in a [Queue](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/watch-processor.ts#l86), guaranteeing ordered and synchronous processing of events, even when the system may be under heavy load.
+Reconcile functions the same as Watch but is tailored for building Kubernetes Controllers and Operators because it processes callback operations in a [Queue](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/watch-processor.ts#L86), guaranteeing ordered and synchronous processing of events, even when the system may be under heavy load.
 
 Ordering can be configured to operate in one of two ways: as a single queue that maintains ordering of operations across all resources of a kind (default) or with separate processing queues per resource instance.
 
@@ -6188,7 +6184,7 @@ Information on reporting security issues can be found at:
 [Section titled “Presentations”](#presentations)
 
 * Building Smarter Kubernetes Workflows: Pepr for the modern SRE
-* [Shipping Software faster and Safer with Pepr](https://open.spotify.com/episode/3ztxklcsmn0hfhxcinczvt?si=c824f1ace8ca4960)
+* [Shipping Software faster and Safer with Pepr](https://open.spotify.com/episode/3ZtXKLCsMN0hFHXCinCZVT?si=c824f1ace8ca4960)
 
 ## 2024
 
@@ -6198,9 +6194,9 @@ Information on reporting security issues can be found at:
 
 [Section titled “Session Recordings”](#session-recordings)
 
-* [Leveraging Fluent Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhsjpmtbu\&t=25s)
-* [Optimizing Kubernetes Operators and Admission Control - Open Source Summit NA 2024](https://www.youtube.com/watch?v=sqjfvq1frr4)
-* [Pepr Analysis and Demo - YouTube](https://www.youtube.com/watch?v=kgsfs68hzby)
+* [Leveraging Fluent Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhSJPMtBU\&t=25s)
+* [Optimizing Kubernetes Operators and Admission Control - Open Source Summit NA 2024](https://www.youtube.com/watch?v=SqJfvQ1frr4)
+* [Pepr Analysis and Demo - YouTube](https://www.youtube.com/watch?v=kgSfS68hzbY)
 
 ### Workshops
 
@@ -6223,8 +6219,8 @@ Information on reporting security issues can be found at:
 
 [Section titled “Session Recordings”](#session-recordings-1)
 
-* [Optimizing Kubernetes Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhsjpmtbu\&t=12s)
-* [Getting Started with Defense Unicorns Integrating Capabilities with Pepr](https://www.youtube.com/watch?v=2khimo0ito4)
+* [Optimizing Kubernetes Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhSJPMtBU\&t=12s)
+* [Getting Started with Defense Unicorns Integrating Capabilities with Pepr](https://www.youtube.com/watch?v=2kHIMo0ITo4)
 
 # Security Policy
 
@@ -6269,7 +6265,7 @@ If you find a bug in Pepr, please report it by opening an issue in the [Pepr Git
 
 You can contact the Pepr team in the following ways:
 
-* [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb)
+* [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB)
 * [GitHub](https://github.com/defenseunicorns/pepr)
 * [Email](mailto:pepr@defenseunicorns.com)
 
@@ -8158,7 +8154,7 @@ Note: The dashboard may take a few minutes to populate with data.
 
 [Section titled “Summary”](#summary)
 
-This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
+This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
 
 # Create a Pepr Module
 
@@ -8275,7 +8271,7 @@ module.start();
 
 [Section titled “Summary”](#summary)
 
-Checkout some examples of Pepr modules in the [excellent examples repo](https://github.com/defenseunicorns/pepr-excellent-examples). If you have questions after that, please reach out to us on [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
+Checkout some examples of Pepr modules in the [excellent examples repo](https://github.com/defenseunicorns/pepr-excellent-examples). If you have questions after that, please reach out to us on [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
 
 # Building a Kubernetes Operator with Pepr
 
@@ -10793,7 +10789,7 @@ Looking for information on the Pepr mutate helpers? See [Mutate Helpers](../acti
 
 The nature of admission controllers and general watch operations (the `Mutate`, `Validate` and `Watch` actions in Pepr) make some types of complex and long-running operations difficult. There are also times when you need to share data between different actions. While you could manually create your own K8s resources and manage their cleanup, this can be very hard to track and keep performant at scale.
 
-The Pepr Store solves this by exposing a simple, [Web Storage API](https://developer.mozilla.org/en-us/docs/web/api/storage)-compatible mechanism for use within capabilities. Additionally, as Pepr runs multiple replicas of the admission controller along with a watch controller, the Pepr Store provides a unique way to share data between these different instances automatically.
+The Pepr Store solves this by exposing a simple, [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Storage)-compatible mechanism for use within capabilities. Additionally, as Pepr runs multiple replicas of the admission controller along with a watch controller, the Pepr Store provides a unique way to share data between these different instances automatically.
 
 Each Pepr Capability has a `Store` instance that can be used to get, set and delete data as well as subscribe to any changes to the Store. Behind the scenes, all capability store instances in a single Pepr Module are stored within a single CRD in the cluster. This CRD is automatically created when the Pepr Module is deployed. Care is taken to make the read and write operations as efficient as possible by using K8s watches, batch processing and patch operations for writes.
 
@@ -10802,7 +10798,7 @@ Each Pepr Capability has a `Store` instance that can be used to get, set and del
 [Section titled “Key Features”](#key-features)
 
 * **Asynchronous Key-Value Store**: Provides an asynchronous interface for storing small amounts of data, making it ideal for sharing information between various actions and capabilities.
-* **Web Storage API Compatibility**: The store’s API is aligned with the standard [Web Storage API](https://developer.mozilla.org/en-us/docs/web/api/storage), simplifying the learning curve.
+* **Web Storage API Compatibility**: The store’s API is aligned with the standard [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Storage), simplifying the learning curve.
 * **Real-time Updates**: The `.subscribe()` and `onReady()` methods enable real-time updates, allowing you to react to changes in the data store instantaneously.
 * **Automatic CRD Management**: Each Pepr Module has its data stored within a single Custom Resource Definition (CRD) that is automatically created upon deployment.
 * **Efficient Operations**: Pepr Store uses Kubernetes watches, batch processing, and patch operations to make read and write operations as efficient as possible.
@@ -10845,7 +10841,7 @@ const unsubscribe = Store.subscribe(data => {
 
 > Pepr Documentation - v0.55.0
 
-[![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev) [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr) [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr) [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr) [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr) [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679y9k1hb)](https://codecov.io/github/defenseunicorns/pepr) [![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-2.1-4baaaa.svg)](/contribute/code-of-conduct)
+[![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev) [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr) [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr) [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr) [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr) [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679Y9K1HB)](https://codecov.io/github/defenseunicorns/pepr) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](/contribute/code-of-conduct)
 
 ## What happened to Pepr’s stars?
 
@@ -10861,9 +10857,7 @@ If you’ve previously starred Pepr, or if you find it a useful project, we woul
 
 [Section titled “Type safe Kubernetes middleware for humans”](#type-safe-kubernetes-middleware-for-humans)
 
-<!-- markdownlint-disable MD033 - Image-styling is unsupported on GitHub-flavored markdown -->
-
-![The Pepr Logo](/assets/pepr.png)
+{/\* markdownlint-disable MD033 - Image-styling is unsupported on GitHub-flavored markdown \*/} ![The Pepr Logo](/assets/pepr.png)
 
 Pepr simplifies Kubernetes management by providing an alternative to complex YAML configurations, custom scripts, and ad-hoc solutions. As a Kubernetes controller, Pepr enables you to define Kubernetes transformations using TypeScript, accessible through straightforward configurations even without extensive development expertise. Pepr transforms disparate implementation approaches into a cohesive, well-structured, and maintainable system. With Pepr, you can efficiently convert organizational knowledge into code, improving documentation, testing, validation, and change management for more predictable outcomes.
 
@@ -11202,7 +11196,7 @@ When(a.ConfigMap)
 
 > Mutate
 
-Mutating admission webhooks are invoked first and can modify objects sent to the API server to enforce custom defaults. After an object is sent to Pepr’s Mutating Admission Webhook, Pepr will [annotate the object](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/mutate-processor.ts#l64) to indicate the status.
+Mutating admission webhooks are invoked first and can modify objects sent to the API server to enforce custom defaults. After an object is sent to Pepr’s Mutating Admission Webhook, Pepr will [annotate the object](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/mutate-processor.ts#L64) to indicate the status.
 
 After a successful mutation of an object in a module with UUID static-test, and capability name hello-pepr, expect to see this annotation: `static-test.pepr.dev/hello-pepr: succeeded`.
 
@@ -11304,7 +11298,7 @@ Looking for some more generic helpers? Check out the [Module Author SDK](/user-g
 
 > Reconcile
 
-Reconcile functions the same as Watch but is tailored for building Kubernetes Controllers and Operators because it processes callback operations in a [Queue](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/watch-processor.ts#l86), guaranteeing ordered and synchronous processing of events, even when the system may be under heavy load.
+Reconcile functions the same as Watch but is tailored for building Kubernetes Controllers and Operators because it processes callback operations in a [Queue](https://github.com/defenseunicorns/pepr/blob/f01f5eeda16c13ecd0d51b26b8a16ed7e4c1b080/src/lib/watch-processor.ts#L86), guaranteeing ordered and synchronous processing of events, even when the system may be under heavy load.
 
 Ordering can be configured to operate in one of two ways: as a single queue that maintains ordering of operations across all resources of a kind (default) or with separate processing queues per resource instance.
 
@@ -11611,7 +11605,7 @@ Information on reporting security issues can be found at:
 [Section titled “Presentations”](#presentations)
 
 * Building Smarter Kubernetes Workflows: Pepr for the modern SRE
-* [Shipping Software faster and Safer with Pepr](https://open.spotify.com/episode/3ztxklcsmn0hfhxcinczvt?si=c824f1ace8ca4960)
+* [Shipping Software faster and Safer with Pepr](https://open.spotify.com/episode/3ZtXKLCsMN0hFHXCinCZVT?si=c824f1ace8ca4960)
 
 ## 2024
 
@@ -11621,9 +11615,9 @@ Information on reporting security issues can be found at:
 
 [Section titled “Session Recordings”](#session-recordings)
 
-* [Leveraging Fluent Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhsjpmtbu\&t=25s)
-* [Optimizing Kubernetes Operators and Admission Control - Open Source Summit NA 2024](https://www.youtube.com/watch?v=sqjfvq1frr4)
-* [Pepr Analysis and Demo - YouTube](https://www.youtube.com/watch?v=kgsfs68hzby)
+* [Leveraging Fluent Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhSJPMtBU\&t=25s)
+* [Optimizing Kubernetes Operators and Admission Control - Open Source Summit NA 2024](https://www.youtube.com/watch?v=SqJfvQ1frr4)
+* [Pepr Analysis and Demo - YouTube](https://www.youtube.com/watch?v=kgSfS68hzbY)
 
 ### Workshops
 
@@ -11646,8 +11640,8 @@ Information on reporting security issues can be found at:
 
 [Section titled “Session Recordings”](#session-recordings-1)
 
-* [Optimizing Kubernetes Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhsjpmtbu\&t=12s)
-* [Getting Started with Defense Unicorns Integrating Capabilities with Pepr](https://www.youtube.com/watch?v=2khimo0ito4)
+* [Optimizing Kubernetes Ecosystems: Leveraging Fluent, Flexible APIs for Admission Control Strategies](https://www.youtube.com/watch?v=32xhSJPMtBU\&t=12s)
+* [Getting Started with Defense Unicorns Integrating Capabilities with Pepr](https://www.youtube.com/watch?v=2kHIMo0ITo4)
 
 # Security Policy
 
@@ -11692,7 +11686,7 @@ If you find a bug in Pepr, please report it by opening an issue in the [Pepr Git
 
 You can contact the Pepr team in the following ways:
 
-* [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb)
+* [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB)
 * [GitHub](https://github.com/defenseunicorns/pepr)
 * [Email](mailto:pepr@defenseunicorns.com)
 
@@ -13579,7 +13573,7 @@ Note: The dashboard may take a few minutes to populate with data.
 
 [Section titled “Summary”](#summary)
 
-This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
+This tutorial demonstrated how to use Prometheus and Grafana to display metrics from your Pepr instance. If you have questions about Pepr metrics or dashboards, please reach out to us on [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
 
 # Create a Pepr Module
 
@@ -13696,7 +13690,7 @@ module.start();
 
 [Section titled “Summary”](#summary)
 
-Checkout some examples of Pepr modules in the [excellent examples repo](https://github.com/defenseunicorns/pepr-excellent-examples). If you have questions after that, please reach out to us on [Slack](https://kubernetes.slack.com/archives/c06dgh40ucb) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
+Checkout some examples of Pepr modules in the [excellent examples repo](https://github.com/defenseunicorns/pepr-excellent-examples). If you have questions after that, please reach out to us on [Slack](https://kubernetes.slack.com/archives/C06DGH40UCB) or [GitHub Issues](https://github.com/defenseunicorns/pepr/issues)
 
 # Building a Kubernetes Operator with Pepr
 
@@ -16211,7 +16205,7 @@ Looking for information on the Pepr mutate helpers? See [Mutate Helpers](/action
 
 The nature of admission controllers and general watch operations (the `Mutate`, `Validate` and `Watch` actions in Pepr) make some types of complex and long-running operations difficult. There are also times when you need to share data between different actions. While you could manually create your own K8s resources and manage their cleanup, this can be very hard to track and keep performant at scale.
 
-The Pepr Store solves this by exposing a simple, [Web Storage API](https://developer.mozilla.org/en-us/docs/web/api/storage)-compatible mechanism for use within capabilities. Additionally, as Pepr runs multiple replicas of the admission controller along with a watch controller, the Pepr Store provides a unique way to share data between these different instances automatically.
+The Pepr Store solves this by exposing a simple, [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Storage)-compatible mechanism for use within capabilities. Additionally, as Pepr runs multiple replicas of the admission controller along with a watch controller, the Pepr Store provides a unique way to share data between these different instances automatically.
 
 Each Pepr Capability has a `Store` instance that can be used to get, set and delete data as well as subscribe to any changes to the Store. Behind the scenes, all capability store instances in a single Pepr Module are stored within a single CRD in the cluster. This CRD is automatically created when the Pepr Module is deployed. Care is taken to make the read and write operations as efficient as possible by using K8s watches, batch processing and patch operations for writes.
 
@@ -16220,7 +16214,7 @@ Each Pepr Capability has a `Store` instance that can be used to get, set and del
 [Section titled “Key Features”](#key-features)
 
 * **Asynchronous Key-Value Store**: Provides an asynchronous interface for storing small amounts of data, making it ideal for sharing information between various actions and capabilities.
-* **Web Storage API Compatibility**: The store’s API is aligned with the standard [Web Storage API](https://developer.mozilla.org/en-us/docs/web/api/storage), simplifying the learning curve.
+* **Web Storage API Compatibility**: The store’s API is aligned with the standard [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Storage), simplifying the learning curve.
 * **Real-time Updates**: The `.subscribe()` and `onReady()` methods enable real-time updates, allowing you to react to changes in the data store instantaneously.
 * **Automatic CRD Management**: Each Pepr Module has its data stored within a single Custom Resource Definition (CRD) that is automatically created upon deployment.
 * **Efficient Operations**: Pepr Store uses Kubernetes watches, batch processing, and patch operations to make read and write operations as efficient as possible.
