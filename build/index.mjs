@@ -100,7 +100,7 @@ const transformContent = (content) => {
 	// 4. Escape MDX content
 	return result
 		.replaceAll(/\*\*@param\b/g, '**\\@param')
-		.replace(/<!--([\s\S]*?)-->/g, '{/* $1 */}')
+		.replace(/<!--([\s\S]*?)-->/g, '')
 		.replace(/<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>/g, '&lt;$1&gt;')
 		.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
 };
