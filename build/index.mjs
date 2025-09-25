@@ -75,6 +75,16 @@ function convertCallouts(content, filePath) {
 	);
 }
 
+// Helper to remove HTML comments repeatedly until none remain
+function removeHtmlComments(input) {
+	let prev;
+	do {
+		prev = input;
+		input = input.replace(/<!--([\s\S]*?)-->/g, '');
+	} while (input !== prev);
+	return input;
+}
+
 // Content transformation pipeline - all transformations in one place
 const transformContent = (content) => {
 	// 1. Fix image paths
@@ -98,9 +108,8 @@ const transformContent = (content) => {
 	});
 
 	// 4. Escape MDX content
-	return result
+	return removeHtmlComments(result)
 		.replaceAll(/\*\*@param\b/g, '**\\@param')
-		.replace(/<!--([\s\S]*?)-->/g, '{/* $1 */}')
 		.replace(/<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>/g, '&lt;$1&gt;')
 		.replace(/<([^>]*[@!][^>]*)>/g, '&lt;$1&gt;');
 };
