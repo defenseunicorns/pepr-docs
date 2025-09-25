@@ -10675,7 +10675,7 @@ const unsubscribe = Store.subscribe(data => {
 
 # Pepr
 
-> Pepr Documentation - v0.55.0
+> Pepr Documentation - v0.55.1
 
 [![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev) [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr) [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr) [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr) [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr) [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679Y9K1HB)](https://codecov.io/github/defenseunicorns/pepr) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](/contribute/code-of-conduct)
 
@@ -10807,7 +10807,9 @@ Tip
 
 Don’t use IP as your `--host`, it’s not supported. Make sure to check your local k8s distro documentation how to reach your localhost, which is where `pepr dev` is serving the code from.
 
-<[](https://user-images.githubusercontent.com/882485/230895880-c5623077-f811-4870-bb9f-9bb8e5edc118.mp4)>
+[](<\<video class=>)" type="video/mp4">
+
+Your browser doesn't support HTML video. [">Download the video](<\<video class=>) instead.
 
 ## Concepts
 
@@ -11257,7 +11259,9 @@ This will result in log entries when creating a Pod with the that include the al
 {"level":30,"time":1726798510466,"pid":16,"hostname":"pepr-static-test-watcher-6dc69654c9-5ql6b","alias":"reconcile","msg":"alias: reconcile red"}
 ```
 
-**Note:** The Alias function is optional and can be used to provide additional context in the logs. You must pass the logger object as shown above to the action to use the Alias function.
+Note
+
+The Alias function is optional and can be used to provide additional context in the logs. You must pass the logger object as shown above to the action to use the Alias function.
 
 ## See Also
 
@@ -11501,7 +11505,7 @@ We appreciate your help in making Pepr more secure and will acknowledge your con
 
 [Section titled “Contact”](#contact)
 
-If you have any questions or concerns regarding the security of Pepr, please contact us at <<pepr@defenseunicorns.com>>.
+If you have any questions or concerns regarding the security of Pepr, please contact us at <pepr@defenseunicorns.com>.
 
 # Support
 
@@ -11576,7 +11580,7 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 [Section titled “Enforcement”](#enforcement)
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at <<pepr-dev-private@googlegroups.com>>. All complaints will be reviewed and investigated promptly and fairly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at <pepr-dev-private@googlegroups.com>. All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the reporter of any incident.
 
@@ -12312,7 +12316,9 @@ npx clear-npx-cache
 
 If you want to ensure the cache has been cleared, you can check the cache directory. The location of this directory varies based on your operating system and configuration. However, you can generally find it in your system’s home directory under `.npm`.
 
-**Note** - If you are inside of the Pepr Core repo (<https://github.com/defenseunicorns/pepr>), then it is normal for `npx pepr -V` to return `0.0.0-development`.
+Note
+
+If you are inside of the Pepr Core repo (<https://github.com/defenseunicorns/pepr>), then it is normal for `npx pepr -V` to return `0.0.0-development`
 
 ## I’ve found a bug, what should I do?
 
@@ -12411,7 +12417,7 @@ This section contains work we’ve considered, but have not slotted in to the ro
 * **Pepr v1.0.0**
   * Determine if Pepr is stable enough to be at `v1.0.0` and release it!
 * **OTEL Preparation**:
-  * Come up with a plan to implement Open Telemetry. Specifically distributed tracing, metrics, logs and events. Use this data to make debugging easier from a UDS Core prespective. There will be documentation work on how to use an OTEL collector with a Pepr Module.
+  * Come up with a plan to implement Open Telemetry. Specifically distributed tracing, metrics, logs and events. Use this data to make debugging easier from a UDS Core perspective. There will be documentation work on how to use an OTEL collector with a Pepr Module.
 * **Deno2 Implementation**:
   * If determined to be advisable, move forward with migrating the project to Deno2 (starting with the kubernetes-fluent-client..?). This phase will focus on adapting the codebase, conducting extensive testing, and creating comprehensive documentation to ensure a seamless transition.
 * **Determine if a Transactional PeprStore makes sense**:
@@ -12469,7 +12475,7 @@ This section contains work we’ve considered, but have not slotted in to the ro
   * **Community Building**:
 
     * Grow the contributor base, establish a governance model, and encourage community-led initiatives. Look to drive conversation in our Slack Channel.
-    * Based on community feedback, continuously improve and add features. Rigoursly test and document and review code.
+    * Based on community feedback, continuously improve and add features. Rigorously test and document and review code.
 
   * **Project Advocation**:
     * Publicly advocate for the project and encourage adoption.
@@ -12479,9 +12485,9 @@ This section contains work we’ve considered, but have not slotted in to the ro
     * Ensure that the project is stable and reliable. Make sure that the project is well-tested and documented.
     * Identify new areas of project improvement and work on them.
 
-## Phase 4: Feature Development, Stablization, Code and Testing Quality Improvements
+## Phase 4: Feature Development, Stabilization, Code and Testing Quality Improvements
 
-[Section titled “Phase 4: Feature Development, Stablization, Code and Testing Quality Improvements”](#phase-4-feature-development-stablization-code-and-testing-quality-improvements)
+[Section titled “Phase 4: Feature Development, Stabilization, Code and Testing Quality Improvements”](#phase-4-feature-development-stabilization-code-and-testing-quality-improvements)
 
 * **Q4**:
 
@@ -13397,13 +13403,17 @@ username: admin password: secret
 
 By clicking on the Prometheus data source, you should be able to test the connection to Prometheus by clicking the “Test” button at the bottom of the screen.
 
-NOTE: The Prometheus server URL should be something like:
+Note
+
+The Prometheus server URL should be something like:
 
 <http://monitoring-kube-prometh-prometheus.default:9090/>
 
 You should now be able to select the Pepr Dashboard from the Grafana UI in the “Dashboards” section.
 
-Note: The dashboard may take a few minutes to populate with data.
+Note
+
+The dashboard may take a few minutes to populate with data.
 
 ## Summary
 
@@ -13827,7 +13837,9 @@ Make sure Pepr is updated to the latest version:
 npx pepr update --skip-template-update
 ```
 
-> ⚠️ **Important Note**: Be cautious when updating Pepr in an existing project as it could potentially override custom configurations. The `--skip-template-update` flag helps prevent this.
+Caution
+
+Be cautious when updating Pepr in an existing project as it could potentially override custom configurations. The `--skip-template-update` flag helps prevent this.
 
 ### Building the Operator
 
@@ -13979,7 +13991,9 @@ FIELDS:
     Theme defines the theme of the web application, either dark or light.
 ```
 
-> 💡 **Note**: `wa` is the short form of `webapp` that kubectl recognizes. This resource structure directly matches the TypeScript interface we defined earlier in our code.
+Note
+
+`wa` is the short form of `webapp` that kubectl recognizes. This resource structure directly matches the TypeScript interface we defined earlier in our code.
 
 [Back to top](#building-a-kubernetes-operator-with-pepr)
 
@@ -14150,7 +14164,7 @@ Events:
 
 [Section titled “Viewing Your WebApp”](#viewing-your-webapp)
 
-To access your WebApp in a browser, use port-forwarding to connect to the service. The following command runs the portforward in the background. Be sure to make note of the `Port-forward PID` for later when we tear down the test environment.
+To access your WebApp in a browser, use port-forwarding to connect to the service. The following command runs the port-forward in the background. Be sure to make note of the `Port-forward PID` for later when we tear down the test environment.
 
 ```bash
 kubectl port-forward svc/webapp-light-en -n webapps 3000:80 &
@@ -14227,9 +14241,11 @@ diff --side-by-side \
 kubectl apply -f webapp-dark-es.yaml
 ```
 
-> 💡 **Note**: We’ve changed the theme from light to dark and the language from English (en) to Spanish (es).
+Note
 
-Your port-forward should still be active, so you can refresh your browser to see the changes. If your porf-forward is no longer active for some reason, create a new one:
+We’ve changed the theme from light to dark and the language from English (en) to Spanish (es).
+
+Your port-forward should still be active, so you can refresh your browser to see the changes. If your port-forward is no longer active for some reason, create a new one:
 
 ```bash
 # Only needed if previous port-forward closed
@@ -14360,13 +14376,33 @@ You can find the following information in this section:
 
 [Section titled “Pepr Capabilities”](#pepr-capabilities)
 
-### [Pepr Store](/user-guide/store)
-
-[Section titled “Pepr Store”](#pepr-store)
-
 ### [Custom Resources](/user-guide/custom-resources)
 
 [Section titled “Custom Resources”](#custom-resources)
+
+### [Customization](/user-guide/customization)
+
+[Section titled “Customization”](#customization)
+
+### [Feature Flags](/user-guide/feature-flags)
+
+[Section titled “Feature Flags”](#feature-flags)
+
+### [Filters](/user-guide/filters)
+
+[Section titled “Filters”](#filters)
+
+### [Custom Metrics](/user-guide/generating-custom-metrics)
+
+[Section titled “Custom Metrics”](#custom-metrics)
+
+### [Generating CRDs](/user-guide/generating-crds)
+
+[Section titled “Generating CRDs”](#generating-crds)
+
+### [Metrics](/user-guide/metrics-endpoints)
+
+[Section titled “Metrics”](#metrics)
 
 ### [OnSchedule](/user-guide/onschedule)
 
@@ -14376,25 +14412,9 @@ You can find the following information in this section:
 
 [Section titled “RBAC”](#rbac)
 
-### [Metrics](/user-guide/metrics)
+### [Pepr Store](/user-guide/store)
 
-[Section titled “Metrics”](#metrics)
-
-### [Customization](/user-guide/customization)
-
-[Section titled “Customization”](#customization)
-
-### [Filters](/user-guide/filters)
-
-[Section titled “Filters”](#filters)
-
-### [Generating CRDs](/user-guide/generating-crds)
-
-[Section titled “Generating CRDs”](#generating-crds)
-
-### [Custom Metrics](/user-guide/generating_custom_metrics)
-
-[Section titled “Custom Metrics”](#custom-metrics)
+[Section titled “Pepr Store”](#pepr-store)
 
 # Pepr Capabilities
 
@@ -14414,7 +14434,9 @@ Defining a new capability can be done via a [VSCode Snippet](https://code.visual
 
 2. Open the new file in VSCode and type `create` in the file. A suggestion should prompt you to generate the content from there.
 
-\[[](https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4]\(https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4))
+[](<\<video class=>)" type="video/mp4">
+
+Your browser doesn't support HTML video. [">Download the video](<\<video class=>) instead.
 
 *If you prefer not to use VSCode, you can also modify or copy the `HelloPepr` capability to meet your needs instead.*
 
@@ -14681,7 +14703,7 @@ Default (without):
 
 [Section titled “Customizing Watch Configuration”](#customizing-watch-configuration)
 
-The Watch configuration is a part of the Pepr module that allows you to watch for specific resources in the Kubernetes cluster. The Watch configuration can be customized by specific enviroment variables of the Watcher Deployment and can be set in the field in the `package.json` or in the helm `values.yaml` file.
+The Watch configuration is a part of the Pepr module that allows you to watch for specific resources in the Kubernetes cluster. The Watch configuration can be customized by specific environment variables of the Watcher Deployment and can be set in the field in the `package.json` or in the helm `values.yaml` file.
 
 | Field                          | Description                                                                                                       | Example Values             |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------- | -------------------------- |
@@ -14696,9 +14718,9 @@ The Watch configuration is a part of the Pepr module that allows you to watch fo
 
 The [Reconcile Action](/actions/reconcile) allows you to maintain ordering of resource updates processed by a Pepr controller. The Reconcile configuration can be customized via environment variable on the Watcher Deployment, which can be set in the `package.json` or in the helm `values.yaml` file.
 
-| Field                     | Description                                                 | Example Values    |
-| ------------------------- | ----------------------------------------------------------- | ----------------- |
-| `PEPR_RECONCILE_STRATEGY` | How Pepr should order resource updates being Reconcile()‘d. | default: `"kind"` |
+| Field                     | Description                                                 | Example Values          |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| `PEPR_RECONCILE_STRATEGY` | How Pepr should order resource updates being Reconcile()‘d. | default: `"kindNsName"` |
 
 | Available Options |                                                                                               |
 | ----------------- | --------------------------------------------------------------------------------------------- |
@@ -14869,7 +14891,9 @@ Pepr’s feature flag system supports:
 
 Feature flags in Pepr are defined in the `FeatureFlags` object. The `FeatureFlags` object is the source of truth for all available feature flags.
 
-> **Important**: To reduce complexity, Pepr enforces a limit of 4 active feature flags. Exceeding this limit results in an error (e.g., `Error: Too many feature flags active: 5 (maximum: 4).`)
+Caution
+
+To reduce complexity, Pepr enforces a limit of 4 active feature flags. Exceeding this limit results in an error (e.g., `Error: Too many feature flags active: 5 (maximum: 4).`)
 
 Feature Flags have:
 
@@ -15083,7 +15107,9 @@ npx pepr crd create \
 
 This command will create a TypeScript file in the `crds` directory with the generated types for the specified CRD. The generated file will include the necessary type definitions for the CRD.
 
-> Note: The comments in the interface spec and condition type become descriptions for the CRD properties, so you can add comments to your properties to provide additional context or documentation for the generated types.
+Note
+
+The comments in the interface spec and condition type become descriptions for the CRD properties, so you can add comments to your properties to provide additional context or documentation for the generated types.
 
 After adding the required types for your CRD, you can then generate the CRD YAML file using the `pepr crd generate` command. This command will create a YAML file that defines the CRD in Kubernetes format.
 
@@ -15127,7 +15153,7 @@ metricsCollector.addCounter(
 
 // Register a gauge to count how many times a given label has been applied
 metricsCollector.addGauge(
-  "label_guage",
+  "label_gauge",
   "example gauge for counting how times times a given label has been applied",
   ["label"],
 );
@@ -15141,9 +15167,9 @@ When(a.Pod)
     po.SetLabel("blue", "true");
     po.SetLabel("green", "true");
     metricsCollector.incCounter("label_counter");
-    metricsCollector.incGauge("label_guage", { label: "blue" }, 1);
-    metricsCollector.incGauge("label_guage", { label: "green" }, 1);
-    metricsCollector.incGauge("label_guage", { label: "hello-pepr" }, 1);
+    metricsCollector.incGauge("label_gauge", { label: "blue" }, 1);
+    metricsCollector.incGauge("label_gauge", { label: "green" }, 1);
+    metricsCollector.incGauge("label_gauge", { label: "hello-pepr" }, 1);
   });
 ```
 
@@ -15158,8 +15184,8 @@ terminal_b > curl -k http://localhost:3000/metrics
 pepr_label_counter 0
 
 
-# HELP pepr_label_guage example gauge for counting how times times a given label has been applied
-# TYPE pepr_label_guage gauge
+# HELP pepr_label_gauge example gauge for counting how times times a given label has been applied
+# TYPE pepr_label_gauge gauge
 terminal_b > kubectl run a --image=nginx
 terminal_b > kubectl run b --image=nginx
 terminal_b > kubectl run c --image=nginx
@@ -15169,11 +15195,11 @@ terminal_b > curl -k http://localhost:3000/metrics
 pepr_label_counter 3
 
 
-# HELP pepr_label_guage example gauge for counting how times times a given label has been applied
-# TYPE pepr_label_guage gauge
-pepr_label_guage{label="blue"} 3
-pepr_label_guage{label="green"} 3
-pepr_label_guage{label="hello-pepr"} 3
+# HELP pepr_label_gauge example gauge for counting how times times a given label has been applied
+# TYPE pepr_label_gauge gauge
+pepr_label_gauge{label="blue"} 3
+pepr_label_gauge{label="green"} 3
+pepr_label_gauge{label="hello-pepr"} 3
 ```
 
 # Metrics Endpoints
@@ -15534,7 +15560,9 @@ Setup a local webhook development environment
 
 Connect a local cluster to a local version of the Pepr Controller to do real-time debugging of your module. Note the `npx pepr dev` assumes a K3d cluster is running by default. If you are working with Kind or another docker-based K8s distro, you will need to pass the `--host host.docker.internal` option to `npx pepr dev`. If working with a remote cluster you will have to give Pepr a host path to your machine that is reachable from the K8s cluster.
 
-NOTE: This command, by necessity, installs resources into the cluster you run it against. Generally, these resources are removed once the `pepr dev` session ends but there are two notable exceptions:
+Note
+
+This command, by necessity, installs resources into the cluster you run it against. Generally, these resources are removed once the `pepr dev` session ends but there are two notable exceptions:
 
 * the `pepr-system` namespace, and
 * the `PeprStore` CRD.
@@ -15707,7 +15735,7 @@ kubectl logs -n pepr-system  -l app | jq
   "ok": false,
   "status": 403,
   "statusText": "Forbidden",
-  "msg": "Dooes the ServiceAccount permissions to CREATE and PATCH this ConfigMap?"
+  "msg": "Does the ServiceAccount have permissions to CREATE and PATCH this ConfigMap?"
 }
 ```
 
