@@ -6,7 +6,6 @@ export default defineConfig({
     environment: 'node',
     reporters: ['verbose'],
     pool: 'threads',
-    testTimeout: 60000,
     globalSetup: [],
     setupFiles: []
   }

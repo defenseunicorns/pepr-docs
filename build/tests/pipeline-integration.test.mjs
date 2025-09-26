@@ -30,110 +30,38 @@ async function getTransformContentFunction() {
 }
 
 describe('transformContent', () => {
-	it('should transform video URLs to video tags', async () => {
-		const transformContent = await getTransformContentFunction();
+    const testCases = [
+        ['should transform video URLs to video tags', 'Check out this demo: https://example.com/demo.mp4', '<video class="td-content" controls src="https://example.com/demo.mp4"></video>'],
 
-		if (transformContent) {
-			const content = 'Check out this demo: https://example.com/demo.mp4';
-			const result = transformContent(content);
+        ['should remove HTML Start Block comments', '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', 'Some content'],
+        ['should remove HTML End Block comments', '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', 'More content'],
+        ['should not contain Start Block markers', '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', '<!-- Start Block -->'],
+        ['should not contain End Block markers', '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', '<!-- End Block -->'],
+        ['should fix pepr-arch.svg image paths', '![arch](_images/pepr-arch.svg) and ![logo](_images/pepr.png)', '/assets/pepr-arch.png'],
+        ['should fix pepr.png image paths', '![arch](_images/pepr-arch.svg) and ![logo](_images/pepr.png)', '/assets/pepr.png'],
 
-			expect(result).toContain('<video class="td-content" controls src="https://example.com/demo.mp4"></video>');
-		}
-	});
+        ['should escape MDX @param', '**@param** name The parameter name', '**\\@param**'],
+        ['should escape email addresses', 'Contact us at <user@example.com>', '&lt;user@example.com&gt;'],
+        ['should process markdown links with numeric prefixes', '[Getting Started](1_getting-started/README.md)', '[Getting Started](getting-started)'],
+        ['should fix image paths in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '/assets/pepr-arch.png'],
+        ['should transform video in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '<video class="td-content" controls'],
+        ['should fix links in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '[Getting Started](getting-started)'],
+        ['should escape @param in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '**\\@param**'],
+        ['should escape email in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '&lt;admin@example.com&gt;'],
+        ['should not contain comments in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '<!-- This is a comment -->']
+    ];
 
-	it('should remove HTML comments', async () => {
-		const transformContent = await getTransformContentFunction();
+    it.each(testCases)('%s', async (testName, input, expected) => {
+        const transformContent = await getTransformContentFunction();
 
-		if (transformContent) {
-			const content = `
-# Test
-<!-- Start Block -->
-Some content
-<!-- End Block -->
-More content
-			`.trim();
+        if (transformContent) {
+            const result = transformContent(input);
 
-			const result = transformContent(content);
-
-			expect(result).not.toContain('<!-- Start Block -->');
-			expect(result).not.toContain('<!-- End Block -->');
-			expect(result).toContain('Some content');
-			expect(result).toContain('More content');
-		}
-	});
-
-	it('should fix image paths', async () => {
-		const transformContent = await getTransformContentFunction();
-
-		if (transformContent) {
-			const content = '![arch](_images/pepr-arch.svg) and ![logo](_images/pepr.png)';
-			const result = transformContent(content);
-
-			expect(result).toContain('/assets/pepr-arch.png');
-			expect(result).toContain('/assets/pepr.png');
-		}
-	});
-
-	it('should escape MDX @param', async () => {
-		const transformContent = await getTransformContentFunction();
-
-		if (transformContent) {
-			const content = '**@param** name The parameter name';
-			const result = transformContent(content);
-
-			expect(result).toContain('**\\@param**');
-		}
-	});
-
-	it('should escape email addresses', async () => {
-		const transformContent = await getTransformContentFunction();
-
-		if (transformContent) {
-			const content = 'Contact us at <user@example.com>';
-			const result = transformContent(content);
-
-			expect(result).toContain('&lt;user@example.com&gt;');
-		}
-	});
-
-	it('should process markdown links with numeric prefixes', async () => {
-		const transformContent = await getTransformContentFunction();
-
-		if (transformContent) {
-			const content = '[Getting Started](1_getting-started/README.md)';
-			const result = transformContent(content);
-
-			expect(result).toContain('[Getting Started](getting-started)');
-		}
-	});
-
-	it('should handle complex content transformation pipeline', async () => {
-		const transformContent = await getTransformContentFunction();
-
-		if (transformContent) {
-			const complexContent = `
-# Documentation
-
-<!-- This is a comment -->
-![arch](_images/pepr-arch.svg)
-
-Check out this video: https://example.com/demo.mp4
-
-[Getting Started](1_getting-started/README.md)
-
-**@param** config The configuration object
-
-Contact: <admin@example.com>
-			`.trim();
-
-			const result = transformContent(complexContent);
-
-			expect(result).not.toContain('<!-- This is a comment -->');
-			expect(result).toContain('/assets/pepr-arch.png');
-			expect(result).toContain('<video class="td-content" controls');
-			expect(result).toContain('[Getting Started](getting-started)');
-			expect(result).toContain('**\\@param**');
-			expect(result).toContain('&lt;admin@example.com&gt;');
-		}
-	});
+            if (testName.includes('should not contain')) {
+                expect(result).not.toContain(expected);
+            } else {
+                expect(result).toContain(expected);
+            }
+        }
+    });
 });
