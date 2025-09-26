@@ -178,7 +178,6 @@ Some regular content
 				// The actual function handles nested comments by removing them iteratively
 				expect(result).toContain('Before');
 				expect(result).toContain('after');
-				// May still contain some comment fragments due to nesting complexity
 			}
 		});
 

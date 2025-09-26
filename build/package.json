@@ -11,9 +11,7 @@
     "serve": "cd work ; npm run start",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:unit": "vitest run --reporter=verbose tests/*.unit.test.mjs",
     "test:integration": "vitest run --reporter=verbose tests/*integration*.test.mjs",
-    "test:unit:watch": "vitest tests/*.unit.test.mjs",
     "test:integration:watch": "vitest tests/*integration*.test.mjs"
   },
   "devDependencies": {
