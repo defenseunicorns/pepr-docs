@@ -10,7 +10,9 @@
     "dev": "node index.mjs",
     "serve": "cd work ; npm run start",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:integration": "vitest run --reporter=verbose tests/*integration*.test.mjs",
+    "test:integration:watch": "vitest tests/*integration*.test.mjs"
   },
   "devDependencies": {
     "commander": "^11.1.0",
