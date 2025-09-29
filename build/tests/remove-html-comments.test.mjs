@@ -17,34 +17,95 @@ async function getRemoveHtmlCommentsFunction() {
 
 describe('removeHtmlComments', () => {
     const testCases = [
-        ['should remove simple HTML comments', 'Before <!-- comment --> after', 'Before  after'],
-        ['should not contain simple comment markers', 'Before <!-- comment --> after', '<!-- comment -->'],
-        ['should handle nested comments - preserve Before', 'Before <!-- outer <!-- inner --> comment --> after', 'Before'],
-        ['should handle nested comments - preserve after', 'Before <!-- outer <!-- inner --> comment --> after', 'after'],
-
-        ['should remove multiline comments', 'Before\n<!--\nThis is a\nmultiline comment\n-->\nAfter', 'Before'],
-        ['should preserve content after multiline comments', 'Before\n<!--\nThis is a\nmultiline comment\n-->\nAfter', 'After'],
-        ['should not contain multiline comment markers', 'Before\n<!--\nThis is a\nmultiline comment\n-->\nAfter', '<!--'],
-        ['should not contain multiline comment content', 'Before\n<!--\nThis is a\nmultiline comment\n-->\nAfter', 'multiline comment'],
-
-        ['should remove multiple comments - preserve content', '<!-- Start --> content <!-- Middle --> more <!-- End -->', 'content'],
-        ['should remove multiple comments - preserve more', '<!-- Start --> content <!-- Middle --> more <!-- End -->', 'more'],
-        ['should not contain Start comment', '<!-- Start --> content <!-- Middle --> more <!-- End -->', '<!--'],
-        ['should not contain comment end markers', '<!-- Start --> content <!-- Middle --> more <!-- End -->', '-->'],
-
-        ['should remove Start Block comment', '# Tutorial\n\n<!-- Start Block -->\nSome tutorial content here\n<!-- End Block -->\n\nMore content', 'Some tutorial content here'],
-        ['should remove End Block comment', '# Tutorial\n\n<!-- Start Block -->\nSome tutorial content here\n<!-- End Block -->\n\nMore content', 'More content'],
-        ['should not contain Start Block marker', '# Tutorial\n\n<!-- Start Block -->\nSome tutorial content here\n<!-- End Block -->\n\nMore content', '<!-- Start Block -->'],
-        ['should not contain End Block marker', '# Tutorial\n\n<!-- Start Block -->\nSome tutorial content here\n<!-- End Block -->\n\nMore content', '<!-- End Block -->']
+        {
+            name: 'should remove simple HTML comments', 
+            input: 'Before <!-- comment --> after', 
+            expected: 'Before  after'
+        },
+        {
+            name: 'should not contain simple comment markers', 
+            input: 'Before <!-- comment --> after', 
+            expected: '<!-- comment -->'
+        },
+        {
+            name: 'should handle nested comments - preserve Before', 
+            input: 'Before <!-- outer <!-- inner --> comment --> after', 
+            expected: 'Before'
+        },
+        {
+            name: 'should handle nested comments - preserve after', 
+            input: 'Before <!-- outer <!-- inner --> comment --> after', 
+            expected: 'after'
+        },
+        {
+            name: 'should remove multiline comments', 
+            input: 'Before\n<!--\nThis is a\nmultiline comment\n-->\nAfter', 
+            expected: 'Before'
+        },
+        {
+            name: 'should preserve content after multiline comments', 
+            input: 'Before\n<!--\nThis is a\nmultiline comment\n-->\nAfter', 
+            expected: 'After'
+        },
+        {
+            name: 'should not contain multiline comment markers', 
+            input: 'Before\n<!--\nThis is a\nmultiline comment\n-->\nAfter', 
+            expected: '<!--'
+        },
+        {
+            name: 'should not contain multiline comment content', 
+            input: 'Before\n<!--\nThis is a\nmultiline comment\n-->\nAfter', 
+            expected: 'multiline comment'
+        },
+        {
+            name: 'should remove multiple comments - preserve content', 
+            input: '<!-- Start --> content <!-- Middle --> more <!-- End -->', 
+            expected: 'content'
+        },
+        {
+            name: 'should remove multiple comments - preserve more', 
+            input: '<!-- Start --> content <!-- Middle --> more <!-- End -->',
+            expected: 'more'
+        },
+        {
+            name: 'should not contain Start comment',
+            input: '<!-- Start --> content <!-- Middle --> more <!-- End -->',
+            expected: '<!--'
+        },
+        {
+            name: 'should not contain comment end markers', 
+            input: '<!-- Start --> content <!-- Middle --> more <!-- End -->', 
+            expected: '-->'
+        },
+        {
+            name: 'should remove Start Block comment', 
+            input: '# Tutorial\n\n<!-- Start Block -->\nSome tutorial content here\n<!-- End Block -->\n\nMore content', 
+            expected: 'Some tutorial content here'
+        },
+        {
+            name: 'should remove End Block comment', 
+            input: '# Tutorial\n\n<!-- Start Block -->\nSome tutorial content here\n<!-- End Block -->\n\nMore content', 
+            expected: 'More content'
+        },
+        {
+            name: 'should not contain Start Block marker', 
+            input: '# Tutorial\n\n<!-- Start Block -->\nSome tutorial content here\n<!-- End Block -->\n\nMore content', 
+            expected: '<!-- Start Block -->'
+        },
+        {
+            name: 'should not contain End Block marker', 
+            input: '# Tutorial\n\n<!-- Start Block -->\nSome tutorial content here\n<!-- End Block -->\n\nMore content', 
+            expected: '<!-- End Block -->'
+        }
     ];
 
-    it.each(testCases)('%s', async (testName, input, expected) => {
+    it.each(testCases)('$name', async ({name, input, expected}) => {
         const removeHtmlComments = await getRemoveHtmlCommentsFunction();
 
         if (removeHtmlComments) {
             const result = removeHtmlComments(input);
 
-            if (testName.includes('should not contain')) {
+            if (name.includes('should not contain')) {
                 expect(result).not.toContain(expected);
             } else {
                 expect(result).toContain(expected);

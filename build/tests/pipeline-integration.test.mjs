@@ -31,33 +31,95 @@ async function getTransformContentFunction() {
 
 describe('transformContent', () => {
     const testCases = [
-        ['should transform video URLs to video tags', 'Check out this demo: https://example.com/demo.mp4', '<video class="td-content" controls src="https://example.com/demo.mp4"></video>'],
-
-        ['should remove HTML Start Block comments', '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', 'Some content'],
-        ['should remove HTML End Block comments', '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', 'More content'],
-        ['should not contain Start Block markers', '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', '<!-- Start Block -->'],
-        ['should not contain End Block markers', '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', '<!-- End Block -->'],
-        ['should fix pepr-arch.svg image paths', '![arch](_images/pepr-arch.svg) and ![logo](_images/pepr.png)', '/assets/pepr-arch.png'],
-        ['should fix pepr.png image paths', '![arch](_images/pepr-arch.svg) and ![logo](_images/pepr.png)', '/assets/pepr.png'],
-
-        ['should escape MDX @param', '**@param** name The parameter name', '**\\@param**'],
-        ['should escape email addresses', 'Contact us at <user@example.com>', '&lt;user@example.com&gt;'],
-        ['should process markdown links with numeric prefixes', '[Getting Started](1_getting-started/README.md)', '[Getting Started](getting-started)'],
-        ['should fix image paths in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '/assets/pepr-arch.png'],
-        ['should transform video in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '<video class="td-content" controls'],
-        ['should fix links in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '[Getting Started](getting-started)'],
-        ['should escape @param in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '**\\@param**'],
-        ['should escape email in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '&lt;admin@example.com&gt;'],
-        ['should not contain comments in complex content', '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', '<!-- This is a comment -->']
+        {
+            name: 'should transform video URLs to video tags', 
+            input: 'Check out this demo: https://example.com/demo.mp4', 
+            expected: '<video class="td-content" controls src="https://example.com/demo.mp4"></video>'
+        },
+        {
+            name: 'should remove HTML Start Block comments', 
+            input: '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', 
+            expected: 'Some content'
+        },
+        {
+            name: 'should remove HTML End Block comments', 
+            input: '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', 
+            expected: 'More content'
+        },
+        {
+            name: 'should not contain Start Block markers', 
+            input: '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', 
+            expected: '<!-- Start Block -->'
+        },
+        {
+            name: 'should not contain End Block markers', 
+            input: '# Test\n<!-- Start Block -->\nSome content\n<!-- End Block -->\nMore content', 
+            expected: '<!-- End Block -->'
+        },
+        {
+            name: 'should fix pepr-arch.svg image paths', 
+            input: '![arch](_images/pepr-arch.svg) and ![logo](_images/pepr.png)', 
+            expected: '/assets/pepr-arch.png'
+        },
+        {
+            name: 'should fix pepr.png image paths', 
+            input: '![arch](_images/pepr-arch.svg) and ![logo](_images/pepr.png)', 
+            expected: '/assets/pepr.png'
+        },
+        {
+            name: 'should escape MDX @param', 
+            input: '**@param** name The parameter name', 
+            expected: '**\\@param**'
+        },
+        {
+            name: 'should escape email addresses', 
+            input: 'Contact us at <user@example.com>', 
+            expected: '&lt;user@example.com&gt;'
+        },
+        {
+            name: 'should process markdown links with numeric prefixes', 
+            input: '[Getting Started](1_getting-started/README.md)', 
+            expected: '[Getting Started](getting-started)'
+        },
+        {
+            name: 'should fix image paths in complex content', 
+            input: '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', 
+            expected: '/assets/pepr-arch.png'
+        },
+        {
+            name: 'should transform video in complex content', 
+            input: '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', 
+            expected: '<video class="td-content" controls'
+        },
+        {
+            name: 'should fix links in complex content', 
+            input: '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', 
+            expected: '[Getting Started](getting-started)'
+        },
+        {
+            name: 'should escape @param in complex content', 
+            input: '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', 
+            expected: '**\\@param**'
+        },
+        {
+            name: 'should escape email in complex content', 
+            input: '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>',
+            expected: '&lt;admin@example.com&gt;'
+        },
+        {
+            name: 'should not contain comments in complex content',
+            input: '# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>', 
+            expected: '<!-- This is a comment -->'
+        }
     ];
 
-    it.each(testCases)('%s', async (testName, input, expected) => {
+    it.each(testCases)('%name', async ({name, input, expected}) => {
         const transformContent = await getTransformContentFunction();
 
         if (transformContent) {
             const result = transformContent(input);
 
-            if (testName.includes('should not contain')) {
+            if (name.includes('should not contain')) {
                 expect(result).not.toContain(expected);
             } else {
                 expect(result).toContain(expected);

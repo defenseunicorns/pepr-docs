@@ -20,26 +20,79 @@ async function getConvertCalloutsFunction() {
 
 describe('convertCallouts', () => {
     const testCases = [
-        ['should convert TIP to :::tip', '> [!TIP]\n> This is a helpful tip\n> that spans multiple lines', ':::tip'],
-        ['should preserve TIP content', '> [!TIP]\n> This is a helpful tip\n> that spans multiple lines', 'This is a helpful tip'],
-        ['should preserve TIP multiline content', '> [!TIP]\n> This is a helpful tip\n> that spans multiple lines', 'that spans multiple lines'],
-        ['should close TIP with :::', '> [!TIP]\n> This is a helpful tip\n> that spans multiple lines', ':::'],
-
-        ['should convert WARNING to :::warning', '> [!WARNING]\n> This is a warning message', ':::warning'],
-        ['should preserve WARNING content', '> [!WARNING]\n> This is a warning message', 'This is a warning message'],
-
-        ['should convert NOTE in mixed content', '> [!NOTE]\n> This is a note\n\nSome regular content\n\n> [!IMPORTANT]\n> This is important', ':::note'],
-        ['should convert IMPORTANT in mixed content', '> [!NOTE]\n> This is a note\n\nSome regular content\n\n> [!IMPORTANT]\n> This is important', ':::important'],
-        ['should preserve regular content between callouts', '> [!NOTE]\n> This is a note\n\nSome regular content\n\n> [!IMPORTANT]\n> This is important', 'Some regular content'],
-
-        ['should convert TIP in multi-type content', '> [!TIP]\n> Tip content\n\n> [!NOTE]\n> Note content\n\n> [!WARNING]\n> Warning content\n\n> [!IMPORTANT]\n> Important content\n\n> [!CAUTION]\n> Caution content', ':::tip'],
-        ['should convert NOTE in multi-type content', '> [!TIP]\n> Tip content\n\n> [!NOTE]\n> Note content\n\n> [!WARNING]\n> Warning content\n\n> [!IMPORTANT]\n> Important content\n\n> [!CAUTION]\n> Caution content', ':::note'],
-        ['should convert WARNING in multi-type content', '> [!TIP]\n> Tip content\n\n> [!NOTE]\n> Note content\n\n> [!WARNING]\n> Warning content\n\n> [!IMPORTANT]\n> Important content\n\n> [!CAUTION]\n> Caution content', ':::warning'],
-        ['should convert IMPORTANT in multi-type content', '> [!TIP]\n> Tip content\n\n> [!NOTE]\n> Note content\n\n> [!WARNING]\n> Warning content\n\n> [!IMPORTANT]\n> Important content\n\n> [!CAUTION]\n> Caution content', ':::important'],
-        ['should convert CAUTION in multi-type content', '> [!TIP]\n> Tip content\n\n> [!NOTE]\n> Note content\n\n> [!WARNING]\n> Warning content\n\n> [!IMPORTANT]\n> Important content\n\n> [!CAUTION]\n> Caution content', ':::caution']
+        {
+            name: 'should convert TIP to :::tip', 
+            input: '> [!TIP]\n> This is a helpful tip\n> that spans multiple lines',
+            expected: ':::tip'
+        },
+        {
+            name: 'should preserve TIP content', 
+            input: '> [!TIP]\n> This is a helpful tip\n> that spans multiple lines', 
+            expected: 'This is a helpful tip'
+        },
+        {
+            name: 'should preserve TIP multiline content', 
+            input: '> [!TIP]\n> This is a helpful tip\n> that spans multiple lines',
+            expected: 'that spans multiple lines'
+        },
+        {
+            name: 'should close TIP with :::', 
+            input: '> [!TIP]\n> This is a helpful tip\n> that spans multiple lines', 
+            expected: ':::'
+        },
+        {
+            name: 'should convert WARNING to :::warning', 
+            input: '> [!WARNING]\n> This is a warning message', 
+            expected: ':::warning'
+        },
+        {
+            name: 'should preserve WARNING content', 
+            input: '> [!WARNING]\n> This is a warning message', 
+            expected: 'This is a warning message'
+        },
+        {
+            name: 'should convert NOTE in mixed content', 
+            input: '> [!NOTE]\n> This is a note\n\nSome regular content\n\n> [!IMPORTANT]\n> This is important', 
+            expected: ':::note'
+        },
+        {
+            name: 'should convert IMPORTANT in mixed content', 
+            input: '> [!NOTE]\n> This is a note\n\nSome regular content\n\n> [!IMPORTANT]\n> This is important', 
+            expected: ':::important'
+        },
+        {
+            name: 'should preserve regular content between callouts', 
+            input: '> [!NOTE]\n> This is a note\n\nSome regular content\n\n> [!IMPORTANT]\n> This is important', 
+            expected: 'Some regular content'
+        },
+        {
+            name: 'should convert TIP in multi-type content', 
+            input: '> [!TIP]\n> Tip content\n\n> [!NOTE]\n> Note content\n\n> [!WARNING]\n> Warning content\n\n> [!IMPORTANT]\n> Important content\n\n> [!CAUTION]\n> Caution content', 
+            expected: ':::tip'
+        },
+        {
+            name: 'should convert NOTE in multi-type content', 
+            input: '> [!TIP]\n> Tip content\n\n> [!NOTE]\n> Note content\n\n> [!WARNING]\n> Warning content\n\n> [!IMPORTANT]\n> Important content\n\n> [!CAUTION]\n> Caution content', 
+            expected: ':::note'
+        },
+        {
+            name: 'should convert WARNING in multi-type content', 
+            input: '> [!TIP]\n> Tip content\n\n> [!NOTE]\n> Note content\n\n> [!WARNING]\n> Warning content\n\n> [!IMPORTANT]\n> Important content\n\n> [!CAUTION]\n> Caution content', 
+            expected: ':::warning'
+        },
+        {
+            name: 'should convert IMPORTANT in multi-type content', 
+            input: '> [!TIP]\n> Tip content\n\n> [!NOTE]\n> Note content\n\n> [!WARNING]\n> Warning content\n\n> [!IMPORTANT]\n> Important content\n\n> [!CAUTION]\n> Caution content', 
+            expected: ':::important'
+        },
+        {
+            name: 'should convert CAUTION in multi-type content', 
+            input: '> [!TIP]\n> Tip content\n\n> [!NOTE]\n> Note content\n\n> [!WARNING]\n> Warning content\n\n> [!IMPORTANT]\n> Important content\n\n> [!CAUTION]\n> Caution content', 
+            expected: ':::caution'
+        }
     ];
 
-    it.each(testCases)('%s', async (testName, input, expected) => {
+    it.each(testCases)('$name', async ({name, input, expected}) => {
         const convertCallouts = await getConvertCalloutsFunction();
 
         if (convertCallouts) {
