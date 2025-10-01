@@ -1,6 +1,6 @@
 ---
 title: Pepr
-description: Pepr Documentation - v0.55.1
+description: Pepr Documentation - v0.55.2
 slug: v0.55
 ---
 
