@@ -134,9 +134,7 @@ Tip
 
 Don’t use IP as your `--host`, it’s not supported. Make sure to check your local k8s distro documentation how to reach your localhost, which is where `pepr dev` is serving the code from.
 
-[](<\<video class=>)" type="video/mp4">
-
-Your browser doesn't support HTML video. [">Download the video](<\<video class=>) instead.
+Your browser doesn't support HTML video. [Download the video](https://user-images.githubusercontent.com/882485/230895880-c5623077-f811-4870-bb9f-9bb8e5edc118.mp4) instead.
 
 ## Concepts
 
@@ -3761,9 +3759,7 @@ Defining a new capability can be done via a [VSCode Snippet](https://code.visual
 
 2. Open the new file in VSCode and type `create` in the file. A suggestion should prompt you to generate the content from there.
 
-[](<\<video class=>)" type="video/mp4">
-
-Your browser doesn't support HTML video. [">Download the video](<\<video class=>) instead.
+Your browser doesn't support HTML video. [Download the video](https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4) instead.
 
 *If you prefer not to use VSCode, you can also modify or copy the `HelloPepr` capability to meet your needs instead.*
 
@@ -10807,9 +10803,7 @@ Tip
 
 Don’t use IP as your `--host`, it’s not supported. Make sure to check your local k8s distro documentation how to reach your localhost, which is where `pepr dev` is serving the code from.
 
-[](<\<video class=>)" type="video/mp4">
-
-Your browser doesn't support HTML video. [">Download the video](<\<video class=>) instead.
+Your browser doesn't support HTML video. [Download the video](https://user-images.githubusercontent.com/882485/230895880-c5623077-f811-4870-bb9f-9bb8e5edc118.mp4) instead.
 
 ## Concepts
 
@@ -14434,9 +14428,7 @@ Defining a new capability can be done via a [VSCode Snippet](https://code.visual
 
 2. Open the new file in VSCode and type `create` in the file. A suggestion should prompt you to generate the content from there.
 
-[](<\<video class=>)" type="video/mp4">
-
-Your browser doesn't support HTML video. [">Download the video](<\<video class=>) instead.
+Your browser doesn't support HTML video. [Download the video](https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4) instead.
 
 *If you prefer not to use VSCode, you can also modify or copy the `HelloPepr` capability to meet your needs instead.*
 
