@@ -32,8 +32,13 @@ async function getTransformContentFunction() {
 describe('transformContent', () => {
     const testCases = [
         {
-            name: 'should transform video URLs to video tags', 
-            input: 'Check out this demo: https://example.com/demo.mp4', 
+            name: 'should transform video URLs to video tags',
+            input: 'Check out this demo: https://example.com/demo.mp4',
+            expected: '<video class="td-content" controls src="https://example.com/demo.mp4"></video>'
+        },
+        {
+            name: 'should not transform videos when video tags are already present',
+            input: '<video class="td-content" controls src="https://example.com/demo.mp4"></video>',
             expected: '<video class="td-content" controls src="https://example.com/demo.mp4"></video>'
         },
         {
