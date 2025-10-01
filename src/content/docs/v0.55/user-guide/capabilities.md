@@ -18,8 +18,8 @@ Defining a new capability can be done via a [VSCode Snippet](https://code.visual
 2. Open the new file in VSCode and type `create` in the file. A suggestion should prompt you to generate the content from there.
 
 <video controls width="100%">
-  <source src="<video class="td-content" controls src="https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4"></video>" type="video/mp4">
-  <p>Your browser doesn't support HTML video. <a href="<video class="td-content" controls src="https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4"></video>">Download the video</a> instead.</p>
+  <source src="https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4" type="video/mp4">
+  <p>Your browser doesn't support HTML video. <a href="https://user-images.githubusercontent.com/882485/230897379-0bb57dff-9832-479f-8733-79e103703135.mp4">Download the video</a> instead.</p>
 </video>
 
 _If you prefer not to use VSCode, you can also modify or copy the `HelloPepr` capability to meet your needs instead._

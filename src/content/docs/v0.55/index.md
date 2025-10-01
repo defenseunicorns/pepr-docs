@@ -136,8 +136,8 @@ local k8s distro documentation how to reach your localhost, which is where
 :::
 
   <video controls width="100%">
-    <source src="<video class="td-content" controls src="https://user-images.githubusercontent.com/882485/230895880-c5623077-f811-4870-bb9f-9bb8e5edc118.mp4"></video>" type="video/mp4">
-    <p>Your browser doesn't support HTML video. <a href="<video class="td-content" controls src="https://user-images.githubusercontent.com/882485/230895880-c5623077-f811-4870-bb9f-9bb8e5edc118.mp4"></video>">Download the video</a> instead.</p>
+    <source src="https://user-images.githubusercontent.com/882485/230895880-c5623077-f811-4870-bb9f-9bb8e5edc118.mp4" type="video/mp4">
+    <p>Your browser doesn't support HTML video. <a href="https://user-images.githubusercontent.com/882485/230895880-c5623077-f811-4870-bb9f-9bb8e5edc118.mp4">Download the video</a> instead.</p>
   </video>
 
 ## Concepts
