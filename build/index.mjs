@@ -90,8 +90,8 @@ const transformContent = (content) => {
 	// 1. Fix image paths
 	let result = fixImagePaths(content);
 
-	// 2. Convert video links
-	result = result.replaceAll(/https[\S]*.mp4/g, (url) => `<video class="td-content" controls src="${url}"></video>`);
+	// 2. Convert video links (only bare URLs, not those already in video tags)
+	result = result.replace(/(?<!src=")https[\S]*\.mp4(?!")/g, (url) => `<video class="td-content" controls src="${url}"></video>`);
 
 	// 3. Process markdown links
 	Array.from(result.matchAll(/\]\([^)]*\)/g), (m) => m[0]).forEach((mdLink) => {
