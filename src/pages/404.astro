@@ -1,7 +1,14 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { retiredVersions } from '../../retired-redirects.js';
 
 const currentPath = Astro.url.pathname;
+
+const versionMatch = currentPath.match(/\/v([\d.]+)\//);
+const majorMinor = versionMatch?.[1].match(/^(\d+\.\d+)/)?.[1];
+const isRetiredVersion = majorMinor && retiredVersions.includes(majorMinor);
+const isLegacyPath = currentPath.includes('/legacy/');
+const showRetiredMessage = isRetiredVersion || isLegacyPath;
 ---
 
 <StarlightPage frontmatter={{ title: `Oops! This page doesn't exist`, editUrl: false }}>
@@ -10,7 +17,7 @@ const currentPath = Astro.url.pathname;
       <p class="text-base mb-4 opacity-90">Sorry about that! The page <code class="px-2 py-1 dark:bg-gray-800 bg-gray-300 rounded text-sm">{currentPath}</code> couldn't be found. Let's get you back on track:</p>
     </div>
     
-    {currentPath.match(/\/v\d+\.|\/legacy\/|\/\d+\.\d+\//) && (
+    {showRetiredMessage && (
       <div class="mb-8 p-5 rounded-lg bg-[#efca81]/20 dark:bg-[#efca81]/10 border-2 border-[#be9853]/50 dark:border-[#be9853]/30">
         <h3 class="text-xl font-semibold mb-3 text-[#141313] dark:text-[#fff3f3]">Looking for an older version?</h3>
         <p class="mb-3 text-[#141313] dark:text-[#dfd6d6a5]">We maintain docs for the latest release plus the two most recent versions. If you're looking for old docs, we recommend upgrading to a supported version.</p>

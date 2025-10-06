@@ -11,3 +11,7 @@ work/
 src/content/docs/
 src/content/versions/
 [0-9]*_*/
+
+# Auto-generated redirect files
+retired-redirects.js
+public/_redirects
