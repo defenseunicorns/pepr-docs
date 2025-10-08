@@ -52,15 +52,13 @@ export async function discoverVersions(coreRepoPath, cutoff = 2) {
 export async function getStarlightVersions(coreRepoPath, cutoff = 2) {
 	const { versions } = await discoverVersions(coreRepoPath, cutoff);
 
-	// Filter out 'latest' and prerelease versions for starlight config
 	const stableVersions = versions.filter(v => v !== 'latest' && semver.prerelease(v) === null);
 
-	// Convert to major.minor format for starlight slug, but keep full version for label
 	return stableVersions.map(version => {
 		const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1');
 		return {
 			slug: versionMajMin,
-			label: version  // Use the full version (major.minor.patch) for display
+			label: version  
 		};
 	});
 }
@@ -68,10 +66,9 @@ export async function getStarlightVersions(coreRepoPath, cutoff = 2) {
 /**
  * Find the current version (latest stable)
  * @param {string[]} versions - Array of version strings
- * @returns {string|null} - The current version or null if none found
+ * @returns {string|null} - The most recent stable version, or null if none found
  */
 export function findCurrentVersion(versions) {
-	// Filter out 'latest', 'main' and prerelease versions
 	const stableVersions = versions.filter(v =>
 		v !== 'latest' &&
 		v !== 'main' &&
@@ -83,7 +80,6 @@ export function findCurrentVersion(versions) {
 		return null;
 	}
 
-	// Sort and return the latest
 	return semver.rsort(stableVersions)[0];
 }
 

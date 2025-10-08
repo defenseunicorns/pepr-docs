@@ -1,6 +1,11 @@
+import { retiredVersionRedirects } from './retired-redirects.js';
+
 export const redirects = {
-	//Legacy Doc Conversion Redirects
-	// Redirect /main
+	// Auto-generated redirects for retired versions (can be overridden by manual redirects below)
+	...retiredVersionRedirects,
+
+// 	//Legacy Doc Conversion Redirects
+// 	// Redirect /main
 	'/main': '/',
 	'/latest': '/',
 	'/latest/user-guide': '/user-guide',
