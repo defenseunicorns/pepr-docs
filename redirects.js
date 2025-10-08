@@ -1,9 +1,8 @@
-import { retiredVersionRedirects } from './retired-redirects.js';
+// NOTE: Retired version redirects (e.g., /v0.1/* -> /*) are handled by Netlify's _redirects file
+// instead of Astro redirects to avoid generating invalid file paths during static site generation.
+// See public/_redirects for the Netlify redirect rules.
 
 export const redirects = {
-	// Auto-generated redirects for retired versions (can be overridden by manual redirects below)
-	...retiredVersionRedirects,
-
 // 	//Legacy Doc Conversion Redirects
 // 	// Redirect /main
 	'/main': '/',
