@@ -67,9 +67,6 @@ function convertCallouts(content, filePath) {
 				.map((line) => line.replace(/^> ?/, ''))
 				.filter((line) => line.length > 0)
 				.join('\n');
-			console.log(
-				`Converting ${type} callout in ${filePath}`
-			);
 			return `:::${mdxType}\n${cleanContent}\n:::`;
 		}
 	);
@@ -739,15 +736,35 @@ await executeWithErrorHandling(`Generate Netlify _redirects file`, async (log) =
 		''
 	];
 
-	for (const version of RUN.retired) {
-		// Netlify format: /v0.53/*  /:splat  301
-		redirectLines.push(`/v${version}/*  /:splat  301`);
+	// Find all patch versions
+	const { stdout } = await exec('git tag', { cwd: RUN.core });
+	const allTags = stdout.trim().split('\n').filter(Boolean).filter(semver.valid);
+
+	// For each retired major.minor version, generate redirects for both
+	// /vX.XX/* and any discovered patch versions /vX.XX.Y/*
+	for (const majmin of RUN.retired) {
+		redirectLines.push(`/v${majmin}/*  /:splat  301`);
+		const patchVersions = allTags
+			.filter(v => {
+				const match = v.match(/^v(\d+\.\d+)\.(\d+)$/);
+				return match && match[1] === majmin;
+			})
+			.map(v => v.match(/^v\d+\.\d+\.(\d+)$/)[1]);
+
+			for (const patch of patchVersions) {
+			redirectLines.push(`/v${majmin}.${patch}/*  /:splat  301`);
+		}
+
+		if (patchVersions.length > 0) {
+			log.push([majmin, `${patchVersions.length} patch versions found`]);
+		}
 	}
 
 	const content = redirectLines.join('\n') + '\n';
 	await fs.writeFile(netlifyRedirectsFile, content);
+	const totalRules = redirectLines.length - 3; // Subtract header lines
 	log.push(['generated', '_redirects (Netlify)']);
-	log.push(['rules', `${RUN.retired.length} redirects`]);
+	log.push(['rules', `${totalRules} redirect rules for ${RUN.retired.length} retired versions`]);
 });
 
 // Generate final distribution build by copying processed content to Starlight directories
