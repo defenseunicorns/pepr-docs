@@ -65,8 +65,8 @@ export async function getStarlightVersions(coreRepoPath, cutoff = 2) {
 
 /**
  * Find the current version (latest stable)
- * @param {string[]} versions -
- * @returns {string|null}
+ * @param {string[]} versions - Array of version strings
+ * @returns {string|null} - The most recent stable version, or null if none found
  */
 export function findCurrentVersion(versions) {
 	const stableVersions = versions.filter(v =>

@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import { discoverVersions, getStarlightVersions } from '../version-discovery.mjs';
+import * as semver from 'semver';
 
 describe('Version Discovery', () => {
   let coreRepoPath;
@@ -41,7 +42,7 @@ describe('Version Discovery', () => {
       const cutoff = 2;
       const { versions } = await discoverVersions(coreRepoPath, cutoff);
       const versionCount = versions.filter(v => v !== 'latest').length;
-      expect(versionCount).toBeLessThanOrEqual(cutoff);
+      expect(versionCount).toBe(cutoff);
     });
 
     it('should return major.minor format for retired versions', async () => {
@@ -118,7 +119,7 @@ describe('Version Discovery', () => {
 
       const starlightVersions = await getStarlightVersions(coreRepoPath, 2);
       starlightVersions.forEach(v => {
-        expect(v.label).not.toMatch(/-alpha|-beta|-rc/);
+        expect(semver.prerelease(v.label)).toBeNull();
       });
     });
 
