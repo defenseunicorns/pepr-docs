@@ -15,3 +15,5 @@ src/content/versions/
 # Auto-generated redirect files
 retired-redirects.js
 public/_redirects
+# Local Netlify folder
+.netlify

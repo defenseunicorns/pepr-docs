@@ -1,29 +1,12 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import { retiredVersions } from '../../retired-redirects.js';
-
-const currentPath = Astro.url.pathname;
-
-const versionMatch = currentPath.match(/\/v([\d.]+)\//);
-const majorMinor = versionMatch?.[1].match(/^(\d+\.\d+)/)?.[1];
-const isRetiredVersion = majorMinor && retiredVersions.includes(majorMinor);
-const isLegacyPath = currentPath.includes('/legacy/');
-const showRetiredMessage = isRetiredVersion || isLegacyPath;
 ---
 
 <StarlightPage frontmatter={{ title: `Oops! This page doesn't exist`, editUrl: false }}>
   <div class="max-w-4xl mx-auto">
     <div class="mb-8">
-      <p class="text-base mb-4 opacity-90">Sorry about that! The page <code class="px-2 py-1 dark:bg-gray-800 bg-gray-300 rounded text-sm">{currentPath}</code> couldn't be found. Let's get you back on track:</p>
+      <p class="text-base mb-4 opacity-90">Sorry about that! The page <code id="current-path" class="px-2 py-1 dark:bg-gray-800 bg-gray-300 rounded text-sm"></code> couldn't be found. Let's get you back on track:</p>
     </div>
-    
-    {showRetiredMessage && (
-      <div class="mb-8 p-5 rounded-lg bg-[#efca81]/20 dark:bg-[#efca81]/10 border-2 border-[#be9853]/50 dark:border-[#be9853]/30">
-        <h3 class="text-xl font-semibold mb-3 text-[#141313] dark:text-[#fff3f3]">Looking for an older version?</h3>
-        <p class="mb-3 text-[#141313] dark:text-[#dfd6d6a5]">We maintain docs for the latest release plus the two most recent versions. If you're looking for old docs, we recommend upgrading to a supported version.</p>
-        <p class="text-[#141313] dark:text-[#dfd6d6a5]">Your future self will thank you — newer releases have better features, security patches, and fewer bugs.</p>
-      </div>
-    )}
     
     <div class="grid md:grid-cols-2 gap-4 mb-8">
       <a href="/" class="  no-underline block p-5 rounded-lg border-2 border-[#6aa4b4]/60 dark:border-[#6aa4b4]/50 bg-[#a5eeef]/20 dark:bg-[#6aa4b4]/10 hover:border-[#6aa4b4] dark:hover:border-[#a5eeef] hover:bg-[#a5eeef]/30 dark:hover:bg-[#6aa4b4]/20 transition-all group">
@@ -64,13 +47,31 @@ const showRetiredMessage = isRetiredVersion || isLegacyPath;
     <div class="mt-10 pt-6 border-t border-gray-700">
       <h4 class="text-lg font-semibold mb-2">Found a broken link?</h4>
       <p class="text-sm mb-3 opacity-80">If you got here from our own docs, that's our bad! Help us fix it:</p>
-      <a 
-        href={`https://github.com/defenseunicorns/pepr-docs/issues/new?title=Broken link: ${encodeURIComponent(currentPath)}&body=I found a broken link at: ${encodeURIComponent(currentPath)}`}
-        class="inline-block no-underline px-4 py-2 rounded-lg bg-[#be9853] hover:bg-[#efca81] dark:bg-[#be9853]/70 dark:hover:bg-[#efca81]/70 text-[#fff3f3] hover:text-[#0b0e2f] dark:text-[#fff3f3] dark:hover:text-[#0b0e2f] font-medium transition-colors"
-        target="_blank"
-        rel="noopener noreferrer"
+      <button
+        id="report-link"
+        class="inline-block no-underline px-4 py-2 rounded-lg bg-[#be9853] hover:bg-[#efca81] dark:bg-[#be9853]/70 dark:hover:bg-[#efca81]/70 text-[#fff3f3] hover:text-[#0b0e2f] dark:text-[#fff3f3] dark:hover:text-[#0b0e2f] font-medium transition-colors cursor-pointer border-0"
       >
         Report this broken link →
-      </a>
+      </button>
     </div>
   </div>
+
+  <script>
+    // Get the actual requested path from the browser
+    const currentPath = window.location.pathname;
+
+    // Update the displayed path
+    const pathElement = document.getElementById('current-path');
+    if (pathElement) {
+      pathElement.textContent = currentPath;
+    }
+
+    // Set up the GitHub issue link button click handler
+    const reportLink = document.getElementById('report-link');
+    if (reportLink) {
+      reportLink.addEventListener('click', () => {
+        const issueUrl = `https://github.com/defenseunicorns/pepr-docs/issues/new?title=${encodeURIComponent('Broken link: ' + currentPath)}&body=${encodeURIComponent('I found a broken link at: ' + currentPath)}`;
+        window.open(issueUrl, '_blank', 'noopener,noreferrer');
+      });
+    }
+  </script>

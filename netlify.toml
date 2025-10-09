@@ -1,0 +1,12 @@
+[build]
+  command = '''
+    node build/index.mjs --core "$CORE" --site ./src/content/docs && \
+    npm run build
+  '''
+  publish = "dist"
+
+[dev]
+  command = "astro preview"
+  port = 8888
+  targetPort = 4321
+  autoLaunch = false

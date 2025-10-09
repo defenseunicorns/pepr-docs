@@ -7,8 +7,6 @@
   "main": "index.mjs",
   "type": "module",
   "scripts": {
-    "dev": "node index.mjs",
-    "serve": "cd work ; npm run start",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:integration": "vitest run --reporter=verbose tests/*integration*.test.mjs",
