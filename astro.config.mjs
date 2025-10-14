@@ -4,7 +4,6 @@ import starlightVersions from 'starlight-versions';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import tailwindcss from '@tailwindcss/vite';
 import starlightLinksValidator from 'starlight-links-validator';
-import { redirects } from './redirects.js';
 import { getStarlightVersions } from './build/version-discovery.mjs';
 
 const coreRepoPath = process.env.CORE || process.env.PEPR_CORE_PATH;
@@ -26,7 +25,6 @@ if (coreRepoPath) {
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://docs.pepr.dev',
-	redirects,
 	integrations: [
 		starlight({
 			favicon: '/pepr.svg',
