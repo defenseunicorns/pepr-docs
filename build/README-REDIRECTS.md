@@ -8,21 +8,24 @@ The redirect generation system has been refactored into a dedicated module (`bui
 
 ## How It Works
 
-The system generates three types of redirects in priority order:
+The system generates three types of redirects in priority order (Netlify processes redirects top-to-bottom, using the first match):
 
-1. **Retired Version Redirects** (Highest Priority)
-   - Automatically generated for all retired major.minor versions
-   - Example: `/v0.53/*` → `/:splat`
-
-2. **Manual Redirects** (Medium Priority)
+1. **Manual Redirects** (Highest Priority)
    - Specific path redirects and fixes
    - Defined in `MANUAL_REDIRECTS` object in `build/redirects-generator.mjs`
+   - Most specific rules should go here
 
-3. **Patch-to-Minor Redirects** (Lowest Priority - Catch-All)
-   - Automatically generated for all patch versions of active releases
+2. **Patch-to-Minor Redirects** (Medium Priority)
+   - Automatically generated for all patch versions of **active (non-retired)** releases only
    - Two rules per patch version:
      - Exact: `/v0.54.0` → `/v0.54`
      - Wildcard: `/v0.54.0/*` → `/v0.54/:splat`
+   - The header in `_redirects` shows which versions are active (e.g., "v0.54, v0.55")
+
+3. **Retired Version Redirects** (Lowest Priority - Catch-All)
+   - Automatically generated for all retired major.minor versions
+   - Broad wildcard rules that catch any remaining traffic
+   - Example: `/v0.53/*` → `/:splat`
 
 ## Adding Manual Redirects
 
