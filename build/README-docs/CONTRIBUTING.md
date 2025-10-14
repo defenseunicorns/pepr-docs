@@ -136,6 +136,86 @@ git commit -m "docs: update architecture documentation"
 git commit -m "fix stuff"
 git commit -m "updates"
 ```
+
+## Writing Documentation
+**Note: All  changes and additions to the content must be made in the [Pepr](https://github.com/defenseunicorns/pepr) repo.**
+
+### Frontmatter
+
+Every documentation page must start with YAML frontmatter containing metadata:
+
+```markdown
+---
+title: Page Title
+description: Brief description for SEO and previews
+---
+```
+
+**Required fields:**
+- `title` - The page title shown in navigation and browser tab
+- `description` - Brief description used for SEO and page previews
+
+### Code Blocks
+
+Use fenced code blocks with language identifiers for syntax highlighting:
+
+````markdown
+```typescript
+const example = "code here";
+```
+
+```bash
+npm install
+```
+````
+
+### Using Callouts
+
+Starlight provides callout syntax for highlighting important information. The build system automatically converts GitHub-style callouts from the core repository, but you can also use Starlight syntax directly.
+
+**Starlight Syntax:**
+```markdown
+:::note
+General information or helpful context
+:::
+
+:::tip
+Helpful suggestions or best practices
+:::
+
+:::caution
+Warnings or important considerations
+:::
+```
+
+**Available Callout Types:**
+- **`:::note`** - Blue, for general information
+- **`:::tip`** - Green, for helpful suggestions
+- **`:::caution`** - Yellow, for warnings
+- **`:::warning`** - Orange, for critical warnings
+- **`:::important`** - Purple, for important notices
+
+### Links
+
+**Internal links** to other documentation pages:
+```markdown
+[Link text](/user-guide/capabilities)
+```
+
+**External links** with full URLs:
+```markdown
+[GitHub](https://github.com/defenseunicorns/pepr)
+```
+
+### Images
+
+Embed images using standard markdown syntax:
+```markdown
+![Alt text](/assets/image.png)
+```
+
+Images in the `public/` directory are served at the root URL path.
+
 ### Additional Information
 - **Documentation**: See [ARCHITECTURE.md](./ARCHITECTURE.md) for system design
 - **Redirects**: See [REDIRECTS.md](./REDIRECTS.md) for redirect guide
