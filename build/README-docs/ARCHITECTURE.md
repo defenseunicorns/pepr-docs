@@ -4,7 +4,8 @@ This document describes the architecture and workflow of the Pepr documentation 
 
 ## Overview
 
-The build system is responsible for generating versioned documentation and managing redirects for the Pepr documentation site. It's designed to maintain multiple documentation versions while ensuring users can always find content through intelligent redirects.
+The build system is responsible for generating versioned documentation and managing redirects for the Pepr documentation site.
+It's designed to maintain multiple documentation versions while ensuring users can always find content through intelligent redirects.
 
 **Deployment:**
 - **Nightly builds**: Pepr core runs nightly builds that trigger documentation generation and deploys to production.
