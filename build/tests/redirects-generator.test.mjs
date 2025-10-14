@@ -33,13 +33,21 @@ describe('generateNetlifyRedirects', () => {
 		await exec('git', ['commit', '-m', 'Initial commit'], { cwd: mockCoreRepo });
 
 		// Create test tags
-		await exec('git', ['tag', 'v0.53.0'], { cwd: mockCoreRepo });
-		await exec('git', ['tag', 'v0.53.1'], { cwd: mockCoreRepo });
-		await exec('git', ['tag', 'v0.54.0'], { cwd: mockCoreRepo });
-		await exec('git', ['tag', 'v0.54.1'], { cwd: mockCoreRepo });
-		await exec('git', ['tag', 'v0.54.2'], { cwd: mockCoreRepo });
-		await exec('git', ['tag', 'v0.55.0'], { cwd: mockCoreRepo });
-		await exec('git', ['tag', 'v0.55.1-beta.1'], { cwd: mockCoreRepo });
+const tags = [
+  'v0.53.0',
+  'v0.53.1',
+  'v0.54.0',
+  'v0.54.1',
+  'v0.54.2',
+  'v0.55.0',
+  'v0.55.1-beta.1',
+];
+
+await Promise.all(
+  tags.map(tag =>
+    exec('git', ['tag', tag], { cwd: mockCoreRepo })
+  )
+);
 	});
 
 	afterEach(async () => {
