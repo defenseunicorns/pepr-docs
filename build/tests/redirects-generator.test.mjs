@@ -123,7 +123,7 @@ await Promise.all(
 		expect(content).toContain('/latest/*  /:splat  301');
 	});
 
-	it('should format patch-to-minor redirects correctly', async () => {
+	it('should generate exact patch-to-minor redirects', async () => {
 		await generateNetlifyRedirects({
 			coreRepoPath: mockCoreRepo,
 			retiredVersions: [],
@@ -132,15 +132,26 @@ await Promise.all(
 		});
 
 		const content = await fs.readFile(outputPath, 'utf8');
-		// Each patch version should have exact and wildcard redirects
 		expect(content).toContain('/v0.54.0  /v0.54  301');
-		expect(content).toContain('/v0.54.0/*  /v0.54/:splat  301');
 		expect(content).toContain('/v0.54.1  /v0.54  301');
+	});
+
+	it('should generate wildcard patch-to-minor redirects', async () => {
+		await generateNetlifyRedirects({
+			coreRepoPath: mockCoreRepo,
+			retiredVersions: [],
+			activeVersions: ['v0.54.0', 'v0.54.1'],
+			outputPath,
+		});
+
+		const content = await fs.readFile(outputPath, 'utf8');
+		// Each patch version should have wildcard redirects with splat
+		expect(content).toContain('/v0.54.0/*  /v0.54/:splat  301');
 		expect(content).toContain('/v0.54.1/*  /v0.54/:splat  301');
 	});
 
-	it('should handle multiple patch versions for same major.minor', async () => {
-		const results = await generateNetlifyRedirects({
+	it('should generate exact redirects for multiple patch versions', async () => {
+		await generateNetlifyRedirects({
 			coreRepoPath: mockCoreRepo,
 			retiredVersions: [],
 			activeVersions: ['v0.54.0', 'v0.54.1', 'v0.54.2'],
@@ -149,11 +160,32 @@ await Promise.all(
 
 		const content = await fs.readFile(outputPath, 'utf8');
 		expect(content).toContain('/v0.54.0  /v0.54  301');
-		expect(content).toContain('/v0.54.0/*  /v0.54/:splat  301');
 		expect(content).toContain('/v0.54.1  /v0.54  301');
-		expect(content).toContain('/v0.54.1/*  /v0.54/:splat  301');
 		expect(content).toContain('/v0.54.2  /v0.54  301');
+	});
+
+	it('should generate wildcard redirects for multiple patch versions', async () => {
+		await generateNetlifyRedirects({
+			coreRepoPath: mockCoreRepo,
+			retiredVersions: [],
+			activeVersions: ['v0.54.0', 'v0.54.1', 'v0.54.2'],
+			outputPath,
+		});
+
+		const content = await fs.readFile(outputPath, 'utf8');
+		expect(content).toContain('/v0.54.0/*  /v0.54/:splat  301');
+		expect(content).toContain('/v0.54.1/*  /v0.54/:splat  301');
 		expect(content).toContain('/v0.54.2/*  /v0.54/:splat  301');
+	});
+
+	it('should count rules correctly for multiple patch versions', async () => {
+		const results = await generateNetlifyRedirects({
+			coreRepoPath: mockCoreRepo,
+			retiredVersions: [],
+			activeVersions: ['v0.54.0', 'v0.54.1', 'v0.54.2'],
+			outputPath,
+		});
+
 		// 2 rules per patch version (exact + wildcard)
 		expect(results.patchCount).toBeGreaterThanOrEqual(6);
 	});
@@ -192,7 +224,7 @@ await Promise.all(
 		}
 	});
 
-	it('should skip prerelease versions in patch redirects', async () => {
+	it('should exclude prerelease versions from exact patch redirects', async () => {
 		await generateNetlifyRedirects({
 			coreRepoPath: mockCoreRepo,
 			retiredVersions: [],
@@ -201,7 +233,21 @@ await Promise.all(
 		});
 
 		const content = await fs.readFile(outputPath, 'utf8');
+		// Stable version should be included
 		expect(content).toContain('/v0.54.0  /v0.54  301');
+		// Prerelease version should be excluded
+		expect(content).not.toContain('v0.54.1-beta.1');
+	});
+
+	it('should exclude prerelease versions from wildcard patch redirects', async () => {
+		await generateNetlifyRedirects({
+			coreRepoPath: mockCoreRepo,
+			retiredVersions: [],
+			activeVersions: ['v0.54.0', 'v0.54.1-beta.1'],
+			outputPath,
+		});
+
+		const content = await fs.readFile(outputPath, 'utf8');
 		expect(content).toContain('/v0.54.0/*  /v0.54/:splat  301');
 		expect(content).not.toContain('v0.54.1-beta.1');
 	});
