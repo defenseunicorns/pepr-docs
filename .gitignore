@@ -9,6 +9,7 @@ node_modules/                   # NPM packages
 work/                           # Temporary clone of core repo during build
 
 # Generated content
+src/content/docs/               # Versioned documentation extracted from Pepr core
 src/content/versions/           # Version metadata generated from git tags
 
 # Astro cache
