@@ -7,10 +7,13 @@ node_modules/
 # Temporary clone of core repo during build
 work/
 
+# Keep the directories but ignore all their contents except .gitkeep
 # Generated versioned documentation extracted from Pepr core
-src/content/docs/
-# Generated version metadata generated from git tags
-src/content/versions/
+src/content/docs/*
+!src/content/docs/.gitkeep
+# Generated version metadata from git tags
+src/content/versions/*
+!src/content/versions/.gitkeep
 
 # Astro cache and metadata
 .astro/
