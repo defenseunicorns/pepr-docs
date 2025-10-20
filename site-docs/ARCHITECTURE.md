@@ -256,10 +256,11 @@ New Release → Active Version → Retired Version
 build/
 ├── index.mjs                         # Main build orchestrator
 ├── *.mjs                             # Generator modules (redirects, etc.)
-├── tests/
-│   └── *.test.mjs                    # Test suite
-└── README-docs/
-    └── *.md                          # Documentation files
+└── tests/
+    └── *.test.mjs                    # Test suite
+
+site-docs/
+└── *.md                              # Documentation site documentation
 
 src/content/docs/
 ├── v*/                               # Generated: Version directory
