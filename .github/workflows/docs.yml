@@ -43,6 +43,34 @@ jobs:
           repository: defenseunicorns/pepr-docs
           path: ./docs
 
+      - name: Validate .gitignore is working
+        run: |
+          cd docs
+          echo "Testing .gitignore patterns..."
+
+          # Test that critical paths would be ignored
+          if ! git check-ignore -q node_modules/test 2>/dev/null; then
+            echo "ERROR: .gitignore broken - node_modules/ not being ignored!"
+            exit 1
+          fi
+
+          if ! git check-ignore -q dist/test 2>/dev/null; then
+            echo "ERROR: .gitignore broken - dist/ not being ignored!"
+            exit 1
+          fi
+
+          if ! git check-ignore -q work/test 2>/dev/null; then
+            echo "ERROR: .gitignore broken - work/ not being ignored!"
+            exit 1
+          fi
+
+          if ! git check-ignore -q .astro/test 2>/dev/null; then
+            echo "ERROR: .gitignore broken - .astro/ not being ignored!"
+            exit 1
+          fi
+
+          echo "✓ .gitignore is working correctly"
+
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get install -y jq
