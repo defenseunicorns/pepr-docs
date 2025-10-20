@@ -71,7 +71,7 @@ npm run test -w build -- tests/redirects-generator.test.mjs
 ## Making Changes
 
 ### Updating Site Content
-For changes and additions to the technical content of the docs, changes must be made to the [Pepr](https://github.com/defenseunicorns/pepr) core repo. Any content changes made to the Pepr-Docs repo will be overwritten by Pepr on the next build. See [Workflow](../README-docs/ARCHITECTURE.md#Workflow) for additional details.
+For changes and additions to the technical content of the docs, changes must be made to the [Pepr](https://github.com/defenseunicorns/pepr) core repo. Any content changes made to the Pepr-Docs repo will be overwritten by Pepr on the next build. See [Workflow](./ARCHITECTURE.md#Workflow) for additional details.
 
 ### Updating Site UI, structure and functionality
 
@@ -81,7 +81,7 @@ For changes to site structure, components, or layouts make changes to this repo.
 2. Build to verify: `npm run build`
 
 ### Adding a Manual Redirect
-1. Follow instructions found in the [REDIRECTS.md](../README-docs/REDIRECTS.md#adding-manual-redirects).
+1. Follow instructions found in the [REDIRECTS.md](./REDIRECTS.md#adding-manual-redirects).
 3. Add tests in `build/tests/redirects-generator.test.mjs`
 4. Update documentation
 
