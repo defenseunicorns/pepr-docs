@@ -44,7 +44,9 @@ jobs:
           path: ./docs
 
       - name: Validate .gitignore is working
-        run: bash ./docs/.github/workflows/scripts/validate-gitignore.sh
+        run: |
+          cd docs
+          bash .github/workflows/scripts/validate-gitignore.sh
 
       - name: Install dependencies
         run: |
