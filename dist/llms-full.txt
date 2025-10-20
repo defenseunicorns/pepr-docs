@@ -14,7 +14,7 @@ In February 2025, an accidental change to the repository’s visibility reset th
 
 Pepr had over 200 stars, demonstrating its recognition and value within the Kubernetes community. We’re working to rebuild that recognition.
 
-If you’ve previously starred Pepr, or if you find it a useful project, we would greatly appreciate it if you could re-star the repository. We really appreciate your support! :star:
+If you’ve previously starred Pepr, or if you find it a useful project, we would greatly appreciate it if you could re-star the repository. We really appreciate your support!
 
 ## ***Type safe Kubernetes middleware for humans***
 
@@ -10671,7 +10671,7 @@ const unsubscribe = Store.subscribe(data => {
 
 # Pepr
 
-> Pepr Documentation - v0.55.4
+> Pepr Documentation - v0.55.6
 
 [![Pepr Documentation](https://img.shields.io/badge/docs--d25ba1)](https://docs.pepr.dev) [![Npm package license](https://badgen.net/npm/license/pepr)](https://npmjs.com/package/pepr) [![Known Vulnerabilities](https://snyk.io/test/npm/pepr/badge.svg)](https://snyk.io/advisor/npm-package/pepr) [![Npm package version](https://badgen.net/npm/v/pepr)](https://npmjs.com/package/pepr) [![Npm package total downloads](https://badgen.net/npm/dt/pepr)](https://npmjs.com/package/pepr) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/defenseunicorns/pepr/badge)](https://securityscorecards.dev/viewer/?uri=github.com/defenseunicorns/pepr) [![codecov](https://codecov.io/github/defenseunicorns/pepr/graph/badge.svg?token=7679Y9K1HB)](https://codecov.io/github/defenseunicorns/pepr) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](/contribute/code-of-conduct)
 
@@ -10683,7 +10683,7 @@ In February 2025, an accidental change to the repository’s visibility reset th
 
 Pepr had over 200 stars, demonstrating its recognition and value within the Kubernetes community. We’re working to rebuild that recognition.
 
-If you’ve previously starred Pepr, or if you find it a useful project, we would greatly appreciate it if you could re-star the repository. We really appreciate your support! :star:
+If you’ve previously starred Pepr, or if you find it a useful project, we would greatly appreciate it if you could re-star the repository. We really appreciate your support!
 
 ## ***Type safe Kubernetes middleware for humans***
 
