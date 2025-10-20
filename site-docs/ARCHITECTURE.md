@@ -245,8 +245,8 @@ build/
 └── tests/
     └── *.test.mjs                    # Test suite
 
-docs/
-└── *.md                              # Project documentation
+site-docs/
+└── *.md                              # Documentation site documentation
 
 src/content/docs/
 ├── v*/                               # Generated: Version directory

@@ -71,7 +71,7 @@ pepr-docs/
 │   ├── pages/               # Custom pages
 │   └── styles/              # Stylesheets
 ├── public/                  # Static assets
-├── docs/                    # Project documentation
+├── site-docs/               # Documentation site documentation
 │   ├── ARCHITECTURE.md      # Build system architecture
 │   ├── CONTRIBUTING.md      # Contribution guide
 │   └── REDIRECTS.md         # Redirect system guide
@@ -83,13 +83,13 @@ pepr-docs/
 
 **Content changes** must be made in the [Pepr core repository](https://github.com/defenseunicorns/pepr). Site structure and UI changes should be made in this repository.
 
-See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for full guidelines.
+See [site-docs/CONTRIBUTING.md](site-docs/CONTRIBUTING.md) for full guidelines.
 
 ## Documentation
 
-- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - Build system architecture and workflow
-- [CONTRIBUTING.md](docs/CONTRIBUTING.md) - Contribution guidelines and testing
-- [REDIRECTS.md](docs/REDIRECTS.md) - Redirect system documentation
+- [ARCHITECTURE.md](site-docs/ARCHITECTURE.md) - Build system architecture and workflow
+- [CONTRIBUTING.md](site-docs/CONTRIBUTING.md) - Contribution guidelines and testing
+- [REDIRECTS.md](site-docs/REDIRECTS.md) - Redirect system documentation
 
 ## Support
 
