@@ -135,34 +135,25 @@ Generating Netlify redirect rules.
    └─ Generates static site in dist/
 ```
 
-### What Gets Generated (Gitignored)
-
-The following files and directories are **generated on every build** and should not be committed:
+### Deployment Process
 
 ```
-work/                           # Temporary clone of core repo
-src/content/docs/v*/            # Extracted documentation by version
-src/content/versions/           # Version metadata
-public/_redirects               # Netlify redirect rules
-dist/                           # Final built site
+1. Build Job (CI)
+   ├─ Runs on PR and main branch pushes
+   ├─ Generates all build artifacts
+   └─ Uploads dist/ as CI artifact
+   ↓
+2. Deploy Job (CI - only on main branch)
+   ├─ Checks out deploy branch
+   ├─ Downloads dist/ artifact
+   ├─ Commits dist/ to deploy branch
+   └─ Pushes to deploy branch
+   ↓
+3. Netlify Deployment
+   └─ Deploys from deploy branch to production
 ```
 
-These are listed in `.gitignore` to prevent accidental commits.
-
-### What Gets Committed
-
-The following are source files that should be in git:
-
-```
-build/                          # Build system source code
-src/                           # Site source (templates, layouts, etc.)
-  ├─ layouts/
-  ├─ components/
-  └─ pages/
-astro.config.mjs               # Site configuration
-package.json                   # Dependencies
-README.md                      # Project documentation
-```
+**Note:** Build artifacts are never committed to the main branch. The deploy branch contains only the built site (dist/) for Netlify deployment.
 
 ## Data Flow
 

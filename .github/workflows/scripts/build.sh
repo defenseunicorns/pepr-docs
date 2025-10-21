@@ -3,7 +3,11 @@
 CORE=$(realpath "$CORE")
 cd "$DOCS" || exit
 npm ci
-        
+
+# Ensure required directories exist
+mkdir -p src/content/docs
+mkdir -p src/content/versions
+
 # Build docs with proper error handling
 echo "Starting documentation generation..."
 node build/index.mjs --core "$CORE" --site ./src/content/docs 2>&1 | tee /tmp/build.log

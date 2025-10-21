@@ -50,10 +50,6 @@ jobs:
       - name: Build the docs
         run: '$DOCS/.github/workflows/scripts/build.sh'
 
-      - name: Commit changes to source!
-        if: github.ref_name == 'main'
-        run: bash ./docs/.github/workflows/scripts/commit.sh
-
       - name: Upload Artifacts
         if: github.ref_name == 'main'
         uses: actions/upload-artifact@v4
