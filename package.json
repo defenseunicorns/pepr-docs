@@ -10,10 +10,12 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "linkcheck": "CHECK_LINKS=true astro build",
     "preview": "astro preview",
+    "linkcheck": "node scripts/validateLinks.js",
+    "linkcheck:ci": "npm run build && npm run preview & sleep 5 && node scripts/validateLinks.js http://localhost:4321; EXIT_CODE=$?; pkill -P $$ astro; exit $EXIT_CODE",
     "astro": "astro",
-    "test": "npm run test -w build",
+    "test": "npm run test:unit && npm run linkcheck:ci",
+    "test:unit": "npm run test -w build",
     "test:watch": "npm run test:watch -w build",
     "prepare": "husky"
   },
@@ -23,7 +25,6 @@
     "@tailwindcss/vite": "^4.1.13",
     "astro": "^5.6.1",
     "sharp": "^0.34.2",
-    "starlight-links-validator": "^0.17.2",
     "starlight-llms-txt": "^0.6.0",
     "starlight-versions": "^0.5.4",
     "tailwindcss": "^4.1.13"
@@ -33,6 +34,7 @@
     "lightningcss-linux-x64-gnu": "*"
   },
   "devDependencies": {
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "linkinator": "^7.2.0"
   }
 }

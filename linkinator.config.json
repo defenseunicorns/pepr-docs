@@ -1,0 +1,18 @@
+{
+  "recurse": true,
+  "concurrency": 100,
+  "retry": true,
+  "timeout": 10000,
+  "include": ["sitemap.xml"],
+  "skip": [
+    "https://github.com/defenseunicorns/pepr/edit/.*",
+    "https://github.com/defenseunicorns/pepr-docs/edit/.*",
+    "https://fonts.googleapis.com/.*",
+    "https://www.linkedin.com/.*",
+    "https://twitter.com/.*",
+    "https://x.com/.*",
+    "http://localhost:3000/connections/datasources",
+    "http://monitoring-kube-prometh-prometheus.default:9090/",
+    ".*/sitemap-index.xml"
+  ]
+}

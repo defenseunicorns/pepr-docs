@@ -3,7 +3,6 @@ import starlight from '@astrojs/starlight';
 import starlightVersions from 'starlight-versions';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import tailwindcss from '@tailwindcss/vite';
-import starlightLinksValidator from 'starlight-links-validator';
 import { getStarlightVersions } from './build/version-discovery.mjs';
 
 const coreRepoPath = process.env.CORE || process.env.PEPR_CORE_PATH;
@@ -29,7 +28,6 @@ export default defineConfig({
 		starlight({
 			favicon: '/pepr.svg',
 			plugins: [
-				...(process.env.CHECK_LINKS ? [starlightLinksValidator()] : []),
 				starlightLlmsTxt(),
 				...(dynamicVersions.length > 0 ? [starlightVersions({
 					versions: dynamicVersions,
