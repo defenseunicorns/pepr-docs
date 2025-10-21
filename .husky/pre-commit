@@ -1,2 +1,4 @@
+#!/bin/bash
 npm test
 bash .github/workflows/scripts/validate-gitignore.sh
+bash .github/workflows/scripts/shellcheck.sh
