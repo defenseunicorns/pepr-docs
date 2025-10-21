@@ -14,7 +14,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "npm run test -w build",
-    "test:watch": "npm run test:watch -w build"
+    "test:watch": "npm run test:watch -w build",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.35.2",
@@ -30,5 +31,8 @@
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "*",
     "lightningcss-linux-x64-gnu": "*"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
   }
 }

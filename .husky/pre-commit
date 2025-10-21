@@ -1,0 +1,2 @@
+npm test
+bash .github/workflows/scripts/validate-gitignore.sh
