@@ -1169,7 +1169,7 @@ When developing mutating admission policies, it is essential to include a valida
 2. Maintain Cluster Integrity: By validating the mutated resource, you ensure it adheres to expected formats, standards, and constraints, maintaining the health and stability of your cluster.
 3. Catch Logic Errors in Mutations: A mutation may not always produce the intended output due to edge cases, unexpected inputs, or incorrect assumptions in the mutation logic.
 
-Validation helps catch such issues early and becomes *particularly* important if your Module is [configured](user-guide/customization/#admission-and-watcher-subparameters) to use a Webhook [failurePolicy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy) of `ignore`. In that case, admission requests failures *won’t prevent further processing and/or acceptance* of mutate-failed requests and could result in undesirable resources getting into your cluster!
+Validation helps catch such issues early and becomes *particularly* important if your Module is [configured](/user-guide/customization/#admission-and-watcher-subparameters) to use a Webhook [failurePolicy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy) of `ignore`. In that case, admission requests failures *won’t prevent further processing and/or acceptance* of mutate-failed requests and could result in undesirable resources getting into your cluster!
 
 1. Comply with Kubernetes Best Practices: Kubernetes resources must meet specific structural and functional requirements. Validating ensures compliance, preventing the risk of deployment failures or runtime errors.
 
@@ -2893,7 +2893,7 @@ The WebApp Operator will:
 
 All resources will include `ownerReferences`, triggering cascading deletion when a WebApp is removed. The operator will also automatically restore any managed resources that are deleted externally.
 
-[Back to top](#building-a-kubernetes-operator-with-pepr)
+[Back to top](#introduction)
 
 ## Prerequisites
 
@@ -2905,7 +2905,7 @@ All resources will include `ownerReferences`, triggering cascading deletion when
 * Familiarity with TypeScript
 * Node.js ≥ 20.0
 
-[Back to top](#building-a-kubernetes-operator-with-pepr)
+[Back to top](#introduction)
 
 ## Tutorial Steps
 
@@ -2918,7 +2918,7 @@ All resources will include `ownerReferences`, triggering cascading deletion when
 5. [Build and Deploy Your Operator](#build-and-deploy-your-operator)
 6. [Test Your Operator](#test-your-operator)
 
-[Back to top](#building-a-kubernetes-operator-with-pepr)
+[Back to top](#introduction)
 
 ## Create a new Pepr Module
 
@@ -2944,7 +2944,7 @@ To track your progress in this tutorial, let’s treat it as a `git` repository:
 git init && git add --all && git commit -m "npx pepr init"
 ```
 
-[Back to top](#building-a-kubernetes-operator-with-pepr)
+[Back to top](#introduction)
 
 ## Create CRD
 
@@ -3022,7 +3022,7 @@ Commit your changes for CRD registration & validation:
 git add capabilities/crd/ && git commit -m "Create CRD handling logic"
 ```
 
-[Back to top](#building-a-kubernetes-operator-with-pepr)
+[Back to top](#introduction)
 
 ## Create Helpers
 
@@ -3057,7 +3057,7 @@ Commit your changes for deployment, service, and configmap generation:
 git add capabilities/controller/ && git commit -m "Add generators for WebApp deployments, services, and configmaps"
 ```
 
-[Back to top](#building-a-kubernetes-operator-with-pepr)
+[Back to top](#introduction)
 
 ## Create Reconciler
 
@@ -3097,7 +3097,7 @@ Commit your changes with:
 git add capabilities/ && git commit -m "Create reconciler for webapps"
 ```
 
-[Back to top](#building-a-kubernetes-operator-with-pepr)
+[Back to top](#introduction)
 
 ## Add capability to Pepr Module
 
@@ -3320,7 +3320,7 @@ Note
 
 `wa` is the short form of `webapp` that kubectl recognizes. This resource structure directly matches the TypeScript interface we defined earlier in our code.
 
-[Back to top](#building-a-kubernetes-operator-with-pepr)
+[Back to top](#introduction)
 
 ## Test Your Operator
 
@@ -3663,7 +3663,7 @@ For more information, check out:
 * [Kubernetes Operator Best Practices](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
 * [Custom Resource Definition Documentation](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)
 
-[Back to top](#building-a-kubernetes-operator-with-pepr)
+[Back to top](#introduction)
 
 # Using Pepr in a GitOps Workflow
 
@@ -3753,7 +3753,7 @@ When you [`npx pepr init`](/user-guide/pepr-cli#pepr-init), a `capabilities` dir
 
 [Section titled “Creating a Capability”](#creating-a-capability)
 
-Defining a new capability can be done via a [VSCode Snippet](https://code.visualstudio.com/docs/editor/userdefinedsnippets) generated during [`npx pepr init`](/pepr-cli#pepr-init).
+Defining a new capability can be done via a [VSCode Snippet](https://code.visualstudio.com/docs/editor/userdefinedsnippets) generated during [`npx pepr init`](/user-guide/pepr-cli#pepr-init).
 
 1. Create a new file in the `capabilities` directory with the name of your capability. For example, `capabilities/my-capability.ts`.
 

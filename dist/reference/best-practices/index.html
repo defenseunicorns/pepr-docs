@@ -107,7 +107,7 @@ By validating the mutated resource, you ensure it adheres to expected formats, s
 <li>Catch Logic Errors in Mutations:
 A mutation may not always produce the intended output due to edge cases, unexpected inputs, or incorrect assumptions in the mutation logic.</li>
 </ol>
-<p>Validation helps catch such issues early and becomes <em>particularly</em> important if your Module is <a href="user-guide/customization/#admission-and-watcher-subparameters">configured</a> to use a Webhook <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failurePolicy</a> of <code dir="auto">ignore</code>. In that case, admission requests failures <em>won’t prevent further processing and/or acceptance</em> of mutate-failed requests and could result in undesirable resources getting into your cluster!</p>
+<p>Validation helps catch such issues early and becomes <em>particularly</em> important if your Module is <a href="/user-guide/customization/#admission-and-watcher-subparameters">configured</a> to use a Webhook <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failurePolicy</a> of <code dir="auto">ignore</code>. In that case, admission requests failures <em>won’t prevent further processing and/or acceptance</em> of mutate-failed requests and could result in undesirable resources getting into your cluster!</p>
 <ol>
 <li>Comply with Kubernetes Best Practices:
 Kubernetes resources must meet specific structural and functional requirements. Validating ensures compliance, preventing the risk of deployment failures or runtime errors.</li>
