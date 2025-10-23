@@ -10,6 +10,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "format": "eslint --fix .",
     "preview": "astro preview",
     "linkcheck": "npm run build && npm run preview & sleep 5 && npm run test:e2e; EXIT_CODE=$?; pkill -P $$ astro; exit $EXIT_CODE",
     "astro": "astro",
@@ -36,5 +37,6 @@
   "devDependencies": {
     "husky": "^9.1.7",
     "linkinator": "^7.2.0"
+    "@defenseunicorns/eslint-config": "^1.1.2",
   }
 }

@@ -29,10 +29,10 @@ export default defineConfig({
 			favicon: '/pepr.svg',
 			plugins: [
 				starlightLlmsTxt(),
-				...(dynamicVersions.length > 0 ? [starlightVersions({
+				starlightVersions({
 					versions: dynamicVersions,
 					current: { label: 'Latest' },
-				})] : []),
+				}),
 			],
 			customCss: ['./src/styles/global.css'],
 			title: 'Pepr',
