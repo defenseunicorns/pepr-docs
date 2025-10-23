@@ -12,10 +12,10 @@
     "https://x.com/.*",
     "https://itnext.io/.*",
     "https://docs.pepr.dev/.*",
-    "http://localhost:3000/connections/datasources",
-    "http://localhost:3000/*",
-    "http://monitoring-kube-prometh-prometheus.default:9090/",
-    ".*/sitemap-index.xml",
-    ".*/_astro/print\\..*\\.css"
+    "http://localhost:3000/.*",
+    "http://monitoring-kube-prometh-prometheus.default:9090/.*",
+    "http://localhost:4321/_astro/print.*\\.css$",
+    "http://localhost:4173/_astro/print.*\\.css$",
+    ".*/sitemap-index.xml$"
   ]
 }
