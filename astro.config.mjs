@@ -56,9 +56,6 @@ export default defineConfig({
 					href: 'https://github.com/defenseunicorns/pepr',
 				},
 			],
-			editLink: {
-				baseUrl: 'https://github.com/defenseunicorns/pepr-docs/edit/main/',
-			},
 			sidebar: [
 				{
 					label: 'User Guide',

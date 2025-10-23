@@ -11,6 +11,7 @@
     "https://twitter.com/.*",
     "https://x.com/.*",
     "https://itnext.io/.*",
+    "https://docs.pepr.dev/.*",
     "http://localhost:3000/connections/datasources",
     "http://localhost:3000/*",
     "http://monitoring-kube-prometh-prometheus.default:9090/",
