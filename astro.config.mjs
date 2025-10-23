@@ -31,10 +31,10 @@ export default defineConfig({
 			plugins: [
 				...(process.env.CHECK_LINKS ? [starlightLinksValidator()] : []),
 				starlightLlmsTxt(),
-				...(dynamicVersions.length > 0 ? [starlightVersions({
+				starlightVersions({
 					versions: dynamicVersions,
 					current: { label: 'Latest' },
-				})] : []),
+				}),
 			],
 			customCss: ['./src/styles/global.css'],
 			title: 'Pepr',
