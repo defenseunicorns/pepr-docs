@@ -33,6 +33,9 @@ Thumbs.db
 *.temp
 *.bak
 
+# Link validation reports
+broken-links-report-*.json
+
 # Legacy redirect generation script
 retired-redirects.js
 # Netlify redirect rules (generated from build)
