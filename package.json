@@ -10,6 +10,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "format": "eslint --fix .",
     "linkcheck": "CHECK_LINKS=true astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -33,6 +34,7 @@
     "lightningcss-linux-x64-gnu": "*"
   },
   "devDependencies": {
+    "@defenseunicorns/eslint-config": "^1.1.2",
     "husky": "^9.1.7"
   }
 }
