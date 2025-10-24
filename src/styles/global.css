@@ -15,3 +15,16 @@
 .site-title {
   font-family: 'Aldrich', sans-serif !important;
 }
+
+/* Customize scroll-to-top button */
+.scroll-to-top-button {
+  @apply !w-7 !h-7 !bg-[#6aa4b4] !rounded-lg !border-none;
+}
+
+.scroll-to-top-button:hover {
+  @apply !bg-[#a5eeef];
+}
+
+.scroll-to-top-button svg {
+  @apply !w-5 !h-5;
+}

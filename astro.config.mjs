@@ -5,6 +5,8 @@ import starlightLlmsTxt from 'starlight-llms-txt';
 import tailwindcss from '@tailwindcss/vite';
 import starlightLinksValidator from 'starlight-links-validator';
 import { getStarlightVersions } from './build/version-discovery.mjs';
+import starlightScrollToTop from 'starlight-scroll-to-top';
+
 
 const coreRepoPath = process.env.CORE || process.env.PEPR_CORE_PATH;
 let dynamicVersions = [];
@@ -31,6 +33,7 @@ export default defineConfig({
 			plugins: [
 				...(process.env.CHECK_LINKS ? [starlightLinksValidator()] : []),
 				starlightLlmsTxt(),
+				starlightScrollToTop(),
 				starlightVersions({
 					versions: dynamicVersions,
 					current: { label: 'Latest' },
