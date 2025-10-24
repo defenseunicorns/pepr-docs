@@ -6,6 +6,8 @@ import tailwindcss from '@tailwindcss/vite';
 import starlightLinksValidator from 'starlight-links-validator';
 import { getStarlightVersions } from './build/version-discovery.mjs';
 import starlightContextualMenu from 'starlight-contextual-menu';
+import starlightImageZoom from 'starlight-image-zoom'
+
 
 const coreRepoPath = process.env.CORE || process.env.PEPR_CORE_PATH;
 let dynamicVersions = [];
@@ -38,6 +40,7 @@ export default defineConfig({
 			plugins: [
 				...(process.env.CHECK_LINKS ? [starlightLinksValidator()] : []),
 				starlightLlmsTxt(),
+				starlightImageZoom(),
 				starlightContextualMenu({
 					actions: ['copy', 'view', 'chatgpt', 'claude', 'grok'],
 				}),
