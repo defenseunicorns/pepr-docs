@@ -24,6 +24,7 @@
     "@tailwindcss/vite": "^4.1.13",
     "astro": "^5.6.1",
     "sharp": "^0.34.2",
+    "starlight-github-alerts": "^0.1.1",
     "starlight-contextual-menu": "^0.1.5",
     "starlight-image-zoom": "^0.13.2",
     "starlight-links-validator": "^0.17.2",

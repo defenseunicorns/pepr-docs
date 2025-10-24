@@ -5,6 +5,7 @@ import starlightLlmsTxt from 'starlight-llms-txt';
 import tailwindcss from '@tailwindcss/vite';
 import starlightLinksValidator from 'starlight-links-validator';
 import { getStarlightVersions } from './build/version-discovery.mjs';
+import starlightGitHubAlerts from 'starlight-github-alerts'
 import starlightContextualMenu from 'starlight-contextual-menu';
 import starlightImageZoom from 'starlight-image-zoom'
 
@@ -40,6 +41,7 @@ export default defineConfig({
 			plugins: [
 				...(process.env.CHECK_LINKS ? [starlightLinksValidator()] : []),
 				starlightLlmsTxt(),
+				starlightGitHubAlerts(),
 				starlightImageZoom(),
 				starlightContextualMenu({
 					actions: ['copy', 'view', 'chatgpt', 'claude', 'grok'],
