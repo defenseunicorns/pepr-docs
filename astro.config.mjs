@@ -4,6 +4,10 @@ import starlightVersions from 'starlight-versions';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import tailwindcss from '@tailwindcss/vite';
 import { getStarlightVersions } from './build/version-discovery.mjs';
+import starlightGitHubAlerts from 'starlight-github-alerts'
+import starlightContextualMenu from 'starlight-contextual-menu';
+import starlightImageZoom from 'starlight-image-zoom'
+
 
 const coreRepoPath = process.env.CORE || process.env.PEPR_CORE_PATH;
 let dynamicVersions = [];
@@ -14,11 +18,17 @@ if (coreRepoPath) {
 		console.log('dynamicVersions =', dynamicVersions);
 	} catch (error) {
 		console.warn('Could not discover versions dynamically:', error.message);
-		console.warn('Using empty versions array - build will include only latest content');
+		console.warn(
+			'Using empty versions array - build will include only latest content'
+		);
 	}
 } else {
-	console.warn('No core repository path provided (CORE or PEPR_CORE_PATH environment variable)');
-	console.warn('Using empty versions array - build will include only latest content');
+	console.warn(
+		'No core repository path provided (CORE or PEPR_CORE_PATH environment variable)'
+	);
+	console.warn(
+		'Using empty versions array - build will include only latest content'
+	);
 }
 
 // https://astro.build/config
@@ -29,6 +39,11 @@ export default defineConfig({
 			favicon: '/pepr.svg',
 			plugins: [
 				starlightLlmsTxt(),
+				starlightGitHubAlerts(),
+				starlightImageZoom(),
+				starlightContextualMenu({
+					actions: ['copy', 'view', 'chatgpt', 'claude', 'grok'],
+				}),
 				starlightVersions({
 					versions: dynamicVersions,
 					current: { label: 'Latest' },

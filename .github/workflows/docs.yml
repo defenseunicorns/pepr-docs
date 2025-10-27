@@ -90,6 +90,7 @@ jobs:
           git config user.email "actions@github.com"
 
           git add --all
+          git add --force dist/
           if ! git diff-index --quiet HEAD; then
             git commit -m "Auto-deploy docs"
             git push origin "$BRANCH"

@@ -57,22 +57,6 @@ function fixImagePaths(content) {
 		.replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, '/assets/$1');
 }
 
-// Convert GitHub callouts to MDX admonitions
-function convertCallouts(content, filePath) {
-	return content.replace(
-		/^> \[!(TIP|NOTE|WARNING|IMPORTANT|CAUTION)\]\n((?:^>.*\n?)*)/gm,
-		(match, type, calloutContent) => {
-			const mdxType = type.toLowerCase();
-			const cleanContent = calloutContent
-				.split('\n')
-				.map((line) => line.replace(/^> ?/, ''))
-				.filter((line) => line.length > 0)
-				.join('\n');
-			return `:::${mdxType}\n${cleanContent}\n:::`;
-		}
-	);
-}
-
 // Helper to remove HTML comments repeatedly until none remain
 function removeHtmlComments(input) {
 	let prev;
@@ -121,7 +105,6 @@ async function processAllContent(contentDir) {
 		const originalContent = await fs.readFile(contentFile, 'utf8');
 		let processedContent = originalContent;
 		let imagePathsFixed = false;
-		let calloutsFixed = false;
 
 		// Apply image path fixes
 		const afterImageFix = fixImagePaths(processedContent);
@@ -130,34 +113,23 @@ async function processAllContent(contentDir) {
 			processedContent = afterImageFix;
 		}
 
-		// Apply callout conversion
-		const afterCalloutFix = convertCallouts(processedContent, contentFile);
-		if (afterCalloutFix !== processedContent) {
-			calloutsFixed = true;
-			processedContent = afterCalloutFix;
-		}
-
 		// Write file only if changes were made
 		if (originalContent !== processedContent) {
 			await fs.writeFile(contentFile, processedContent);
-			return { updated: true, imagePathsFixed, calloutsFixed };
+			return { updated: true, imagePathsFixed};
 		}
 
-		return { updated: false, imagePathsFixed: false, calloutsFixed: false };
+		return { updated: false, imagePathsFixed: false};
 	}));
 
 	// Aggregate results
 	const updatedFilesCount = results.filter(r => r.updated).length;
 	const imagePathsFixedCount = results.filter(r => r.imagePathsFixed).length;
-	const calloutsFixedCount = results.filter(r => r.calloutsFixed).length;
 
 	if (updatedFilesCount > 0) {
 		console.log(`Updated ${updatedFilesCount} files`);
 		if (imagePathsFixedCount > 0) {
 			console.log(`Fixed image paths in ${imagePathsFixedCount} files`);
-		}
-		if (calloutsFixedCount > 0) {
-			console.log(`Fixed callouts in ${calloutsFixedCount} files`);
 		}
 	}
 }
@@ -510,8 +482,8 @@ for (const version of RUN.versions) {
 }
 
 await executeWithErrorHandling(`Process all work directory content`, async (log) => {
-	// Process all content in work directory to fix image paths and callouts
-	console.log('Processing work directory content (fixing image paths and callouts)...');
+	// Process all content in work directory to fix image paths
+	console.log('Processing work directory content (fixing image paths)...');
 	const workContentDirs = await glob(`${RUN.work}/content/*`, { onlyDirectories: true });
 
 	// Process all version directories in parallel

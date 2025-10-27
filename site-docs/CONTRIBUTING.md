@@ -169,11 +169,29 @@ npm install
 ```
 ````
 
-### Using Callouts
+### Using Callouts and Alerts
 
-Starlight provides callout syntax for highlighting important information. The build system automatically converts GitHub-style callouts from the core repository, but you can also use Starlight syntax directly.
+We support both GitHub-style alerts and Starlight callouts for highlighting important information. Both syntaxes are supported thanks to the `starlight-github-alerts` plugin.
 
-**Starlight Syntax:**
+**GitHub Alert Syntax (Recommended for Core Repo):**
+```markdown
+> [!NOTE]
+> General information or helpful context
+
+> [!TIP]
+> Helpful suggestions or best practices
+
+> [!IMPORTANT]
+> Critical information that users need to know
+
+> [!WARNING]
+> Critical content demanding immediate user attention
+
+> [!CAUTION]
+> Negative potential consequences of an action
+```
+
+**Starlight Syntax (Alternative):**
 ```markdown
 :::note
 General information or helpful context
@@ -186,14 +204,20 @@ Helpful suggestions or best practices
 :::caution
 Warnings or important considerations
 :::
+
+:::danger
+Critical warnings requiring immediate attention
+:::
 ```
 
-**Available Callout Types:**
-- **`:::note`** - Blue, for general information
-- **`:::tip`** - Green, for helpful suggestions
-- **`:::caution`** - Yellow, for warnings
-- **`:::warning`** - Orange, for critical warnings
-- **`:::important`** - Purple, for important notices
+**Available Callout/Alert Types:**
+- **`NOTE` / `:::note`** - Blue, for general information
+- **`TIP` / `:::tip`** - Green, for helpful suggestions
+- **`IMPORTANT`** - Purple, for critical information
+- **`WARNING` / `:::danger`** - Red, for critical warnings
+- **`CAUTION` / `:::caution`** - Orange, for warnings and important considerations
+
+Both syntaxes render identically and can be used interchangeably.
 
 ### Links
 
