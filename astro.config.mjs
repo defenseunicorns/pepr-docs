@@ -52,6 +52,7 @@ export default defineConfig({
 				}),
 			],
 			customCss: ['./src/styles/global.css'],
+			disable404Route: true,
 			title: 'Pepr',
 			description: 'Pepr Documentation',
 			logo: {
