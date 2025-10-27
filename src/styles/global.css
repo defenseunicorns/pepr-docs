@@ -4,14 +4,31 @@
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 
-/* In your custom.css */
-@font-face {
-  font-family: 'Aldrich';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/aldrich-regular.woff2') format('woff2');
+@theme {
+/* Pepr Brand Colors */
+	--color-midBlue: #6aa4b4;
+	--color-ltBlue: #a5eeef;
+	--color-ltPink: #d14667;
+	--color-dkPink: #871a41;
+	--color-ltGold: #efca81;
+	--color-dkGold: #be9853;
+/* Generated accent color palettes. */
+--color-accent-200: #b3cfcf;
+--color-accent-600: #017879;
+--color-accent-900: #113939;
+--color-accent-950: #112828;
+/* Generated background color palettes. */
+--color-gray-100: #f4f7f9;
+--color-gray-200: #e9eff3;
+--color-gray-300: #bcc3c8;
+--color-gray-400: #808e97;
+--color-gray-500: #4d5a62;
+--color-gray-700: #2e3a42;
+--color-gray-800: #1d2830;
+--color-gray-900: #14191c;
 }
 
 .site-title {
-  font-family: 'Aldrich', sans-serif !important;
+  @apply  text-2xl;
+  font-family: 'Aldrich', sans-serif;
 }
