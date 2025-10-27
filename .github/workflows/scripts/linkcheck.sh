@@ -2,19 +2,25 @@
 
 cd "$DOCS" || exit
 
-# Start preview server in background
-echo "Starting preview server..."
-npm run preview &
-PREVIEW_PID=$!
+# Check that dist directory exists
+if [ ! -d "dist" ]; then
+  echo "Error: dist directory not found. Build may have failed."
+  exit 1
+fi
+
+# Start an HTTP server in background
+echo "Starting HTTP server on port 4321..."
+(cd dist && python3 -m http.server 4321) &
+SERVER_PID=$!
 
 # Wait for server to be ready
-echo "Waiting for preview server to start..."
-sleep 10
+echo "Waiting for server to start..."
+sleep 5
 
 # Check if server is responding
 for i in {1..30}; do
   if curl -s http://localhost:4321 > /dev/null; then
-    echo "Preview server is ready!"
+    echo "Server is ready!"
     break
   fi
   echo "Waiting for server... ($i/30)"
@@ -26,9 +32,9 @@ echo "Running link validation tests..."
 npm run test:e2e
 TEST_EXIT_CODE=$?
 
-# Stop preview server
-echo "Stopping preview server..."
-kill $PREVIEW_PID || true
+# Stop server
+echo "Stopping server..."
+kill $SERVER_PID || true
 
 if [ "$TEST_EXIT_CODE" -eq 0 ]; then
   echo "Link validation completed successfully!"
