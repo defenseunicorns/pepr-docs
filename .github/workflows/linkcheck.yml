@@ -1,0 +1,51 @@
+name: Link Check
+run-name: Link Check
+
+permissions: read-all
+
+on:
+  workflow_dispatch:
+
+  pull_request:
+    branches: ['main']
+
+  # run weekly on Monday at 8am UTC
+  schedule:
+    - cron: '0 8 * * 1'
+
+env:
+  CORE: ./core
+  DOCS: ./docs
+
+jobs:
+  linkcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: defenseunicorns/pepr
+          path: ./core
+          fetch-depth: 0
+
+      - uses: actions/checkout@v4
+        with:
+          repository: defenseunicorns/pepr-docs
+          path: ./docs
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Build the docs
+        run: '$DOCS/.github/workflows/scripts/build.sh'
+
+      - name: Run link validation
+        run: '$DOCS/.github/workflows/scripts/linkcheck.sh'
+
+      - name: Upload broken links report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: broken-links-report
+          path: ./docs/broken-links-report-*.json
+          if-no-files-found: ignore
