@@ -12,7 +12,7 @@
     "build": "astro build",
     "format": "eslint --fix .",
     "preview": "astro preview",
-    "linkcheck": "lsof -ti:4321 | xargs kill -9 2>/dev/null || true; python3 -m http.server 4321 --directory dist >/dev/null 2>&1 & sleep 2 && npm run --silent test:e2e; EXIT_CODE=$?; pkill -P $$ python3; exit $EXIT_CODE",
+    "linkcheck": "bash scripts/linkcheck-local.sh",
     "astro": "astro",
     "test": "npm run test:unit && npm run linkcheck",
     "test:unit": "npm run test -w build",
