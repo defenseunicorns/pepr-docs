@@ -9,10 +9,6 @@ on:
   pull_request:
     branches: ['main']
 
-  # run weekly on Monday at 8am UTC
-  schedule:
-    - cron: '0 8 * * 1'
-
 env:
   CORE: ./core
   DOCS: ./docs
@@ -24,17 +20,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr
-          path: ./core
+          path: ${{ env.CORE }}
           fetch-depth: 0
 
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr-docs
-          path: ./docs
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y jq
+          path: ${{ env.DOCS }}
 
       - name: Build the docs
         run: '$DOCS/.github/workflows/scripts/build.sh'
@@ -47,5 +39,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: broken-links-report
-          path: ./docs/broken-links-report-*.json
+          path: ${{ env.DOCS }}/broken-links-report-*.json
           if-no-files-found: ignore
