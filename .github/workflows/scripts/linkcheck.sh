@@ -8,9 +8,13 @@ if [ ! -d "dist" ]; then
   exit 1
 fi
 
+# Kill any existing process on port 4321
+echo "Checking for existing processes on port 4321..."
+lsof -ti:4321 | xargs kill -9 2>/dev/null || true
+
 # Start an HTTP server in background
 echo "Starting HTTP server on port 4321..."
-(cd dist && python3 -m http.server 4321) &
+(cd dist && python3 -m http.server 4321 >/dev/null 2>&1) &
 SERVER_PID=$!
 
 # Wait for server to be ready
