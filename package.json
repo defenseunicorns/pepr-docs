@@ -12,11 +12,11 @@
     "build": "astro build",
     "format": "eslint --fix .",
     "preview": "astro preview",
-    "linkcheck": "bash scripts/linkcheck-local.sh",
+    "linkcheck": "bash .github/workflows/scripts/linkcheck.sh",
     "astro": "astro",
     "test": "npm run test:unit && npm run linkcheck",
     "test:unit": "npm run test -w build",
-    "test:e2e": "npm run test -w build -- tests/e2e-link-validation.test.mjs",
+    "test:e2e": "npm run test:e2e -w build",
     "test:watch": "npm run test:watch -w build",
     "prepare": "husky"
   },
