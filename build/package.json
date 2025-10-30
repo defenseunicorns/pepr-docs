@@ -9,6 +9,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "VITEST_RUN_E2E=true vitest run tests/e2e-*.test.mjs",
     "test:integration": "vitest run --reporter=verbose tests/*integration*.test.mjs",
     "test:integration:watch": "vitest tests/*integration*.test.mjs"
   },

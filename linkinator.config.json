@@ -1,0 +1,21 @@
+{
+  "recurse": true,
+  "concurrency": 100,
+  "retry": true,
+  "timeout": 10000,
+  "skip": [
+    "https://github.com/defenseunicorns/pepr/edit/.*",
+    "https://github.com/defenseunicorns/pepr-docs/edit/.*",
+    "https://fonts.googleapis.com/.*",
+    "https://www.linkedin.com/.*",
+    "https://twitter.com/.*",
+    "https://x.com/.*",
+    "https://itnext.io/.*",
+    "https://docs.pepr.dev/.*",
+    "http://localhost:3000/.*",
+    "http://monitoring-kube-prometh-prometheus.default:9090/.*",
+    "http://localhost:4321/_astro/print.*\\.css$",
+    "http://localhost:4173/_astro/print.*\\.css$",
+    ".*/sitemap-index.xml$"
+  ]
+}

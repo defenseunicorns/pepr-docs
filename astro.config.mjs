@@ -3,7 +3,6 @@ import starlight from '@astrojs/starlight';
 import starlightVersions from 'starlight-versions';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import tailwindcss from '@tailwindcss/vite';
-import starlightLinksValidator from 'starlight-links-validator';
 import { getStarlightVersions } from './build/version-discovery.mjs';
 import starlightGitHubAlerts from 'starlight-github-alerts'
 import starlightContextualMenu from 'starlight-contextual-menu';
@@ -39,7 +38,6 @@ export default defineConfig({
 		starlight({
 			favicon: '/pepr.svg',
 			plugins: [
-				...(process.env.CHECK_LINKS ? [starlightLinksValidator()] : []),
 				starlightLlmsTxt(),
 				starlightGitHubAlerts(),
 				starlightImageZoom(),
@@ -74,9 +72,6 @@ export default defineConfig({
 					href: 'https://github.com/defenseunicorns/pepr',
 				},
 			],
-			editLink: {
-				baseUrl: 'https://github.com/defenseunicorns/pepr-docs/edit/main/',
-			},
 			sidebar: [
 				{
 					label: 'User Guide',

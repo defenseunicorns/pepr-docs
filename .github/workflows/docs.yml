@@ -35,17 +35,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr
-          path: ./core
+          path: ${{ env.CORE }}
           fetch-depth: 0 # pull history to get version tags
 
       - uses: actions/checkout@v4
         with:
           repository: defenseunicorns/pepr-docs
-          path: ./docs
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y jq
+          path: ${{ env.DOCS }}
 
       - name: Build the docs
         run: '$DOCS/.github/workflows/scripts/build.sh'
@@ -56,7 +52,7 @@ jobs:
         with:
           name: dist
           retention-days: 1
-          path: ./docs/dist
+          path: ${{ env.DIST }}
 
   deploy:
     if: github.ref_name == 'main'
@@ -69,7 +65,7 @@ jobs:
         with:
           repository: defenseunicorns/pepr-docs
           ref: deploy
-          path: ./docs
+          path: ${{ env.DOCS }}
 
       - name: Clear previously deployed content!
         run: |
@@ -79,7 +75,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: dist
-          path: ./docs/dist
+          path: ${{ env.DIST }}
 
       - name: Deploy the docs!
         run: |
