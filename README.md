@@ -2,7 +2,7 @@
 
 Official documentation site for [Pepr](https://github.com/defenseunicorns/pepr) - A Kubernetes controller framework built in TypeScript.
 
-**Live Site:** https://docs.pepr.dev
+**Live Site:** <https://docs.pepr.dev>
 
 ## Overview
 
@@ -19,6 +19,7 @@ This repository contains the build system and site structure for the Pepr docume
 ### Setup
 
 1. Clone this repository:
+
 ```bash
 git clone https://github.com/defenseunicorns/pepr-docs.git
 cd pepr-docs
@@ -26,6 +27,7 @@ npm install
 ```
 
 2. Clone the Pepr core repository:
+
 ```bash
 git clone https://github.com/defenseunicorns/pepr.git
 ```
@@ -59,7 +61,7 @@ netlify dev
 
 ## Project Structure
 
-```
+```text
 pepr-docs/
 ├── build/                   # Build system source code
 │   ├── index.mjs            # Main build orchestrator
