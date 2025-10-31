@@ -8,6 +8,7 @@ The build system is responsible for generating versioned documentation and manag
 It's designed to maintain multiple documentation versions while ensuring users can always find content through intelligent redirects.
 
 **Deployment:**
+
 - **Nightly builds**: Pepr core runs nightly builds that trigger documentation generation and deploys to production.
 - **PR merges**: Documentation deploys automatically when PRs are merged to main in the docs repo.
 
@@ -18,6 +19,7 @@ It's designed to maintain multiple documentation versions while ensuring users c
 The site is built with [Starlight](https://starlight.astro.build), a documentation framework built on Astro.
 
 **Version Management:**
+
 - Uses [@astrojs/starlight-versions](https://www.npmjs.com/package/@astrojs/starlight-versions) plugin
 - Enables version dropdown in navigation
 - Manages versioned content structure
@@ -57,10 +59,12 @@ export default defineConfig({
 - `plugins` - Starlight-specific plugins like the versions plugin
 
 **Content Organization:**
+
 - Content lives in `src/content/docs/`
 - Each version has its own directory (e.g., `v0.54/`, `v0.55/`)
 - Sidebar navigation is auto-generated from folder structure
 - Frontmatter in markdown files controls page metadata:
+
   ```yaml
   ---
   title: Page Title
@@ -73,12 +77,14 @@ export default defineConfig({
 The main entry point that coordinates the entire build process.
 
 **Responsibilities:**
+
 - Parse command-line arguments
 - Coordinate version management
 - Trigger redirect generation
 - Manage the overall build workflow
 
 **Key Inputs:**
+
 - `--core`: Path to the Pepr core repository (for git tags)
 - `--site`: Path to the documentation content directory
 
@@ -87,17 +93,18 @@ The main entry point that coordinates the entire build process.
 Generating Netlify redirect rules.
 
 **Redirect Types:**
+
 1. Manual Redirects - Specific path fixes
 2. Patch-to-Minor Redirects - Automatic - Active version patches
 3. Retired Version Redirects - Automatic - Catch-all for old versions
 
-→ See [REDIRECTS.md](./REDIRECTS.md#how-it-works) for detailed explanation of redirect types and examples.**
+→ See [REDIRECTS.md](./REDIRECTS.md#how-it-works) for detailed explanation of redirect types and examples.
 
 ## Workflow
 
 ### Build Process
 
-```
+```text
 1. Parse Arguments
    ├─ --core: Path to Pepr core repository
    └─ --site: Path to documentation content
@@ -137,7 +144,7 @@ Generating Netlify redirect rules.
 
 ### Deployment Process
 
-```
+```text
 1. Build Job (CI)
    ├─ Runs on PR and main branch pushes
    ├─ Generates all build artifacts
@@ -157,7 +164,7 @@ Generating Netlify redirect rules.
 
 ## Data Flow
 
-```
+```text
 ┌─────────────────────────┐
 │  Pepr Core Repository   │
 │  (External Source)      │
@@ -210,26 +217,28 @@ Generating Netlify redirect rules.
 ## Version Management
 
 ### Active Versions
+
 - Currently maintained documentation versions
 - Receive patch-to-minor redirects
 - Latest 2 major.minor releases
 - Example: `v0.54`, `v0.55`
 
 ### Retired Versions
+
 - Old documentation versions no longer maintained
 - All traffic redirected to root (latest version)
 - Example: `v0.53`, `v0.52`, `v0.51`
 
 ### Version Lifecycle
 
-```
+```text
 New Release → Active Version → Retired Version
  ('latest')   (2 releases)    (redirect to root)
 ```
 
 ## File Structure
 
-```
+```text
 build/
 ├── index.mjs                         # Main build orchestrator
 ├── *.mjs                             # Generator modules (redirects, etc.)
@@ -251,12 +260,14 @@ public/
 ## Testing Strategy
 
 ### Test Coverage
+
 - Unit tests for each redirect generator function
 - Integration tests for the full generation flow
 - Tests verify both content and counts
 - Separate tests for exact vs wildcard redirects
 
 ### Running Tests
+
 ```bash
 npm run test -w build -- tests/redirects-generator.test.mjs
 ```
