@@ -4,7 +4,6 @@ work
 .astro
 src/content/docs
 src/content/versions
-build
 site
 package-lock.json
 *.min.js

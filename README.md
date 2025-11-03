@@ -6,7 +6,8 @@ Official documentation site for [Pepr](https://github.com/defenseunicorns/pepr) 
 
 ## Overview
 
-This repository contains the build system and site structure for the Pepr documentation. The actual documentation content is automatically extracted from the [Pepr core repository](https://github.com/defenseunicorns/pepr) and built into a versioned documentation site using [Starlight](https://starlight.astro.build).
+This repository contains the build system and site structure for the Pepr documentation site.
+Documentation content is extracted from the [Pepr core repository](https://github.com/defenseunicorns/pepr) and built into a versioned site using [Starlight](https://starlight.astro.build).
 
 ## Quick Start
 
@@ -21,15 +22,15 @@ This repository contains the build system and site structure for the Pepr docume
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/defenseunicorns/pepr-docs.git
-cd pepr-docs
-npm install
+    git clone https://github.com/defenseunicorns/pepr-docs.git
+    cd pepr-docs
+    npm install
 ```
 
 2. Clone the Pepr core repository:
 
 ```bash
-git clone https://github.com/defenseunicorns/pepr.git
+    git clone https://github.com/defenseunicorns/pepr.git
 ```
 
 ### Build and Run Locally
@@ -83,7 +84,8 @@ pepr-docs/
 
 ## Contributing
 
-**Content changes** must be made in the [Pepr core repository](https://github.com/defenseunicorns/pepr). Site structure and UI changes should be made in this repository.
+**Content changes** must be made in the [Pepr core repository](https://github.com/defenseunicorns/pepr).
+Site structure and UI changes should be made in this repository.
 
 See [site-docs/CONTRIBUTING.md](site-docs/CONTRIBUTING.md) for full guidelines.
 

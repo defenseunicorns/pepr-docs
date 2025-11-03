@@ -77,7 +77,9 @@ npm run test -w build -- tests/redirects-generator.test.mjs
 
 ### Updating Site Content
 
-For changes and additions to the technical content of the docs, changes must be made to the [Pepr](https://github.com/defenseunicorns/pepr) core repo. Any content changes made to the Pepr-Docs repo will be overwritten by Pepr on the next build. See [Workflow](./ARCHITECTURE.md#Workflow) for additional details.
+For changes and additions to the technical content of the docs, changes must be made to the [Pepr](https://github.com/defenseunicorns/pepr) core repo.
+Any content changes made to the Pepr-Docs repo will be overwritten by Pepr on the next build.
+See [Workflow](./ARCHITECTURE.md#Workflow) for additional details.
 
 ### Updating Site UI, structure and functionality
 
@@ -184,7 +186,8 @@ npm install
 
 ### Using Callouts and Alerts
 
-We support both GitHub-style alerts and Starlight callouts for highlighting important information. Both syntaxes are supported thanks to the `starlight-github-alerts` plugin.
+We support both GitHub-style alerts and Starlight callouts for highlighting important information.
+Both syntaxes are supported thanks to the `starlight-github-alerts` plugin.
 
 **GitHub Alert Syntax (Recommended for Core Repo):**
 

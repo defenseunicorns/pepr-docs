@@ -13,7 +13,7 @@
     "format:check": "npm run format:code && npm run format:markdown && npm run format:prettier -- --check",
     "format:fix": "npm run format:code -- --fix && npm run format:markdown -- --fix && npm run format:prettier -- --write",
     "format:code": "eslint .",
-    "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore work --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore site \"**/*.{md,mdx}\"",
+    "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore work --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore 090_community --ignore 100_contribute --ignore site \"**/*.{md,mdx}\"",
     "format:prettier": "prettier .",
     "linkcheck": "CHECK_LINKS=true astro build",
     "preview": "astro preview",

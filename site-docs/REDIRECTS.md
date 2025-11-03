@@ -4,7 +4,7 @@ This document explains how the redirect generation system works and how to add m
 
 ## Overview
 
-The redirect generation system has been refactored into a dedicated module (`build/redirects-generator.mjs`) that generates all redirects in the Netlify `_redirects` file.
+The redirect generation system uses a dedicated module (`build/redirects-generator.mjs`) that generates all redirects in the Netlify `_redirects` file.
 
 ## How It Works
 
