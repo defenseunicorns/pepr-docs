@@ -1,0 +1,12 @@
+node_modules
+dist
+work
+.astro
+src/content/docs
+src/content/versions
+site
+package-lock.json
+*.min.js
+*.min.css
+*.md
+*.mdx

@@ -1,0 +1,22 @@
+{
+  "default": true,
+  "MD013": { "line_length": 150 },
+  "MD029": false,
+  "MD033": {
+    "allowed_elements": [
+      "video",
+      "source",
+      "img",
+      "p",
+      "a",
+      "details",
+      "summary",
+      "br",
+      "sub",
+      "sup"
+    ]
+  },
+  "no-duplicate-heading": {
+    "siblings_only": true
+  }
+}
