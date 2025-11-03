@@ -7,21 +7,21 @@
     "site"
   ],
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
+    "dev": "node --env-file=.env node_modules/.bin/astro dev",
+    "dev:netlify": "netlify dev",
+    "start": "node --env-file=.env node_modules/.bin/astro dev",
+    "build": "node --env-file=.env build/index.mjs --core \"${CORE:-../pepr}\" --site ./src/content/docs",
     "format:check": "npm run format:code && npm run format:markdown && npm run format:prettier -- --check",
     "format:fix": "npm run format:code -- --fix && npm run format:markdown -- --fix && npm run format:prettier -- --write",
     "format:code": "eslint .",
     "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore work --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore 090_community --ignore 100_contribute --ignore site \"**/*.{md,mdx}\"",
     "format:prettier": "prettier .",
-    "preview": "astro preview",
+    "preview": "node --env-file=.env node_modules/.bin/astro preview",
     "linkcheck": "bash .github/workflows/scripts/linkcheck.sh",
-    "astro": "astro",
+    "astro": "node --env-file=.env node_modules/.bin/astro",
     "test": "npm run test:unit && npm run linkcheck",
     "test:unit": "npm run test -w build",
     "test:e2e": "npm run test:e2e -w build",
-    "test:watch": "npm run test:watch -w build",
     "prepare": "husky"
   },
   "dependencies": {

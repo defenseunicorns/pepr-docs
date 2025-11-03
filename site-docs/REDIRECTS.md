@@ -101,8 +101,6 @@ To test your redirects:
 2. Run the full build:
 
    ```bash
-   export CORE="/path/to/pepr/pepr"
-   node build/index.mjs --core "$CORE" --site ./src/content/docs
    npm run build
    ```
 
@@ -110,7 +108,7 @@ To test your redirects:
 4. Test locally with Netlify dev:
 
    ```bash
-   netlify dev
+   npm run dev:netlify
    ```
 
    Visit <http://localhost:8888> and test your redirect

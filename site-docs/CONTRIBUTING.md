@@ -17,46 +17,50 @@ npm install
 2. Clone the core repository and install deps:
 
 ```bash
+cd ..
 git clone https://github.com/defenseunicorns/pepr.git
 cd pepr
 npm install
+cd ../pepr-docs
+```
+
+3. Create a `.env` file to configure the core repository path:
+
+```bash
+# Create .env file with path to Pepr core repo
+echo 'CORE=../pepr' > .env
+
+# If pepr is in a different location, edit .env:
+# CORE=/path/to/pepr
 ```
 
 ## Development Workflow
 
 ### Building the Documentation
 
-Generate versioned documentation from the core repository:
+The build system generates versioned documentation from the core repository. This process:
 
-```bash
-node build/index.mjs --core "$CORE" --site ./src/content/docs
-```
-
-This will:
-
-- Clone the core repo to `work/` (temporary)
-- Extract documentation for active versions
-- Generate redirects
-- Create versioned content in `src/content/docs/`
+- Extracts documentation for active versions from the core repo
+- Generates redirects for retired versions
+- Creates versioned content in `src/content/docs/`
 
 ### Building and Running Locally
 
-Start the development server:
-
 ```bash
- export CORE="<path/to/local/pepr>"
-  node build/index.mjs --core "$CORE" --site ./src/content/docs
-  npm run build
-  npm run dev
+# Build the site (generates content from core repo and builds site)
+npm run build
+
+# Start development server
+npm run dev
 ```
 
-Running Netlify development server. Use when testing redirects or to mimic Netlify environment.
+**Testing with Netlify (for redirects):**
+
+Use when testing redirects or mimicking the Netlify environment:
 
 ```bash
- export CORE="<path/to/local/pepr>"
-  node build/index.mjs --core "$CORE" --site ./src/content/docs
-  npm run build
-  netlify dev
+npm run build
+npm run dev:netlify
 ```
 
 ### Testing
@@ -85,8 +89,8 @@ See [Workflow](./ARCHITECTURE.md#Workflow) for additional details.
 
 For changes to site structure, components, or layouts make changes to this repo.
 
-1. Test locally with `npm run dev`
-2. Build to verify: `npm run build`
+1. Build the site: `npm run build`
+2. Test locally with `npm run dev`
 
 ### Adding a Manual Redirect
 
@@ -101,7 +105,7 @@ For changes to site structure, components, or layouts make changes to this repo.
 - [ ] Tests pass: `npm test`
 - [ ] Build succeeds: `npm run build`
 - [ ] Documentation updated (if needed)
-- [ ] Redirects tested locally with `netlify dev`
+- [ ] Redirects tested locally with `npm run dev:netlify`
 - [ ] No generated files committed (check `.gitignore`)
 
 ### PR Description

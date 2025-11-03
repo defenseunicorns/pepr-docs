@@ -27,20 +27,28 @@ Documentation content is extracted from the [Pepr core repository](https://githu
     npm install
 ```
 
-2. Clone the Pepr core repository:
+2. Clone the Pepr core repository (adjacent to pepr-docs):
 
 ```bash
-    git clone https://github.com/defenseunicorns/pepr.git
+cd ..
+git clone https://github.com/defenseunicorns/pepr.git
+cd pepr-docs
+```
+
+3. Create a `.env` file to configure the core repository path:
+
+```bash
+# Create .env file with path to Pepr core repo
+echo 'CORE=../pepr' > .env
+
+# If pepr is in a different location, edit .env:
+# CORE=/path/to/pepr
 ```
 
 ### Build and Run Locally
 
 ```bash
-# Set the path to your Pepr core repository and generate content
-export CORE="/path/to/pepr"
-node build/index.mjs --core "$CORE" --site ./src/content/docs
-
-# Build the site
+# Build the site (generates content from core repo and builds site)
 npm run build
 
 # Start development server
@@ -54,10 +62,8 @@ The site will be available at `http://localhost:4321`
 To test redirects or mimic the Netlify environment:
 
 ```bash
-export CORE="/path/to/pepr"
-node build/index.mjs --core "$CORE" --site ./src/content/docs
 npm run build
-netlify dev
+npm run dev:netlify
 ```
 
 ## Project Structure
