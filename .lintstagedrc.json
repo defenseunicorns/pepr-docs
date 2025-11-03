@@ -1,0 +1,16 @@
+{
+  "*.ts": ["prettier --write", "eslint --fix"],
+  "*.mjs": ["prettier --write", "eslint --fix"],
+  "*.js": ["prettier --write", "eslint --fix"],
+  "*.astro": ["prettier --write", "eslint --fix"],
+  "*.json": ["prettier --write"],
+  "*.css": ["prettier --write"],
+  "*.sh": ["shellcheck -f tty"],
+  ".husky/pre-*": ["shellcheck -f tty"],
+  "*.md": [
+    "npx -y markdownlint-cli --fix --ignore node_modules --ignore dist --ignore work --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore site"
+  ],
+  "*.mdx": [
+    "npx -y markdownlint-cli --fix --ignore node_modules --ignore dist --ignore work --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore site"
+  ]
+}

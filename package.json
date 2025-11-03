@@ -10,7 +10,11 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "format": "eslint --fix .",
+    "format:check": "npm run format:code && npm run format:markdown && npm run format:prettier -- --check",
+    "format:fix": "npm run format:code -- --fix && npm run format:markdown -- --fix && npm run format:prettier -- --write",
+    "format:code": "eslint .",
+    "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore work --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore 090_community --ignore 100_contribute --ignore site \"**/*.{md,mdx}\"",
+    "format:prettier": "prettier .",
     "preview": "astro preview",
     "linkcheck": "bash .github/workflows/scripts/linkcheck.sh",
     "astro": "astro",
@@ -26,8 +30,8 @@
     "@tailwindcss/vite": "^4.1.13",
     "astro": "^5.15.2",
     "sharp": "^0.34.2",
-    "starlight-github-alerts": "^0.1.1",
     "starlight-contextual-menu": "^0.1.5",
+    "starlight-github-alerts": "^0.1.1",
     "starlight-image-zoom": "^0.13.2",
     "starlight-links-validator": "^0.17.2",
     "starlight-llms-txt": "^0.6.0",
@@ -36,14 +40,17 @@
     "tailwindcss": "^4.1.13"
   },
   "optionalDependencies": {
+    "@pagefind/linux-x64": "^1.4.0",
     "@rollup/rollup-linux-x64-gnu": "*",
     "lightningcss-linux-x64-gnu": "*",
-    "pagefind": "^1.2.0",
-    "@pagefind/linux-x64": "^1.4.0"
+    "pagefind": "^1.2.0"
   },
   "devDependencies": {
     "husky": "^9.1.7",
     "linkinator": "^7.2.0",
-    "@defenseunicorns/eslint-config": "^1.1.2"
+    "@defenseunicorns/eslint-config": "^1.1.2",
+    "lint-staged": "^16.2.6",
+    "markdownlint-cli": "^0.45.0",
+    "prettier": "^3.6.2"
   }
 }

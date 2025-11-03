@@ -4,7 +4,7 @@ This document explains how the redirect generation system works and how to add m
 
 ## Overview
 
-The redirect generation system has been refactored into a dedicated module (`build/redirects-generator.mjs`) that generates all redirects in the Netlify `_redirects` file.
+The redirect generation system uses a dedicated module (`build/redirects-generator.mjs`) that generates all redirects in the Netlify `_redirects` file.
 
 ## How It Works
 
@@ -33,14 +33,14 @@ To add a new redirect, edit `build/redirects-generator.mjs` and add an entry to 
 
 ```javascript
 const MANUAL_REDIRECTS = {
-	// Your custom redirects here
-	'/old-path': '/new-path',
-	'/another-old-path': '/another-new-path',
-	
-	// Existing redirects...
-	'/main/*': '/:splat',
-	'/latest/*': '/:splat',
-	// ...
+  // Your custom redirects here
+  "/old-path": "/new-path",
+  "/another-old-path": "/another-new-path",
+
+  // Existing redirects...
+  "/main/*": "/:splat",
+  "/latest/*": "/:splat",
+  // ...
 };
 ```
 
@@ -51,7 +51,7 @@ const MANUAL_REDIRECTS = {
 - Wildcards are automatically appended:
   - Source: `/*` is added if not present
   - Destination: `/:splat` is added if not present
-  
+
 ### Examples
 
 ```javascript
@@ -99,15 +99,20 @@ To test your redirects:
 
 1. Add your redirect to `MANUAL_REDIRECTS` in `build/redirects-generator.mjs`
 2. Run the full build:
+
    ```bash
    export CORE="/path/to/pepr/pepr"
    node build/index.mjs --core "$CORE" --site ./src/content/docs
    npm run build
    ```
+
 3. Check `public/_redirects` to verify your redirect was generated
 4. Test locally with Netlify dev:
+
    ```bash
    netlify dev
    ```
-   Visit http://localhost:8888 and test your redirect
+
+   Visit <http://localhost:8888> and test your redirect
+
 5. Deploy and test on Netlify

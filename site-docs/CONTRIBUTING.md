@@ -7,12 +7,15 @@ Thank you for contributing to the Pepr documentation! This guide will help you g
 ### Setup
 
 1. Clone the docs repository and install deps:
+
 ```bash
 git clone https://github.com/defenseunicorns/pepr-docs.git
 cd pepr-docs
 npm install
 ```
+
 2. Clone the core repository and install deps:
+
 ```bash
 git clone https://github.com/defenseunicorns/pepr.git
 cd pepr
@@ -30,6 +33,7 @@ node build/index.mjs --core "$CORE" --site ./src/content/docs
 ```
 
 This will:
+
 - Clone the core repo to `work/` (temporary)
 - Extract documentation for active versions
 - Generate redirects
@@ -45,7 +49,8 @@ Start the development server:
   npm run build
   npm run dev
 ```
-Running Netlify development server. Use when testing redirects or to mimic Netlify environment. 
+
+Running Netlify development server. Use when testing redirects or to mimic Netlify environment.
 
 ```bash
  export CORE="<path/to/local/pepr>"
@@ -71,7 +76,10 @@ npm run test -w build -- tests/redirects-generator.test.mjs
 ## Making Changes
 
 ### Updating Site Content
-For changes and additions to the technical content of the docs, changes must be made to the [Pepr](https://github.com/defenseunicorns/pepr) core repo. Any content changes made to the Pepr-Docs repo will be overwritten by Pepr on the next build. See [Workflow](./ARCHITECTURE.md#Workflow) for additional details.
+
+For changes and additions to the technical content of the docs, changes must be made to the [Pepr](https://github.com/defenseunicorns/pepr) core repo.
+Any content changes made to the Pepr-Docs repo will be overwritten by Pepr on the next build.
+See [Workflow](./ARCHITECTURE.md#Workflow) for additional details.
 
 ### Updating Site UI, structure and functionality
 
@@ -81,9 +89,10 @@ For changes to site structure, components, or layouts make changes to this repo.
 2. Build to verify: `npm run build`
 
 ### Adding a Manual Redirect
+
 1. Follow instructions found in the [REDIRECTS.md](./REDIRECTS.md#adding-manual-redirects).
-3. Add tests in `build/tests/redirects-generator.test.mjs`
-4. Update documentation
+2. Add tests in `build/tests/redirects-generator.test.mjs`
+3. Update documentation
 
 ## Pull Request Guidelines
 
@@ -108,15 +117,19 @@ Example:
 
 ```markdown
 ## What
+
 Added redirect for renamed documentation page
 
 ## Why
+
 Users are getting 404s on the old URL
 
 ## How
+
 Added manual redirect in MANUAL_REDIRECTS
 
 ## Testing
+
 - Rebuilt site
 - Verified redirect in public/_redirects
 - Tested with netlify dev
@@ -138,7 +151,8 @@ git commit -m "updates"
 ```
 
 ## Writing Documentation
-**Note: All  changes and additions to the content must be made in the [Pepr](https://github.com/defenseunicorns/pepr) repo.**
+
+**Note: All changes and additions to the content must be made in the [Pepr](https://github.com/defenseunicorns/pepr) repo.**
 
 ### Frontmatter
 
@@ -152,6 +166,7 @@ description: Brief description for SEO and previews
 ```
 
 **Required fields:**
+
 - `title` - The page title shown in navigation and browser tab
 - `description` - Brief description used for SEO and page previews
 
@@ -171,9 +186,11 @@ npm install
 
 ### Using Callouts and Alerts
 
-We support both GitHub-style alerts and Starlight callouts for highlighting important information. Both syntaxes are supported thanks to the `starlight-github-alerts` plugin.
+We support both GitHub-style alerts and Starlight callouts for highlighting important information.
+Both syntaxes are supported thanks to the `starlight-github-alerts` plugin.
 
 **GitHub Alert Syntax (Recommended for Core Repo):**
+
 ```markdown
 > [!NOTE]
 > General information or helpful context
@@ -192,6 +209,7 @@ We support both GitHub-style alerts and Starlight callouts for highlighting impo
 ```
 
 **Starlight Syntax (Alternative):**
+
 ```markdown
 :::note
 General information or helpful context
@@ -211,6 +229,7 @@ Critical warnings requiring immediate attention
 ```
 
 **Available Callout/Alert Types:**
+
 - **`NOTE` / `:::note`** - Blue, for general information
 - **`TIP` / `:::tip`** - Green, for helpful suggestions
 - **`IMPORTANT`** - Purple, for critical information
@@ -222,11 +241,13 @@ Both syntaxes render identically and can be used interchangeably.
 ### Links
 
 **Internal links** to other documentation pages:
+
 ```markdown
 [Link text](/user-guide/capabilities)
 ```
 
 **External links** with full URLs:
+
 ```markdown
 [GitHub](https://github.com/defenseunicorns/pepr)
 ```
@@ -234,6 +255,7 @@ Both syntaxes render identically and can be used interchangeably.
 ### Images
 
 Embed images using standard markdown syntax:
+
 ```markdown
 ![Alt text](/assets/image.png)
 ```
@@ -241,6 +263,7 @@ Embed images using standard markdown syntax:
 Images in the `public/` directory are served at the root URL path.
 
 ### Additional Information
+
 - **Documentation**: See [ARCHITECTURE.md](./ARCHITECTURE.md) for system design
 - **Redirects**: See [REDIRECTS.md](./REDIRECTS.md) for redirect guide
 - **Issues**: Open an issue on [GitHub](https://github.com/defenseunicorns/pepr-docs/issues)

@@ -1,116 +1,134 @@
-import * as fs from 'node:fs/promises';
-import * as util from 'node:util';
-import * as child_process from 'node:child_process';
-import * as semver from 'semver';
+import * as fs from "node:fs/promises";
+import * as util from "node:util";
+import * as child_process from "node:child_process";
+import * as semver from "semver";
 
 const exec = util.promisify(child_process.exec);
 
 const MANUAL_REDIRECTS = {
-	'/main/*': '/:splat',
-	'/latest/*': '/:splat',
-	'/code_of_conduct': '/contribute/code-of-conduct',
-	'/support': '/community/support',
-	'/security': '/community/security',
-	'/contribute': '/contribute/contributor-guide',
-	'/metrics-endpoints': '/metric',
-	'/pepr-tutorials/': '/tutorials/',
+  "/main/*": "/:splat",
+  "/latest/*": "/:splat",
+  "/code_of_conduct": "/contribute/code-of-conduct",
+  "/support": "/community/support",
+  "/security": "/community/security",
+  "/contribute": "/contribute/contributor-guide",
+  "/metrics-endpoints": "/metric",
+  "/pepr-tutorials/": "/tutorials/",
 };
 
 async function fetchGitTags(coreRepoPath) {
-	const { stdout } = await exec('git tag', { cwd: coreRepoPath });
-	return stdout.trim().split('\n').filter(Boolean).filter(semver.valid);
+  const { stdout } = await exec("git tag", { cwd: coreRepoPath });
+  return stdout.trim().split("\n").filter(Boolean).filter(semver.valid);
 }
 
 function sectionHeader(title, description) {
-	return ['', '# ============================================', `# ${title}`, `# ${description}`, '# ============================================', ''];
+  return [
+    "",
+    "# ============================================",
+    `# ${title}`,
+    `# ${description}`,
+    "# ============================================",
+    "",
+  ];
 }
 
 function matchesMajorMinor(version, majmin) {
-	const match = version.match(/^v(\d+\.\d+)\.(\d+)$/);
-	return match && match[1] === majmin;
+  const match = version.match(/^v(\d+\.\d+)\.(\d+)$/);
+  return match && match[1] === majmin;
 }
 
 function generateManualRedirects() {
-	const lines = [...sectionHeader('Manual Redirects', 'Specific path redirects and fixes')];
-	let count = 0;
+  const lines = [...sectionHeader("Manual Redirects", "Specific path redirects and fixes")];
+  let count = 0;
 
-	for (const [from, to] of Object.entries(MANUAL_REDIRECTS)) {
-		const fromPath = (!from.includes('*') && !from.includes(':path')) ? `${from}/*` : from;
-		const toPath = (!to.includes('*') && !to.includes(':')) ? `${to}/:splat` : to;
-		lines.push(`${fromPath}  ${toPath}  301`);
-		count++;
-	}
+  for (const [from, to] of Object.entries(MANUAL_REDIRECTS)) {
+    const fromPath = !from.includes("*") && !from.includes(":path") ? `${from}/*` : from;
+    const toPath = !to.includes("*") && !to.includes(":") ? `${to}/:splat` : to;
+    lines.push(`${fromPath}  ${toPath}  301`);
+    count++;
+  }
 
-	return { lines, count };
+  return { lines, count };
 }
 
 function generatePatchToMinorRedirects(activeVersions, allTags) {
-	const stableVersions = activeVersions.filter(v => semver.prerelease(v) === null);
-	const activeMajorMinors = [...new Set(stableVersions.map(v => v.replace(/^v(\d+\.\d+)\.\d+$/, 'v$1')))];
+  const stableVersions = activeVersions.filter(v => semver.prerelease(v) === null);
+  const activeMajorMinors = [
+    ...new Set(stableVersions.map(v => v.replace(/^v(\d+\.\d+)\.\d+$/, "v$1"))),
+  ];
 
-	const lines = [...sectionHeader(
-		'Automatic Patch-to-Minor Redirects',
-		`Redirect all patch versions to their major.minor for active versions: ${activeMajorMinors.join(', ')}\n`
-	)];
-	let count = 0;
+  const lines = [
+    ...sectionHeader(
+      "Automatic Patch-to-Minor Redirects",
+      `Redirect all patch versions to their major.minor for active versions: ${activeMajorMinors.join(", ")}\n`,
+    ),
+  ];
+  let count = 0;
 
-	for (const majmin of activeMajorMinors) {
-		const patchVersions = allTags.filter(v => {
-			const match = v.match(/^v(\d+\.\d+)\.(\d+)$/);
-			return match && `v${match[1]}` === majmin;
-		});
+  for (const majmin of activeMajorMinors) {
+    const patchVersions = allTags.filter(v => {
+      const match = v.match(/^v(\d+\.\d+)\.(\d+)$/);
+      return match && `v${match[1]}` === majmin;
+    });
 
-		for (const patchVersion of patchVersions) {
-			lines.push(`/${patchVersion}  /${majmin}  301`);
-			lines.push(`/${patchVersion}/*  /${majmin}/:splat  301`);
-			count += 2;
-		}
-	}
+    for (const patchVersion of patchVersions) {
+      lines.push(`/${patchVersion}  /${majmin}  301`);
+      lines.push(`/${patchVersion}/*  /${majmin}/:splat  301`);
+      count += 2;
+    }
+  }
 
-	return { lines, count };
+  return { lines, count };
 }
 
 function generateRetiredVersionRedirects(retiredVersions, allTags) {
-	const lines = [...sectionHeader('Retired Version Redirects', 'Redirect old documentation versions to root')];
-	let count = 0;
+  const lines = [
+    ...sectionHeader("Retired Version Redirects", "Redirect old documentation versions to root"),
+  ];
+  let count = 0;
 
-	for (const majmin of retiredVersions) {
-		lines.push(`/v${majmin}/*  /:splat  301`);
-		count++;
+  for (const majmin of retiredVersions) {
+    lines.push(`/v${majmin}/*  /:splat  301`);
+    count++;
 
-		const patchVersions = allTags.filter(v => matchesMajorMinor(v, majmin));
-		for (const patchVersion of patchVersions) {
-			lines.push(`/${patchVersion}/*  /:splat  301`);
-			count++;
-		}
-	}
+    const patchVersions = allTags.filter(v => matchesMajorMinor(v, majmin));
+    for (const patchVersion of patchVersions) {
+      lines.push(`/${patchVersion}/*  /:splat  301`);
+      count++;
+    }
+  }
 
-	return { lines, count };
+  return { lines, count };
 }
 
-export async function generateNetlifyRedirects({ coreRepoPath, retiredVersions, activeVersions, outputPath }) {
-	const allTags = await fetchGitTags(coreRepoPath);
+export async function generateNetlifyRedirects({
+  coreRepoPath,
+  retiredVersions,
+  activeVersions,
+  outputPath,
+}) {
+  const allTags = await fetchGitTags(coreRepoPath);
 
-	const header = [
-		'# Auto-generated redirects for Pepr documentation',
-		'# Generated by build/redirects-generator.mjs - DO NOT EDIT MANUALLY',
-		'',
-	];
-	const manual = generateManualRedirects();
-	const automatic = generatePatchToMinorRedirects(activeVersions, allTags);
-	const retired = generateRetiredVersionRedirects(retiredVersions, allTags);
+  const header = [
+    "# Auto-generated redirects for Pepr documentation",
+    "# Generated by build/redirects-generator.mjs - DO NOT EDIT MANUALLY",
+    "",
+  ];
+  const manual = generateManualRedirects();
+  const automatic = generatePatchToMinorRedirects(activeVersions, allTags);
+  const retired = generateRetiredVersionRedirects(retiredVersions, allTags);
 
-	const allLines = [...header, ...manual.lines, ...automatic.lines, ...retired.lines];
-	await fs.writeFile(outputPath, allLines.join('\n') + '\n');
+  const allLines = [...header, ...manual.lines, ...automatic.lines, ...retired.lines];
+  await fs.writeFile(outputPath, allLines.join("\n") + "\n");
 
-	return {
-		totalRules: retired.count + manual.count + automatic.count,
-		retiredCount: retired.count,
-		manualCount: manual.count,
-		patchCount: automatic.count,
-	};
+  return {
+    totalRules: retired.count + manual.count + automatic.count,
+    retiredCount: retired.count,
+    manualCount: manual.count,
+    patchCount: automatic.count,
+  };
 }
 
 export function getStableVersions(versions) {
-	return versions.filter(v => v !== 'latest' && semver.prerelease(v) === null);
+  return versions.filter(v => v !== "latest" && semver.prerelease(v) === null);
 }
