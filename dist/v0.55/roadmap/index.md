@@ -83,7 +83,7 @@ _2024 Roadmap_
 - **Q3**:
   - **Informer Iterations**:
     - Tune informer based on feedback from UDS Core and delivery so events will be reconciled through eventual consistency.
-    - [Evaluate](https://github.com/defenseunicorns/pepr/blob/main/adr/0015-kfc-watch-undici/) other underlying technologies for informer.
+    - [Evaluate](https://github.com/defenseunicorns/pepr/blob/main/adr/0015-kfc-watch-undici.md) other underlying technologies for informer.
   - **Feature Development**:
     - `.WithNameRegex()/.InNamespaceRegex()` for Kubernetes Controller development against resources that could match a variety of names or namespaces.
     - `.WithDeletionTimestamp()` for Kubernetes Controller Development against resources that are pending deletion

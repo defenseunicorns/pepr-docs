@@ -1789,7 +1789,7 @@ This section contains work we’ve considered, but have not slotted in to the ro
   * **Informer Iterations**:
 
     * Tune informer based on feedback from UDS Core and delivery so events will be reconciled through eventual consistency.
-    * [Evaluate](https://github.com/defenseunicorns/pepr/blob/main/adr/0015-kfc-watch-undici/) other underlying technologies for informer.
+    * [Evaluate](https://github.com/defenseunicorns/pepr/blob/main/adr/0015-kfc-watch-undici.md) other underlying technologies for informer.
 
   * **Feature Development**:
 
@@ -7131,7 +7131,7 @@ This section contains work we’ve considered, but have not slotted in to the ro
   * **Informer Iterations**:
 
     * Tune informer based on feedback from UDS Core and delivery so events will be reconciled through eventual consistency.
-    * [Evaluate](https://github.com/defenseunicorns/pepr/blob/main/adr/0015-kfc-watch-undici/) other underlying technologies for informer.
+    * [Evaluate](https://github.com/defenseunicorns/pepr/blob/main/adr/0015-kfc-watch-undici.md) other underlying technologies for informer.
 
   * **Feature Development**:
 
@@ -12458,7 +12458,7 @@ This section contains work we’ve considered, but have not slotted in to the ro
   * **Informer Iterations**:
 
     * Tune informer based on feedback from UDS Core and delivery so events will be reconciled through eventual consistency.
-    * [Evaluate](https://github.com/defenseunicorns/pepr/blob/main/adr/0015-kfc-watch-undici/) other underlying technologies for informer.
+    * [Evaluate](https://github.com/defenseunicorns/pepr/blob/main/adr/0015-kfc-watch-undici.md) other underlying technologies for informer.
 
   * **Feature Development**:
 
