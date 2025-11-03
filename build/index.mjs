@@ -302,8 +302,8 @@ async function copyRepoResources(core, work, version) {
 // Map community files from repository root to their destination paths in docs
 const ROOT_MD_MAPPINGS = {
   "SECURITY.md": "090_community/security.md",
-  "CODE_OF_CONDUCT.md": "100_contribute/code_of_conduct.md",
-  "CODE-OF-CONDUCT.md": "100_contribute/code_of_conduct.md",
+  "CODE_OF_CONDUCT.md": "100_contribute/code-of-conduct.md",
+  "CODE-OF-CONDUCT.md": "100_contribute/code-of-conduct.md",
   "SUPPORT.md": "090_community/support.md",
 };
 
@@ -340,7 +340,7 @@ const getSourcePath = (file, coredocs) =>
     "900_code_of_conduct/README.md",
     "920_support/README.md",
     "090_community/security.md",
-    "100_contribute/code_of_conduct.md",
+    "100_contribute/code-of-conduct.md",
     "090_community/support.md",
   ].some(cf => file.endsWith(cf))
     ? file
@@ -439,10 +439,18 @@ const processContentLinks = (content, file) => {
   }
 
   // Apply all link mappings and cleanup
-  return Object.entries(LINK_MAPPINGS)
-    .reduce((acc, [old, new_]) => acc.replaceAll(old, new_), result)
-    .replaceAll(".md)", "/)")
-    .replaceAll(/.md#(.*)\)/g, (_, group) => `#${group})`);
+  result = Object.entries(LINK_MAPPINGS).reduce(
+    (acc, [old, new_]) => acc.replaceAll(old, new_),
+    result,
+  );
+
+  // Strip .md extension only from internal links (not external URLs)
+  // Match ](non-http-url.md) and ](non-http-url.md#anchor)
+  result = result.replace(/\]\((?!https?:\/\/)([^)]+)\.md(#[^)]+)?\)/g, (match, url, anchor) => {
+    return `](${url}${anchor || "/"})`;
+  });
+
+  return result;
 };
 
 // Process a single source file

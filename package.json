@@ -15,10 +15,12 @@
     "format:code": "eslint .",
     "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore work --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore 090_community --ignore 100_contribute --ignore site \"**/*.{md,mdx}\"",
     "format:prettier": "prettier .",
-    "linkcheck": "CHECK_LINKS=true astro build",
     "preview": "astro preview",
+    "linkcheck": "bash .github/workflows/scripts/linkcheck.sh",
     "astro": "astro",
-    "test": "npm run test -w build",
+    "test": "npm run test:unit && npm run linkcheck",
+    "test:unit": "npm run test -w build",
+    "test:e2e": "npm run test:e2e -w build",
     "test:watch": "npm run test:watch -w build",
     "prepare": "husky"
   },
@@ -44,8 +46,9 @@
     "pagefind": "^1.2.0"
   },
   "devDependencies": {
-    "@defenseunicorns/eslint-config": "^1.1.2",
     "husky": "^9.1.7",
+    "linkinator": "^7.2.0",
+    "@defenseunicorns/eslint-config": "^1.1.2",
     "lint-staged": "^16.2.6",
     "markdownlint-cli": "^0.45.0",
     "prettier": "^3.6.2"
