@@ -21,6 +21,8 @@ if [ -z "$CORE" ]; then
   exit 1
 fi
 
+CORE=$(realpath "$CORE")
+
 # Ensure required directories exist
 mkdir -p src/content/docs
 mkdir -p src/content/versions
