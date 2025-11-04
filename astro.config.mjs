@@ -49,19 +49,15 @@ export default defineConfig({
       logo: {
         src: "./public/assets/pepr.png",
       },
+      components: {
+        Head: "./src/components/Head.astro",
+      },
       head: [
         {
           tag: "link",
           attrs: {
             rel: "stylesheet",
             href: "https://fonts.googleapis.com/css2?family=Aldrich&display=swap",
-          },
-        },
-        {
-          tag: "script",
-          attrs: {
-            src: "/posthog.js",
-            defer: true,
           },
         },
       ],
