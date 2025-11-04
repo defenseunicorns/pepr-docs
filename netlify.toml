@@ -1,7 +1,7 @@
 [build]
   command = """
-    # Clone the Pepr core repository for docs extraction
-    git clone --depth 1 https://github.com/defenseunicorns/pepr.git ../pepr-core
+    # Clone the Pepr core repository for docs extraction (with tags for version detection)
+    git clone https://github.com/defenseunicorns/pepr.git ../pepr-core
     # Set CORE and run build
     export CORE=$(realpath ../pepr-core)
     npm run build
