@@ -672,7 +672,7 @@ const executeBuild = async (siteRoot, targetDist) => {
   try {
     const buildResult = await util.promisify(child_process.execFile)(
       "node",
-      ["--env-file=.env", "node_modules/.bin/astro", "build"],
+      ["node_modules/.bin/astro", "build"],
       {
         cwd: siteRoot,
         maxBuffer: 1024 * 1024 * 10,
