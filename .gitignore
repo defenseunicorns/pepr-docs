@@ -6,7 +6,6 @@ node_modules/
 
 # Environment variables (local configuration)
 .env
-.env.local
 
 # Temporary clone of core repo during build
 work/
