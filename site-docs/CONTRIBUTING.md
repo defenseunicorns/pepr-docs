@@ -99,14 +99,45 @@ For changes to site structure, components, or layouts make changes to this repo.
 2. Add tests in `build/tests/redirects-generator.test.mjs`
 3. Update documentation
 
+### Code Quality and Formatting
+
+The project uses automated linting and formatting tools to maintain code quality.
+
+**Available Commands:**
+
+```bash
+# Check formatting (runs all checks)
+npm run format:check
+
+# Auto-fix formatting issues
+npm run format:fix
+
+# Individual checks
+npm run format:code        # ESLint for JS/TS files
+npm run format:markdown    # Markdownlint for .md/.mdx files
+npm run format:prettier    # Prettier for all files
+```
+
+**Pre-commit Hooks:**
+
+The project uses Husky and lint-staged to automatically format files before commit:
+
+- Code files: ESLint auto-fix
+- Markdown files: Markdownlint auto-fix
+- Shell scripts: Shellcheck validation
+- JSON files: Prettier formatting
+
+If pre-commit checks fail, the commit will be blocked. Run `npm run format:fix` to resolve issues.
+
 ## Pull Request Guidelines
 
 ### Before Submitting
 
 - [ ] Tests pass: `npm test`
 - [ ] Build succeeds: `npm run build`
+- [ ] Code is formatted: `npm run format:check` (or run `npm run format:fix` to auto-fix)
 - [ ] Documentation updated (if needed)
-- [ ] Redirects tested locally with `npm run dev:netlify`
+- [ ] Redirects tested locally with `npm run dev:netlify` (if applicable)
 - [ ] No generated files committed (check `.gitignore`)
 
 ### PR Description
