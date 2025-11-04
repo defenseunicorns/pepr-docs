@@ -57,6 +57,13 @@ export default defineConfig({
             href: "https://fonts.googleapis.com/css2?family=Aldrich&display=swap",
           },
         },
+        {
+          tag: "script",
+          attrs: {
+            src: "/posthog.js",
+            defer: true,
+          },
+        },
       ],
       social: [
         {
