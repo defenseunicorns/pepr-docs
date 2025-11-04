@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
   pull_request:
-    branches: ['main']
+    branches: ["main"]
 
 env:
   CORE: ./core
@@ -29,10 +29,14 @@ jobs:
           path: ${{ env.DOCS }}
 
       - name: Build the docs
-        run: '$DOCS/.github/workflows/scripts/build.sh'
+        run: |
+          CORE=$(realpath ${{ env.CORE }})
+          cd ${{ env.DOCS }}
+          npm ci
+          CORE="$CORE" npm run build
 
       - name: Run link validation
-        run: '$DOCS/.github/workflows/scripts/linkcheck.sh'
+        run: "$DOCS/.github/workflows/scripts/linkcheck.sh"
 
       - name: Upload broken links report
         if: failure()

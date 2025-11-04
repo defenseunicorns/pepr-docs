@@ -1,8 +1,11 @@
 [build]
-  command = '''
-    node build/index.mjs --core "$CORE" --site ./src/content/docs && \
+  command = """
+    # Clone the Pepr core repository for docs extraction (with tags for version detection)
+    git clone https://github.com/defenseunicorns/pepr.git ../pepr-core
+    # Set CORE and run build
+    export CORE=$(realpath ../pepr-core)
     npm run build
-  '''
+  """
   publish = "dist"
 
 [dev]

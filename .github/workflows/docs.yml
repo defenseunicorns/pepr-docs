@@ -44,7 +44,11 @@ jobs:
           path: ${{ env.DOCS }}
 
       - name: Build the docs
-        run: "$DOCS/.github/workflows/scripts/build.sh"
+        run: |
+          CORE=$(realpath ${{ env.CORE }})
+          cd ${{ env.DOCS }}
+          npm ci
+          CORE="$CORE" npm run build
 
       - name: Upload Artifacts
         if: github.ref_name == 'main'
