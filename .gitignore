@@ -4,6 +4,9 @@ dist/
 # Dependencies / NPM packages
 node_modules/
 
+# Environment variables (local configuration)
+.env
+
 # Temporary clone of core repo during build
 work/
 
@@ -36,8 +39,9 @@ Thumbs.db
 # Link validation reports
 broken-links-report-*.json
 
-# Legacy redirect generation script
+# Legacy files (no longer generated, but kept in gitignore for safety)
 retired-redirects.js
+
 # Netlify redirect rules (generated from build)
 public/_redirects
 

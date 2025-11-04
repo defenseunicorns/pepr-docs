@@ -1,0 +1,4 @@
+# ShellCheck configuration
+# Disable SC1091: Not following sourced files
+# This is appropriate for optional config files like .env that may not exist
+disable=SC1091
