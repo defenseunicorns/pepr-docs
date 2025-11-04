@@ -28,10 +28,11 @@ cd ../pepr-docs
 
 ```bash
 # Create .env file with path to Pepr core repo
+# If pepr and pepr-docs are siblings:
 echo 'CORE=../pepr' > .env
 
-# If pepr is in a different location, edit .env:
-# CORE=/path/to/pepr
+# If pepr is in a different location:
+echo 'CORE=/path/to/pepr' > .env
 ```
 
 ## Development Workflow
