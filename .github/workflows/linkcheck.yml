@@ -30,11 +30,10 @@ jobs:
 
       - name: Build the docs
         run: |
+          CORE=$(realpath ${{ env.CORE }})
           cd ${{ env.DOCS }}
           npm ci
-          npm run build
-        env:
-          CORE: ${{ env.CORE }}
+          CORE="$CORE" npm run build
 
       - name: Run link validation
         run: "$DOCS/.github/workflows/scripts/linkcheck.sh"
