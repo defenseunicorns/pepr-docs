@@ -21,5 +21,9 @@ if [ -z "$CORE" ]; then
   exit 1
 fi
 
+# Ensure required directories exist
+mkdir -p src/content/docs
+mkdir -p src/content/versions
+
 # Run the build
 node build/index.mjs --core "$CORE" --site ./src/content/docs
