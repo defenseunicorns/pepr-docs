@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   extends: ["@commitlint/config-conventional"],
   ignores: [
     // prevent header-max-length error on long, dependabot-gen'd commits titles
