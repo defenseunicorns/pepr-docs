@@ -18,10 +18,12 @@
 
 # ============================================
 # Automatic Patch-to-Minor Redirects
-# Redirect all patch versions to their major.minor for active versions: v0.55, v0.54, latest
+# Redirect all patch versions to their major.minor for active versions: v1.0, v0.55, latest
 
 # ============================================
 
+/v1.0.0  /v1.0  301
+/v1.0.0/*  /v1.0/:splat  301
 /v0.55.0  /v0.55  301
 /v0.55.0/*  /v0.55/:splat  301
 /v0.55.1  /v0.55  301
@@ -36,14 +38,14 @@
 /v0.55.5/*  /v0.55/:splat  301
 /v0.55.6  /v0.55  301
 /v0.55.6/*  /v0.55/:splat  301
-/v0.54.0  /v0.54  301
-/v0.54.0/*  /v0.54/:splat  301
 
 # ============================================
 # Retired Version Redirects
 # Redirect old documentation versions to root
 # ============================================
 
+/v0.54/*  /:splat  301
+/v0.54.0/*  /:splat  301
 /v0.53/*  /:splat  301
 /v0.53.0/*  /:splat  301
 /v0.53.1/*  /:splat  301
