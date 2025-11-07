@@ -11,7 +11,7 @@ on:
 
 env:
   CORE: ./core
-  DOCS: ./docs
+  DOCS: ./pepr-docs
 
 jobs:
   linkcheck:
