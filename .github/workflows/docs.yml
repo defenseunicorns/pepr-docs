@@ -21,10 +21,10 @@ on:
 
 env:
   CORE: ./core
-  DOCS: ./docs
-  DIST: ./docs/dist
-  SITE: ./docs/src/content/docs
-  TMP: ./docs/tmp
+  DOCS: ./pepr-docs
+  DIST: ./pepr-docs/dist
+  SITE: ./pepr-docs/src/content/docs
+  TMP: ./pepr-docs/tmp
 
 jobs:
   build:
