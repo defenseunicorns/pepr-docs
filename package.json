@@ -22,7 +22,7 @@
     "test": "npm run test:unit && npm run linkcheck",
     "test:unit": "npm run test -w build",
     "test:e2e": "npm run test:e2e -w build",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.35.2",
