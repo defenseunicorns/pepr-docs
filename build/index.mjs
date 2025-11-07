@@ -164,18 +164,18 @@ await executeWithErrorHandling(`Validate args`, async log => {
   log.push(["core", RUN.core]);
 });
 
-// Ensure work directory is created relative to the docs directory, not wherever the script runs from
-RUN.work = path.resolve(path.dirname(RUN.site), "../../work");
+// Ensure tmp directory is created relative to the docs directory, not wherever the script runs from
+RUN.tmp = path.resolve(path.dirname(RUN.site), "../../tmp");
 
-await executeWithErrorHandling(`Clean work dir`, async log => {
-  await fs.rm(RUN.work, { recursive: true, force: true });
-  await fs.mkdir(RUN.work);
+await executeWithErrorHandling(`Clean tmp dir`, async log => {
+  await fs.rm(RUN.tmp, { recursive: true, force: true });
+  await fs.mkdir(RUN.tmp);
 
-  log.push(["work", RUN.work]);
+  log.push(["tmp", RUN.tmp]);
 });
 
-await executeWithErrorHandling(`Copy site src to work dir`, async () => {
-  await fs.cp(RUN.site, RUN.work, { recursive: true });
+await executeWithErrorHandling(`Copy site src to tmp dir`, async () => {
+  await fs.cp(RUN.site, RUN.tmp, { recursive: true });
 });
 
 await executeWithErrorHandling(`Search core repo versions`, async log => {
@@ -271,18 +271,18 @@ async function findSourceDocFiles(coredocs) {
 }
 
 // Copy repository images
-const copyRepoImages = (core, work, version) =>
+const copyRepoImages = (core, tmp, version) =>
   executeWithErrorHandling(`Copy repo images`, async log => {
-    const [src, dst] = [`${core}/_images`, `${work}/static/${version}/_images`];
+    const [src, dst] = [`${core}/_images`, `${tmp}/static/${version}/_images`];
     await fs.cp(src, dst, { recursive: true });
     log.push(["src", src], ["dst", dst]);
   });
 
 // Copy repository resources
-async function copyRepoResources(core, work, version) {
+async function copyRepoResources(core, tmp, version) {
   await executeWithErrorHandling(`Copy repo resources`, async log => {
     const srcresources = `${core}/docs`;
-    const dstresources = `${work}/static/${version}`;
+    const dstresources = `${tmp}/static/${version}`;
 
     // Copy all resource directories from docs
     const resourceDirs = await glob(`${srcresources}/**/resources`, {
@@ -493,7 +493,7 @@ const writeVersionLandingPage = async (version, verdir, core) => {
 // Process each version
 for (const version of RUN.versions) {
   RUN.version = version;
-  RUN.verdir = `${RUN.work}/content/${RUN.version}`;
+  RUN.verdir = `${RUN.tmp}/content/${RUN.version}`;
   RUN.coredocs = `${RUN.core}/docs`;
 
   // Check if version should be skipped
@@ -508,8 +508,8 @@ for (const version of RUN.versions) {
   await createVersionDirectory(RUN.verdir);
   await checkoutCoreVersion(RUN.core, RUN.version);
   RUN.srcmds = await findSourceDocFiles(RUN.coredocs);
-  await copyRepoImages(RUN.core, RUN.work, RUN.version);
-  await copyRepoResources(RUN.core, RUN.work, RUN.version);
+  await copyRepoImages(RUN.core, RUN.tmp, RUN.version);
+  await copyRepoResources(RUN.core, RUN.tmp, RUN.version);
 
   // Process root markdown files and add them to source files list
   const rootMarkdownFiles = await processRootMarkdownFiles(RUN.core, RUN.version);
@@ -527,16 +527,16 @@ for (const version of RUN.versions) {
   await writeVersionLandingPage(RUN.version, RUN.verdir, RUN.core);
 }
 
-await executeWithErrorHandling(`Process all work directory content`, async log => {
-  // Process all content in work directory to fix image paths
-  console.log("Processing work directory content (fixing image paths)...");
-  const workContentDirs = await glob(`${RUN.work}/content/*`, { onlyDirectories: true });
+await executeWithErrorHandling(`Process all tmp directory content`, async log => {
+  // Process all content in tmp directory to fix image paths
+  console.log("Processing tmp directory content (fixing image paths)...");
+  const workContentDirs = await glob(`${RUN.tmp}/content/*`, { onlyDirectories: true });
 
   // Process all version directories in parallel
   await Promise.all(
     workContentDirs.map(async workDir => {
       const version = path.basename(workDir);
-      console.log(`Processing work content for version: ${version}`);
+      console.log(`Processing tmp content for version: ${version}`);
       await processAllContent(workDir);
     }),
   );
@@ -614,7 +614,7 @@ const hasMarkdownContent = async versionPath => {
 
 // Helper function to copy images from a version
 const copyImagesFromVersion = async (version, publicDir) => {
-  const imagesPath = `${RUN.work}/static/${version}/_images`;
+  const imagesPath = `${RUN.tmp}/static/${version}/_images`;
   if (await pathExists(imagesPath)) {
     console.log(`Copying images from ${imagesPath} to assets directory`);
     const imageFiles = await fs.readdir(imagesPath);
@@ -638,7 +638,7 @@ const copyImagesFromVersion = async (version, publicDir) => {
 
 // Helper function to copy resources from a version
 const copyResourcesFromVersion = async (version, siteRoot) => {
-  const resourcesPath = `${RUN.work}/static/${version}/040_pepr-tutorials/resources`;
+  const resourcesPath = `${RUN.tmp}/static/${version}/040_pepr-tutorials/resources`;
   if (await pathExists(resourcesPath)) {
     console.log(`Copying resources from ${resourcesPath} to src directories`);
     await fs.mkdir(`${siteRoot}/src/content/docs/resources`, { recursive: true });
@@ -721,7 +721,7 @@ await executeWithErrorHandling(`Generate version configuration files`, async log
 
   for (const version of stableVersions) {
     const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, "v$1");
-    const versionContentPath = `${RUN.work}/content/${version}`;
+    const versionContentPath = `${RUN.tmp}/content/${version}`;
 
     if (await hasMarkdownContent(versionContentPath)) {
       await fs.writeFile(
@@ -796,8 +796,8 @@ if (opts.dist) {
     }
 
     // Copy main version content to unversioned location (current/latest)
-    if (await pathExists(`${RUN.work}/content/latest`)) {
-      await fs.cp(`${RUN.work}/content/latest`, starlightContentDir, { recursive: true });
+    if (await pathExists(`${RUN.tmp}/content/latest`)) {
+      await fs.cp(`${RUN.tmp}/content/latest`, starlightContentDir, { recursive: true });
     }
 
     // Copy resource images to assets directory
@@ -825,7 +825,7 @@ if (opts.dist) {
     await Promise.all(
       stableVersions.map(async version => {
         try {
-          const versionContentPath = `${RUN.work}/content/${version}`;
+          const versionContentPath = `${RUN.tmp}/content/${version}`;
           const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, "v$1");
           const starlightVersionDir = `${siteRoot}/src/content/docs/${versionMajMin}`;
 
