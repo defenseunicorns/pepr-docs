@@ -47,7 +47,7 @@ jobs:
         run: |
           CORE=$(realpath ${{ env.CORE }})
           cd ${{ env.DOCS }}
-          npm ci --omit=dev
+          npm ci --omit=dev --ignore-scripts
           CORE="$CORE" npm run build
 
       - name: Upload Artifacts
