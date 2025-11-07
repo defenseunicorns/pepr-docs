@@ -2,7 +2,7 @@
 
 # Validate .gitignore is working correctly
 # This script tests that critical build artifacts would be ignored by git
-# Prevents accidentally committing node_modules, dist, tmp, and .astro directories
+# Prevents accidentally committing node_modules, dist, work, and .astro directories
 
 echo "Validating .gitignore patterns..."
 
@@ -17,8 +17,8 @@ if ! git check-ignore -q dist/test 2>/dev/null; then
   exit 1
 fi
 
-if ! git check-ignore -q tmp/test 2>/dev/null; then
-  echo "ERROR: .gitignore broken - tmp/ not being ignored!"
+if ! git check-ignore -q work/test 2>/dev/null; then
+  echo "ERROR: .gitignore broken - work/ not being ignored!"
   exit 1
 fi
 
@@ -37,7 +37,7 @@ if [ -n "$STAGED_FILES" ]; then
     # Check if staged file matches patterns that should be ignored
     if [[ "$file" =~ ^node_modules/ ]] || \
        [[ "$file" =~ ^dist/ ]] || \
-       [[ "$file" =~ ^tmp/ ]] || \
+       [[ "$file" =~ ^work/ ]] || \
        [[ "$file" =~ ^\.astro/ ]] || \
        [[ "$file" =~ ^src/content/docs/.*\.md$ ]] || \
        [[ "$file" =~ ^src/content/versions/.*\.json$ ]] || \

@@ -109,8 +109,8 @@ Generating Netlify redirect rules.
    ├─ --core: Path to Pepr core repository
    └─ --site: Path to documentation content
    ↓
-2. Clone Core Repository to tmp/ Directory
-   ├─ Creates temporary tmp directory (gitignored)
+2. Clone Core Repository to work/ Directory
+   ├─ Creates temporary work directory (gitignored)
    └─ Clones specified core repo for git tag access
    ↓
 3. Fetch Git Tags (from core repo clone)
@@ -136,7 +136,7 @@ Generating Netlify redirect rules.
    └─ Creates public/_redirects (generated, gitignored)
    ↓
 8. Clean Up
-   └─ Removes tmp/ directory
+   └─ Removes work/ directory
    ↓
 9. Build Documentation Site (Astro)
    └─ Generates static site in dist/
@@ -170,9 +170,9 @@ Generating Netlify redirect rules.
 │  (External Source)      │
 └───────────┬─────────────┘
             │
-            ↓ (clone to tmp/)
+            ↓ (clone to work/)
 ┌───────────────────────────────────────┐
-│         tmp/ Directory                │
+│         work/ Directory               │
 │  ┌──────────────┐  ┌────────────────┐│
 │  │  Git Tags    │  │  Docs (*.md)   ││
 │  │  (versions)  │  │  (content)     ││

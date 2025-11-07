@@ -1,6 +1,6 @@
 node_modules
 dist
-tmp
+work
 .astro
 src/content/docs
 src/content/versions
