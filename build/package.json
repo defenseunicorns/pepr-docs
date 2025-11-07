@@ -13,11 +13,13 @@
     "test:integration": "vitest run --reporter=verbose tests/*integration*.test.mjs",
     "test:integration:watch": "vitest tests/*integration*.test.mjs"
   },
-  "devDependencies": {
+  "dependencies": {
     "commander": "^11.1.0",
     "glob": "^10.3.10",
     "semver": "^7.5.4",
-    "vitest": "^1.6.0",
     "yaml": "^2.3.4"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
   }
 }
