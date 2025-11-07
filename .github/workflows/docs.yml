@@ -21,10 +21,10 @@ on:
 
 env:
   CORE: ./core
-  DOCS: ./pepr-docs
-  DIST: ./pepr-docs/dist
-  SITE: ./pepr-docs/src/content/docs
-  TMP: ./pepr-docs/tmp
+  DOCS: ./docs
+  DIST: ./docs/dist
+  SITE: ./docs/src/content/docs
+  TMP: ./docs/tmp
 
 jobs:
   build:
@@ -47,7 +47,7 @@ jobs:
         run: |
           CORE=$(realpath ${{ env.CORE }})
           cd ${{ env.DOCS }}
-          npm install --prefer-offline --no-audit
+          npm install --prefer-offline --no-audit --omit=dev
           CORE="$CORE" npm run build
 
       - name: Upload Artifacts
