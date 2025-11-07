@@ -8,9 +8,9 @@
   "*.sh": ["shellcheck -f tty"],
   ".husky/pre-*": ["shellcheck -f tty"],
   "*.md": [
-    "npx -y markdownlint-cli --fix --ignore node_modules --ignore dist --ignore work --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore site"
+    "npx -y markdownlint-cli --fix --ignore node_modules --ignore dist --ignore tmp --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore site"
   ],
   "*.mdx": [
-    "npx -y markdownlint-cli --fix --ignore node_modules --ignore dist --ignore work --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore site"
+    "npx -y markdownlint-cli --fix --ignore node_modules --ignore dist --ignore tmp --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore site"
   ]
 }

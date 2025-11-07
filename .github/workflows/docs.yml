@@ -24,7 +24,7 @@ env:
   DOCS: ./docs
   DIST: ./docs/dist
   SITE: ./docs/src/content/docs
-  WORK: ./docs/work
+  TMP: ./docs/tmp
 
 jobs:
   build:
