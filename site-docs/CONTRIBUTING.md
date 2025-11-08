@@ -75,7 +75,7 @@ npm test
 Run specific tests:
 
 ```bash
-npm run test -w build -- tests/redirects-generator.test.mjs
+npm run test -w scripts -- tests/redirects-generator.test.mjs
 ```
 
 ## Making Changes
@@ -96,7 +96,7 @@ For changes to site structure, components, or layouts make changes to this repo.
 ### Adding a Manual Redirect
 
 1. Follow instructions found in the [REDIRECTS.md](./REDIRECTS.md#adding-manual-redirects).
-2. Add tests in `build/tests/redirects-generator.test.mjs`
+2. Add tests in `scripts/tests/redirects-generator.test.mjs`
 3. Update documentation
 
 ### Code Quality and Formatting

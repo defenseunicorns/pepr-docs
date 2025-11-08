@@ -1,5 +1,5 @@
 {
-  "name": "build",
+  "name": "scripts",
   "version": "0.0.0",
   "description": "multi-version, cross-repo site build automation",
   "license": "Apache 2.0",
