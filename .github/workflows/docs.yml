@@ -47,7 +47,7 @@ jobs:
         run: |
           CORE=$(realpath ${{ env.CORE }})
           cd ${{ env.DOCS }}
-          npm install --prefer-offline --no-audit
+          npm install --prefer-offline
           CORE="$CORE" npm run build
 
       - name: Upload Artifacts
