@@ -32,3 +32,38 @@
   @apply text-2xl;
   font-family: "Aldrich", sans-serif;
 }
+
+/* Version banner */
+p.astro-wh6mpa6d {
+  white-space: normal !important;
+  text-wrap: balance !important;
+  margin-right: 1.5rem !important;
+}
+
+/* h1 page title */
+.sl-container > h1 {
+  line-height: 1.2;
+  margin-right: 1.5rem;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
+.contextual-menu-container {
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments for page h1, version banner and contextual menu */
+@media (max-width: 50rem) {
+  .sl-container > h1 {
+    font-size: 1.75rem;
+  }
+
+  .contextual-menu-container {
+    margin-left: 0.5rem;
+    padding-left: 0.5rem;
+  }
+
+  .contextual-main-action span {
+    display: none;
+  }
+}
