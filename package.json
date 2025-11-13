@@ -28,7 +28,7 @@
     "@astrojs/starlight": "^0.35.2",
     "@astrojs/starlight-tailwind": "^4.0.1",
     "@tailwindcss/vite": "^4.1.13",
-    "astro": "^5.15.2",
+    "astro": "^5.15.6",
     "sharp": "^0.34.2",
     "starlight-contextual-menu": "^0.1.5",
     "starlight-github-alerts": "^0.1.1",
