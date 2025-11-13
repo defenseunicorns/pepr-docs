@@ -12,6 +12,7 @@
     "https://x.com/.*",
     "https://itnext.io/.*",
     "https://docs.pepr.dev/.*",
+    "https://badgen.net/.*",
     "http://localhost:3000/.*",
     "http://monitoring-kube-prometh-prometheus.default:9090/.*",
     "http://localhost:4321/_astro/print.*\\.css$",
