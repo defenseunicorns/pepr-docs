@@ -3,8 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "workspaces": [
-    "build",
-    "site"
+    "scripts"
   ],
   "scripts": {
     "dev": "node --env-file=.env node_modules/.bin/astro dev",
@@ -14,15 +13,15 @@
     "format:check": "npm run format:code && npm run format:markdown && npm run format:prettier -- --check",
     "format:fix": "npm run format:code -- --fix && npm run format:markdown -- --fix && npm run format:prettier -- --write",
     "format:code": "eslint .",
-    "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore work --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore 090_community --ignore 100_contribute --ignore site \"**/*.{md,mdx}\"",
+    "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore tmp --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore scripts --ignore 090_community --ignore 100_contribute \"**/*.{md,mdx}\"",
     "format:prettier": "prettier .",
     "preview": "node --env-file=.env node_modules/.bin/astro preview",
     "linkcheck": "bash .github/workflows/scripts/linkcheck.sh",
     "astro": "node --env-file=.env node_modules/.bin/astro",
     "test": "npm run test:unit && npm run linkcheck",
-    "test:unit": "npm run test -w build",
-    "test:e2e": "npm run test:e2e -w build",
-    "prepare": "husky"
+    "test:unit": "npm run test -w scripts",
+    "test:e2e": "npm run test:e2e -w scripts",
+    "prepare": "husky || true"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.35.2",
@@ -44,7 +43,8 @@
     "@rollup/rollup-linux-x64-gnu": "*",
     "@tailwindcss/oxide-linux-x64-gnu": "*",
     "lightningcss-linux-x64-gnu": "*",
-    "pagefind": "^1.2.0"
+    "pagefind": "^1.2.0",
+    "@tailwindcss/oxide-linux-x64-gnu": "*"
   },
   "devDependencies": {
     "@defenseunicorns/eslint-config": "^1.1.2",

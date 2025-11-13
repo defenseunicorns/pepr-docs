@@ -14,7 +14,19 @@ It's designed to maintain multiple documentation versions while ensuring users c
 
 ## Core Components
 
-### 1. Documentation Framework (Starlight)
+### 1. Build System (`scripts/`)
+
+The build orchestration system is located in the `scripts/` workspace directory and handles version management, content extraction, and redirect generation.
+
+**Key files:**
+
+- `index.mjs` - Main build orchestrator
+- `version-discovery.mjs` - Discovers and manages versions from git tags
+- `redirects-generator.mjs` - Generates Netlify redirect rules
+- `heredoc.mjs` - Utilities for processing heredoc-style content
+- `tests/` - Unit and integration tests for build scripts
+
+### 2. Documentation Framework (Starlight)
 
 The site is built with [Starlight](https://starlight.astro.build), a documentation framework built on Astro.
 
@@ -72,7 +84,7 @@ export default defineConfig({
   ---
   ```
 
-### 2. Build Orchestrator (`build/index.mjs`)
+### 3. Build Orchestrator (`scripts/index.mjs`)
 
 The main entry point that coordinates the entire build process.
 
@@ -88,7 +100,7 @@ The main entry point that coordinates the entire build process.
 - `--core`: Path to the Pepr core repository (for git tags)
 - `--site`: Path to the documentation content directory
 
-### 3. Redirect Generator (`build/redirects-generator.mjs`)
+### 4. Redirect Generator (`scripts/redirects-generator.mjs`)
 
 Generating Netlify redirect rules.
 
@@ -109,8 +121,8 @@ Generating Netlify redirect rules.
    ├─ --core: Path to Pepr core repository
    └─ --site: Path to documentation content
    ↓
-2. Clone Core Repository to work/ Directory
-   ├─ Creates temporary work directory (gitignored)
+2. Clone Core Repository to tmp/ Directory
+   ├─ Creates temporary tmp directory (gitignored)
    └─ Clones specified core repo for git tag access
    ↓
 3. Fetch Git Tags (from core repo clone)
@@ -136,7 +148,7 @@ Generating Netlify redirect rules.
    └─ Creates public/_redirects (generated, gitignored)
    ↓
 8. Clean Up
-   └─ Removes work/ directory
+   └─ Removes tmp/ directory
    ↓
 9. Build Documentation Site (Astro)
    └─ Generates static site in dist/
@@ -170,9 +182,9 @@ Generating Netlify redirect rules.
 │  (External Source)      │
 └───────────┬─────────────┘
             │
-            ↓ (clone to work/)
+            ↓ (clone to tmp/)
 ┌───────────────────────────────────────┐
-│         work/ Directory               │
+│         tmp/ Directory                │
 │  ┌──────────────┐  ┌────────────────┐│
 │  │  Git Tags    │  │  Docs (*.md)   ││
 │  │  (versions)  │  │  (content)     ││
@@ -239,9 +251,13 @@ New Release → Active Version → Retired Version
 ## File Structure
 
 ```text
-build/
-├── index.mjs                         # Main build orchestrator
-├── *.mjs                             # Generator modules (redirects, etc.)
+scripts/
+├── build.sh                          # Build entry point (bash)
+├── index.mjs                         # Main build orchestrator (Node.js)
+├── version-discovery.mjs             # Version management
+├── redirects-generator.mjs           # Redirect generation
+├── heredoc.mjs                       # Content processing utilities
+├── package.json                      # Build scripts workspace config
 └── tests/
     └── *.test.mjs                    # Test suite
 
@@ -269,5 +285,5 @@ public/
 ### Running Tests
 
 ```bash
-npm run test -w build -- tests/redirects-generator.test.mjs
+npm run test -w scripts -- tests/redirects-generator.test.mjs
 ```

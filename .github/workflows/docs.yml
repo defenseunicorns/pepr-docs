@@ -24,7 +24,7 @@ env:
   DOCS: ./docs
   DIST: ./docs/dist
   SITE: ./docs/src/content/docs
-  WORK: ./docs/work
+  TMP: ./docs/tmp
 
 jobs:
   build:
@@ -47,7 +47,7 @@ jobs:
         run: |
           CORE=$(realpath ${{ env.CORE }})
           cd ${{ env.DOCS }}
-          npm ci
+          npm ci --omit=dev
           CORE="$CORE" npm run build
 
       - name: Upload Artifacts

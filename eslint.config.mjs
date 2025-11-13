@@ -6,7 +6,7 @@ export default [
     ignores: [
       "node_modules",
       "dist",
-      "work",
+      "tmp",
       ".astro",
       "src/content/docs",
       "src/content/versions",

@@ -8,7 +8,7 @@ node_modules/
 .env
 
 # Temporary clone of core repo during build
-work/
+tmp/
 
 # Keep the directories but ignore all their contents except .gitkeep
 # Generated versioned documentation extracted from Pepr core

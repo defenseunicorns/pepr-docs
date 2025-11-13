@@ -71,7 +71,7 @@ npm run dev:netlify
 
 ```text
 pepr-docs/
-├── build/                   # Build system source code
+├── scripts/                 # Build system source code
 │   ├── index.mjs            # Main build orchestrator
 │   ├── redirects-generator.mjs
 │   └── tests/               # Test suite

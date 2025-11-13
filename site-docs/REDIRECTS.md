@@ -4,7 +4,7 @@ This document explains how the redirect generation system works and how to add m
 
 ## Overview
 
-The redirect generation system uses a dedicated module (`build/redirects-generator.mjs`) that generates all redirects in the Netlify `_redirects` file.
+The redirect generation system uses a dedicated module (`scripts/redirects-generator.mjs`) that generates all redirects in the Netlify `_redirects` file.
 
 ## How It Works
 
@@ -12,7 +12,7 @@ The system generates three types of redirects in priority order (Netlify process
 
 1. **Manual Redirects** (Highest Priority)
    - Specific path redirects and fixes
-   - Defined in `MANUAL_REDIRECTS` object in `build/redirects-generator.mjs`
+   - Defined in `MANUAL_REDIRECTS` object in `scripts/redirects-generator.mjs`
    - Most specific rules should go here
 
 2. **Patch-to-Minor Redirects** (Medium Priority)
@@ -29,7 +29,7 @@ The system generates three types of redirects in priority order (Netlify process
 
 ## Adding Manual Redirects
 
-To add a new redirect, edit `build/redirects-generator.mjs` and add an entry to the `MANUAL_REDIRECTS` object:
+To add a new redirect, edit `scripts/redirects-generator.mjs` and add an entry to the `MANUAL_REDIRECTS` object:
 
 ```javascript
 const MANUAL_REDIRECTS = {
@@ -89,15 +89,15 @@ const MANUAL_REDIRECTS = {
 
 ## File Locations
 
-- **Generator Module**: `build/redirects-generator.mjs`
-- **Build Script**: `build/index.mjs` (calls the generator)
+- **Generator Module**: `scripts/redirects-generator.mjs`
+- **Build Script**: `scripts/index.mjs` (calls the generator)
 - **Output File**: `public/_redirects` (Netlify format)
 
 ## Testing
 
 To test your redirects:
 
-1. Add your redirect to `MANUAL_REDIRECTS` in `build/redirects-generator.mjs`
+1. Add your redirect to `MANUAL_REDIRECTS` in `scripts/redirects-generator.mjs`
 2. Run the full build:
 
    ```bash
