@@ -41,6 +41,7 @@
   "optionalDependencies": {
     "@pagefind/linux-x64": "^1.4.0",
     "@rollup/rollup-linux-x64-gnu": "*",
+    "@tailwindcss/oxide-linux-x64-gnu": "*",
     "lightningcss-linux-x64-gnu": "*",
     "pagefind": "^1.2.0",
     "@tailwindcss/oxide-linux-x64-gnu": "*"
