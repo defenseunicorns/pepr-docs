@@ -32,7 +32,7 @@ jobs:
         run: |
           CORE=$(realpath ${{ env.CORE }})
           cd ${{ env.DOCS }}
-          npm ci --no-optional
+          npm ci
           CORE="$CORE" npm run build
 
       - name: Run link validation
