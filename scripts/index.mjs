@@ -3,7 +3,6 @@ import * as path from "node:path";
 import * as fs from "node:fs/promises";
 import * as util from "node:util";
 import * as child_process from "node:child_process";
-import * as semver from "semver";
 import { glob } from "glob";
 import { heredoc } from "./heredoc.mjs";
 import { discoverVersions, findCurrentVersion } from "./version-discovery.mjs";
