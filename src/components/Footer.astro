@@ -1,11 +1,15 @@
 ---
 import Default from "@astrojs/starlight/components/Footer.astro";
-import CookieConsent from "@components/CookieConsent.astro";
 ---
 
 <Default><slot /></Default>
 <div class="flex justify-center gap-8">
-  <CookieConsent />
+  <a
+    type="button"
+    class="text-gray-800 hover:text-gray-500 dark:text-gray-200 dark:hover:text-gray-400 no-underline hover:underline"
+    href="#"
+    data-cc="show-preferencesModal">Cookie Settings</a
+  >
   <a
     class="text-gray-800 hover:text-gray-500 dark:text-gray-200 dark:hover:text-gray-400 no-underline hover:underline"
     href="https://defenseunicorns.com/legal/privacypolicy"

@@ -2,21 +2,14 @@
 import "vanilla-cookieconsent/dist/cookieconsent.css";
 ---
 
-<a
-  type="button"
-  class="text-gray-800 hover:text-gray-500 dark:text-gray-200 dark:hover:text-gray-400 no-underline hover:underline"
-  href="#"
-  data-cc="show-preferencesModal">Cookie Settings</a
->
-
 <script>
-  import { run } from "vanilla-cookieconsent";
+  import * as CookieConsent from "vanilla-cookieconsent";
 
   /**
    * All config. options available here:
    * https://cookieconsent.orestbida.com/reference/configuration-reference.html
    */
-  run({
+  CookieConsent.run({
     guiOptions: {
       consentModal: {
         layout: "box inline",

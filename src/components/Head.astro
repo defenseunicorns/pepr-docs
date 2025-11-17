@@ -1,6 +1,7 @@
 ---
 import Default from "@astrojs/starlight/components/Head.astro";
 import PostHog from "./PostHog.astro";
+import CookieConsent from "./CookieConsent.astro";
 ---
 
 <script
@@ -20,5 +21,6 @@ import PostHog from "./PostHog.astro";
   gtag("config", "G-W4R3G0EBWD");
 </script>
 
+<CookieConsent />
 <PostHog />
 <Default><slot /></Default>
