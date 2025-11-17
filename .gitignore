@@ -9,6 +9,7 @@ node_modules/
 
 # Temporary clone of core repo during build
 tmp/
+temp/
 
 # Keep the directories but ignore all their contents except .gitkeep
 # Generated versioned documentation extracted from Pepr core
