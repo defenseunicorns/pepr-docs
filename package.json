@@ -30,6 +30,8 @@
     "@astrojs/starlight-tailwind": "^4.0.1",
     "@tailwindcss/vite": "^4.1.13",
     "astro": "^5.15.2",
+    "commander": "^11.1.0",
+    "glob": "^10.3.10",
     "sharp": "^0.34.2",
     "starlight-contextual-menu": "^0.1.5",
     "starlight-github-alerts": "^0.1.1",
@@ -48,9 +50,7 @@
   },
   "devDependencies": {
     "@defenseunicorns/eslint-config": "^1.1.2",
-    "commander": "^11.1.0",
     "esbuild": "^0.27.0",
-    "glob": "^10.3.10",
     "husky": "^9.1.7",
     "linkinator": "^7.2.0",
     "lint-staged": "^16.2.6",
