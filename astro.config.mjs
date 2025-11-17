@@ -49,6 +49,9 @@ export default defineConfig({
       logo: {
         src: "./public/assets/pepr.png",
       },
+      components: {
+        Head: "./src/components/Head.astro",
+      },
       head: [
         {
           tag: "link",
