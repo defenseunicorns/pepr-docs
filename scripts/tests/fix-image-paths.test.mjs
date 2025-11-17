@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as fs from "node:fs/promises";
 
 async function getFixImagePathsFunction() {
-  const buildScript = await fs.readFile("index.mjs", "utf8");
+  const buildScript = await fs.readFile("scripts/index.mjs", "utf8");
 
   const imageMatch = buildScript.match(/function fixImagePaths\(content\) \{([\s\S]*?)^\}/m);
   if (imageMatch) {

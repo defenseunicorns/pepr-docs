@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as fs from "node:fs/promises";
 
 async function getProcessContentLinksFunction() {
-  const buildScript = await fs.readFile("index.mjs", "utf8");
+  const buildScript = await fs.readFile("scripts/index.mjs", "utf8");
 
   const hasNumericMatch = buildScript.match(
     /function hasNumericPrefix\(str\) \{\s*return ([^}]+);\s*\}/,

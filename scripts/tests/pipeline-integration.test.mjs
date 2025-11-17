@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as fs from "node:fs/promises";
 
 async function getTransformContentFunction() {
-  const buildScript = await fs.readFile("index.mjs", "utf8");
+  const buildScript = await fs.readFile("scripts/index.mjs", "utf8");
 
   const funcMatch = buildScript.match(/const transformContent = \(content\) => \{([\s\S]*?)^\};/m);
   if (funcMatch) {

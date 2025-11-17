@@ -3,32 +3,35 @@
   "type": "module",
   "version": "0.0.1",
   "workspaces": [
-    "build",
-    "site"
+    "scripts"
   ],
   "scripts": {
+    "astro": "node --env-file=.env node_modules/.bin/astro",
+    "build": "bash scripts/build.sh",
     "dev": "node --env-file=.env node_modules/.bin/astro dev",
     "dev:netlify": "netlify dev",
-    "start": "node --env-file=.env node_modules/.bin/astro dev",
-    "build": "bash scripts/build.sh",
     "format:check": "npm run format:code && npm run format:markdown && npm run format:prettier -- --check",
-    "format:fix": "npm run format:code -- --fix && npm run format:markdown -- --fix && npm run format:prettier -- --write",
     "format:code": "eslint .",
-    "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore work --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore build --ignore 090_community --ignore 100_contribute --ignore site \"**/*.{md,mdx}\"",
+    "format:fix": "npm run format:code -- --fix && npm run format:markdown -- --fix && npm run format:prettier -- --write",
+    "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore tmp --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore scripts --ignore 090_community --ignore 100_contribute \"**/*.{md,mdx}\"",
     "format:prettier": "prettier .",
-    "preview": "node --env-file=.env node_modules/.bin/astro preview",
     "linkcheck": "bash .github/workflows/scripts/linkcheck.sh",
-    "astro": "node --env-file=.env node_modules/.bin/astro",
-    "test": "npm run test:unit && npm run linkcheck",
-    "test:unit": "npm run test -w build",
-    "test:e2e": "npm run test:e2e -w build",
-    "prepare": "husky"
+    "prepare": "husky || true",
+    "preview": "node --env-file=.env node_modules/.bin/astro preview",
+    "start": "node --env-file=.env node_modules/.bin/astro dev",
+    "test": "vitest scripts/tests/ --exclude '**/*integration*.test.mjs','**/*e2e*.test.mjs' && npm run linkcheck",
+    "test:e2e": "VITEST_RUN_E2E=true vitest run scripts/tests/e2e-*.test.mjs",
+    "test:integration": "vitest run --reporter=verbose scripts/tests/*integration*.test.mjs",
+    "test:integration:watch": "vitest scripts/tests/*integration*.test.mjs",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.35.2",
     "@astrojs/starlight-tailwind": "^4.0.1",
     "@tailwindcss/vite": "^4.1.13",
     "astro": "^5.15.2",
+    "commander": "^11.1.0",
+    "glob": "^10.3.10",
     "sharp": "^0.34.2",
     "starlight-contextual-menu": "^0.1.5",
     "starlight-github-alerts": "^0.1.1",
@@ -54,6 +57,9 @@
     "markdownlint-cli": "^0.45.0",
     "netlify-cli": "^23.10.0",
     "prettier": "^3.6.2",
-    "prettier-plugin-astro": "^0.14.1"
+    "prettier-plugin-astro": "^0.14.1",
+    "semver": "^7.5.4",
+    "vitest": "^1.6.0",
+    "yaml": "^2.3.4"
   }
 }
