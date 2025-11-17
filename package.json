@@ -19,7 +19,7 @@
     "prepare": "husky || true",
     "preview": "node --env-file=.env node_modules/.bin/astro preview",
     "start": "node --env-file=.env node_modules/.bin/astro dev",
-    "test": "vitest scripts/tests/ --exclude '**/*integration*.test.mjs','**/*e2e*.test.mjs' && npm run linkcheck",
+    "test": "vitest run scripts/tests/ && npm run linkcheck",
     "test:e2e": "VITEST_RUN_E2E=true vitest run scripts/tests/e2e-*.test.mjs",
     "test:integration": "vitest run --reporter=verbose scripts/tests/*integration*.test.mjs",
     "test:integration:watch": "vitest scripts/tests/*integration*.test.mjs",
@@ -40,7 +40,8 @@
     "starlight-llms-txt": "^0.6.0",
     "starlight-scroll-to-top": "^0.4.0",
     "starlight-versions": "^0.5.4",
-    "tailwindcss": "^4.1.13"
+    "tailwindcss": "^4.1.13",
+    "vanilla-cookieconsent": "^3.1.0"
   },
   "optionalDependencies": {
     "@pagefind/linux-x64": "^1.4.0",
