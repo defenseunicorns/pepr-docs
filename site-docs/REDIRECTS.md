@@ -105,12 +105,20 @@ To test your redirects:
    ```
 
 3. Check `public/_redirects` to verify your redirect was generated
-4. Test locally with Netlify dev:
 
-   ```bash
-   npm run dev:netlify
-   ```
+4. Test your redirects:
 
-   Visit <http://localhost:8888> and test your redirect
+   **Option A: Deploy Preview (Recommended)**
 
-5. Deploy and test on Netlify
+   - Push your changes to a branch and create a pull request
+   - Wait for Netlify to build the deploy preview
+   - Click the deploy preview link in the PR checks
+   - Test your redirects in the live preview environment
+
+   **Option B: Local Netlify CLI**
+
+   - Install Netlify CLI globally: `npm install -g netlify-cli`
+   - Run: `netlify dev`
+   - Visit <http://localhost:8888> and test your redirect
+
+   **Note:** The standard `npm run dev` server does not support Netlify's `_redirects` file.
