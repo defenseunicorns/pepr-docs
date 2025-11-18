@@ -9,7 +9,6 @@
     "astro": "node --env-file=.env node_modules/.bin/astro",
     "build": "bash scripts/build.sh",
     "dev": "node --env-file=.env node_modules/.bin/astro dev",
-    "dev:netlify": "netlify dev",
     "format:check": "npm run format:code && npm run format:markdown && npm run format:prettier -- --check",
     "format:code": "eslint .",
     "format:fix": "npm run format:code -- --fix && npm run format:markdown -- --fix && npm run format:prettier -- --write",
