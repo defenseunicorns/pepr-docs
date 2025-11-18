@@ -1,16 +1,17 @@
 ---
 import Default from "@astrojs/starlight/components/Head.astro";
 import PostHog from "./PostHog.astro";
+import CookieConsent from "./CookieConsent.astro";
 ---
 
 <script
   is:inline
-  type="text/javascript"
+  type="text/plain"
   data-category="analytics"
   data-service="Google Analytics"
   src="https://www.googletagmanager.com/gtag/js?id=G-W4R3G0EBWD"
   async></script>
-<script is:inline type="text/javascript" data-category="analytics">
+<script is:inline type="text/plain" data-category="analytics">
   window.dataLayer = window.dataLayer || [];
   function gtag() {
     dataLayer.push(arguments);
@@ -20,5 +21,6 @@ import PostHog from "./PostHog.astro";
   gtag("config", "G-W4R3G0EBWD");
 </script>
 
+<CookieConsent />
 <PostHog />
 <Default><slot /></Default>

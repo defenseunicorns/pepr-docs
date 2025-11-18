@@ -67,3 +67,44 @@ p.astro-wh6mpa6d {
     display: none;
   }
 }
+
+/* Cookie Consent Custom Colors - Light Mode */
+#cc-main {
+  --cc-bg: var(--color-gray-200);
+  --cc-primary-color: var(--color-gray-900);
+  --cc-secondary-color: var(--color-gray-700);
+  --cc-btn-primary-bg: var(--color-accent-200);
+  --cc-btn-primary-color: var(--color-gray-900);
+  --cc-btn-primary-hover-bg: var(--color-accent-600);
+  --cc-btn-secondary-bg: var(--color-gray-100);
+  --cc-btn-secondary-color: var(--color-gray-900);
+  --cc-btn-secondary-hover-bg: var(--color-gray-300);
+  --cc-separator-border-color: var(--color-gray-300);
+  --cc-cookie-category-block-bg: var(--color-accent-200);
+  --cc-cookie-category-block-hover-bg: var(--color-gray-300);
+  --cc-toggle-on-bg: var(--color-accent-600);
+}
+
+/* Cookie Consent Custom Colors - Dark Mode */
+[data-theme="dark"] #cc-main {
+  --cc-bg: var(--color-gray-700);
+  --cc-primary-color: var(--color-gray-100);
+  --cc-secondary-color: var(--color-gray-200);
+  --cc-btn-primary-bg: var(--color-accent-600);
+  --cc-btn-primary-color: var(--color-gray-100);
+  --cc-btn-primary-border-color: var(--color-accent-600);
+  --cc-btn-primary-hover-border-color: var(--color-accent-900);
+  --cc-btn-primary-hover-bg: var(--color-accent-900);
+  --cc-btn-primary-hover-color: var(--color-gray-200);
+  --cc-btn-secondary-bg: var(--color-gray-500);
+  --cc-btn-secondary-color: var(--color-gray-200);
+  --cc-btn-secondary-border-color: var(--color-gray-500);
+  --cc-btn-secondary-hover-border-color: var(--color-gray-800);
+  --cc-btn-secondary-hover-bg: var(--color-gray-800);
+  --cc-btn-secondary-hover-color: var(--color-gray-200);
+  --cc-separator-border-color: var(--color-gray-700);
+  --cc-cookie-category-block-bg: var(--color-gray-500);
+  --cc-cookie-category-block-hover-bg: var(--color-gray-800);
+  --cc-toggle-readonly-bg: var(--color-accent-600);
+  --cc-cookie-category-block-border: none;
+}
