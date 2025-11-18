@@ -31,7 +31,7 @@
     "@tailwindcss/vite": "^4.1.13",
     "astro": "^5.15.2",
     "commander": "^11.1.0",
-    "glob": "^10.3.10",
+    "glob": "^10.5.0",
     "sharp": "^0.34.2",
     "starlight-contextual-menu": "^0.1.5",
     "starlight-github-alerts": "^0.1.1",
