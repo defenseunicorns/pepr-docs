@@ -19,7 +19,7 @@
     "prepare": "husky || true",
     "preview": "node --env-file=.env node_modules/.bin/astro preview",
     "start": "node --env-file=.env node_modules/.bin/astro dev",
-    "test": "vitest scripts/tests/ --exclude '**/*integration*.test.mjs','**/*e2e*.test.mjs' && npm run linkcheck",
+    "test": "vitest run scripts/tests/ && npm run linkcheck",
     "test:e2e": "VITEST_RUN_E2E=true vitest run scripts/tests/e2e-*.test.mjs",
     "test:integration": "vitest run --reporter=verbose scripts/tests/*integration*.test.mjs",
     "test:integration:watch": "vitest scripts/tests/*integration*.test.mjs",
@@ -32,13 +32,11 @@
     "astro": "^5.15.2",
     "commander": "^11.1.0",
     "glob": "^10.3.10",
-    "sharp": "^0.34.2",
     "starlight-contextual-menu": "^0.1.5",
     "starlight-github-alerts": "^0.1.1",
     "starlight-image-zoom": "^0.13.2",
     "starlight-links-validator": "^0.17.2",
     "starlight-llms-txt": "^0.6.0",
-    "starlight-scroll-to-top": "^0.4.0",
     "starlight-versions": "^0.5.4",
     "tailwindcss": "^4.1.13"
   },
@@ -54,12 +52,11 @@
     "husky": "^9.1.7",
     "linkinator": "^7.2.0",
     "lint-staged": "^16.2.6",
-    "markdownlint-cli": "^0.45.0",
-    "netlify-cli": "^23.10.0",
+    "markdownlint-cli": "^0.44.0",
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.14.1",
     "semver": "^7.5.4",
-    "vitest": "^1.6.0",
+    "vitest": "^4.0.10",
     "yaml": "^2.3.4"
   }
 }
