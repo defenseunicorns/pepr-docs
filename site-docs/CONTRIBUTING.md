@@ -55,15 +55,6 @@ npm run build
 npm run dev
 ```
 
-**Testing with Netlify (for redirects):**
-
-Use when testing redirects or mimicking the Netlify environment:
-
-```bash
-npm run build
-npm run dev:netlify
-```
-
 ### Testing
 
 Run the test suite:
@@ -77,6 +68,37 @@ Run specific tests:
 ```bash
 npm run test -w scripts -- tests/redirects-generator.test.mjs
 ```
+
+### Testing Redirects
+
+Redirects use Netlify's `_redirects` file format and only work on Netlify's platform. You have two options to test redirects:
+
+#### Option 1: Deploy Preview (Recommended)
+
+Create a pull request and test redirects in the Netlify deploy preview:
+
+1. Push your changes to a branch
+2. Create a pull request
+3. Wait for Netlify to build the deploy preview
+4. Click the deploy preview link in the PR checks
+5. Test your redirects in the live preview environment
+
+#### Option 2: Local Netlify CLI
+
+Install and run Netlify CLI locally (not included in project dependencies):
+
+```bash
+# Install Netlify CLI globally (one-time setup)
+npm install -g netlify-cli
+
+# Build the site first
+npm run build
+
+# Run with Netlify dev
+netlify dev
+```
+
+Visit <http://localhost:8888> and test your redirects.
 
 ## Making Changes
 
@@ -137,7 +159,7 @@ If pre-commit checks fail, the commit will be blocked. Run `npm run format:fix` 
 - [ ] Build succeeds: `npm run build`
 - [ ] Code is formatted: `npm run format:check` (or run `npm run format:fix` to auto-fix)
 - [ ] Documentation updated (if needed)
-- [ ] Redirects tested locally with `npm run dev:netlify` (if applicable)
+- [ ] Redirects tested via deploy preview or local Netlify CLI (if applicable)
 - [ ] No generated files committed (check `.gitignore`)
 
 ### PR Description
@@ -168,7 +190,7 @@ Added manual redirect in MANUAL_REDIRECTS
 
 - Rebuilt site
 - Verified redirect in public/_redirects
-- Tested with netlify dev
+- Tested with Netlify deploy preview
 ```
 
 ### Commit Messages
