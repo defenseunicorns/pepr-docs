@@ -10,6 +10,14 @@ const __dirname = dirname(__filename);
 const DEFAULT_URL = process.env.TEST_URL || "http://localhost:4321";
 const CONFIG_PATH = path.resolve(__dirname, "../../linkinator.config.json");
 
+// HTTP status codes that indicate actual broken links (test should fail)
+const BROKEN_LINK_STATUSES = [
+  400, // Bad Request - malformed URL
+  401, // Unauthorized - authorization requirement
+  404, // Not Found - resource doesn't exist
+  410, // Gone - resource permanently removed
+];
+
 async function readConfig() {
   try {
     const data = await fs.readFile(CONFIG_PATH, "utf8");
@@ -56,14 +64,14 @@ describe("Link Validation", () => {
       if (result.state === "SKIPPED") {
         stats.skipped++;
       } else if (result.state === "BROKEN") {
-        if (result.status === 403 || result.status === 429) {
-          warnings.push({
+        if (BROKEN_LINK_STATUSES.includes(result.status)) {
+          brokenLinks.push({
             url: result.url,
             parent: result.parent,
             status: result.status,
           });
         } else {
-          brokenLinks.push({
+          warnings.push({
             url: result.url,
             parent: result.parent,
             status: result.status,
@@ -89,7 +97,7 @@ describe("Link Validation", () => {
     console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     console.log(`Valid:    ${stats.valid.toLocaleString()}`);
     console.log(`Skipped:  ${stats.skipped.toLocaleString()}`);
-    console.log(`Warnings: ${warnings.length.toLocaleString()} (403/429)`);
+    console.log(`Warnings: ${warnings.length.toLocaleString()}`);
     console.log(`Broken:   ${brokenLinks.length.toLocaleString()}`);
     console.log(`Pages:    ${stats.pages.size.toLocaleString()}`);
 
@@ -107,9 +115,7 @@ describe("Link Validation", () => {
         )
         .join("\n");
 
-      console.log(
-        `\n⚠️  Warnings (${warnings.length} links with 403 (likely anti-bot) or 429 (rate-limiting)):${warningMessage}`,
-      );
+      console.log(`Warnings (${warnings.length}:${warningMessage}`);
     }
 
     // Save report if there are broken links or warnings

@@ -2,7 +2,7 @@
   "recurse": true,
   "concurrency": 50,
   "retry": true,
-  "timeout": 10000,
+  "timeout": 30000,
   "skip": [
     "https://github.com/defenseunicorns/pepr/edit/.*",
     "https://github.com/defenseunicorns/pepr-docs/edit/.*",
