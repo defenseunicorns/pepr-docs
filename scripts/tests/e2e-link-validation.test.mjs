@@ -99,6 +99,7 @@ describe("Link Validation", () => {
     console.log(`Warnings: ${warnings.length.toLocaleString()}`);
     console.log(`Broken:   ${brokenLinks.length.toLocaleString()}`);
     console.log(`Pages:    ${stats.pages.size.toLocaleString()}`);
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     if (warnings.length > 0) {
       const byPage = {};
