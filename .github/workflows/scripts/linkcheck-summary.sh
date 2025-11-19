@@ -25,23 +25,33 @@ else
     echo "" >> "$OUTPUT_FILE"
 fi
 
-# Process broken links
+# Process broken links and warnings
 if [ -f "$REPORT_FILE" ]; then
     BROKEN_COUNT=$(jq '.brokenLinks | length' "$REPORT_FILE")
-    if [ "$BROKEN_COUNT" -gt 0 ]; then
-        # Group broken links by page and display each link
-        jq -r '.brokenLinks | group_by(.parent) | .[] |
-            "**Page:** \(.[0].parent)\n" +
-            ([.[] | "- **BROKEN** [\(.status)] \(.url)"] | join("\n"))' "$REPORT_FILE" >> "$OUTPUT_FILE"
-        echo "" >> "$OUTPUT_FILE"
-    fi
-
-    # Process warnings (if present)
     WARNING_COUNT=$(jq '.warnings | length // 0' "$REPORT_FILE")
-    if [ "$WARNING_COUNT" -gt 0 ]; then
-        jq -r '.warnings | group_by(.parent) | .[] |
-            "**Page:** \(.[0].parent)\n" +
-            ([.[] | "- **WARNING** [\(.status)] \(.url)"] | join("\n"))' "$REPORT_FILE" >> "$OUTPUT_FILE"
+    TOTAL_ISSUES=$((BROKEN_COUNT + WARNING_COUNT))
+
+    if [ "$TOTAL_ISSUES" -gt 0 ]; then
+        # Create table header
+        {
+            echo "| Type | Status | Link | Page |"
+            echo "|------|--------|------|------|"
+        } >> "$OUTPUT_FILE"
+
+        # Add broken links to table
+        if [ "$BROKEN_COUNT" -gt 0 ]; then
+            jq -r '.brokenLinks[] |
+                "| BROKEN | \(.status) | [\(.url)](\(.url)) | [\(.parent)](\(.parent)) |"' \
+                "$REPORT_FILE" >> "$OUTPUT_FILE"
+        fi
+
+        # Add warnings to table
+        if [ "$WARNING_COUNT" -gt 0 ]; then
+            jq -r '.warnings[] |
+                "| WARNING | \(.status) | [\(.url)](\(.url)) | [\(.parent)](\(.parent)) |"' \
+                "$REPORT_FILE" >> "$OUTPUT_FILE"
+        fi
+
         echo "" >> "$OUTPUT_FILE"
     fi
 else
