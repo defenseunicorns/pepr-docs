@@ -54,7 +54,4 @@ jobs:
 
       - name: Generate Summary
         if: always()
-        run: ${{ env.DOCS }}/.github/workflows/scripts/linkcheck-summary.sh \
-          $GITHUB_STEP_SUMMARY \
-          ${{ env.DOCS }} \
-          ${{ steps.linkcheck.outputs.exit_code }}
+        run: ${{ env.DOCS }}/.github/workflows/scripts/linkcheck-summary.sh "$GITHUB_STEP_SUMMARY" "${{ env.DOCS }}" "${{ steps.linkcheck.outputs.exit_code }}"
