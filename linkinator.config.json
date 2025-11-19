@@ -1,6 +1,6 @@
 {
   "recurse": true,
-  "concurrency": 100,
+  "concurrency": 50,
   "retry": true,
   "timeout": 10000,
   "skip": [
