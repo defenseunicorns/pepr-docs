@@ -53,7 +53,6 @@ describe("Link Validation", () => {
       retry: config.retry !== undefined ? config.retry : true,
       linksToSkip: Array.isArray(config.skip) ? config.skip : [],
       timeout: config.timeout || 10000,
-      // userAgent: config.userAgent || 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     };
 
     checker.on("pagestart", url => stats.pages.add(url));
