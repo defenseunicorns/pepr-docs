@@ -56,7 +56,7 @@ describe("Link Validation", () => {
       if (result.state === "SKIPPED") {
         stats.skipped++;
       } else if (result.state === "BROKEN") {
-        if (result.status === 403) {
+        if (result.status === 403 || result.status === 429) {
           warnings.push({
             url: result.url,
             parent: result.parent,
@@ -89,7 +89,7 @@ describe("Link Validation", () => {
     console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     console.log(`Valid:    ${stats.valid.toLocaleString()}`);
     console.log(`Skipped:  ${stats.skipped.toLocaleString()}`);
-    console.log(`Warnings: ${warnings.length.toLocaleString()} (403 - anti-bot protection)`);
+    console.log(`Warnings: ${warnings.length.toLocaleString()} (403/429)`);
     console.log(`Broken:   ${brokenLinks.length.toLocaleString()}`);
     console.log(`Pages:    ${stats.pages.size.toLocaleString()}`);
 
@@ -108,7 +108,7 @@ describe("Link Validation", () => {
         .join("\n");
 
       console.log(
-        `\n⚠️  Warnings (${warnings.length} links with 403 - likely anti-bot protection):${warningMessage}`,
+        `\n⚠️  Warnings (${warnings.length} links with 403 (likely anti-bot) or 429 (rate-limiting)):${warningMessage}`,
       );
     }
 
