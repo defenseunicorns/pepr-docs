@@ -46,7 +46,7 @@ jobs:
 
       - name: Upload broken links report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: broken-links-report
           path: ${{ env.DOCS }}/broken-links-report-*.json
