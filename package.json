@@ -29,7 +29,7 @@
     "@astrojs/starlight-tailwind": "^4.0.1",
     "@tailwindcss/vite": "^4.1.13",
     "astro": "^5.15.2",
-    "commander": "^11.1.0",
+    "commander": "^14.0.2",
     "glob": "^13.0.0",
     "starlight-contextual-menu": "^0.1.5",
     "starlight-github-alerts": "^0.1.1",
