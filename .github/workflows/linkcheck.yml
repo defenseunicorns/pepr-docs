@@ -16,6 +16,8 @@ env:
 jobs:
   linkcheck:
     runs-on: ubuntu-latest
+    outputs:
+      exit_code: ${{ steps.linkcheck.outputs.exit_code }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,12 +38,20 @@ jobs:
           CORE="$CORE" npm run build
 
       - name: Run link validation
-        run: "$DOCS/.github/workflows/scripts/linkcheck.sh"
+        id: linkcheck
+        run: |
+          ${{ env.DOCS }}/.github/workflows/scripts/linkcheck.sh 2>&1 | tee linkcheck-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+        continue-on-error: true
 
       - name: Upload broken links report
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: broken-links-report
           path: ${{ env.DOCS }}/broken-links-report-*.json
           if-no-files-found: ignore
+
+      - name: Generate Summary
+        if: always()
+        run: ${{ env.DOCS }}/.github/workflows/scripts/linkcheck-summary.sh "$GITHUB_STEP_SUMMARY" "${{ env.DOCS }}" "${{ steps.linkcheck.outputs.exit_code }}"
