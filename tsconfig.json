@@ -6,6 +6,6 @@
       "@components/*": ["src/components/*"]
     }
   },
-  "include": [".astro/types.d.ts", "**/*"],
+  "include": [".astro/types.d.ts", "**/*", ".github/workflows/scripts/**/*.ts"],
   "exclude": ["dist"]
 }
