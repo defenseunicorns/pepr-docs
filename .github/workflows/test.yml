@@ -1,0 +1,54 @@
+name: All Tests
+run-name: Run All Tests
+
+permissions: read-all
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches: ["main"]
+
+  pull_request:
+    branches: ["main"]
+
+env:
+  CORE: ./core
+  DOCS: ./docs
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: defenseunicorns/pepr
+          path: ${{ env.CORE }}
+          fetch-depth: 0
+
+      - uses: actions/checkout@v5
+        with:
+          repository: defenseunicorns/pepr-docs
+          path: ${{ env.DOCS }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          cd ${{ env.DOCS }}
+          npm ci
+
+      - name: Build docs
+        run: |
+          CORE=$(realpath ${{ env.CORE }})
+          cd ${{ env.DOCS }}
+          CORE="$CORE" npm run build
+
+      - name: Run tests
+        run: |
+          CORE=$(realpath ${{ env.CORE }})
+          cd ${{ env.DOCS }}
+          CORE="$CORE" npm test
