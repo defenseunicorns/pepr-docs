@@ -1,6 +1,7 @@
 #!/bin/bash
 
-if [ "$CI" = "true" ]; then
+# Change to DOCS directory if needed (when not already there)
+if [ "$CI" = "true" ] && [ -n "$DOCS" ] && [ ! -d "dist" ] && [ -d "$DOCS" ]; then
   cd "$DOCS" || exit
 fi
 
