@@ -15,7 +15,7 @@
     "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore tmp --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore scripts --ignore 090_community --ignore 100_contribute \"**/*.{md,mdx}\"",
     "format:prettier": "prettier .",
     "linkcheck": "bash .github/workflows/scripts/linkcheck.sh",
-    "prepare": "husky || true",
+    "prepare": "husky",
     "preview": "node --env-file=.env node_modules/.bin/astro preview",
     "start": "node --env-file=.env node_modules/.bin/astro dev",
     "test": "vitest run scripts/tests/ && npm run linkcheck",
