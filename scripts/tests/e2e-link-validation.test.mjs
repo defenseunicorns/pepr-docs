@@ -10,7 +10,6 @@ const __dirname = dirname(__filename);
 const DEFAULT_URL = process.env.TEST_URL || "http://localhost:4321";
 const CONFIG_PATH = path.resolve(__dirname, "../../linkinator.config.json");
 
-// HTTP status codes that indicate actual broken links (test should fail)
 const BROKEN_LINK_STATUSES = [
   400, // Bad Request - malformed URL
   401, // Unauthorized - authorization requirement
@@ -28,6 +27,130 @@ async function readConfig() {
   }
 }
 
+function buildCheckerConfig(config) {
+  return {
+    path: DEFAULT_URL,
+    recurse: config.recurse !== undefined ? config.recurse : true,
+    concurrency: config.concurrency || 100,
+    retry: config.retry !== undefined ? config.retry : true,
+    linksToSkip: Array.isArray(config.skip) ? config.skip : [],
+    timeout: config.timeout || 10000,
+  };
+}
+
+function createLinkEventHandler(stats, brokenLinks, warnings) {
+  return result => {
+    stats.checked++;
+
+    if (result.state === "SKIPPED") {
+      stats.skipped++;
+    } else if (result.state === "BROKEN") {
+      if (BROKEN_LINK_STATUSES.includes(result.status)) {
+        brokenLinks.push({
+          url: result.url,
+          parent: result.parent,
+          status: result.status,
+        });
+      } else {
+        warnings.push({
+          url: result.url,
+          parent: result.parent,
+          status: result.status,
+        });
+      }
+    } else if (result.state === "OK") {
+      stats.valid++;
+    }
+  };
+}
+
+function logValidationStart(checkerConfig) {
+  console.log(`\nValidating links at: ${DEFAULT_URL}`);
+  console.log(
+    `Config: recurse=${checkerConfig.recurse}, concurrency=${checkerConfig.concurrency}, timeout=${checkerConfig.timeout}ms`,
+  );
+  console.log(`Skip patterns: ${checkerConfig.linksToSkip.length} patterns loaded`);
+  console.log(`First few patterns: ${checkerConfig.linksToSkip.slice(0, 3).join(", ")}\n`);
+}
+
+function logValidationSummary(stats, warnings, brokenLinks) {
+  console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.log("Link Validation Summary");
+  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.log(`Valid:    ${stats.valid.toLocaleString()}`);
+  console.log(`Skipped:  ${stats.skipped.toLocaleString()}`);
+  console.log(`Warnings: ${warnings.length.toLocaleString()}`);
+  console.log(`Broken:   ${brokenLinks.length.toLocaleString()}`);
+  console.log(`Pages:    ${stats.pages.size.toLocaleString()}`);
+  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+}
+
+function logWarnings(warnings) {
+  if (warnings.length > 0) {
+    const byPage = groupLinksByPage(warnings);
+    const warningMessage = formatLinksMessage(byPage);
+    console.log(`Warnings (${warnings.length}:${warningMessage}`);
+  }
+}
+
+async function saveReport(results, stats, brokenLinks, warnings) {
+  const timestamp = new Date().toISOString().replace(/:/g, "-").split(".")[0];
+  const reportPath = path.resolve(process.cwd(), `broken-links-report-${timestamp}.json`);
+
+  await fs.writeFile(
+    reportPath,
+    JSON.stringify(
+      {
+        date: new Date().toISOString(),
+        url: DEFAULT_URL,
+        summary: {
+          total: results.links.length,
+          valid: stats.valid,
+          broken: brokenLinks.length,
+          warnings: warnings.length,
+          skipped: stats.skipped,
+          pagesChecked: Array.from(stats.pages),
+        },
+        brokenLinks,
+        warnings,
+      },
+      null,
+      2,
+    ),
+  );
+
+  console.log(`\nReport saved: ${reportPath}`);
+}
+
+function assertNoBrokenLinks(brokenLinks) {
+  if (brokenLinks.length > 0) {
+    const byPage = groupLinksByPage(brokenLinks);
+    const errorMessage = formatLinksMessage(byPage);
+
+    expect(brokenLinks, `Found ${brokenLinks.length} broken links:\n${errorMessage}`).toHaveLength(
+      0,
+    );
+  }
+}
+
+function groupLinksByPage(links) {
+  const byPage = {};
+  links.forEach(link => {
+    if (!byPage[link.parent]) byPage[link.parent] = [];
+    byPage[link.parent].push(link);
+  });
+  return byPage;
+}
+
+function formatLinksMessage(linksByPage) {
+  return Object.entries(linksByPage)
+    .map(
+      ([page, links]) =>
+        `\nPage: ${page}\n${links.map(l => `  - ${l.url} (${l.status})`).join("\n")}`,
+    )
+    .join("\n");
+}
+
 describe("Link Validation", () => {
   let config;
 
@@ -36,6 +159,7 @@ describe("Link Validation", () => {
   });
 
   it("should find no broken links on the site", async () => {
+    // Initialize checker and tracking structures
     const checker = new LinkChecker();
     const brokenLinks = [];
     const warnings = [];
@@ -46,129 +170,26 @@ describe("Link Validation", () => {
       pages: new Set(),
     };
 
-    const checkerConfig = {
-      path: DEFAULT_URL,
-      recurse: config.recurse !== undefined ? config.recurse : true,
-      concurrency: config.concurrency || 100,
-      retry: config.retry !== undefined ? config.retry : true,
-      linksToSkip: Array.isArray(config.skip) ? config.skip : [],
-      timeout: config.timeout || 10000,
-    };
-
+    // Configure checker
+    const checkerConfig = buildCheckerConfig(config);
     checker.on("pagestart", url => stats.pages.add(url));
+    checker.on("link", createLinkEventHandler(stats, brokenLinks, warnings));
 
-    checker.on("link", result => {
-      stats.checked++;
-
-      if (result.state === "SKIPPED") {
-        stats.skipped++;
-      } else if (result.state === "BROKEN") {
-        if (BROKEN_LINK_STATUSES.includes(result.status)) {
-          brokenLinks.push({
-            url: result.url,
-            parent: result.parent,
-            status: result.status,
-          });
-        } else {
-          warnings.push({
-            url: result.url,
-            parent: result.parent,
-            status: result.status,
-          });
-        }
-      } else if (result.state === "OK") {
-        stats.valid++;
-      }
-    });
-
-    console.log(`\nValidating links at: ${DEFAULT_URL}`);
-    console.log(
-      `Config: recurse=${checkerConfig.recurse}, concurrency=${checkerConfig.concurrency}, timeout=${checkerConfig.timeout}ms`,
-    );
-    console.log(`Skip patterns: ${checkerConfig.linksToSkip.length} patterns loaded`);
-    console.log(`First few patterns: ${checkerConfig.linksToSkip.slice(0, 3).join(", ")}\n`);
-
+    // Run link validation
+    logValidationStart(checkerConfig);
     const results = await checker.check(checkerConfig);
 
-    // Log summary
-    console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log("Link Validation Summary");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log(`Valid:    ${stats.valid.toLocaleString()}`);
-    console.log(`Skipped:  ${stats.skipped.toLocaleString()}`);
-    console.log(`Warnings: ${warnings.length.toLocaleString()}`);
-    console.log(`Broken:   ${brokenLinks.length.toLocaleString()}`);
-    console.log(`Pages:    ${stats.pages.size.toLocaleString()}`);
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    // Report results
+    logValidationSummary(stats, warnings, brokenLinks);
+    logWarnings(warnings);
 
-    if (warnings.length > 0) {
-      const byPage = {};
-      warnings.forEach(link => {
-        if (!byPage[link.parent]) byPage[link.parent] = [];
-        byPage[link.parent].push(link);
-      });
-
-      const warningMessage = Object.entries(byPage)
-        .map(
-          ([page, links]) =>
-            `\nPage: ${page}\n${links.map(l => `  - ${l.url} (${l.status})`).join("\n")}`,
-        )
-        .join("\n");
-
-      console.log(`Warnings (${warnings.length}:${warningMessage}`);
-    }
-
-    // Save report if there are broken links or warnings
+    // Save report if needed
     if (brokenLinks.length > 0 || warnings.length > 0) {
-      const timestamp = new Date().toISOString().replace(/:/g, "-").split(".")[0];
-      const reportPath = path.resolve(process.cwd(), `broken-links-report-${timestamp}.json`);
-
-      await fs.writeFile(
-        reportPath,
-        JSON.stringify(
-          {
-            date: new Date().toISOString(),
-            url: DEFAULT_URL,
-            summary: {
-              total: results.links.length,
-              valid: stats.valid,
-              broken: brokenLinks.length,
-              warnings: warnings.length,
-              skipped: stats.skipped,
-              pagesChecked: Array.from(stats.pages),
-            },
-            brokenLinks,
-            warnings,
-          },
-          null,
-          2,
-        ),
-      );
-
-      console.log(`\nReport saved: ${reportPath}`);
+      await saveReport(results, stats, brokenLinks, warnings);
     }
 
-    if (brokenLinks.length > 0) {
-      const byPage = {};
-      brokenLinks.forEach(link => {
-        if (!byPage[link.parent]) byPage[link.parent] = [];
-        byPage[link.parent].push(link);
-      });
-
-      const errorMessage = Object.entries(byPage)
-        .map(
-          ([page, links]) =>
-            `\nPage: ${page}\n${links.map(l => `  - ${l.url} (${l.status})`).join("\n")}`,
-        )
-        .join("\n");
-
-      expect(
-        brokenLinks,
-        `Found ${brokenLinks.length} broken links:\n${errorMessage}`,
-      ).toHaveLength(0);
-    }
-
-    // Validate we actually checked something
+    // Assert success
+    assertNoBrokenLinks(brokenLinks);
     expect(stats.valid, "No valid links found - is the server running?").toBeGreaterThan(0);
   }, 60000); // 60 second timeout for full site crawl
 });
