@@ -1,4 +1,4 @@
-name: Test
+name: All Tests
 run-name: Run All Tests
 
 permissions: read-all
