@@ -41,6 +41,12 @@ jobs:
           cd ${{ env.DOCS }}
           npm ci
 
+      - name: Build docs
+        run: |
+          CORE=$(realpath ${{ env.CORE }})
+          cd ${{ env.DOCS }}
+          CORE="$CORE" npm run build
+
       - name: Run tests
         run: |
           CORE=$(realpath ${{ env.CORE }})
