@@ -391,12 +391,11 @@ const generateFileMetadata = file => {
 };
 
 // Generate Starlight front matter for a file
-const generateFrontMatter = (content, newfile, version) => {
+const generateFrontMatter = (content, newfile, version, originalFile = "") => {
   const heading = content.match(/#[\s]+(.*)/);
-  const title =
-    newfile.endsWith("/README.md") || newfile === "README.md"
-      ? "Overview"
-      : heading[1].replaceAll(/[`:]/g, "");
+  const isReadme =
+    originalFile.endsWith("README.md") || newfile.endsWith("/README.md") || newfile === "README.md";
+  const title = isReadme ? "Overview" : heading[1].replaceAll(/[`:]/g, "");
 
   const slug =
     version !== "latest"
@@ -413,8 +412,10 @@ const generateFrontMatter = (content, newfile, version) => {
         }`
       : "";
 
+  const sidebarLabel = isReadme ? "\nsidebar:\n  label: Overview" : "";
+
   return {
-    front: `---\ntitle: ${title}\ndescription: ${title}${slug}\n---`,
+    front: `---\ntitle: ${title}\ndescription: ${title}${slug}${sidebarLabel}\n---`,
     contentWithoutHeading: content.replaceAll(heading[0], ""),
   };
 };
@@ -457,7 +458,7 @@ const processSingleSourceFile = async (file, coredocs, verdir) => {
   const src = getSourcePath(file, coredocs);
   const content = await fs.readFile(src, "utf8");
   const { newfile } = generateFileMetadata(file);
-  const { front, contentWithoutHeading } = generateFrontMatter(content, newfile, RUN.version);
+  const { front, contentWithoutHeading } = generateFrontMatter(content, newfile, RUN.version, file);
   const processedContent = processContentLinks([front, contentWithoutHeading].join("\n"), file);
 
   await fs.mkdir(`${verdir}/${path.dirname(newfile)}`, { recursive: true });
