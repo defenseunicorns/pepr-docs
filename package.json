@@ -55,7 +55,7 @@
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.14.1",
     "semver": "^7.5.4",
-    "vitest": "^4.0.12",
+    "vitest": "^4.0.14",
     "yaml": "^2.3.4"
   }
 }
