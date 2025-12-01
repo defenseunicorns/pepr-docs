@@ -20,13 +20,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           repository: defenseunicorns/pepr
           path: ${{ env.CORE }}
           fetch-depth: 0
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           repository: defenseunicorns/pepr-docs
           path: ${{ env.DOCS }}
