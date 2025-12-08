@@ -1,55 +1,76 @@
 ---
-import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+const linkStyle =
+  "dark:text-gray-100 text-gray-900 hover:text-midBlue dark:hover:text-ltBlue underline font-medium";
+const descStyle = "text-sm opacity-70 ml-2";
+const cardBaseStyle = "no-underline block p-5 rounded-lg border-2 transition-all group";
+const homeCardStyle = `${cardBaseStyle} border-midBlue/60 dark:border-midBlue/50 bg-ltBlue/20 dark:bg-midBlue/10 hover:border-midBlue dark:hover:border-ltBlue hover:bg-ltBlue/30 dark:hover:bg-midBlue/20`;
+const quickStartCardStyle = `${cardBaseStyle} border-ltPink/60 dark:border-ltPink/50 bg-ltPink/20 dark:bg-dkPink/10 hover:border-ltPink dark:hover:border-ltPink hover:bg-ltPink/30 dark:hover:bg-dkPink/20`;
 ---
 
 <StarlightPage frontmatter={{ title: `Oops! This page doesn't exist`, editUrl: false }}>
   <div class="max-w-4xl mx-auto">
     <div class="mb-8">
-      <p class="text-base mb-4 opacity-90">Sorry about that! The page <code id="current-path" class="px-2 py-1 dark:bg-gray-800 bg-gray-300 rounded text-sm"></code> couldn't be found. Let's get you back on track:</p>
+      <p class="text-base mb-4 opacity-90">
+        Sorry about that! The page
+        <code id="current-path" class="px-2 py-1 dark:bg-gray-800 bg-gray-300 rounded text-sm"
+        ></code>
+        couldn't be found. Let's get you back on track:
+      </p>
     </div>
-    
+
     <div class="grid md:grid-cols-2 gap-4 mb-8">
-      <a href="/" class="  no-underline block p-5 rounded-lg border-2 border-[#6aa4b4]/60 dark:border-[#6aa4b4]/50 bg-[#a5eeef]/20 dark:bg-[#6aa4b4]/10 hover:border-[#6aa4b4] dark:hover:border-[#a5eeef] hover:bg-[#a5eeef]/30 dark:hover:bg-[#6aa4b4]/20 transition-all group">
-        <div class="text-xl font-bold mb-2 text-[#0b0e2f] dark:text-[#fff3f3] group-hover:text-[#6aa4b4] dark:group-hover:text-[#a5eeef]">Return to Docs Home</div>
-        <p class="text-sm opacity-80 text-[#141313] dark:text-[#dfd6d6a5]">Start from the beginning</p>
+      <a href="/" class={homeCardStyle}>
+        <div
+          class="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100 group-hover:text-accent-900 dark:group-hover:text-ltBlue"
+        >
+          Return to Docs Home
+        </div>
+        <p class="text-sm opacity-80 text-[#141313] dark:text-gray-300">Start from the beginning</p>
       </a>
-      
-      <a href="/#quick-start-guide" class=" no-underline block p-5 rounded-lg border-2 border-[#d14667]/60 dark:border-[#d14667]/50 bg-[#d14667]/20 dark:bg-[#871a41]/10 hover:border-[#d14667] dark:hover:border-[#d14667] hover:bg-[#d14667]/30 dark:hover:bg-[#871a41]/20 transition-all group">
-        <div class="text-xl font-bold mb-2 text-[#0b0e2f] dark:text-[#fff3f3] group-hover:text-[#871a41] dark:group-hover:text-[#d14667]">Quick Start Guide</div>
-        <p class="text-sm opacity-80 text-[#141313] dark:text-[#dfd6d6a5]">Get Pepr up and running</p>
+
+      <a href="/#quick-start-guide" class={quickStartCardStyle}>
+        <div
+          class="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100 group-hover:text-dkPink dark:group-hover:text-ltPink"
+        >
+          Quick Start Guide
+        </div>
+        <p class="text-sm opacity-80 text-[#141313] dark:text-gray-300">Get Pepr up and running</p>
       </a>
     </div>
 
     <details class="mb-8 p-4 rounded-lg dark:bg-gray-800/30 bg-gray-800/5">
-      <summary class="cursor-pointer font-semibold text-lg mb-4 hover:text-[#6aa4b4] dark:hover:text-[#a5eeef]">More helpful resources </summary>
+      <summary
+        class="cursor-pointer font-semibold text-lg mb-4 hover:text-accent-600 dark:hover:text-ltBlue"
+      >
+        More Helpful Resources
+      </summary>
+
       <ul class="space-y-3 ml-4">
         <li>
-          <a href="/reference/faq/" class="dark:text-[#fff3f3] text-[#0b0e2f] hover:text-[#6aa4b4] dark:hover:text-[#a5eeef] underline font-medium">
-            FAQs
-          </a>
-          <span class="text-sm opacity-70 ml-2">— Quick answers for common questions</span>
+          <a href="/reference/faq/" class={linkStyle}>FAQs</a>
+          <span class={descStyle}>— Quick answers for common questions</span>
         </li>
         <li>
-          <a href="/tutorials/" class="dark:text-[#fff3f3] text-[#0b0e2f] hover:text-[#6aa4b4] dark:hover:text-[#a5eeef] underline font-medium">
-            Tutorials
-          </a>
-          <span class="text-sm opacity-70 ml-2">— Step-by-step guides</span>
+          <a href="/reference/module-examples/" class={linkStyle}>Module Examples</a>
+          <span class={descStyle}>— Complete and deployable module examples</span>
         </li>
         <li>
-          <a href="/user-guide/" class="dark:text-[#fff3f3] text-[#0b0e2f] hover:text-[#6aa4b4] dark:hover:text-[#a5eeef] underline font-medium">
-            User Guide
-          </a>
-          <span class="text-sm opacity-70 ml-2">— Complete guide to Pepr's features and capabilities </span>
+          <a href="/user-guide/capabilities/" class={linkStyle}>User Guide</a>
+          <span class={descStyle}>— Complete guide to Pepr's features and capabilities</span>
         </li>
       </ul>
     </details>
 
     <div class="mt-10 pt-6 border-t border-gray-700">
       <h4 class="text-lg font-semibold mb-2">Found a broken link?</h4>
-      <p class="text-sm mb-3 opacity-80">If you got here from our own docs, that's our bad! Help us fix it:</p>
+      <p class="text-sm mb-3 opacity-80">
+        If you got here from our own docs, that's our bad! Help us fix it:
+      </p>
       <button
         id="report-link"
-        class="inline-block no-underline px-4 py-2 rounded-lg bg-[#be9853] hover:bg-[#efca81] dark:bg-[#be9853]/70 dark:hover:bg-[#efca81]/70 text-[#fff3f3] hover:text-[#0b0e2f] dark:text-[#fff3f3] dark:hover:text-[#0b0e2f] font-medium transition-colors cursor-pointer border-0"
+        class="inline-block no-underline px-4 py-2 rounded-lg bg-ltGold/70 hover:bg-ltGold dark:bg-dkGold/70 dark:hover:bg-ltGold/70 text-gray-800 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-900 font-medium transition-colors cursor-pointer border-0"
       >
         Report this broken link →
       </button>
@@ -57,21 +78,21 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
   </div>
 
   <script>
-    // Get the actual requested path from the browser
     const currentPath = window.location.pathname;
 
-    // Update the displayed path
-    const pathElement = document.getElementById('current-path');
+    const pathElement = document.getElementById("current-path");
     if (pathElement) {
       pathElement.textContent = currentPath;
     }
 
-    // Set up the GitHub issue link button click handler
-    const reportLink = document.getElementById('report-link');
+    const reportLink = document.getElementById("report-link");
     if (reportLink) {
-      reportLink.addEventListener('click', () => {
-        const issueUrl = `https://github.com/defenseunicorns/pepr-docs/issues/new?title=${encodeURIComponent('Broken link: ' + currentPath)}&body=${encodeURIComponent('I found a broken link at: ' + currentPath)}`;
-        window.open(issueUrl, '_blank', 'noopener,noreferrer');
+      reportLink.addEventListener("click", () => {
+        const issueUrl = `https://github.com/defenseunicorns/pepr-docs/issues/new?title=${encodeURIComponent(
+          "Broken link: " + currentPath,
+        )}&body=${encodeURIComponent("I found a broken link at: " + currentPath)}`;
+        window.open(issueUrl, "_blank", "noopener,noreferrer");
       });
     }
   </script>
+</StarlightPage>
