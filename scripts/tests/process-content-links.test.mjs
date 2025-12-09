@@ -4,9 +4,6 @@ import * as fs from "node:fs/promises";
 async function getProcessContentLinksFunction() {
   const buildScript = await fs.readFile("scripts/index.mjs", "utf8");
 
-  const hasNumericMatch = buildScript.match(
-    /function hasNumericPrefix\(str\) \{\s*return ([^}]+);\s*\}/,
-  );
   const fixImageMatch = buildScript.match(/function fixImagePaths\(content\) \{([\s\S]*?)^\}/m);
   const removeHtmlMatch = buildScript.match(
     /function removeHtmlComments\(input\) \{([\s\S]*?)^\}/m,
@@ -20,7 +17,6 @@ async function getProcessContentLinksFunction() {
   );
 
   if (
-    hasNumericMatch &&
     fixImageMatch &&
     removeHtmlMatch &&
     transformContentMatch &&
@@ -32,7 +28,6 @@ async function getProcessContentLinksFunction() {
       "file",
       `
 			const path = { basename: (filePath) => filePath.split('/').pop() };
-			const hasNumericPrefix = (str) => { return ${hasNumericMatch[1]}; };
 			const fixImagePaths = (content) => { ${fixImageMatch[1]} };
 			const removeHtmlComments = (input) => { ${removeHtmlMatch[1]} };
 			const transformContent = (content) => { ${transformContentMatch[1]} };

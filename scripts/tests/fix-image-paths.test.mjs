@@ -18,18 +18,18 @@ async function getFixImagePathsFunction() {
 describe("fixImagePaths - table", () => {
   const testCases = [
     {
-      name: "should convert _images/pepr-arch.svg to assets path",
-      input: "See the ![architecture](_images/pepr-arch.svg) diagram",
+      name: "should convert _images/pepr-arch.png to assets path",
+      input: "See the ![architecture](_images/pepr-arch.png) diagram",
       expected: "/assets/pepr-arch.png",
     },
     {
-      name: "should not contain original _images/pepr-arch.svg",
-      input: "See the ![architecture](_images/pepr-arch.svg) diagram",
-      expected: "_images/pepr-arch.svg",
+      name: "should not contain original _images/pepr-arch.png",
+      input: "See the ![architecture](_images/pepr-arch.png) diagram",
+      expected: "_images/pepr-arch.png",
     },
     {
-      name: "should convert relative paths to assets",
-      input: "![test](../../../images/test.png)",
+      name: "should convert relative _images paths to assets",
+      input: "![test](../../_images/test.png)",
       expected: "/assets/test.png",
     },
     {
@@ -43,27 +43,27 @@ describe("fixImagePaths - table", () => {
       expected: "/assets/dark.png",
     },
     {
-      name: "should convert _images/pepr-arch.svg in multi-image content",
+      name: "should convert _images/pepr-arch.png in multi-image content",
       input:
-        "![arch](_images/pepr-arch.svg)\n![logo](_images/pepr.png)\n![demo](resources/create-pepr-operator/dark.png)\n![other](../../../images/other.png)",
+        "![arch](_images/pepr-arch.png)\n![logo](_images/pepr.png)\n![demo](resources/create-pepr-operator/dark.png)\n![other](../../_images/other.png)",
       expected: "/assets/pepr-arch.png",
     },
     {
       name: "should convert _images/pepr.png in multi-image content",
       input:
-        "![arch](_images/pepr-arch.svg)\n![logo](_images/pepr.png)\n![demo](resources/create-pepr-operator/dark.png)\n![other](../../../images/other.png)",
+        "![arch](_images/pepr-arch.png)\n![logo](_images/pepr.png)\n![demo](resources/create-pepr-operator/dark.png)\n![other](../../_images/other.png)",
       expected: "/assets/pepr.png",
     },
     {
       name: "should convert resources dark.png in multi-image content",
       input:
-        "![arch](_images/pepr-arch.svg)\n![logo](_images/pepr.png)\n![demo](resources/create-pepr-operator/dark.png)\n![other](../../../images/other.png)",
+        "![arch](_images/pepr-arch.png)\n![logo](_images/pepr.png)\n![demo](resources/create-pepr-operator/dark.png)\n![other](../../_images/other.png)",
       expected: "/assets/dark.png",
     },
     {
       name: "should convert relative other.png in multi-image content",
       input:
-        "![arch](_images/pepr-arch.svg)\n![logo](_images/pepr.png)\n![demo](resources/create-pepr-operator/dark.png)\n![other](../../../images/other.png)",
+        "![arch](_images/pepr-arch.png)\n![logo](_images/pepr.png)\n![demo](resources/create-pepr-operator/dark.png)\n![other](../../_images/other.png)",
       expected: "/assets/other.png",
     },
     {

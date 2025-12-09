@@ -37,21 +37,19 @@ async function executeWithErrorHandling(label, func) {
   }
 }
 
-// Check if a string starts with a numeric prefix (e.g., "010_filename")
-function hasNumericPrefix(str) {
-  return Number.isInteger(Number(str));
-}
-
-// Fix image paths in content
+// Converts all _images and resources references to /assets/
 function fixImagePaths(content) {
-  return content
-    .replace(/_images\/pepr-arch\.svg/g, "/assets/pepr-arch.png")
-    .replace(/_images\/pepr-arch\.png/g, "/assets/pepr-arch.png")
-    .replace(/images\/pepr-arch\.png/g, "/assets/pepr-arch.png")
-    .replace(/images\/pepr-arch\.svg/g, "/assets/pepr-arch.png")
-    .replace(/_images\/pepr\.png/g, "/assets/pepr.png")
-    .replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, "/assets/$1.png")
-    .replace(/\.\.\/\.\.\/\.\.\/images\/([\w-]+\.png)/g, "/assets/$1");
+  return (
+    content
+      // Handle any relative path to _images (../../_images/, ../../../_images/, etc.)
+      .replace(/(\.\.\/)+_images\/([\w-]+\.(png|svg))/g, "/assets/$2")
+      // Handle direct _images references
+      .replace(/_images\/([\w-]+\.(png|svg))/g, "/assets/$1")
+      // Handle resources paths - supports numbered prefixes (e.g., 030_create-pepr-operator)
+      // for backward compatibility with old git tags (v1.0.2, v0.55.6)
+      // Once these old versions are retired, this can be removed.
+      .replace(/resources\/(?:\d+_)?create-pepr-operator\/(light|dark)\.png/g, "/assets/$1.png")
+  );
 }
 
 // Helper to remove HTML comments repeatedly until none remain
@@ -87,9 +85,6 @@ const transformContent = content => {
       ["CODE_OF_CONDUCT.md", "SECURITY.md", "SUPPORT.md"].includes(parts[2])
     )
       parts.shift();
-    parts = parts.map(p =>
-      hasNumericPrefix(p.split("_")[0]) ? p.split("_").slice(1).join("_") : p,
-    );
     if (parts.at(-1) === "README.md") parts.pop();
     if (parts[0]?.startsWith("_images")) parts[0] = "__images";
 
@@ -356,21 +351,23 @@ const PATH_MAPPINGS = {
   },
 };
 
-const removeNumberPrefixes = parts =>
-  parts
-    .map(p => (hasNumericPrefix(p.split("_")[0]) ? p.split("_").slice(1).join("_") : p))
-    .join("/");
-
 // Generate new file path for a source file
 const generateFileMetadata = file => {
   const [dir, filename] = [path.dirname(file), path.basename(file)];
   const parts = dir.split("/");
   const parent = parts.pop();
-  const ancestors = removeNumberPrefixes(parts);
+  const ancestors = parts.join("/");
 
-  let rawdir = ancestors
-    ? `${ancestors}/${parent.replace(/^\d+_/, "")}`
-    : parent.replace(/^\d+_/, "");
+  // Strip numbered prefixes from directory parts (e.g., 010_user-guide -> user-guide)
+  // Needed for backward compatibility with old git tags (v1.0.2, v0.55.6) that still use numbered prefixes
+  // Once these old versions are retired, this prefix stripping can be removed
+  const cleanParent = parent.replace(/^\d+_/, "");
+  const cleanAncestors = ancestors
+    .split("/")
+    .map(p => p.replace(/^\d+_/, ""))
+    .join("/");
+
+  let rawdir = cleanAncestors ? `${cleanAncestors}/${cleanParent}` : cleanParent;
 
   // Apply structure mappings
   let newdir = Object.entries(PATH_MAPPINGS.structure).reduce(
@@ -378,9 +375,12 @@ const generateFileMetadata = file => {
     rawdir,
   );
 
-  // Process filename
-  let newfile =
-    filename.replace(/^\d+_/, "") === "README.md" ? "index.md" : filename.replace(/^\d+_/, "");
+  // Process filename - strip numbered prefix (e.g., 070_roadmap.md -> roadmap.md)
+  // Needed for backward compatibility with old git tags (v1.0.2, v0.55.6)
+  let newfile = filename.replace(/^\d+_/, "");
+  if (newfile === "README.md") {
+    newfile = "index.md";
+  }
 
   // Handle single file mappings
   if (newfile === "index.md" && PATH_MAPPINGS.singleFile[rawdir]) {
@@ -421,6 +421,8 @@ const generateFrontMatter = (content, newfile, version, originalFile = "") => {
 };
 
 // Content link transformations
+// Note: /pepr-tutorials/ mapping is for backward compatibility with v0.55.6
+// Once v0.55.6 is retired, the pepr-tutorials mapping can be removed
 const LINK_MAPPINGS = {
   "](/pepr-tutorials/": "](/tutorials/",
   "](/best-practices/": "](/reference/best-practices/",
@@ -650,8 +652,7 @@ const copyResourcesFromVersion = async (version, siteRoot) => {
       directoriesOnly.map(async dirent => {
         try {
           const srcDir = path.join(resourcesPath, dirent.name);
-          const cleanName = dirent.name.replace(/^\d+_/, "");
-          const dstDir = path.join(`${siteRoot}/src/content/docs/resources`, cleanName);
+          const dstDir = path.join(`${siteRoot}/src/content/docs/resources`, dirent.name);
           await fs.cp(srcDir, dstDir, { recursive: true });
           console.log(`Copied ${srcDir} -> ${dstDir}`);
         } catch (e) {

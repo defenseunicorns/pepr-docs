@@ -7,20 +7,16 @@ async function getTransformContentFunction() {
   const funcMatch = buildScript.match(/const transformContent = \(content\) => \{([\s\S]*?)^\};/m);
   if (funcMatch) {
     try {
-      const hasNumericMatch = buildScript.match(
-        /function hasNumericPrefix\(str\) \{\s*return ([^}]+);\s*\}/,
-      );
       const fixImageMatch = buildScript.match(/function fixImagePaths\(content\) \{([\s\S]*?)^\}/m);
       const removeHtmlMatch = buildScript.match(
         /function removeHtmlComments\(input\) \{([\s\S]*?)^\}/m,
       );
 
-      if (hasNumericMatch && fixImageMatch && removeHtmlMatch) {
+      if (fixImageMatch && removeHtmlMatch) {
         return new Function(
           "content",
           `
 					// Helper functions
-					const hasNumericPrefix = (str) => { return ${hasNumericMatch[1]}; };
 					const fixImagePaths = (content) => { ${fixImageMatch[1]} };
 					const removeHtmlComments = (input) => { ${removeHtmlMatch[1]} };
 
@@ -89,44 +85,44 @@ describe("transformContent", () => {
       expected: "&lt;user@example.com&gt;",
     },
     {
-      name: "should process markdown links with numeric prefixes",
-      input: "[Getting Started](1_getting-started/README.md)",
+      name: "should process markdown links and strip README.md",
+      input: "[Getting Started](getting-started/README.md)",
       expected: "[Getting Started](getting-started)",
     },
     {
       name: "should fix image paths in complex content",
       input:
-        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
+        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
       expected: "/assets/pepr-arch.png",
     },
     {
       name: "should transform video in complex content",
       input:
-        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
+        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
       expected: '<video class="td-content" controls',
     },
     {
       name: "should fix links in complex content",
       input:
-        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
+        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
       expected: "[Getting Started](getting-started)",
     },
     {
       name: "should escape @param in complex content",
       input:
-        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
+        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
       expected: "**\\@param**",
     },
     {
       name: "should escape email in complex content",
       input:
-        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
+        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
       expected: "&lt;admin@example.com&gt;",
     },
     {
       name: "should not contain comments in complex content",
       input:
-        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](1_getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
+        "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
       expected: "<!-- This is a comment -->",
     },
   ];
