@@ -298,10 +298,10 @@ Both syntaxes render identically and can be used interchangeably.
 
 ### Links
 
-**Internal links** to other documentation pages:
+**Internal links** Use relative paths to link to other documentation pages:
 
 ```markdown
-[Link text](/user-guide/capabilities)
+[Link text](./pepr-cli.md#pepr-init)
 ```
 
 **External links** with full URLs:
@@ -312,10 +312,10 @@ Both syntaxes render identically and can be used interchangeably.
 
 ### Images
 
-Embed images using standard markdown syntax:
+Embed images using standard markdown syntax using relative paths:
 
 ```markdown
-![Alt text](/assets/image.png)
+![Alt text](/_images/image.png)
 ```
 
 Images in the `public/` directory are served at the root URL path.
