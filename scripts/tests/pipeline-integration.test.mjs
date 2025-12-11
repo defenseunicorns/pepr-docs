@@ -125,6 +125,56 @@ describe("transformContent", () => {
         "# Documentation\n\n<!-- This is a comment -->\n![arch](_images/pepr-arch.svg)\n\nCheck out this video: https://example.com/demo.mp4\n\n[Getting Started](getting-started/README.md)\n\n**@param** config The configuration object\n\nContact: <admin@example.com>",
       expected: "<!-- This is a comment -->",
     },
+    {
+      name: "should strip .md extension from relative links",
+      input: "[Guide](../user-guide/pepr-cli.md)",
+      expected: "[Guide](../user-guide/pepr-cli)",
+    },
+    {
+      name: "should strip .md extension and preserve anchor",
+      input: "[Section](./docs/guide.md#intro)",
+      expected: "[Section](./docs/guide#intro)",
+    },
+    {
+      name: "should strip /docs/ prefix from absolute paths",
+      input: "[Code of Conduct](/docs/contribute/code-of-conduct.md)",
+      expected: "[Code of Conduct](/contribute/code-of-conduct)",
+    },
+    {
+      name: "should strip docs/ prefix from relative paths",
+      input: "[Store](docs/user-guide/store.md)",
+      expected: "[Store](user-guide/store)",
+    },
+    {
+      name: "should convert ../../CODE_OF_CONDUCT.md to ./code-of-conduct",
+      input: "[Code of Conduct](../../CODE_OF_CONDUCT.md)",
+      expected: "[Code of Conduct](./code-of-conduct)",
+    },
+    {
+      name: "should convert ../../code-of-conduct.md to ./code-of-conduct",
+      input: "[Code](../../code-of-conduct.md)",
+      expected: "[Code](./code-of-conduct)",
+    },
+    {
+      name: "should convert ../../SECURITY.md to ./security",
+      input: "[Security](../../SECURITY.md)",
+      expected: "[Security](./security)",
+    },
+    {
+      name: "should convert ../../security.md to ./security",
+      input: "[Sec](../../security.md)",
+      expected: "[Sec](./security)",
+    },
+    {
+      name: "should convert ../../SUPPORT.md to ./support",
+      input: "[Support](../../SUPPORT.md)",
+      expected: "[Support](./support)",
+    },
+    {
+      name: "should convert ../../support.md to ./support",
+      input: "[Help](../../support.md)",
+      expected: "[Help](./support)",
+    },
   ];
 
   it.each(testCases)("%name", async ({ name, input, expected }) => {
