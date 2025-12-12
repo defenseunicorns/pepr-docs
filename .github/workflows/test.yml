@@ -56,8 +56,7 @@ jobs:
       - name: Run link validation
         id: linkcheck
         run: |
-          cd ${{ env.DOCS }}
-          ./.github/workflows/scripts/linkcheck.sh 2>&1 | tee linkcheck-output.txt
+          ${{ env.DOCS }}/.github/workflows/scripts/linkcheck.sh 2>&1 | tee linkcheck-output.txt
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
         continue-on-error: true
 
