@@ -51,7 +51,7 @@ jobs:
         run: |
           CORE=$(realpath ${{ env.CORE }})
           cd ${{ env.DOCS }}
-          CORE="$CORE" vitest run scripts/tests/
+          CORE="$CORE" npx vitest run scripts/tests/
 
       - name: Run link validation
         id: linkcheck
