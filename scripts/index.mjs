@@ -663,14 +663,19 @@ await executeWithErrorHandling(`Process pepr-excellent-examples`, async log => {
       // Create a clean slug from the example name (remove hello-pepr- prefix)
       const slug = exampleName.replace(/^hello-pepr-/, "");
 
+      // Helper to escape double quotes and backslashes for YAML quoted strings
+      function escapeYamlString(str) {
+        return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      }
+
       // GitHub source URL
       const sourceUrl = `https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/${exampleName}`;
 
       // Generate frontmatter (quote values to handle special YAML characters like colons)
       const frontmatter = heredoc`
         ---
-        title: "${title.replace(/"/g, '\\"')}"
-        description: "${title.replace(/"/g, '\\"')}"
+        title: "${escapeYamlString(title)}"
+        description: "${escapeYamlString(title)}"
         ---
       `;
 
