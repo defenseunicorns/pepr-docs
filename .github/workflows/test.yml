@@ -48,7 +48,28 @@ jobs:
           CORE="$CORE" npm run build
 
       - name: Run tests
+        id: test
         run: |
           CORE=$(realpath ${{ env.CORE }})
           cd ${{ env.DOCS }}
           CORE="$CORE" npm test
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Upload broken links report
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: broken-links-report
+          path: ${{ env.DOCS }}/broken-links-report-*.json
+          if-no-files-found: ignore
+
+      - name: Generate test summary
+        if: always()
+        run: |
+          cd ${{ env.DOCS }}
+          npx tsx .github/workflows/scripts/linkcheck-summary.ts "$GITHUB_STEP_SUMMARY" "${{ env.DOCS }}" "${{ steps.test.outputs.exit_code }}"
+
+      - name: Fail if tests failed
+        if: steps.test.outputs.exit_code != '0'
+        run: exit 1
