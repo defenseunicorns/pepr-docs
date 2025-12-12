@@ -9,8 +9,9 @@ It's designed to maintain multiple documentation versions while ensuring users c
 
 **Deployment:**
 
-- **Nightly builds**: Pepr core runs nightly builds that trigger documentation generation and deploys to production.
-- **PR merges**: Documentation deploys automatically when PRs are merged to main in the docs repo.
+- **Nightly builds**: Pepr core runs nightly builds that trigger Netlify to build and deploy documentation to production.
+- **PR merges**: Netlify automatically builds and deploys documentation when PRs are merged to main in the docs repo.
+- **Build process**: Netlify handles the complete build and deployment process in its own environment.
 
 ## Core Components
 
@@ -159,20 +160,25 @@ Generating Netlify redirect rules.
 ```text
 1. Build Job (CI)
    ├─ Runs on PR and main branch pushes
-   ├─ Generates all build artifacts
-   └─ Uploads dist/ as CI artifact
+   ├─ Validates and builds documentation (read-only)
+   └─ No artifacts uploaded (build verification only)
    ↓
-2. Deploy Job (CI - only on main branch)
-   ├─ Checks out deploy branch
-   ├─ Downloads dist/ artifact
-   ├─ Commits dist/ to deploy branch
-   └─ Pushes to deploy branch
+2. Trigger Netlify Job (CI - only on main branch)
+   ├─ Sends webhook to Netlify on manual deployments
+   └─ Triggers via repository_dispatch event
    ↓
-3. Netlify Deployment
-   └─ Deploys from deploy branch to production
+3. Netlify Build & Deployment
+   ├─ Clones the repository
+   ├─ Clones Pepr core repository to tmp/
+   ├─ Runs full build process (npm run build)
+   ├─ Generates versioned documentation
+   ├─ Creates static site in dist/
+   └─ Deploys directly to production
 ```
 
-**Note:** Build artifacts are never committed to the main branch. The deploy branch contains only the built site (dist/) for Netlify deployment.
+> [!NOTE] Build artifacts are never committed to any branch.
+> Netlify handles the entire build and deployment process in its own environment.
+> The GitHub Actions workflow only validates builds and triggers Netlify via webhooks.
 
 ## Data Flow
 
