@@ -11,6 +11,7 @@ on:
 
 env:
   CORE: ./core
+  EXAMPLES: ./examples
   DOCS: ./docs
 
 jobs:
@@ -27,15 +28,21 @@ jobs:
 
       - uses: actions/checkout@v6
         with:
+          repository: defenseunicorns/pepr-excellent-examples
+          path: ${{ env.EXAMPLES }}
+
+      - uses: actions/checkout@v6
+        with:
           repository: defenseunicorns/pepr-docs
           path: ${{ env.DOCS }}
 
       - name: Build the docs
         run: |
           CORE=$(realpath ${{ env.CORE }})
+          EXAMPLES=$(realpath ${{ env.EXAMPLES }})
           cd ${{ env.DOCS }}
           npm ci
-          CORE="$CORE" npm run build
+          CORE="$CORE" EXAMPLES="$EXAMPLES" npm run build
 
       - name: Run link validation
         id: linkcheck

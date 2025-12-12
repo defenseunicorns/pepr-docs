@@ -14,6 +14,7 @@ program
   .version("0.0.0", "-v, --version")
   .requiredOption("-c, --core <path>", "path to core project folder")
   .requiredOption("-s, --site <path>", "path to docs site folder")
+  .requiredOption("-e, --examples <path>", "path to pepr-excellent-examples repository")
   .option("-n, --no-dist", "do not generate /dist output")
   .parse();
 const opts = program.opts();
@@ -613,6 +614,80 @@ await executeWithErrorHandling(`Set current version alias`, async log => {
   }
 });
 
+// Process pepr-excellent-examples
+await executeWithErrorHandling(`Process pepr-excellent-examples`, async log => {
+  console.log("Processing pepr-excellent-examples repository...");
+
+  const examplesRepo = path.resolve(opts.examples);
+  const examplesDir = `${RUN.tmp}/content/latest/examples`;
+
+  // Ensure examples directory exists
+  await fs.mkdir(examplesDir, { recursive: true });
+
+  // Find all hello-pepr-* directories
+  const exampleDirs = await glob(`${examplesRepo}/hello-pepr-*`, { onlyDirectories: true });
+
+  console.log(`Found ${exampleDirs.length} example directories`);
+
+  // Process each example directory
+  await Promise.all(
+    exampleDirs.map(async exampleDir => {
+      const exampleName = path.basename(exampleDir);
+      const readmePath = path.join(exampleDir, "README.md");
+
+      // Check if README exists
+      try {
+        await fs.access(readmePath);
+      } catch {
+        console.warn(`No README.md found in ${exampleName}, skipping`);
+        return;
+      }
+
+      // Read and transform content
+      let content = await fs.readFile(readmePath, "utf8");
+
+      // Extract title from first heading or use directory name
+      const headingMatch = content.match(/^#\s+(.+)$/m);
+      const title = headingMatch
+        ? headingMatch[1]
+        : exampleName.replace(/^hello-pepr-/, "").replace(/-/g, " ");
+
+      // Remove the first heading if it exists (we'll use frontmatter title)
+      if (headingMatch) {
+        content = content.replace(/^#\s+.+$/m, "").trim();
+      }
+
+      // Transform content (fix paths, links, etc.)
+      content = transformContent(content);
+
+      // Create a clean slug from the example name (remove hello-pepr- prefix)
+      const slug = exampleName.replace(/^hello-pepr-/, "");
+
+      // GitHub source URL
+      const sourceUrl = `https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/${exampleName}`;
+
+      // Generate frontmatter (quote values to handle special YAML characters like colons)
+      const frontmatter = heredoc`
+        ---
+        title: "${title.replace(/"/g, '\\"')}"
+        description: "${title.replace(/"/g, '\\"')}"
+        ---
+      `;
+
+      // Add source link at the top of content
+      const sourceLink = `\n\n> **Source:** [${exampleName}](${sourceUrl})\n\n`;
+
+      // Write the processed file
+      const outputPath = path.join(examplesDir, `${slug}.md`);
+      await fs.writeFile(outputPath, frontmatter + sourceLink + content, "utf8");
+
+      log.push(["processed", `${exampleName} -> examples/${slug}.md`]);
+    }),
+  );
+
+  log.push(["total", `${exampleDirs.length} examples processed`]);
+});
+
 // Starlight sidebar configuration template
 const STARLIGHT_SIDEBAR_CONFIG = {
   sidebar: [
@@ -622,7 +697,8 @@ const STARLIGHT_SIDEBAR_CONFIG = {
     { label: "Reference", autogenerate: { directory: "reference" } },
     { label: "Community and Support", autogenerate: { directory: "community" } },
     { label: "Contribute", autogenerate: { directory: "contribute" } },
-    { label: "Roadmap for Pepr", slug: "roadmap" },
+    { label: "Examples", autogenerate: { directory: "examples" } },
+    { label: "Roadmap for Pepr", link: "roadmap" },
   ],
 };
 

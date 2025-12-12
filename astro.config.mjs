@@ -87,6 +87,10 @@ export default defineConfig({
           autogenerate: { directory: "reference" },
         },
         {
+          label: "Excellent Examples",
+          autogenerate: { directory: "examples" },
+        },
+        {
           label: "Community and Support",
           autogenerate: { directory: "community" },
         },
