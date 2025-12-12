@@ -74,21 +74,49 @@ const transformContent = content => {
   );
 
   // 3. Process markdown links
-  Array.from(result.matchAll(/\]\([^)]*\)/g), m => m[0]).forEach(mdLink => {
-    let parts = mdLink.replace("](", "").replace(")", "").split("/");
-    if (parts[0].startsWith("http")) return;
+  const ROOT_FILE_MAPPINGS = {
+    "code-of-conduct.md": "code-of-conduct.md",
+    "security.md": "security.md",
+    "support.md": "support.md",
+  };
 
-    // Apply transformations
-    if (
-      parts[0] === ".." &&
-      parts[1] === ".." &&
-      ["CODE_OF_CONDUCT.md", "SECURITY.md", "SUPPORT.md"].includes(parts[2])
-    )
-      parts.shift();
-    if (parts.at(-1) === "README.md") parts.pop();
+  result = result.replace(/\]\(([^)]+)\)/g, (match, url) => {
+    // Skip external URLs
+    if (url.startsWith("http")) return match;
+
+    let parts = url.split("/");
+
+    // Handle root-level files that get copied to subdirectories
+    if (parts[0] === ".." && parts[1] === ".." && parts[2]) {
+      const fileName = parts[2].toLowerCase();
+      if (ROOT_FILE_MAPPINGS[fileName]) {
+        parts = [".", ROOT_FILE_MAPPINGS[fileName]];
+      }
+    }
+
+    // Remove README.md from end
+    if (parts[parts.length - 1] === "README.md") parts.pop();
+
+    // Handle _images paths
     if (parts[0]?.startsWith("_images")) parts[0] = "__images";
 
-    result = result.replaceAll(mdLink, `](${parts.join("/").toLowerCase()})`);
+    // Strip docs/ prefix (handle ./docs/, /docs/, or docs/)
+    if (parts[0] === "." && parts[1] === "docs") {
+      parts.splice(0, 2);
+    } else if (parts[0] === "" && parts[1] === "docs") {
+      parts.splice(0, 2);
+      parts.unshift(""); // Maintain leading slash
+    } else if (parts[0] === "docs") {
+      parts.shift();
+    }
+
+    // Strip .md extension from last part
+    const lastIdx = parts.length - 1;
+    if (parts[lastIdx]?.endsWith(".md")) {
+      parts[lastIdx] = parts[lastIdx].slice(0, -3);
+    }
+
+    return `](${parts.join("/").toLowerCase()})`;
   });
 
   // 4. Escape MDX content
@@ -294,32 +322,35 @@ async function copyRepoResources(core, tmp, version) {
 }
 
 // Map community files from repository root to their destination paths in docs
-const ROOT_MD_MAPPINGS = {
-  "SECURITY.md": "090_community/security.md",
-  "CODE_OF_CONDUCT.md": "100_contribute/code-of-conduct.md",
-  "CODE-OF-CONDUCT.md": "100_contribute/code-of-conduct.md",
-  "SUPPORT.md": "090_community/support.md",
-};
+// Needed for backward compatibility with old git tags (v1.0.2, v0.55.6) that still use numbered prefixes
+const ROOT_MD_MAPPINGS = [
+  { sources: ["SECURITY.md"], target: "090_community/security.md" },
+  { sources: ["CODE-OF-CONDUCT.md"], target: "100_contribute/code-of-conduct.md" },
+  { sources: ["SUPPORT.md"], target: "090_community/support.md" },
+];
 
 // Process root level markdown files (community files)
 const processRootMarkdownFiles = async (core, version) => {
   const processedFiles = [];
 
   await executeWithErrorHandling("Process root level markdown files", async () => {
-    for (const [srcFile, targetPath] of Object.entries(ROOT_MD_MAPPINGS)) {
-      const srcPath = `${core}/${srcFile}`;
-      if (
-        await fs
-          .stat(srcPath)
-          .then(() => true)
-          .catch(() => false)
-      ) {
-        console.log(`Found ${srcFile} for version ${version}`);
-        await fs.mkdir(path.dirname(targetPath), { recursive: true });
-        await fs.copyFile(srcPath, targetPath);
-        processedFiles.push(targetPath);
-      } else {
-        console.log(`${srcFile} does not exist for version ${version}.`);
+    for (const { sources, target } of ROOT_MD_MAPPINGS) {
+      // Try each source variant until one is found
+      let found = false;
+      for (const srcFile of sources) {
+        const srcPath = `${core}/${srcFile}`;
+        if (
+          await fs
+            .stat(srcPath)
+            .then(() => true)
+            .catch(() => false)
+        ) {
+          await fs.mkdir(path.dirname(target), { recursive: true });
+          await fs.copyFile(srcPath, target);
+          processedFiles.push(target);
+          found = true;
+          break; // Stop checking other variants once we find one
+        }
       }
     }
   });
@@ -327,12 +358,10 @@ const processRootMarkdownFiles = async (core, version) => {
   return processedFiles;
 };
 
-// Determine source path for a file (handles special community files)
+// Determine source path for a file (handles special community files).
+// Needed for backward compatibility with old git tags (v1.0.2, v0.55.6)
 const getSourcePath = (file, coredocs) =>
   [
-    "910_security/README.md",
-    "900_code_of_conduct/README.md",
-    "920_support/README.md",
     "090_community/security.md",
     "100_contribute/code-of-conduct.md",
     "090_community/support.md",
@@ -639,6 +668,7 @@ const copyImagesFromVersion = async (version, publicDir) => {
 };
 
 // Helper function to copy resources from a version
+// Path needed for backward compatibility for versions 1.0.2 and below
 const copyResourcesFromVersion = async (version, siteRoot) => {
   const resourcesPath = `${RUN.tmp}/static/${version}/040_pepr-tutorials/resources`;
   if (await pathExists(resourcesPath)) {
