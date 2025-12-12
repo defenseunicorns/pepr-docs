@@ -36,6 +36,7 @@
     "starlight-image-zoom": "^0.13.2",
     "starlight-links-validator": "^0.19.2",
     "starlight-llms-txt": "^0.6.0",
+    "starlight-sidebar-topics": "^0.6.2",
     "starlight-versions": "^0.5.4",
     "tailwindcss": "^4.1.13",
     "vanilla-cookieconsent": "^3.1.0"
