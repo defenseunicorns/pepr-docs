@@ -2,8 +2,11 @@
   command = """
     # Clone the Pepr core repository for docs extraction (with tags for version detection)
     git clone https://github.com/defenseunicorns/pepr.git ../pepr-core
-    # Set CORE and run build
+    # Clone the pepr-excellent-examples repository for examples documentation
+    git clone https://github.com/defenseunicorns/pepr-excellent-examples.git ../pepr-examples
+    # Set CORE, EXAMPLES and run build
     export CORE=$(realpath ../pepr-core)
+    export EXAMPLES=$(realpath ../pepr-examples)
     npm run build
   """
   publish = "dist"
