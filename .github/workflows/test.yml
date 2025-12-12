@@ -47,13 +47,18 @@ jobs:
           cd ${{ env.DOCS }}
           CORE="$CORE" npm run build
 
-      - name: Run tests
-        id: test
+      - name: Run unit tests
         run: |
           CORE=$(realpath ${{ env.CORE }})
           cd ${{ env.DOCS }}
-          CORE="$CORE" npm test
-          echo "exit_code=$?" >> $GITHUB_OUTPUT
+          CORE="$CORE" vitest run scripts/tests/
+
+      - name: Run link validation
+        id: linkcheck
+        run: |
+          cd ${{ env.DOCS }}
+          ./.github/workflows/scripts/linkcheck.sh 2>&1 | tee linkcheck-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
         continue-on-error: true
 
       - name: Upload broken links report
@@ -64,12 +69,12 @@ jobs:
           path: ${{ env.DOCS }}/broken-links-report-*.json
           if-no-files-found: ignore
 
-      - name: Generate test summary
+      - name: Generate link validation summary
         if: always()
         run: |
           cd ${{ env.DOCS }}
-          npx tsx .github/workflows/scripts/linkcheck-summary.ts "$GITHUB_STEP_SUMMARY" "${{ env.DOCS }}" "${{ steps.test.outputs.exit_code }}"
+          npx tsx .github/workflows/scripts/linkcheck-summary.ts "$GITHUB_STEP_SUMMARY" "${{ env.DOCS }}" "${{ steps.linkcheck.outputs.exit_code }}"
 
-      - name: Fail if tests failed
-        if: steps.test.outputs.exit_code != '0'
+      - name: Fail if link validation failed
+        if: steps.linkcheck.outputs.exit_code != '0'
         run: exit 1
