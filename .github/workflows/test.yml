@@ -70,9 +70,7 @@ jobs:
 
       - name: Generate link validation summary
         if: always()
-        run: |
-          cd ${{ env.DOCS }}
-          npx tsx .github/workflows/scripts/linkcheck-summary.ts "$GITHUB_STEP_SUMMARY" "${{ env.DOCS }}" "${{ steps.linkcheck.outputs.exit_code }}"
+        run: npx tsx ${{ env.DOCS }}/.github/workflows/scripts/linkcheck-summary.ts "$GITHUB_STEP_SUMMARY" "${{ env.DOCS }}" "${{ steps.linkcheck.outputs.exit_code }}"
 
       - name: Fail if link validation failed
         if: steps.linkcheck.outputs.exit_code != '0'
