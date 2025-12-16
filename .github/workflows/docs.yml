@@ -10,7 +10,7 @@ on:
 
   # enable trigger via remote call webhook
   repository_dispatch:
-    types: update-docs
+    types: [update-docs]
 
   # enable run on "standard" updates to main branch
   push:
