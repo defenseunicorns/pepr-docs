@@ -24,8 +24,8 @@
   "dependencies": {
     "@astrojs/starlight": "^0.37.1",
     "@astrojs/starlight-tailwind": "^4.0.1",
-    "@tailwindcss/vite": "^4.1.13",
-    "astro": "^5.16.4",
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "^5.16.6",
     "commander": "^14.0.2",
     "glob": "^13.0.0",
     "starlight-contextual-menu": "^0.1.5",
@@ -53,7 +53,7 @@
     "prettier": "^3.7.4",
     "prettier-plugin-astro": "^0.14.1",
     "semver": "^7.5.4",
-    "vitest": "^4.0.15",
+    "vitest": "^4.0.16",
     "yaml": "^2.8.2"
   }
 }
