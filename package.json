@@ -18,8 +18,8 @@
     "prepare": "husky",
     "preview": "node --env-file=.env node_modules/.bin/astro preview",
     "start": "node --env-file=.env node_modules/.bin/astro dev",
-    "test": "vitest run scripts/tests/ && npm run linkcheck",
-    "test:watch": "vitest"
+    "test": "node --env-file=.env ./node_modules/.bin/vitest run scripts/tests/ && npm run linkcheck",
+    "test:watch": "node --env-file=.env ./node_modules/.bin/vitest"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.37.1",
