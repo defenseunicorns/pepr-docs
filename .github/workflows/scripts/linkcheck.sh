@@ -42,11 +42,7 @@ fi
 
 # Run link validation tests
 echo "Running link validation tests..."
-if [ "$CI" = "true" ]; then
-  npm run test:e2e
-else
-  npm run --silent test:e2e
-fi
+VITEST_RUN_E2E=true npx vitest run scripts/tests/e2e-link-validation.test.mjs
 TEST_EXIT_CODE=$?
 
 # Stop server

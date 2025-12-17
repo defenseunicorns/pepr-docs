@@ -1,9 +1,10 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import sitemap from "@astrojs/sitemap";
 import starlightVersions from "starlight-versions";
 import starlightLlmsTxt from "starlight-llms-txt";
 import tailwindcss from "@tailwindcss/vite";
-import { getStarlightVersions } from "./scripts/version-discovery.mjs";
+import { getStarlightVersions } from "./scripts/lib/version-discovery.mjs";
 import starlightGitHubAlerts from "starlight-github-alerts";
 import starlightContextualMenu from "starlight-contextual-menu";
 import starlightImageZoom from "starlight-image-zoom";
@@ -28,6 +29,7 @@ if (coreRepoPath) {
 export default defineConfig({
   site: "https://docs.pepr.dev",
   integrations: [
+    sitemap(),
     starlight({
       favicon: "/pepr.svg",
       plugins: [

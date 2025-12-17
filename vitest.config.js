@@ -7,7 +7,7 @@ export default defineConfig({
       ? ["**/node_modules/**"]
       : ["**/e2e-*.test.?(m)js", "**/node_modules/**"],
     environment: "node",
-    reporters: ["verbose"],
+    reporters: ["default"],
     pool: "threads",
     globalSetup: [],
     setupFiles: [],

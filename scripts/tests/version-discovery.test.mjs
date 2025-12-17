@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeAll } from "vitest";
-import { discoverVersions, getStarlightVersions } from "../version-discovery.mjs";
+import { discoverVersions, getStarlightVersions } from "../lib/version-discovery.mjs";
 import * as semver from "semver";
 
 describe("Version Discovery", () => {
