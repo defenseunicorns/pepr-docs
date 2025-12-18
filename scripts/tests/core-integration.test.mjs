@@ -72,52 +72,23 @@ describe("CORE Integration Tests", () => {
   });
 
   describe("Root Community Files", () => {
-    it("should process SECURITY.md from repository root", async () => {
-      const securityPath = path.join(coreRepo, "SECURITY.md");
-      const content = "# Security Policy\n\nPlease report vulnerabilities...";
+    it.each([
+      ["SECURITY.md", "# Security Policy\n\nPlease report vulnerabilities...", "Security Policy"],
+      ["CODE-OF-CONDUCT.md", "# Code of Conduct\n\nBe respectful...", "Code of Conduct"],
+      ["SUPPORT.md", "# Support\n\nGet help with Pepr...", "Support"],
+    ])("should process %s from repository root", async (filename, content, expectedText) => {
+      const filePath = path.join(coreRepo, filename);
 
-      await fs.writeFile(securityPath, content, "utf8");
+      await fs.writeFile(filePath, content, "utf8");
 
       const exists = await fs
-        .access(securityPath)
+        .access(filePath)
         .then(() => true)
         .catch(() => false);
       expect(exists).toBe(true);
 
-      const fileContent = await fs.readFile(securityPath, "utf8");
-      expect(fileContent).toContain("Security Policy");
-    });
-
-    it("should process CODE-OF-CONDUCT.md from repository root", async () => {
-      const codePath = path.join(coreRepo, "CODE-OF-CONDUCT.md");
-      const content = "# Code of Conduct\n\nBe respectful...";
-
-      await fs.writeFile(codePath, content, "utf8");
-
-      const exists = await fs
-        .access(codePath)
-        .then(() => true)
-        .catch(() => false);
-      expect(exists).toBe(true);
-
-      const fileContent = await fs.readFile(codePath, "utf8");
-      expect(fileContent).toContain("Code of Conduct");
-    });
-
-    it("should process SUPPORT.md from repository root", async () => {
-      const supportPath = path.join(coreRepo, "SUPPORT.md");
-      const content = "# Support\n\nGet help with Pepr...";
-
-      await fs.writeFile(supportPath, content, "utf8");
-
-      const exists = await fs
-        .access(supportPath)
-        .then(() => true)
-        .catch(() => false);
-      expect(exists).toBe(true);
-
-      const fileContent = await fs.readFile(supportPath, "utf8");
-      expect(fileContent).toContain("Support");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).toContain(expectedText);
     });
   });
 

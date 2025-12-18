@@ -8,7 +8,6 @@ import { heredoc } from "./lib/heredoc.mjs";
 import { discoverVersions, findCurrentVersion } from "./lib/version-discovery.mjs";
 import { generateNetlifyRedirects, getStableVersions } from "./lib/redirects-generator.mjs";
 import { fixImagePaths } from "./lib/fix-image-paths.mjs";
-import { removeHtmlComments } from "./lib/remove-html-comments.mjs";
 import { transformContent } from "./lib/transform-content.mjs";
 import { processContentLinks } from "./lib/process-content-links.mjs";
 
