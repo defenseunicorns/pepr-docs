@@ -13,6 +13,13 @@ import { processContentLinks } from "./lib/process-content-links.mjs";
 import { ROOT_MD_MAPPINGS } from "./lib/root-mappings.mjs";
 import { generateFileMetadata } from "./lib/file-metadata.mjs";
 import { generateFrontMatter } from "./lib/frontmatter.mjs";
+import {
+  extractExampleTitle,
+  removeHeading,
+  generateExampleSlug,
+  escapeYamlString,
+  generateExampleSourceUrl,
+} from "./lib/examples-processing.mjs";
 
 const exec = util.promisify(child_process.exec);
 
@@ -439,33 +446,20 @@ await executeWithErrorHandling(`Process pepr-excellent-examples`, async log => {
       // Read and transform content
       let content = await fs.readFile(readmePath, "utf8");
 
-      // Extract title from first heading or use directory name
-      const headingMatch = content.match(/^#\s+(.+)$/m);
-      let title = headingMatch
-        ? headingMatch[1]
-        : exampleName.replace(/^hello-pepr-/, "").replace(/-/g, " ");
-
-      // Remove "Hello Pepr " prefix from title (case-insensitive)
-      title = title.replace(/^hello\s+pepr\s+/i, "");
+      // Extract and clean title
+      const title = extractExampleTitle(content, exampleName);
 
       // Remove the first heading if it exists (we'll use frontmatter title)
-      if (headingMatch) {
-        content = content.replace(/^#\s+.+$/m, "").trim();
-      }
+      content = removeHeading(content);
 
       // Transform content (fix paths, links, etc.)
       content = transformContent(content);
 
-      // Create a clean slug from the example name (remove hello-pepr- prefix)
-      const slug = exampleName.replace(/^hello-pepr-/, "");
-
-      // Helper to escape double quotes and backslashes for YAML quoted strings
-      function escapeYamlString(str) {
-        return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-      }
+      // Create a clean slug from the example name
+      const slug = generateExampleSlug(exampleName);
 
       // GitHub source URL
-      const sourceUrl = `https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/${exampleName}`;
+      const sourceUrl = generateExampleSourceUrl(exampleName);
 
       // Generate frontmatter (quote values to handle special YAML characters like colons)
       const frontmatter = heredoc`

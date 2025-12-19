@@ -124,5 +124,14 @@ describe("frontmatter", () => {
       expect(result.contentWithoutHeading).toBe("\n\nLine 1\nLine 2");
       expect(result.contentWithoutHeading).not.toContain("# Getting Started");
     });
+
+    it("should throw clear error when content has no heading", () => {
+      const content = "This has no heading\n\nJust content...";
+      const newfile = "guide.md";
+
+      expect(() => generateFrontMatter(content, newfile, "latest")).toThrow(
+        "Missing heading in guide.md. All markdown files must start with # Heading",
+      );
+    });
   });
 });

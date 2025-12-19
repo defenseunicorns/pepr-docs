@@ -3,6 +3,13 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { glob } from "glob";
+import {
+  extractExampleTitle,
+  removeHeading,
+  generateExampleSlug,
+  escapeYamlString,
+  generateExampleSourceUrl,
+} from "../lib/examples-processing.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -57,21 +64,19 @@ describe("EXAMPLES Integration Tests", () => {
 
   describe("Title Extraction and Transformation", () => {
     it.each([
-      ["# Audit Logging Example", "Audit Logging Example", "Audit Logging Example"],
-      ["# Hello Pepr Test", "Hello Pepr Test", "Test"],
-      ["# hello pepr validation", "hello pepr validation", "validation"],
-      ["# HELLO PEPR Advanced", "HELLO PEPR Advanced", "Advanced"],
+      ["# Audit Logging Example", "Audit Logging Example"],
+      ["# Hello Pepr Test", "Test"],
+      ["# hello pepr validation", "validation"],
+      ["# HELLO PEPR Advanced", "Advanced"],
     ])(
-      "should extract title from heading: %s",
-      async (heading, rawTitle, cleanedTitle) => {
+      "should extract and clean title from heading: %s",
+      async (heading, expectedTitle) => {
         const content = `${heading}\n\nExample content here...`;
+        const exampleName = "hello-pepr-example";
 
-        const headingMatch = content.match(/^#\s+(.+)$/m);
-        let title = headingMatch ? headingMatch[1] : "";
-        title = title.replace(/^hello\s+pepr\s+/i, "");
+        const title = extractExampleTitle(content, exampleName);
 
-        expect(headingMatch[1]).toBe(rawTitle);
-        expect(title).toBe(cleanedTitle);
+        expect(title).toBe(expectedTitle);
       },
     );
 
@@ -79,23 +84,15 @@ describe("EXAMPLES Integration Tests", () => {
       const exampleName = "hello-pepr-no-heading";
       const content = "This example has no heading.\n\nJust content.";
 
-      const headingMatch = content.match(/^#\s+(.+)$/m);
-      let title = headingMatch
-        ? headingMatch[1]
-        : exampleName.replace(/^hello-pepr-/, "").replace(/-/g, " ");
-      title = title.replace(/^hello\s+pepr\s+/i, "");
+      const title = extractExampleTitle(content, exampleName);
 
-      expect(headingMatch).toBeNull();
       expect(title).toBe("no heading");
     });
 
     it("should remove heading from content after extraction", async () => {
       const readmeContent = "# Full Test Example\n\nThis is the content...";
 
-      const headingMatch = readmeContent.match(/^#\s+(.+)$/m);
-      const contentWithoutHeading = headingMatch
-        ? readmeContent.replace(/^#\s+.+$/m, "").trim()
-        : readmeContent;
+      const contentWithoutHeading = removeHeading(readmeContent);
 
       expect(contentWithoutHeading).toBe("This is the content...");
       expect(contentWithoutHeading).not.toContain("# Full Test Example");
@@ -110,8 +107,7 @@ describe("EXAMPLES Integration Tests", () => {
       ["hello-pepr-advanced-test", "advanced-test"],
       ["hello-pepr-load", "load"],
     ])("should generate slug from example name: %s -> %s", async (exampleName, expectedSlug) => {
-
-      const slug = exampleName.replace(/^hello-pepr-/, "");
+      const slug = generateExampleSlug(exampleName);
 
       expect(slug).toBe(expectedSlug);
     });
@@ -125,8 +121,6 @@ describe("EXAMPLES Integration Tests", () => {
       ['Multiple "quotes" here', 'Multiple \\"quotes\\" here'],
       ['Back\\slash and "quotes"', 'Back\\\\slash and \\"quotes\\"'],
     ])("should escape YAML special characters: %s", async (inputTitle, expectedEscaped) => {
-
-      const escapeYamlString = str => str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
       const escapedTitle = escapeYamlString(inputTitle);
 
       expect(escapedTitle).toBe(expectedEscaped);
@@ -139,15 +133,14 @@ describe("EXAMPLES Integration Tests", () => {
       ["hello-pepr-mutation", "https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/hello-pepr-mutation"],
       ["hello-pepr-load", "https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/hello-pepr-load"],
     ])("should construct source URL for %s", async (exampleName, expectedUrl) => {
-
-      const sourceUrl = `https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/${exampleName}`;
+      const sourceUrl = generateExampleSourceUrl(exampleName);
 
       expect(sourceUrl).toBe(expectedUrl);
     });
 
     it("should format source link with markdown", async () => {
       const exampleName = "hello-pepr-test";
-      const sourceUrl = `https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/${exampleName}`;
+      const sourceUrl = generateExampleSourceUrl(exampleName);
 
       const sourceLink = `\n\n> **Source:** [${exampleName}](${sourceUrl})\n\n`;
 
@@ -166,23 +159,10 @@ This is a complete example with:
 - Links: [Guide](../guide/README.md)
 `;
 
-      let content = readmeContent;
-
-
-      const headingMatch = content.match(/^#\s+(.+)$/m);
-      let title = headingMatch
-        ? headingMatch[1]
-        : exampleName.replace(/^hello-pepr-/, "").replace(/-/g, " ");
-      title = title.replace(/^hello\s+pepr\s+/i, "");
-
-      if (headingMatch) {
-        content = content.replace(/^#\s+.+$/m, "").trim();
-      }
-
-      const slug = exampleName.replace(/^hello-pepr-/, "");
-
-      const escapeYamlString = str => str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-      const sourceUrl = `https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/${exampleName}`;
+      const title = extractExampleTitle(readmeContent, exampleName);
+      const content = removeHeading(readmeContent);
+      const slug = generateExampleSlug(exampleName);
+      const sourceUrl = generateExampleSourceUrl(exampleName);
       const sourceLink = `\n\n> **Source:** [${exampleName}](${sourceUrl})\n\n`;
       const frontmatter = `---\ntitle: "${escapeYamlString(title)}"\ndescription: "${escapeYamlString(title)}"\n---\n`;
 
@@ -202,15 +182,8 @@ This is a complete example with:
       const exampleName = "hello-pepr-no-heading";
       const readmeContent = "This example has no heading.\n\nJust content.";
 
-      const headingMatch = readmeContent.match(/^#\s+(.+)$/m);
-      let title = headingMatch
-        ? headingMatch[1]
-        : exampleName.replace(/^hello-pepr-/, "").replace(/-/g, " ");
-      title = title.replace(/^hello\s+pepr\s+/i, "");
-
-      const content = headingMatch
-        ? readmeContent.replace(/^#\s+.+$/m, "").trim()
-        : readmeContent;
+      const title = extractExampleTitle(readmeContent, exampleName);
+      const content = removeHeading(readmeContent);
 
       expect(title).toBe("no heading");
       expect(content).toBe("This example has no heading.\n\nJust content.");

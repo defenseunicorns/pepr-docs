@@ -1,6 +1,11 @@
 // Generate Starlight front matter for a file
 export const generateFrontMatter = (content, newfile, version, originalFile = "") => {
   const heading = content.match(/#[\s]+(.*)/);
+
+  if (!heading) {
+    throw new Error(`Missing heading in ${newfile}. All markdown files must start with # Heading`);
+  }
+
   const isReadme =
     originalFile.endsWith("README.md") || newfile.endsWith("/README.md") || newfile === "README.md";
   const title = isReadme ? "Overview" : heading[1].replaceAll(/[`:]/g, "");

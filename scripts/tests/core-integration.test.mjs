@@ -4,6 +4,8 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { glob } from "glob";
 import { ROOT_MD_MAPPINGS } from "../lib/root-mappings.mjs";
+import { generateFileMetadata } from "../lib/file-metadata.mjs";
+import { generateFrontMatter } from "../lib/frontmatter.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -87,49 +89,28 @@ describe("CORE Integration Tests", () => {
   });
 
   describe("File Processing with Metadata", () => {
-    it("should strip numbered prefixes from directories", async () => {
-      const sourceFile = path.join(docsDir, "010_user-guide/getting-started.md");
-      await fs.mkdir(path.dirname(sourceFile), { recursive: true });
-      await fs.writeFile(sourceFile, "# Getting Started\n\nContent...", "utf8");
+    it("should strip numbered prefixes from directories", () => {
+      const inputPath = "010_user-guide/getting-started.md";
 
-      // Simulate metadata generation
-      const relativePath = path.relative(docsDir, sourceFile);
-      const cleanPath = relativePath.replace(/\d+_/g, "");
+      const result = generateFileMetadata(inputPath);
 
-      expect(cleanPath).toBe("user-guide/getting-started.md");
+      expect(result.newfile).toBe("user-guide/getting-started.md");
     });
 
-    it("should convert README.md to index.md", async () => {
-      const sourceFile = path.join(docsDir, "010_user-guide/README.md");
-      await fs.mkdir(path.dirname(sourceFile), { recursive: true });
-      await fs.writeFile(sourceFile, "# User Guide\n\nOverview...", "utf8");
+    it("should convert README.md to index.md", () => {
+      const inputPath = "010_user-guide/README.md";
 
-      // Simulate README conversion
-      const basename = path.basename(sourceFile);
-      const newBasename = basename === "README.md" ? "index.md" : basename;
+      const result = generateFileMetadata(inputPath);
 
-      expect(newBasename).toBe("index.md");
+      expect(result.newfile).toBe("user-guide/index.md");
     });
 
     it("should apply path structure mappings", async () => {
-      const sourceFile = path.join(docsDir, "040_pepr-tutorials/getting-started.md");
-      await fs.mkdir(path.dirname(sourceFile), { recursive: true });
-      await fs.writeFile(sourceFile, "# Tutorial\n\nContent...", "utf8");
+      const inputPath = "040_pepr-tutorials/getting-started.md";
 
-      // Simulate path mapping
-      const PATH_MAPPINGS = {
-        structure: { "pepr-tutorials": "tutorials" },
-      };
+      const result = generateFileMetadata(inputPath);
 
-      let relativePath = path.relative(docsDir, sourceFile);
-      relativePath = relativePath.replace(/\d+_/g, "");
-
-      let mapped = Object.entries(PATH_MAPPINGS.structure).reduce(
-        (p, [old, new_]) => p.replace(old, new_),
-        relativePath,
-      );
-
-      expect(mapped).toBe("tutorials/getting-started.md");
+      expect(result.newfile).toBe("tutorials/getting-started.md");
     });
   });
 
@@ -137,18 +118,12 @@ describe("CORE Integration Tests", () => {
     it("should generate frontmatter for latest version without slug", async () => {
       const content = "# Getting Started\n\nThis is the guide...";
       const version = "latest";
+      const newfile = "user-guide/getting-started.md";
 
-      function generateFrontMatter(content, version) {
-        const heading = content.match(/#[\s]+(.*)/);
-        const title = heading[1];
-        const slug = version !== "latest" ? `\nslug: ${version}` : "";
-        return `---\ntitle: ${title}\ndescription: ${title}${slug}\n---`;
-      }
+      const result = generateFrontMatter(content, newfile, version);
 
-      const frontmatter = generateFrontMatter(content, version);
-
-      expect(frontmatter).toContain("title: Getting Started");
-      expect(frontmatter).not.toContain("slug:");
+      expect(result.front).toContain("title: Getting Started");
+      expect(result.front).not.toContain("slug:");
     });
 
     it("should generate frontmatter for versioned content with slug", async () => {
@@ -156,114 +131,85 @@ describe("CORE Integration Tests", () => {
       const version = "v1.2.3";
       const newfile = "user-guide/getting-started.md";
 
-      function generateFrontMatter(content, version, newfile) {
-        const heading = content.match(/#[\s]+(.*)/);
-        const title = heading[1];
-        const slug =
-          version !== "latest"
-            ? `\nslug: ${version.replace(/^v(\d+\.\d+)\.\d+$/, "v$1")}/${newfile.replace(/\.md$/, "")}`
-            : "";
-        return `---\ntitle: ${title}\ndescription: ${title}${slug}\n---`;
-      }
+      const result = generateFrontMatter(content, newfile, version);
 
-      const frontmatter = generateFrontMatter(content, version, newfile);
-
-      expect(frontmatter).toContain("slug: v1.2/user-guide/getting-started");
+      expect(result.front).toContain("slug: v1.2/user-guide/getting-started");
     });
 
     it("should generate Overview title for README files with sidebar label", async () => {
       const content = "# User Guide\n\nOverview content...";
-      const isReadme = true;
+      const newfile = "user-guide/index.md";
+      const originalFile = "010_user-guide/README.md";
 
-      function generateFrontMatter(content, isReadme) {
-        const title = isReadme ? "Overview" : "User Guide";
-        const sidebarLabel = isReadme ? "\nsidebar:\n  label: Overview" : "";
-        return `---\ntitle: ${title}\ndescription: ${title}${sidebarLabel}\n---`;
-      }
+      const result = generateFrontMatter(content, newfile, "latest", originalFile);
 
-      const frontmatter = generateFrontMatter(content, isReadme);
-
-      expect(frontmatter).toContain("title: Overview");
-      expect(frontmatter).toContain("sidebar:");
-      expect(frontmatter).toContain("label: Overview");
+      expect(result.front).toContain("title: Overview");
+      expect(result.front).toContain("sidebar:");
+      expect(result.front).toContain("label: Overview");
     });
   });
 
   describe("Content Transformation Pipeline", () => {
-    it("should transform numbered paths and generate frontmatter in one pipeline", async () => {
+    it("should transform numbered paths and generate frontmatter in one pipeline", () => {
       const inputPath = "010_user-guide/070_getting-started.md";
       const sourceContent = "# Getting Started\n\nThis is a comprehensive guide...";
 
-      const relativePath = path.relative(".", inputPath);
-      const cleanPath = relativePath.replace(/\d+_/g, "");
+      const fileResult = generateFileMetadata(inputPath);
+      const frontmatterResult = generateFrontMatter(sourceContent, fileResult.newfile, "latest");
 
-      const heading = sourceContent.match(/#[\s]+(.*)/);
-      const title = heading[1];
-      const frontmatter = `---\ntitle: ${title}\ndescription: ${title}\n---`;
-      const contentWithoutHeading = sourceContent.replace(heading[0], "");
-      const transformedContent = `${frontmatter}\n${contentWithoutHeading}`;
-
-      expect(cleanPath).toBe("user-guide/getting-started.md");
-      expect(transformedContent).toContain("title: Getting Started");
-      expect(transformedContent).toContain("description: Getting Started");
-      expect(transformedContent).toContain("This is a comprehensive guide...");
-      expect(transformedContent).not.toContain("# Getting Started");
+      expect(fileResult.newfile).toBe("user-guide/getting-started.md");
+      expect(frontmatterResult.front).toContain("title: Getting Started");
+      expect(frontmatterResult.front).toContain("description: Getting Started");
+      expect(frontmatterResult.contentWithoutHeading).toContain("This is a comprehensive guide...");
+      expect(frontmatterResult.contentWithoutHeading).not.toContain("# Getting Started");
     });
 
     it.each([
-      ["010_user-guide/README.md", "README.md", "# User Guide\n\nContent...", "Overview", true],
-      ["020_actions/mutate.md", "mutate.md", "# Mutate\n\nContent...", "Mutate", false],
-      ["040_tutorials/README.md", "README.md", "# Tutorials\n\nContent...", "Overview", true],
+      ["010_user-guide/README.md", "# User Guide\n\nContent...", "Overview"],
+      ["040_tutorials/README.md", "# Tutorials\n\nContent...", "Overview"],
     ])(
-      "should decide title based on README vs regular file: %s",
-      async (inputPath, basename, sourceContent, expectedTitle, shouldHaveSidebar) => {
-        const isReadme = basename === "README.md";
-        const heading = sourceContent.match(/#[\s]+(.*)/);
-        const title = isReadme ? "Overview" : heading[1];
-        const sidebarLabel = isReadme ? "\nsidebar:\n  label: Overview" : "";
+      "should generate Overview title with sidebar label for README files: %s",
+      (inputPath, sourceContent, expectedTitle) => {
+        const fileResult = generateFileMetadata(inputPath);
+        const frontmatterResult = generateFrontMatter(
+          sourceContent,
+          fileResult.newfile,
+          "latest",
+          inputPath,
+        );
 
-        expect(title).toBe(expectedTitle);
-        if (shouldHaveSidebar) {
-          expect(sidebarLabel).toContain("sidebar:");
-          expect(sidebarLabel).toContain("label: Overview");
-        } else {
-          expect(sidebarLabel).toBe("");
-        }
+        expect(frontmatterResult.front).toContain(`title: ${expectedTitle}`);
+        expect(frontmatterResult.front).toContain("sidebar:");
+        expect(frontmatterResult.front).toContain("label: Overview");
       },
     );
 
     it.each([
-      ["best-practices/README.md", "best-practices", "reference/best-practices.md"],
-      ["module-examples/README.md", "module-examples", "reference/module-examples.md"],
-      ["faq/README.md", "faq", "reference/faq.md"],
-    ])("should map special directory %s to single file", async (inputPath, dir, expectedOutput) => {
-      const PATH_MAPPINGS = {
-        singleFile: {
-          "best-practices": "reference/best-practices.md",
-          "module-examples": "reference/module-examples.md",
-          faq: "reference/faq.md",
-        },
-      };
+      ["020_actions/mutate.md", "# Mutate\n\nContent...", "Mutate"],
+    ])(
+      "should use heading title without sidebar for regular files: %s",
+      (inputPath, sourceContent, expectedTitle) => {
+        const fileResult = generateFileMetadata(inputPath);
+        const frontmatterResult = generateFrontMatter(
+          sourceContent,
+          fileResult.newfile,
+          "latest",
+          inputPath,
+        );
 
-      const basename = path.basename(inputPath);
-      let outputPath = inputPath;
-      if (basename === "README.md" && PATH_MAPPINGS.singleFile[dir]) {
-        outputPath = PATH_MAPPINGS.singleFile[dir];
-      }
+        expect(frontmatterResult.front).toContain(`title: ${expectedTitle}`);
+        expect(frontmatterResult.front).not.toContain("sidebar:");
+      },
+    );
 
-      expect(outputPath).toBe(expectedOutput);
-    });
+    it.each([
+      ["best-practices/README.md", "reference/best-practices.md"],
+      ["module-examples/README.md", "reference/module-examples.md"],
+      ["faq/README.md", "reference/faq.md"],
+    ])("should map special directory %s to single file", async (inputPath, expectedOutput) => {
+      const result = generateFileMetadata(inputPath);
 
-    it("should handle malformed markdown by returning null heading", () => {
-      const contentWithoutHeading = "This has no heading\n\nJust content...";
-      const contentWithHeading = "# Proper Heading\n\nContent...";
-
-      const noHeading = contentWithoutHeading.match(/#[\s]+(.*)/);
-      const hasHeading = contentWithHeading.match(/#[\s]+(.*)/);
-
-      expect(noHeading).toBeNull();
-      expect(hasHeading).not.toBeNull();
-      expect(hasHeading[1]).toBe("Proper Heading");
+      expect(result.newfile).toBe(expectedOutput);
     });
   });
 });
