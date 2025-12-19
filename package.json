@@ -19,6 +19,7 @@
     "preview": "node --env-file=.env node_modules/.bin/astro preview",
     "start": "node --env-file=.env node_modules/.bin/astro dev",
     "test": "node --env-file=.env ./node_modules/.bin/vitest run scripts/tests/ && npm run linkcheck",
+    "test:coverage": "node --env-file=.env ./node_modules/.bin/vitest run scripts/tests/ --coverage",
     "test:watch": "node --env-file=.env ./node_modules/.bin/vitest"
   },
   "dependencies": {
@@ -46,6 +47,7 @@
   "devDependencies": {
     "@astrojs/sitemap": "^3.6.0",
     "@defenseunicorns/eslint-config": "^1.1.2",
+    "@vitest/coverage-v8": "^4.0.16",
     "esbuild": "^0.27.1",
     "husky": "^9.1.7",
     "linkinator": "^7.5.1",
