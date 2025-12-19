@@ -10,6 +10,9 @@ import { generateNetlifyRedirects, getStableVersions } from "./lib/redirects-gen
 import { fixImagePaths } from "./lib/fix-image-paths.mjs";
 import { transformContent } from "./lib/transform-content.mjs";
 import { processContentLinks } from "./lib/process-content-links.mjs";
+import { ROOT_MD_MAPPINGS } from "./lib/root-mappings.mjs";
+import { generateFileMetadata } from "./lib/file-metadata.mjs";
+import { generateFrontMatter } from "./lib/frontmatter.mjs";
 
 const exec = util.promisify(child_process.exec);
 
@@ -236,13 +239,6 @@ async function copyRepoResources(core, tmp, version) {
   });
 }
 
-// Map community files from repository root to their destination paths in docs
-// Needed for backward compatibility with old git tags (v1.0.2, v0.55.6) that still use numbered prefixes
-const ROOT_MD_MAPPINGS = [
-  { sources: ["SECURITY.md"], target: "090_community/security.md" },
-  { sources: ["CODE-OF-CONDUCT.md"], target: "100_contribute/code-of-conduct.md" },
-  { sources: ["SUPPORT.md"], target: "090_community/support.md" },
-];
 
 // Process root level markdown files (community files)
 const processRootMarkdownFiles = async (core, version) => {
@@ -275,94 +271,12 @@ const processRootMarkdownFiles = async (core, version) => {
 
 // Determine source path for a file (handles special community files).
 // Needed for backward compatibility with old git tags (v1.0.2, v0.55.6)
-const getSourcePath = (file, coredocs) =>
-  [
-    "090_community/security.md",
-    "100_contribute/code-of-conduct.md",
-    "090_community/support.md",
-  ].some(cf => file.endsWith(cf))
-    ? file
-    : `${coredocs}/${file}`;
-
-// Directory restructuring rules for organizing content into logical sections
-const PATH_MAPPINGS = {
-  structure: { "pepr-tutorials": "tutorials", "user-guide/actions": "actions" },
-  singleFile: {
-    "best-practices": "reference/best-practices.md",
-    "module-examples": "reference/module-examples.md",
-    faq: "reference/faq.md",
-    roadmap: "roadmap.md",
-  },
+const getSourcePath = (file, coredocs) => {
+  // Derive the list of root markdown file targets from ROOT_MD_MAPPINGS to avoid duplication
+  const rootMarkdownTargets = ROOT_MD_MAPPINGS.map(m => m.target);
+  return rootMarkdownTargets.some(cf => file.endsWith(cf)) ? file : `${coredocs}/${file}`;
 };
 
-// Generate new file path for a source file
-const generateFileMetadata = file => {
-  const [dir, filename] = [path.dirname(file), path.basename(file)];
-  const parts = dir.split("/");
-  const parent = parts.pop();
-  const ancestors = parts.join("/");
-
-  // Strip numbered prefixes from directory parts (e.g., 010_user-guide -> user-guide)
-  // Needed for backward compatibility with old git tags (v1.0.2, v0.55.6) that still use numbered prefixes
-  // Once these old versions are retired, this prefix stripping can be removed
-  const cleanParent = parent.replace(/^\d+_/, "");
-  const cleanAncestors = ancestors
-    .split("/")
-    .map(p => p.replace(/^\d+_/, ""))
-    .join("/");
-
-  let rawdir = cleanAncestors ? `${cleanAncestors}/${cleanParent}` : cleanParent;
-
-  // Apply structure mappings
-  let newdir = Object.entries(PATH_MAPPINGS.structure).reduce(
-    (dir, [old, new_]) => (dir.startsWith(old) ? dir.replace(old, new_) : dir),
-    rawdir,
-  );
-
-  // Process filename - strip numbered prefix (e.g., 070_roadmap.md -> roadmap.md)
-  // Needed for backward compatibility with old git tags (v1.0.2, v0.55.6)
-  let newfile = filename.replace(/^\d+_/, "");
-  if (newfile === "README.md") {
-    newfile = "index.md";
-  }
-
-  // Handle single file mappings
-  if (newfile === "index.md" && PATH_MAPPINGS.singleFile[rawdir]) {
-    [newdir, newfile] = ["", PATH_MAPPINGS.singleFile[rawdir]];
-  }
-
-  return { newfile: newdir && newdir !== "." ? `${newdir}/${newfile}` : newfile };
-};
-
-// Generate Starlight front matter for a file
-const generateFrontMatter = (content, newfile, version, originalFile = "") => {
-  const heading = content.match(/#[\s]+(.*)/);
-  const isReadme =
-    originalFile.endsWith("README.md") || newfile.endsWith("/README.md") || newfile === "README.md";
-  const title = isReadme ? "Overview" : heading[1].replaceAll(/[`:]/g, "");
-
-  const slug =
-    version !== "latest"
-      ? `\nslug: ${version.replace(/^v(\d+\.\d+)\.\d+$/, "v$1")}${
-          newfile
-            .replace(/\.md$/, "")
-            .replace(/\/index$/, "")
-            .replace(/^\/+|\/+$/g, "")
-            ? `/${newfile
-                .replace(/\.md$/, "")
-                .replace(/\/index$/, "")
-                .replace(/^\/+|\/+$/g, "")}`
-            : ""
-        }`
-      : "";
-
-  const sidebarLabel = isReadme ? "\nsidebar:\n  label: Overview" : "";
-
-  return {
-    front: `---\ntitle: ${title}\ndescription: ${title}${slug}${sidebarLabel}\n---`,
-    contentWithoutHeading: content.replaceAll(heading[0], ""),
-  };
-};
 
 // Process a single source file
 const processSingleSourceFile = async (file, coredocs, verdir) => {

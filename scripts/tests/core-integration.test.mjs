@@ -3,6 +3,7 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { glob } from "glob";
+import { ROOT_MD_MAPPINGS } from "../lib/root-mappings.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,33 +52,31 @@ describe("CORE Integration Tests", () => {
   });
 
   describe("Root Contributing and Community Files Routing", () => {
-    it.each([
-      ["SECURITY.md", "community/security.md"],
-      ["CODE-OF-CONDUCT.md", "contribute/code-of-conduct.md"],
-      ["SUPPORT.md", "community/support.md"],
-    ])(
-      "should route %s to correct destination directory",
-      async (sourceFile, expectedDestination) => {
-        const ROOT_MD_MAPPINGS = [
-          { sources: ["SECURITY.md"], target: "community/security.md" },
-          { sources: ["CODE-OF-CONDUCT.md"], target: "contribute/code-of-conduct.md" },
-          { sources: ["SUPPORT.md"], target: "community/support.md" },
-        ];
+    it("should configure SECURITY.md to route to community directory", () => {
+      const securityMapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes("SECURITY.md"));
 
-        const mapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes(sourceFile));
+      expect(securityMapping).toBeDefined();
+      expect(securityMapping.target).toBe("090_community/security.md");
+      expect(securityMapping.target).toContain("community/");
+    });
 
-        expect(mapping).toBeDefined();
-        expect(mapping.target).toBe(expectedDestination);
-      },
-    );
+    it("should configure CODE-OF-CONDUCT.md to route to contribute directory", () => {
+      const conductMapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes("CODE-OF-CONDUCT.md"));
 
-    it("should place SECURITY.md in community/ not contribute/", async () => {
-      const ROOT_MD_MAPPINGS = [
-        { sources: ["SECURITY.md"], target: "community/security.md" },
-        { sources: ["SUPPORT.md"], target: "community/support.md" },
-        { sources: ["CODE-OF-CONDUCT.md"], target: "contribute/code-of-conduct.md" },
-      ];
+      expect(conductMapping).toBeDefined();
+      expect(conductMapping.target).toBe("100_contribute/code-of-conduct.md");
+      expect(conductMapping.target).toContain("contribute/");
+    });
 
+    it("should configure SUPPORT.md to route to community directory", () => {
+      const supportMapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes("SUPPORT.md"));
+
+      expect(supportMapping).toBeDefined();
+      expect(supportMapping.target).toBe("090_community/support.md");
+      expect(supportMapping.target).toContain("community/");
+    });
+
+    it("should place SECURITY.md in community/ not contribute/", () => {
       const securityMapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes("SECURITY.md"));
       const conductMapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes("CODE-OF-CONDUCT.md"));
 
