@@ -28,42 +28,21 @@ describe("CORE Integration Tests", () => {
     }
   });
 
-  describe("Documentation Directory Discovery", () => {
-    it("should find all .md files in docs directory", async () => {
-      const testFiles = [
-        "010_user-guide/getting-started.md",
-        "010_user-guide/README.md",
-        "020_actions/mutate.md",
-        "README.md",
-        "index.js",
-      ];
+  describe("File Discovery and Routing Logic", () => {
+    it("should exclude root README.md but include nested READMEs when filtering source files", async () => {
+      const testFiles = ["README.md", "010_user-guide/README.md", "getting-started.md"];
 
       for (const file of testFiles) {
         const filePath = path.join(docsDir, file);
         await fs.mkdir(path.dirname(filePath), { recursive: true });
-        await fs.writeFile(filePath, "# Test\n\nContent", "utf8");
+        await fs.writeFile(filePath, "# Test Content", "utf8");
       }
 
-      const foundFiles = await glob(`${docsDir}/**/*.md`);
-      const relativePaths = foundFiles.map(f => path.relative(docsDir, f));
-
-      expect(relativePaths).toContain("010_user-guide/getting-started.md");
-      expect(relativePaths).toContain("010_user-guide/README.md");
-      expect(relativePaths).toContain("020_actions/mutate.md");
-    });
-
-    it("should exclude non-.md files", async () => {
-      const foundFiles = await glob(`${docsDir}/**/*.md`);
-      const foundBasenames = foundFiles.map(f => path.basename(f));
-
-      expect(foundBasenames).not.toContain("index.js");
-    });
-
-    it("should filter out root README.md from processing", async () => {
-      const files = ["README.md", "010_user-guide/README.md", "getting-started.md"];
-
-      // Simulate the filtering logic from findSourceDocFiles
-      const filtered = files.filter(f => f.endsWith(".md")).filter(f => !(f === "README.md"));
+      const allFiles = await glob(`${docsDir}/**/*.md`);
+      const relativeFiles = allFiles.map(f => path.relative(docsDir, f));
+      const filtered = relativeFiles
+        .filter(f => f.endsWith(".md"))
+        .filter(f => !(f === "README.md"));
 
       expect(filtered).not.toContain("README.md");
       expect(filtered).toContain("010_user-guide/README.md");
@@ -71,24 +50,40 @@ describe("CORE Integration Tests", () => {
     });
   });
 
-  describe("Root Community Files", () => {
+  describe("Root Contributing and Community Files Routing", () => {
     it.each([
-      ["SECURITY.md", "# Security Policy\n\nPlease report vulnerabilities...", "Security Policy"],
-      ["CODE-OF-CONDUCT.md", "# Code of Conduct\n\nBe respectful...", "Code of Conduct"],
-      ["SUPPORT.md", "# Support\n\nGet help with Pepr...", "Support"],
-    ])("should process %s from repository root", async (filename, content, expectedText) => {
-      const filePath = path.join(coreRepo, filename);
+      ["SECURITY.md", "community/security.md"],
+      ["CODE-OF-CONDUCT.md", "contribute/code-of-conduct.md"],
+      ["SUPPORT.md", "community/support.md"],
+    ])(
+      "should route %s to correct destination directory",
+      async (sourceFile, expectedDestination) => {
+        const ROOT_MD_MAPPINGS = [
+          { sources: ["SECURITY.md"], target: "community/security.md" },
+          { sources: ["CODE-OF-CONDUCT.md"], target: "contribute/code-of-conduct.md" },
+          { sources: ["SUPPORT.md"], target: "community/support.md" },
+        ];
 
-      await fs.writeFile(filePath, content, "utf8");
+        const mapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes(sourceFile));
 
-      const exists = await fs
-        .access(filePath)
-        .then(() => true)
-        .catch(() => false);
-      expect(exists).toBe(true);
+        expect(mapping).toBeDefined();
+        expect(mapping.target).toBe(expectedDestination);
+      },
+    );
 
-      const fileContent = await fs.readFile(filePath, "utf8");
-      expect(fileContent).toContain(expectedText);
+    it("should place SECURITY.md in community/ not contribute/", async () => {
+      const ROOT_MD_MAPPINGS = [
+        { sources: ["SECURITY.md"], target: "community/security.md" },
+        { sources: ["SUPPORT.md"], target: "community/support.md" },
+        { sources: ["CODE-OF-CONDUCT.md"], target: "contribute/code-of-conduct.md" },
+      ];
+
+      const securityMapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes("SECURITY.md"));
+      const conductMapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes("CODE-OF-CONDUCT.md"));
+
+      expect(securityMapping.target).toContain("community/");
+      expect(conductMapping.target).toContain("contribute/");
+      expect(securityMapping.target).not.toContain("contribute/");
     });
   });
 
@@ -195,253 +190,81 @@ describe("CORE Integration Tests", () => {
     });
   });
 
-  describe("Output File Generation", () => {
-    it("should create output file with correct path", async () => {
-      const sourceFile = "010_user-guide/getting-started.md";
-      const content = "---\ntitle: Getting Started\n---\n\nContent...";
-
-      // Simulate output path generation
-      const cleanPath = sourceFile.replace(/\d+_/g, "");
-      const outputPath = path.join(outputDir, cleanPath);
-
-      await fs.mkdir(path.dirname(outputPath), { recursive: true });
-      await fs.writeFile(outputPath, content, "utf8");
-
-      const exists = await fs
-        .access(outputPath)
-        .then(() => true)
-        .catch(() => false);
-      expect(exists).toBe(true);
-
-      expect(path.basename(outputPath)).toBe("getting-started.md");
-    });
-
-    it("should create index.md for README files", async () => {
-      const content = "---\ntitle: Overview\n---\n\nOverview content...";
-      const outputPath = path.join(outputDir, "user-guide/index.md");
-
-      await fs.mkdir(path.dirname(outputPath), { recursive: true });
-      await fs.writeFile(outputPath, content, "utf8");
-
-      const exists = await fs
-        .access(outputPath)
-        .then(() => true)
-        .catch(() => false);
-      expect(exists).toBe(true);
-
-      expect(path.basename(outputPath)).toBe("index.md");
-    });
-
-    it("should create multiple output files for multiple source files", async () => {
-      const files = [
-        { source: "user-guide/getting-started.md", title: "Getting Started" },
-        { source: "user-guide/pepr-cli.md", title: "Pepr CLI" },
-        { source: "actions/mutate.md", title: "Mutate" },
-      ];
-
-      for (const file of files) {
-        const outputPath = path.join(outputDir, file.source);
-        const content = `---\ntitle: ${file.title}\n---\n\nContent...`;
-        await fs.mkdir(path.dirname(outputPath), { recursive: true });
-        await fs.writeFile(outputPath, content, "utf8");
-      }
-
-      const outputFiles = await glob(`${outputDir}/**/*.md`);
-      const relativePaths = outputFiles.map(f => path.relative(outputDir, f));
-
-      expect(relativePaths).toContain("user-guide/getting-started.md");
-      expect(relativePaths).toContain("user-guide/pepr-cli.md");
-      expect(relativePaths).toContain("actions/mutate.md");
-    });
-  });
-
-  describe("Complete Processing Simulation", () => {
-    it("should process file from docs/ through complete pipeline", async () => {
-      const sourceFile = path.join(docsDir, "010_user-guide/070_getting-started.md");
+  describe("Content Transformation Pipeline", () => {
+    it("should transform numbered paths and generate frontmatter in one pipeline", async () => {
+      const inputPath = "010_user-guide/070_getting-started.md";
       const sourceContent = "# Getting Started\n\nThis is a comprehensive guide...";
 
-      await fs.mkdir(path.dirname(sourceFile), { recursive: true });
-      await fs.writeFile(sourceFile, sourceContent, "utf8");
-
-      // Read source
-      const content = await fs.readFile(sourceFile, "utf8");
-
-      // Generate metadata
-      const relativePath = path.relative(docsDir, sourceFile);
+      const relativePath = path.relative(".", inputPath);
       const cleanPath = relativePath.replace(/\d+_/g, "");
 
-      // Generate frontmatter
-      const heading = content.match(/#[\s]+(.*)/);
+      const heading = sourceContent.match(/#[\s]+(.*)/);
       const title = heading[1];
       const frontmatter = `---\ntitle: ${title}\ndescription: ${title}\n---`;
-      const contentWithoutHeading = content.replace(heading[0], "");
+      const contentWithoutHeading = sourceContent.replace(heading[0], "");
+      const transformedContent = `${frontmatter}\n${contentWithoutHeading}`;
 
-      // Write output
-      const outputPath = path.join(outputDir, cleanPath);
-      await fs.mkdir(path.dirname(outputPath), { recursive: true });
-      await fs.writeFile(outputPath, `${frontmatter}\n${contentWithoutHeading}`, "utf8");
-
-      // Verify
-      const outputContent = await fs.readFile(outputPath, "utf8");
-
-      expect(outputContent).toContain("title: Getting Started");
-      expect(outputContent).toContain("description: Getting Started");
-      expect(outputContent).toContain("This is a comprehensive guide...");
-      expect(outputContent).not.toContain("# Getting Started");
-      expect(path.relative(outputDir, outputPath)).toBe("user-guide/getting-started.md");
+      expect(cleanPath).toBe("user-guide/getting-started.md");
+      expect(transformedContent).toContain("title: Getting Started");
+      expect(transformedContent).toContain("description: Getting Started");
+      expect(transformedContent).toContain("This is a comprehensive guide...");
+      expect(transformedContent).not.toContain("# Getting Started");
     });
 
-    it("should process README.md with Overview title and sidebar label", async () => {
-      const sourceFile = path.join(docsDir, "010_user-guide/README.md");
-      const sourceContent = "# User Guide\n\nWelcome to the user guide...";
+    it.each([
+      ["010_user-guide/README.md", "README.md", "# User Guide\n\nContent...", "Overview", true],
+      ["020_actions/mutate.md", "mutate.md", "# Mutate\n\nContent...", "Mutate", false],
+      ["040_tutorials/README.md", "README.md", "# Tutorials\n\nContent...", "Overview", true],
+    ])(
+      "should decide title based on README vs regular file: %s",
+      async (inputPath, basename, sourceContent, expectedTitle, shouldHaveSidebar) => {
+        const isReadme = basename === "README.md";
+        const heading = sourceContent.match(/#[\s]+(.*)/);
+        const title = isReadme ? "Overview" : heading[1];
+        const sidebarLabel = isReadme ? "\nsidebar:\n  label: Overview" : "";
 
-      await fs.mkdir(path.dirname(sourceFile), { recursive: true });
-      await fs.writeFile(sourceFile, sourceContent, "utf8");
+        expect(title).toBe(expectedTitle);
+        if (shouldHaveSidebar) {
+          expect(sidebarLabel).toContain("sidebar:");
+          expect(sidebarLabel).toContain("label: Overview");
+        } else {
+          expect(sidebarLabel).toBe("");
+        }
+      },
+    );
 
-      // Read and process
-      const content = await fs.readFile(sourceFile, "utf8");
-      const heading = content.match(/#[\s]+(.*)/);
-      const isReadme = path.basename(sourceFile) === "README.md";
-      const title = isReadme ? "Overview" : heading[1];
-      const sidebarLabel = isReadme ? "\nsidebar:\n  label: Overview" : "";
-      const frontmatter = `---\ntitle: ${title}\ndescription: ${title}${sidebarLabel}\n---`;
-      const contentWithoutHeading = content.replace(heading[0], "");
-
-      // Generate output path
-      const relativePath = path.relative(docsDir, sourceFile);
-      const cleanPath = relativePath.replace(/\d+_/g, "").replace("README.md", "index.md");
-      const outputPath = path.join(outputDir, cleanPath);
-
-      // Write output
-      await fs.mkdir(path.dirname(outputPath), { recursive: true });
-      await fs.writeFile(outputPath, `${frontmatter}\n${contentWithoutHeading}`, "utf8");
-
-      // Verify
-      const outputContent = await fs.readFile(outputPath, "utf8");
-
-      expect(outputContent).toContain("title: Overview");
-      expect(outputContent).toContain("sidebar:");
-      expect(outputContent).toContain("label: Overview");
-      expect(path.basename(outputPath)).toBe("index.md");
-    });
-
-    it("should apply path mappings for special directories", async () => {
-      const sourceFile = path.join(docsDir, "040_pepr-tutorials/010_getting-started.md");
-      const sourceContent = "# Tutorial: Getting Started\n\nLearn Pepr basics...";
-
-      await fs.mkdir(path.dirname(sourceFile), { recursive: true });
-      await fs.writeFile(sourceFile, sourceContent, "utf8");
-
-      // Process with path mappings
-      const PATH_MAPPINGS = {
-        structure: { "pepr-tutorials": "tutorials" },
-      };
-
-      const relativePath = path.relative(docsDir, sourceFile);
-      let cleanPath = relativePath.replace(/\d+_/g, "");
-      cleanPath = Object.entries(PATH_MAPPINGS.structure).reduce(
-        (p, [old, new_]) => (p.startsWith(old) ? p.replace(old, new_) : p),
-        cleanPath,
-      );
-
-      expect(cleanPath).toBe("tutorials/getting-started.md");
-    });
-
-    it("should handle single file mappings for special cases", async () => {
-      const sourceFile = path.join(docsDir, "best-practices/README.md");
-      const sourceContent = "# Best Practices\n\nFollow these guidelines...";
-
-      await fs.mkdir(path.dirname(sourceFile), { recursive: true });
-      await fs.writeFile(sourceFile, sourceContent, "utf8");
-
-      // Simulate single file mapping
+    it.each([
+      ["best-practices/README.md", "best-practices", "reference/best-practices.md"],
+      ["module-examples/README.md", "module-examples", "reference/module-examples.md"],
+      ["faq/README.md", "faq", "reference/faq.md"],
+    ])("should map special directory %s to single file", async (inputPath, dir, expectedOutput) => {
       const PATH_MAPPINGS = {
         singleFile: {
           "best-practices": "reference/best-practices.md",
+          "module-examples": "reference/module-examples.md",
+          faq: "reference/faq.md",
         },
       };
 
-      const relativePath = path.relative(docsDir, sourceFile);
-      const dir = path.dirname(relativePath);
-      const basename = path.basename(relativePath);
-
-      let outputPath = relativePath;
+      const basename = path.basename(inputPath);
+      let outputPath = inputPath;
       if (basename === "README.md" && PATH_MAPPINGS.singleFile[dir]) {
         outputPath = PATH_MAPPINGS.singleFile[dir];
       }
 
-      expect(outputPath).toBe("reference/best-practices.md");
-    });
-  });
-
-  describe("Error Handling", () => {
-    it("should handle missing files gracefully", async () => {
-      const missingFile = path.join(docsDir, "nonexistent.md");
-
-      let hasError = false;
-      try {
-        await fs.access(missingFile);
-      } catch {
-        hasError = true;
-      }
-
-      expect(hasError).toBe(true);
+      expect(outputPath).toBe(expectedOutput);
     });
 
-    it("should handle empty content files", async () => {
-      const emptyFile = path.join(docsDir, "empty.md");
-      await fs.writeFile(emptyFile, "", "utf8");
+    it("should handle malformed markdown by returning null heading", () => {
+      const contentWithoutHeading = "This has no heading\n\nJust content...";
+      const contentWithHeading = "# Proper Heading\n\nContent...";
 
-      const content = await fs.readFile(emptyFile, "utf8");
-      expect(content).toBe("");
+      const noHeading = contentWithoutHeading.match(/#[\s]+(.*)/);
+      const hasHeading = contentWithHeading.match(/#[\s]+(.*)/);
 
-      const heading = content.match(/#[\s]+(.*)/);
-      expect(heading).toBeNull();
-    });
-
-    it("should handle malformed markdown", async () => {
-      const malformedFile = path.join(docsDir, "malformed.md");
-      const content = "This has no heading\n\nJust content...";
-      await fs.writeFile(malformedFile, content, "utf8");
-
-      const fileContent = await fs.readFile(malformedFile, "utf8");
-      const heading = fileContent.match(/#[\s]+(.*)/);
-
-      expect(heading).toBeNull();
-    });
-  });
-
-  describe("Parallel Processing", () => {
-    it("should handle multiple files processed in parallel", async () => {
-      const files = [
-        "010_user-guide/getting-started.md",
-        "010_user-guide/pepr-cli.md",
-        "020_actions/mutate.md",
-        "020_actions/validate.md",
-        "040_tutorials/basic.md",
-      ];
-
-      await Promise.all(
-        files.map(async file => {
-          const filePath = path.join(docsDir, file);
-          await fs.mkdir(path.dirname(filePath), { recursive: true });
-          const content = `# ${path.basename(file, ".md")}\n\nContent for ${file}`;
-          await fs.writeFile(filePath, content, "utf8");
-        }),
-      );
-
-      const results = await Promise.all(
-        files.map(async file => {
-          const filePath = path.join(docsDir, file);
-          const content = await fs.readFile(filePath, "utf8");
-          return { file, content };
-        }),
-      );
-
-      expect(results.length).toBe(5);
-      results.forEach(result => {
-        expect(result.content).toContain(`Content for ${result.file}`);
-      });
+      expect(noHeading).toBeNull();
+      expect(hasHeading).not.toBeNull();
+      expect(hasHeading[1]).toBe("Proper Heading");
     });
   });
 });
