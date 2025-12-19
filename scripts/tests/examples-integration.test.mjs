@@ -26,8 +26,8 @@ describe("EXAMPLES Integration Tests", () => {
     }
   });
 
-  describe("Example Directory Discovery", () => {
-    it("should find all hello-pepr-* directories", async () => {
+  describe("Example Directory Pattern Matching", () => {
+    it("should match hello-pepr-* pattern and exclude non-matching directories", async () => {
       const exampleDirs = [
         "hello-pepr-audit-logging",
         "hello-pepr-mutation",
@@ -53,114 +53,112 @@ describe("EXAMPLES Integration Tests", () => {
       expect(foundBasenames).not.toContain("other-example");
       expect(foundDirs.length).toBeGreaterThanOrEqual(4);
     });
+  });
 
-    it("should skip directories without README.md", async () => {
-      const testExample = path.join(examplesRepo, "hello-pepr-no-readme");
-      await fs.mkdir(testExample, { recursive: true });
+  describe("Title Extraction and Transformation", () => {
+    it.each([
+      ["# Audit Logging Example", "Audit Logging Example", "Audit Logging Example"],
+      ["# Hello Pepr Test", "Hello Pepr Test", "Test"],
+      ["# hello pepr validation", "hello pepr validation", "validation"],
+      ["# HELLO PEPR Advanced", "HELLO PEPR Advanced", "Advanced"],
+    ])(
+      "should extract title from heading: %s",
+      async (heading, rawTitle, cleanedTitle) => {
+        const content = `${heading}\n\nExample content here...`;
 
-      const readmePath = path.join(testExample, "README.md");
+        const headingMatch = content.match(/^#\s+(.+)$/m);
+        let title = headingMatch ? headingMatch[1] : "";
+        title = title.replace(/^hello\s+pepr\s+/i, "");
 
-      // Check if README exists
-      let hasReadme = false;
-      try {
-        await fs.access(readmePath);
-        hasReadme = true;
-      } catch {
-        hasReadme = false;
-      }
+        expect(headingMatch[1]).toBe(rawTitle);
+        expect(title).toBe(cleanedTitle);
+      },
+    );
 
-      expect(hasReadme).toBe(false);
+    it("should generate fallback title from directory name when no heading exists", async () => {
+      const exampleName = "hello-pepr-no-heading";
+      const content = "This example has no heading.\n\nJust content.";
+
+      const headingMatch = content.match(/^#\s+(.+)$/m);
+      let title = headingMatch
+        ? headingMatch[1]
+        : exampleName.replace(/^hello-pepr-/, "").replace(/-/g, " ");
+      title = title.replace(/^hello\s+pepr\s+/i, "");
+
+      expect(headingMatch).toBeNull();
+      expect(title).toBe("no heading");
+    });
+
+    it("should remove heading from content after extraction", async () => {
+      const readmeContent = "# Full Test Example\n\nThis is the content...";
+
+      const headingMatch = readmeContent.match(/^#\s+(.+)$/m);
+      const contentWithoutHeading = headingMatch
+        ? readmeContent.replace(/^#\s+.+$/m, "").trim()
+        : readmeContent;
+
+      expect(contentWithoutHeading).toBe("This is the content...");
+      expect(contentWithoutHeading).not.toContain("# Full Test Example");
     });
   });
 
-  describe("README Processing", () => {
-    it("should read and process README.md from example directory", async () => {
-      const exampleDir = path.join(examplesRepo, "hello-pepr-test-example");
-      await fs.mkdir(exampleDir, { recursive: true });
+  describe("Slug Generation", () => {
+    it.each([
+      ["hello-pepr-audit-logging", "audit-logging"],
+      ["hello-pepr-mutation", "mutation"],
+      ["hello-pepr-validation", "validation"],
+      ["hello-pepr-advanced-test", "advanced-test"],
+      ["hello-pepr-load", "load"],
+    ])("should generate slug from example name: %s -> %s", async (exampleName, expectedSlug) => {
 
-      const readmeContent = "# Test Example\n\nThis is a test example for Pepr.";
-      await fs.writeFile(path.join(exampleDir, "README.md"), readmeContent, "utf8");
-
-      const content = await fs.readFile(path.join(exampleDir, "README.md"), "utf8");
-
-      expect(content).toContain("# Test Example");
-      expect(content).toContain("This is a test example for Pepr.");
-    });
-
-    it("should handle README with complex content", async () => {
-      const exampleDir = path.join(examplesRepo, "hello-pepr-complex");
-      await fs.mkdir(exampleDir, { recursive: true });
-
-      const readmeContent = `# Complex Example
-
-This example includes:
-
-- Images: ![demo](_images/demo.png)
-- Links: [Getting Started](../getting-started/README.md)
-- Code: \`\`\`typescript
-const x = 42;
-\`\`\`
-- Video: https://example.com/demo.mp4
-
-Contact: <admin@example.com>
-`;
-
-      await fs.writeFile(path.join(exampleDir, "README.md"), readmeContent, "utf8");
-
-      const content = await fs.readFile(path.join(exampleDir, "README.md"), "utf8");
-
-      expect(content).toContain("![demo](_images/demo.png)");
-      expect(content).toContain("[Getting Started](../getting-started/README.md)");
-      expect(content).toContain("https://example.com/demo.mp4");
-      expect(content).toContain("<admin@example.com>");
-    });
-  });
-
-  describe("Output File Generation", () => {
-    it("should create output file with correct naming", async () => {
-      const exampleName = "hello-pepr-output-test";
       const slug = exampleName.replace(/^hello-pepr-/, "");
-      const outputPath = path.join(outputDir, `${slug}.md`);
 
-      const content = '---\ntitle: "Output Test"\n---\n\nContent here...';
-      await fs.writeFile(outputPath, content, "utf8");
-
-      const exists = await fs
-        .access(outputPath)
-        .then(() => true)
-        .catch(() => false);
-      expect(exists).toBe(true);
-
-      expect(path.basename(outputPath)).toBe("output-test.md");
-    });
-
-    it("should create multiple output files for multiple examples", async () => {
-      const examples = [
-        { name: "hello-pepr-first", title: "First Example" },
-        { name: "hello-pepr-second", title: "Second Example" },
-        { name: "hello-pepr-third", title: "Third Example" },
-      ];
-
-      for (const example of examples) {
-        const slug = example.name.replace(/^hello-pepr-/, "");
-        const outputPath = path.join(outputDir, `${slug}.md`);
-        const content = `---\ntitle: "${example.title}"\n---\n\nContent...`;
-        await fs.writeFile(outputPath, content, "utf8");
-      }
-
-      const files = await fs.readdir(outputDir);
-      expect(files).toContain("first.md");
-      expect(files).toContain("second.md");
-      expect(files).toContain("third.md");
+      expect(slug).toBe(expectedSlug);
     });
   });
 
-  describe("Complete Processing Simulation", () => {
-    it("should process example from README to output file", async () => {
-      const exampleName = "hello-pepr-full-test";
-      const exampleDir = path.join(examplesRepo, exampleName);
-      await fs.mkdir(exampleDir, { recursive: true });
+  describe("YAML Frontmatter Escaping", () => {
+    it.each([
+      ['Example: "Test" & More', 'Example: \\"Test\\" & More'],
+      ["Simple Title", "Simple Title"],
+      ['Title with \\ backslash', 'Title with \\\\ backslash'],
+      ['Multiple "quotes" here', 'Multiple \\"quotes\\" here'],
+      ['Back\\slash and "quotes"', 'Back\\\\slash and \\"quotes\\"'],
+    ])("should escape YAML special characters: %s", async (inputTitle, expectedEscaped) => {
 
+      const escapeYamlString = str => str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+      const escapedTitle = escapeYamlString(inputTitle);
+
+      expect(escapedTitle).toBe(expectedEscaped);
+    });
+  });
+
+  describe("Source URL Construction", () => {
+    it.each([
+      ["hello-pepr-audit-logging", "https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/hello-pepr-audit-logging"],
+      ["hello-pepr-mutation", "https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/hello-pepr-mutation"],
+      ["hello-pepr-load", "https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/hello-pepr-load"],
+    ])("should construct source URL for %s", async (exampleName, expectedUrl) => {
+
+      const sourceUrl = `https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/${exampleName}`;
+
+      expect(sourceUrl).toBe(expectedUrl);
+    });
+
+    it("should format source link with markdown", async () => {
+      const exampleName = "hello-pepr-test";
+      const sourceUrl = `https://github.com/defenseunicorns/pepr-excellent-examples/tree/main/${exampleName}`;
+
+      const sourceLink = `\n\n> **Source:** [${exampleName}](${sourceUrl})\n\n`;
+
+      expect(sourceLink).toContain("> **Source:**");
+      expect(sourceLink).toContain(`[${exampleName}](${sourceUrl})`);
+    });
+  });
+
+  describe("Content Transformation Pipeline", () => {
+    it("should transform README to output format with all components", async () => {
+      const exampleName = "hello-pepr-full-test";
       const readmeContent = `# Full Test Example
 
 This is a complete example with:
@@ -168,9 +166,8 @@ This is a complete example with:
 - Links: [Guide](../guide/README.md)
 `;
 
-      await fs.writeFile(path.join(exampleDir, "README.md"), readmeContent, "utf8");
+      let content = readmeContent;
 
-      let content = await fs.readFile(path.join(exampleDir, "README.md"), "utf8");
 
       const headingMatch = content.match(/^#\s+(.+)$/m);
       let title = headingMatch
@@ -191,125 +188,33 @@ This is a complete example with:
 
       const finalContent = frontmatter + sourceLink + content;
 
-      const outputPath = path.join(outputDir, `${slug}.md`);
-      await fs.writeFile(outputPath, finalContent, "utf8");
-
-      const outputContent = await fs.readFile(outputPath, "utf8");
-
-      expect(outputContent).toContain('title: "Full Test Example"');
-      expect(outputContent).toContain('description: "Full Test Example"');
-      expect(outputContent).toContain("> **Source:**");
-      expect(outputContent).toContain("[hello-pepr-full-test]");
-      expect(outputContent).toContain("This is a complete example with:");
-      expect(outputContent).not.toContain("# Full Test Example");
+      expect(title).toBe("Full Test Example");
+      expect(slug).toBe("full-test");
+      expect(finalContent).toContain('title: "Full Test Example"');
+      expect(finalContent).toContain('description: "Full Test Example"');
+      expect(finalContent).toContain("> **Source:**");
+      expect(finalContent).toContain("[hello-pepr-full-test]");
+      expect(finalContent).toContain("This is a complete example with:");
+      expect(finalContent).not.toContain("# Full Test Example");
     });
 
-    it("should handle example without heading", async () => {
+    it("should handle transformation when README has no heading", async () => {
       const exampleName = "hello-pepr-no-heading";
-      const exampleDir = path.join(examplesRepo, exampleName);
-      await fs.mkdir(exampleDir, { recursive: true });
-
       const readmeContent = "This example has no heading.\n\nJust content.";
-      await fs.writeFile(path.join(exampleDir, "README.md"), readmeContent, "utf8");
 
-      let content = await fs.readFile(path.join(exampleDir, "README.md"), "utf8");
-
-      const headingMatch = content.match(/^#\s+(.+)$/m);
+      const headingMatch = readmeContent.match(/^#\s+(.+)$/m);
       let title = headingMatch
         ? headingMatch[1]
         : exampleName.replace(/^hello-pepr-/, "").replace(/-/g, " ");
       title = title.replace(/^hello\s+pepr\s+/i, "");
 
+      const content = headingMatch
+        ? readmeContent.replace(/^#\s+.+$/m, "").trim()
+        : readmeContent;
+
       expect(title).toBe("no heading");
-      expect(content).toContain("This example has no heading.");
-    });
-
-    it("should escape special characters in YAML frontmatter", async () => {
-      const exampleName = "hello-pepr-special-chars";
-      const exampleDir = path.join(examplesRepo, exampleName);
-      await fs.mkdir(exampleDir, { recursive: true });
-
-      const readmeContent = '# Example: "Test" & More\n\nContent here...';
-      await fs.writeFile(path.join(exampleDir, "README.md"), readmeContent, "utf8");
-
-      let content = await fs.readFile(path.join(exampleDir, "README.md"), "utf8");
-
-      const headingMatch = content.match(/^#\s+(.+)$/m);
-      let title = headingMatch ? headingMatch[1] : "";
-      title = title.replace(/^hello\s+pepr\s+/i, "");
-
-      const escapeYamlString = str => str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-      const escapedTitle = escapeYamlString(title);
-
-      const frontmatter = `---\ntitle: "${escapedTitle}"\ndescription: "${escapedTitle}"\n---\n`;
-
-      expect(frontmatter).toContain('title: "Example: \\"Test\\" & More"');
+      expect(content).toBe("This example has no heading.\n\nJust content.");
     });
   });
 
-  describe("Error Handling", () => {
-    it("should handle missing README.md gracefully", async () => {
-      const exampleDir = path.join(examplesRepo, "hello-pepr-missing-readme");
-      await fs.mkdir(exampleDir, { recursive: true });
-
-      const readmePath = path.join(exampleDir, "README.md");
-
-      let hasError = false;
-      try {
-        await fs.access(readmePath);
-      } catch {
-        hasError = true;
-      }
-
-      expect(hasError).toBe(true);
-    });
-
-    it("should handle empty README.md", async () => {
-      const exampleDir = path.join(examplesRepo, "hello-pepr-empty");
-      await fs.mkdir(exampleDir, { recursive: true });
-
-      const readmePath = path.join(exampleDir, "README.md");
-      await fs.writeFile(readmePath, "", "utf8");
-
-      const content = await fs.readFile(readmePath, "utf8");
-      expect(content).toBe("");
-
-      const headingMatch = content.match(/^#\s+(.+)$/m);
-      expect(headingMatch).toBeNull();
-    });
-  });
-
-  describe("Parallel Processing", () => {
-    it("should handle multiple examples processed in parallel", async () => {
-      const examples = [
-        "hello-pepr-parallel-1",
-        "hello-pepr-parallel-2",
-        "hello-pepr-parallel-3",
-        "hello-pepr-parallel-4",
-        "hello-pepr-parallel-5",
-      ];
-
-      await Promise.all(
-        examples.map(async exampleName => {
-          const exampleDir = path.join(examplesRepo, exampleName);
-          await fs.mkdir(exampleDir, { recursive: true });
-          const content = `# ${exampleName}\n\nExample content for ${exampleName}`;
-          await fs.writeFile(path.join(exampleDir, "README.md"), content, "utf8");
-        }),
-      );
-
-      const results = await Promise.all(
-        examples.map(async exampleName => {
-          const readmePath = path.join(examplesRepo, exampleName, "README.md");
-          const content = await fs.readFile(readmePath, "utf8");
-          return { name: exampleName, content };
-        }),
-      );
-
-      expect(results.length).toBe(5);
-      results.forEach(result => {
-        expect(result.content).toContain(result.name);
-      });
-    });
-  });
 });
