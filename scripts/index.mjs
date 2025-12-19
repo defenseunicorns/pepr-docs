@@ -321,16 +321,15 @@ async function copyRepoResources(core, tmp, version) {
   });
 }
 
-// Map community files from repository root to their destination paths in docs
-// Needed for backward compatibility with old git tags (v1.0.2, v0.55.6) that still use numbered prefixes
+// Map root markdown files from the core repo to their destination in the docs
 const ROOT_MD_MAPPINGS = [
-  { sources: ["SECURITY.md"], target: "090_community/security.md" },
-  { sources: ["CODE-OF-CONDUCT.md"], target: "100_contribute/code-of-conduct.md" },
-  { sources: ["SUPPORT.md"], target: "090_community/support.md" },
+  { sources: ["SECURITY.md"], target: "community/security.md" },
+  { sources: ["CODE-OF-CONDUCT.md"], target: "contribute/code-of-conduct.md" },
+  { sources: ["SUPPORT.md"], target: "community/support.md" },
 ];
 
 // Process root level markdown files (community files)
-const processRootMarkdownFiles = async (core, version) => {
+const processRootMarkdownFiles = async (core, verdir) => {
   const processedFiles = [];
 
   await executeWithErrorHandling("Process root level markdown files", async () => {
@@ -345,8 +344,9 @@ const processRootMarkdownFiles = async (core, version) => {
             .then(() => true)
             .catch(() => false)
         ) {
-          await fs.mkdir(path.dirname(target), { recursive: true });
-          await fs.copyFile(srcPath, target);
+          const targetPath = `${verdir}/${target}`;
+          await fs.mkdir(path.dirname(targetPath), { recursive: true });
+          await fs.copyFile(srcPath, targetPath);
           processedFiles.push(target);
           found = true;
           break; // Stop checking other variants once we find one
@@ -359,14 +359,11 @@ const processRootMarkdownFiles = async (core, version) => {
 };
 
 // Determine source path for a file (handles special community files).
-// Needed for backward compatibility with old git tags (v1.0.2, v0.55.6)
-const getSourcePath = (file, coredocs) =>
-  [
-    "090_community/security.md",
-    "100_contribute/code-of-conduct.md",
-    "090_community/support.md",
-  ].some(cf => file.endsWith(cf))
-    ? file
+const getSourcePath = (file, coredocs, verdir) =>
+  ["community/security.md", "contribute/code-of-conduct.md", "community/support.md"].some(cf =>
+    file.endsWith(cf),
+  )
+    ? `${verdir}/${file}`
     : `${coredocs}/${file}`;
 
 // Directory restructuring rules for organizing content into logical sections
@@ -486,7 +483,7 @@ const processContentLinks = (content, file) => {
 
 // Process a single source file
 const processSingleSourceFile = async (file, coredocs, verdir) => {
-  const src = getSourcePath(file, coredocs);
+  const src = getSourcePath(file, coredocs, verdir);
   const content = await fs.readFile(src, "utf8");
   const { newfile } = generateFileMetadata(file);
   const { front, contentWithoutHeading } = generateFrontMatter(content, newfile, RUN.version, file);
@@ -543,7 +540,7 @@ for (const version of RUN.versions) {
   await copyRepoResources(RUN.core, RUN.tmp, RUN.version);
 
   // Process root markdown files and add them to source files list
-  const rootMarkdownFiles = await processRootMarkdownFiles(RUN.core, RUN.version);
+  const rootMarkdownFiles = await processRootMarkdownFiles(RUN.core, RUN.verdir);
   if (!RUN.srcmds) RUN.srcmds = [];
   if (rootMarkdownFiles && Array.isArray(rootMarkdownFiles)) {
     RUN.srcmds.push(...rootMarkdownFiles);
