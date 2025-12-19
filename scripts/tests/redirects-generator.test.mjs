@@ -2,9 +2,143 @@ import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import * as os from "node:os";
-import { generateNetlifyRedirects } from "../lib/redirects-generator.mjs";
+import {
+  generateNetlifyRedirects,
+  generateManualRedirects,
+  generatePatchToMinorRedirects,
+  generateRetiredVersionRedirects,
+  getStableVersions,
+} from "../lib/redirects-generator.mjs";
 
-describe("generateNetlifyRedirects", () => {
+describe("Unit Tests - Helper Functions", () => {
+  describe("getStableVersions - version filtering logic", () => {
+    it.each([
+      [
+        ["v0.54.0", "v0.54.1", "v0.55.0", "latest"],
+        ["v0.54.0", "v0.54.1", "v0.55.0"],
+        "should filter out 'latest'",
+      ],
+      [
+        ["v0.54.0", "v0.54.1-beta.1", "v0.55.0"],
+        ["v0.54.0", "v0.55.0"],
+        "should filter out prerelease versions",
+      ],
+      [
+        ["v0.54.0", "latest", "v0.54.1-beta.1", "v0.55.0-rc.1"],
+        ["v0.54.0"],
+        "should filter out both 'latest' and prereleases",
+      ],
+      [["v0.54.0", "v0.55.0"], ["v0.54.0", "v0.55.0"], "should keep only stable versions"],
+    ])("should correctly filter versions: %s", (input, expected) => {
+      const result = getStableVersions(input);
+
+      expect(result).toEqual(expected);
+    });
+  });
+
+  describe("generateManualRedirects - wildcard and splat logic", () => {
+    it("should add wildcards and splats to paths without them", () => {
+      const result = generateManualRedirects();
+
+      expect(result.lines).toContain("/main/*  /:splat  301");
+      expect(result.lines).toContain("/latest/*  /:splat  301");
+      expect(result.lines).toContain("/support/*  /community/support/:splat  301");
+      expect(result.count).toBeGreaterThan(0);
+    });
+
+    it("should preserve existing wildcards and splats", () => {
+      const result = generateManualRedirects();
+      const redirectLines = result.lines.filter(line => !line.startsWith("#") && line.trim());
+      expect(redirectLines.length).toBeGreaterThan(0);
+      redirectLines.forEach(line => {
+        expect(line).toMatch(/\s+301$/); 
+      });
+    });
+
+    it("should include section header", () => {
+      const result = generateManualRedirects();
+
+      expect(result.lines.some(line => line.includes("Manual Redirects"))).toBe(true);
+    });
+  });
+
+  describe("generatePatchToMinorRedirects - prerelease filtering and redirect generation", () => {
+    it("should filter out prerelease versions", () => {
+      const activeVersions = ["v0.54.0", "v0.54.1-beta.1", "v0.55.0"];
+      const allTags = ["v0.54.0", "v0.54.1", "v0.55.0"];
+      const result = generatePatchToMinorRedirects(activeVersions, allTags);
+
+      expect(result.lines.some(line => line.includes("v0.54.1-beta.1"))).toBe(false);
+      expect(result.lines.some(line => line.includes("/v0.54.0"))).toBe(true);
+    });
+
+    it("should generate both exact and wildcard redirects for each patch version", () => {
+      const activeVersions = ["v0.54.0", "v0.54.1"];
+      const allTags = ["v0.54.0", "v0.54.1"];
+      const result = generatePatchToMinorRedirects(activeVersions, allTags);
+
+      expect(result.lines).toContain("/v0.54.0  /v0.54  301");
+      expect(result.lines).toContain("/v0.54.0/*  /v0.54/:splat  301");
+      expect(result.lines).toContain("/v0.54.1  /v0.54  301");
+      expect(result.lines).toContain("/v0.54.1/*  /v0.54/:splat  301");
+    });
+
+    it("should count rules correctly (2 per patch version)", () => {
+      const activeVersions = ["v0.54.0", "v0.54.1", "v0.54.2"];
+      const allTags = ["v0.54.0", "v0.54.1", "v0.54.2"];
+      const result = generatePatchToMinorRedirects(activeVersions, allTags);
+      expect(result.count).toBe(6);
+    });
+
+    it("should group patch versions by major.minor", () => {
+      const activeVersions = ["v0.54.0", "v0.54.1", "v0.55.0"];
+      const allTags = ["v0.54.0", "v0.54.1", "v0.55.0"];
+      const result = generatePatchToMinorRedirects(activeVersions, allTags);
+
+      expect(result.lines.some(line => line.includes("/v0.54  301"))).toBe(true);
+      expect(result.lines.some(line => line.includes("/v0.55  301"))).toBe(true);
+    });
+  });
+
+  describe("generateRetiredVersionRedirects - version matching logic", () => {
+    it("should generate redirect for major.minor version", () => {
+      const retiredVersions = ["0.53"];
+      const allTags = ["v0.53.0", "v0.53.1"];
+      const result = generateRetiredVersionRedirects(retiredVersions, allTags);
+
+      expect(result.lines).toContain("/v0.53/*  /:splat  301");
+    });
+
+    it("should generate redirects for all patch versions", () => {
+      const retiredVersions = ["0.53"];
+      const allTags = ["v0.53.0", "v0.53.1", "v0.53.2"];
+      const result = generateRetiredVersionRedirects(retiredVersions, allTags);
+
+      expect(result.lines).toContain("/v0.53.0/*  /:splat  301");
+      expect(result.lines).toContain("/v0.53.1/*  /:splat  301");
+      expect(result.lines).toContain("/v0.53.2/*  /:splat  301");
+    });
+
+    it("should handle multiple retired versions", () => {
+      const retiredVersions = ["0.53", "0.52"];
+      const allTags = ["v0.52.0", "v0.53.0"];
+      const result = generateRetiredVersionRedirects(retiredVersions, allTags);
+
+      expect(result.lines).toContain("/v0.53/*  /:splat  301");
+      expect(result.lines).toContain("/v0.52/*  /:splat  301");
+    });
+
+    it("should count redirects correctly", () => {
+      const retiredVersions = ["0.53"];
+      const allTags = ["v0.53.0", "v0.53.1"];
+      const result = generateRetiredVersionRedirects(retiredVersions, allTags);
+
+      expect(result.count).toBe(3); 
+    });
+  });
+});
+
+describe("Integration Tests - Full Pipeline", () => {
   let tempDir;
   let outputPath;
   let mockCoreRepo;
@@ -51,203 +185,63 @@ describe("generateNetlifyRedirects", () => {
     await fs.rm(tempDir, { recursive: true, force: true });
   });
 
-  it("should generate _redirects file", async () => {
-    const results = await generateNetlifyRedirects({
+  it("should generate complete redirects file with all sections", async () => {
+    const config = {
       coreRepoPath: mockCoreRepo,
-      retiredVersions: ["0.53", "0.52"],
+      retiredVersions: ["0.53"],
       activeVersions: ["v0.54.0", "v0.55.0"],
       outputPath,
-    });
+    };
 
-    const fileExists = await fs
-      .stat(outputPath)
-      .then(() => true)
-      .catch(() => false);
-    expect(fileExists).toBe(true);
-  });
-
-  it("should return redirect counts", async () => {
-    const results = await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: ["0.53"],
-      activeVersions: ["v0.54.0"],
-      outputPath,
-    });
-
-    expect(results).toHaveProperty("totalRules");
-    expect(results).toHaveProperty("retiredCount");
-    expect(results).toHaveProperty("manualCount");
-    expect(results).toHaveProperty("patchCount");
-    expect(typeof results.totalRules).toBe("number");
-  });
-
-  it("should include section headers", async () => {
-    await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: ["0.53"],
-      activeVersions: ["v0.54.0"],
-      outputPath,
-    });
+    await generateNetlifyRedirects(config);
 
     const content = await fs.readFile(outputPath, "utf8");
     expect(content).toContain("# Retired Version Redirects");
     expect(content).toContain("# Manual Redirects");
     expect(content).toContain("# Automatic Patch-to-Minor Redirects");
-  });
-
-  it("should generate retired version redirects", async () => {
-    await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: ["0.53", "0.52"],
-      activeVersions: [],
-      outputPath,
-    });
-
-    const content = await fs.readFile(outputPath, "utf8");
-    expect(content).toContain("/v0.53/*  /:splat  301");
-    expect(content).toContain("/v0.52/*  /:splat  301");
-  });
-
-  it("should include manual redirects", async () => {
-    await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: [],
-      activeVersions: [],
-      outputPath,
-    });
-
-    const content = await fs.readFile(outputPath, "utf8");
-    // Check for some manual redirects (these are in MANUAL_REDIRECTS)
-    expect(content).toContain("/main/*  /:splat  301");
-    expect(content).toContain("/latest/*  /:splat  301");
-  });
-
-  it("should generate exact patch-to-minor redirects", async () => {
-    await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: [],
-      activeVersions: ["v0.54.0", "v0.54.1"],
-      outputPath,
-    });
-
-    const content = await fs.readFile(outputPath, "utf8");
-    expect(content).toContain("/v0.54.0  /v0.54  301");
-    expect(content).toContain("/v0.54.1  /v0.54  301");
-  });
-
-  it("should generate wildcard patch-to-minor redirects", async () => {
-    await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: [],
-      activeVersions: ["v0.54.0", "v0.54.1"],
-      outputPath,
-    });
-
-    const content = await fs.readFile(outputPath, "utf8");
-    // Each patch version should have wildcard redirects with splat
-    expect(content).toContain("/v0.54.0/*  /v0.54/:splat  301");
-    expect(content).toContain("/v0.54.1/*  /v0.54/:splat  301");
-  });
-
-  it("should generate exact redirects for multiple patch versions", async () => {
-    await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: [],
-      activeVersions: ["v0.54.0", "v0.54.1", "v0.54.2"],
-      outputPath,
-    });
-
-    const content = await fs.readFile(outputPath, "utf8");
-    expect(content).toContain("/v0.54.0  /v0.54  301");
-    expect(content).toContain("/v0.54.1  /v0.54  301");
-    expect(content).toContain("/v0.54.2  /v0.54  301");
-  });
-
-  it("should generate wildcard redirects for multiple patch versions", async () => {
-    await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: [],
-      activeVersions: ["v0.54.0", "v0.54.1", "v0.54.2"],
-      outputPath,
-    });
-
-    const content = await fs.readFile(outputPath, "utf8");
-    expect(content).toContain("/v0.54.0/*  /v0.54/:splat  301");
-    expect(content).toContain("/v0.54.1/*  /v0.54/:splat  301");
-    expect(content).toContain("/v0.54.2/*  /v0.54/:splat  301");
-  });
-
-  it("should count rules correctly for multiple patch versions", async () => {
-    const results = await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: [],
-      activeVersions: ["v0.54.0", "v0.54.1", "v0.54.2"],
-      outputPath,
-    });
-
-    // 2 rules per patch version (exact + wildcard)
-    expect(results.patchCount).toBeGreaterThanOrEqual(6);
-  });
-
-  it("should add auto-generated warning comment", async () => {
-    await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: [],
-      activeVersions: [],
-      outputPath,
-    });
-
-    const content = await fs.readFile(outputPath, "utf8");
-    expect(content).toContain("Auto-generated");
     expect(content).toContain("DO NOT EDIT MANUALLY");
   });
 
-  it("should use proper Netlify redirect format", async () => {
-    await generateNetlifyRedirects({
+  it("should return accurate redirect counts", async () => {
+    const config = {
       coreRepoPath: mockCoreRepo,
       retiredVersions: ["0.53"],
-      activeVersions: [],
+      activeVersions: ["v0.54.0"],
       outputPath,
-    });
+    };
+
+    const results = await generateNetlifyRedirects(config);
+
+    expect(results).toHaveProperty("totalRules");
+    expect(results).toHaveProperty("retiredCount");
+    expect(results).toHaveProperty("manualCount");
+    expect(results).toHaveProperty("patchCount");
+    expect(results.totalRules).toBe(
+      results.retiredCount + results.manualCount + results.patchCount,
+    );
+  });
+
+  it("should use proper Netlify redirect format throughout", async () => {
+    const config = {
+      coreRepoPath: mockCoreRepo,
+      retiredVersions: ["0.53"],
+      activeVersions: ["v0.54.0"],
+      outputPath,
+    };
+
+    await generateNetlifyRedirects(config);
 
     const content = await fs.readFile(outputPath, "utf8");
-    const lines = content.split("\n").filter(l => !l.startsWith("#") && l.trim());
+    const redirectLines = content
+      .split("\n")
+      .filter(l => !l.startsWith("#") && l.trim() && !l.includes("Auto-generated"));
 
-    // All redirect lines should have format: source destination status
-    for (const line of lines) {
+    for (const line of redirectLines) {
       const parts = line.trim().split(/\s+/);
       if (parts.length > 0) {
         expect(parts).toHaveLength(3);
         expect(parts[2]).toBe("301");
       }
     }
-  });
-
-  it("should exclude prerelease versions from exact patch redirects", async () => {
-    await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: [],
-      activeVersions: ["v0.54.0", "v0.54.1-beta.1"],
-      outputPath,
-    });
-
-    const content = await fs.readFile(outputPath, "utf8");
-    // Stable version should be included
-    expect(content).toContain("/v0.54.0  /v0.54  301");
-    // Prerelease version should be excluded
-    expect(content).not.toContain("v0.54.1-beta.1");
-  });
-
-  it("should exclude prerelease versions from wildcard patch redirects", async () => {
-    await generateNetlifyRedirects({
-      coreRepoPath: mockCoreRepo,
-      retiredVersions: [],
-      activeVersions: ["v0.54.0", "v0.54.1-beta.1"],
-      outputPath,
-    });
-
-    const content = await fs.readFile(outputPath, "utf8");
-    expect(content).toContain("/v0.54.0/*  /v0.54/:splat  301");
-    expect(content).not.toContain("v0.54.1-beta.1");
   });
 });

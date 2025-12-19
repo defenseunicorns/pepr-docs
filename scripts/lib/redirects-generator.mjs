@@ -37,7 +37,7 @@ function matchesMajorMinor(version, majmin) {
   return match && match[1] === majmin;
 }
 
-function generateManualRedirects() {
+export function generateManualRedirects() {
   const lines = [...sectionHeader("Manual Redirects", "Specific path redirects and fixes")];
   let count = 0;
 
@@ -51,7 +51,7 @@ function generateManualRedirects() {
   return { lines, count };
 }
 
-function generatePatchToMinorRedirects(activeVersions, allTags) {
+export function generatePatchToMinorRedirects(activeVersions, allTags) {
   const stableVersions = activeVersions.filter(v => semver.prerelease(v) === null);
   const activeMajorMinors = [
     ...new Set(stableVersions.map(v => v.replace(/^v(\d+\.\d+)\.\d+$/, "v$1"))),
@@ -81,7 +81,7 @@ function generatePatchToMinorRedirects(activeVersions, allTags) {
   return { lines, count };
 }
 
-function generateRetiredVersionRedirects(retiredVersions, allTags) {
+export function generateRetiredVersionRedirects(retiredVersions, allTags) {
   const lines = [
     ...sectionHeader("Retired Version Redirects", "Redirect old documentation versions to root"),
   ];
