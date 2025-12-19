@@ -5,7 +5,7 @@ import * as fs from "node:fs/promises";
 
 const execFile = util.promisify(child_process.execFile);
 
-function majmin(version) {
+export function majmin(version) {
   return `${semver.major(version)}.${semver.minor(version)}`;
 }
 
