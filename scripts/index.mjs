@@ -483,16 +483,67 @@ await executeWithErrorHandling(`Process pepr-excellent-examples`, async log => {
   log.push(["total", `${exampleDirs.length} examples processed`]);
 });
 
+// Copy examples to all version directories (examples are not versioned)
+await executeWithErrorHandling(`Copy examples to all versions`, async log => {
+  const latestExamplesDir = `${RUN.tmp}/content/latest/examples`;
+
+  // Check if examples directory exists
+  try {
+    await fs.access(latestExamplesDir);
+  } catch {
+    log.push(["skipped", "no examples directory found"]);
+    return;
+  }
+
+  const stableVersions = getStableVersions(RUN.versions);
+
+  await Promise.all(
+    stableVersions.map(async version => {
+      const versionExamplesDir = `${RUN.tmp}/content/${version}/examples`;
+      await fs.mkdir(versionExamplesDir, { recursive: true });
+
+      // Get all example files
+      const exampleFiles = await fs.readdir(latestExamplesDir);
+
+      // Copy each file and add version-specific slug
+      await Promise.all(
+        exampleFiles.map(async file => {
+          const sourcePath = path.join(latestExamplesDir, file);
+          const destPath = path.join(versionExamplesDir, file);
+
+          // Read the file content
+          const content = await fs.readFile(sourcePath, "utf8");
+
+          // Extract frontmatter and add slug for versioned docs
+          const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n/);
+          if (frontmatterMatch) {
+            const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, "v$1");
+            const slug = `${versionMajMin}/examples/${file.replace(/\.md$/, "")}`;
+            const newFrontmatter = `---\n${frontmatterMatch[1]}\nslug: ${slug}\n---\n`;
+            const newContent = content.replace(/^---\n[\s\S]*?\n---\n/, newFrontmatter);
+            await fs.writeFile(destPath, newContent, "utf8");
+          } else {
+            // No frontmatter, just copy as-is
+            await fs.copyFile(sourcePath, destPath);
+          }
+        }),
+      );
+
+      log.push(["copied", `examples -> ${version}/examples (with slugs)`]);
+    }),
+  );
+});
+
 // Starlight sidebar configuration template
 const STARLIGHT_SIDEBAR_CONFIG = {
   sidebar: [
     { label: "User Guide", autogenerate: { directory: "user-guide" } },
     { label: "Actions", autogenerate: { directory: "actions" } },
-    { label: "Tutorials", autogenerate: { directory: "tutorials" } },
-    { label: "Reference", autogenerate: { directory: "reference" } },
-    { label: "Community and Support", autogenerate: { directory: "community" } },
-    { label: "Contribute", autogenerate: { directory: "contribute" } },
-    { label: "Examples", autogenerate: { directory: "examples" } },
+    { label: "Tutorials", collapsed: true, autogenerate: { directory: "tutorials" } },
+    { label: "Reference", collapsed: true, autogenerate: { directory: "reference" } },
+    { label: "Excellent Examples", collapsed: true, autogenerate: { directory: "examples" } },
+    { label: "Community and Support", collapsed: true, autogenerate: { directory: "community" } },
+    { label: "Contribute", collapsed: true, autogenerate: { directory: "contribute" } },
     { label: "Roadmap for Pepr", link: "roadmap" },
   ],
 };

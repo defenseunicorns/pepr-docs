@@ -82,22 +82,27 @@ export default defineConfig({
         },
         {
           label: "Tutorials",
+          collapsed: true,
           autogenerate: { directory: "tutorials" },
         },
         {
           label: "Reference",
+          collapsed: true,
           autogenerate: { directory: "reference" },
         },
         {
           label: "Excellent Examples",
+          collapsed: true,
           autogenerate: { directory: "examples" },
         },
         {
           label: "Community and Support",
+          collapsed: true,
           autogenerate: { directory: "community" },
         },
         {
           label: "Contribute",
+          collapsed: true,
           autogenerate: { directory: "contribute" },
         },
         {
