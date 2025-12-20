@@ -39,6 +39,9 @@ Thumbs.db
 # Link validation reports
 broken-links-report-*.json
 
+# Test coverage reports
+coverage/
+
 # Legacy files (no longer generated, but kept in gitignore for safety)
 retired-redirects.js
 

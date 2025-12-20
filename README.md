@@ -7,7 +7,9 @@ Official documentation site for [Pepr](https://github.com/defenseunicorns/pepr) 
 ## Overview
 
 This repository contains the build system and site structure for the Pepr documentation site.
-Documentation content is extracted from the [Pepr core repository](https://github.com/defenseunicorns/pepr) and built into a versioned site using [Starlight](https://starlight.astro.build).
+Documentation content is extracted from the [Pepr core repository](https://github.com/defenseunicorns/pepr) and
+example content from the [Pepr Excellent Examples repository](https://github.com/defenseunicorns/pepr-excellent-examples),
+then built into a versioned site using [Starlight](https://starlight.astro.build).
 
 ## Quick Start
 
@@ -32,18 +34,31 @@ Documentation content is extracted from the [Pepr core repository](https://githu
 ```bash
 cd ..
 git clone https://github.com/defenseunicorns/pepr.git
+```
+
+3. Clone the Pepr Excellent Examples repository (adjacent to pepr-docs):
+
+```bash
+cd ..
+git clone https://github.com/defenseunicorns/pepr-excellent-examples.git
 cd pepr-docs
 ```
 
-3. Create a `.env` file to configure the core repository path:
+4. Create a `.env` file to configure the repository paths:
 
 ```bash
-# Create .env file with path to Pepr core repo
-# If pepr and pepr-docs are siblings:
-echo 'CORE=../pepr' > .env
+# Create .env file with paths to Pepr core and examples repos
+# If repositories are siblings:
+cat > .env << EOF
+CORE=../pepr
+EXAMPLES=../pepr-excellent-examples
+EOF
 
-# If pepr is in a different location:
-echo 'CORE=/path/to/pepr' > .env
+# Or if repositories are in different locations:
+cat > .env << EOF
+CORE=/path/to/pepr
+EXAMPLES=/path/to/pepr-excellent-examples
+EOF
 ```
 
 ### Build and Run Locally
@@ -58,13 +73,13 @@ npm run dev
 
 The site will be available at `http://localhost:4321`
 
-### Test with Netlify Environment
+### Preview Production Build
 
-To test redirects or mimic the Netlify environment:
+To preview the built site locally (tests redirects and production behavior):
 
 ```bash
 npm run build
-npm run dev:netlify
+npm run preview
 ```
 
 ## Project Structure
@@ -91,8 +106,12 @@ pepr-docs/
 
 ## Contributing
 
-**Content changes** must be made in the [Pepr core repository](https://github.com/defenseunicorns/pepr).
-Site structure and UI changes should be made in this repository.
+**Content Changes:**
+
+- Core documentation must be made in the [Pepr core repository](https://github.com/defenseunicorns/pepr)
+- Example content must be made in the [Pepr Excellent Examples repository](https://github.com/defenseunicorns/pepr-excellent-examples)
+
+**Site structure and UI changes** should be made in this repository.
 
 See [site-docs/CONTRIBUTING.md](site-docs/CONTRIBUTING.md) for full guidelines.
 

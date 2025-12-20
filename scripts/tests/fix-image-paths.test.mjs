@@ -1,19 +1,5 @@
 import { describe, expect, it } from "vitest";
-import * as fs from "node:fs/promises";
-
-async function getFixImagePathsFunction() {
-  const buildScript = await fs.readFile("scripts/index.mjs", "utf8");
-
-  const imageMatch = buildScript.match(/function fixImagePaths\(content\) \{([\s\S]*?)^\}/m);
-  if (imageMatch) {
-    try {
-      return new Function("content", imageMatch[1]);
-    } catch (e) {
-      console.warn("Could not extract fixImagePaths function:", e.message);
-    }
-  }
-  return null;
-}
+import { fixImagePaths } from "../lib/fix-image-paths.mjs";
 
 describe("fixImagePaths - table", () => {
   const testCases = [
@@ -78,17 +64,13 @@ describe("fixImagePaths - table", () => {
     },
   ];
 
-  it.each(testCases)("$name", async ({ name, input, expected }) => {
-    const fixImagePaths = await getFixImagePathsFunction();
+  it.each(testCases)("$name", ({ name, input, expected }) => {
+    const result = fixImagePaths(input);
 
-    if (fixImagePaths) {
-      const result = fixImagePaths(input);
-
-      if (name.includes("should not contain")) {
-        expect(result).not.toContain(expected);
-      } else {
-        expect(result).toContain(expected);
-      }
+    if (name.includes("should not contain")) {
+      expect(result).not.toContain(expected);
+    } else {
+      expect(result).toContain(expected);
     }
   });
 });

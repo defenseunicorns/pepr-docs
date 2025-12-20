@@ -1,19 +1,5 @@
 import { describe, expect, it } from "vitest";
-import * as fs from "node:fs/promises";
-
-async function getRemoveHtmlCommentsFunction() {
-  const buildScript = await fs.readFile("scripts/index.mjs", "utf8");
-
-  const removeMatch = buildScript.match(/function removeHtmlComments\(input\) \{([\s\S]*?)^\}/m);
-  if (removeMatch) {
-    try {
-      return new Function("input", removeMatch[1]);
-    } catch (e) {
-      console.warn("Could not extract removeHtmlComments function:", e.message);
-    }
-  }
-  return null;
-}
+import { removeHtmlComments } from "../lib/remove-html-comments.mjs";
 
 describe("removeHtmlComments", () => {
   const testCases = [
@@ -103,17 +89,13 @@ describe("removeHtmlComments", () => {
     },
   ];
 
-  it.each(testCases)("$name", async ({ name, input, expected }) => {
-    const removeHtmlComments = await getRemoveHtmlCommentsFunction();
+  it.each(testCases)("$name", ({ name, input, expected }) => {
+    const result = removeHtmlComments(input);
 
-    if (removeHtmlComments) {
-      const result = removeHtmlComments(input);
-
-      if (name.includes("should not contain")) {
-        expect(result).not.toContain(expected);
-      } else {
-        expect(result).toContain(expected);
-      }
+    if (name.includes("should not contain")) {
+      expect(result).not.toContain(expected);
+    } else {
+      expect(result).toContain(expected);
     }
   });
 });

@@ -1,43 +1,5 @@
 import { describe, expect, it } from "vitest";
-import * as fs from "node:fs/promises";
-
-async function getProcessContentLinksFunction() {
-  const buildScript = await fs.readFile("scripts/index.mjs", "utf8");
-
-  const fixImageMatch = buildScript.match(/function fixImagePaths\(content\) \{([\s\S]*?)^\}/m);
-  const removeHtmlMatch = buildScript.match(
-    /function removeHtmlComments\(input\) \{([\s\S]*?)^\}/m,
-  );
-  const transformContentMatch = buildScript.match(
-    /const transformContent = content => \{([\s\S]*?)^\};/m,
-  );
-  const linkMappingsMatch = buildScript.match(/const LINK_MAPPINGS = \{([\s\S]*?)^\};/m);
-  const processContentLinksMatch = buildScript.match(
-    /const processContentLinks = \(content, file\) => \{([\s\S]*?)^\};/m,
-  );
-
-  if (
-    fixImageMatch &&
-    removeHtmlMatch &&
-    transformContentMatch &&
-    linkMappingsMatch &&
-    processContentLinksMatch
-  ) {
-    return new Function(
-      "content",
-      "file",
-      `
-			const path = { basename: (filePath) => filePath.split('/').pop() };
-			const fixImagePaths = (content) => { ${fixImageMatch[1]} };
-			const removeHtmlComments = (input) => { ${removeHtmlMatch[1]} };
-			const transformContent = (content) => { ${transformContentMatch[1]} };
-			const LINK_MAPPINGS = { ${linkMappingsMatch[1]} };
-			${processContentLinksMatch[1]}
-		`,
-    );
-  }
-  return null;
-}
+import { processContentLinks } from "../lib/process-content-links.mjs";
 
 describe("processContentLinks - .md extension removal", () => {
   const testCases = [
@@ -67,15 +29,9 @@ describe("processContentLinks - .md extension removal", () => {
     },
   ];
 
-  it.each(testCases)("$name", async ({ input, file, expected, expectMultiple }) => {
-    const processContentLinks = await getProcessContentLinksFunction();
+  it.each(testCases)("$name", ({ input, file, expected }) => {
     const result = processContentLinks(input, file);
-
-    if (expectMultiple) {
-      expectMultiple.forEach(exp => expect(result).toContain(exp));
-    } else {
-      expect(result).toContain(expected);
-    }
+    expect(result).toContain(expected);
   });
 });
 
@@ -113,9 +69,60 @@ describe("processContentLinks - link mapping transformations", () => {
     },
   ];
 
-  it.each(testCases)("$name", async ({ input, file, expected }) => {
-    const processContentLinks = await getProcessContentLinksFunction();
+  it.each(testCases)("$name", ({ input, file, expected }) => {
     const result = processContentLinks(input, file);
     expect(result).toContain(expected);
+  });
+});
+
+describe("processContentLinks - relative link adjustment based on file type", () => {
+  const testCases = [
+    {
+      name: "should NOT adjust relative links for README.md files",
+      input: "See [guide](../docs/intro) and [local](./file).",
+      file: "README.md",
+      expectedContains: ["](../docs/intro)", "](./file)"],
+      expectedNotContains: ["](../../docs/intro)", "](../file)"],
+    },
+    {
+      name: "should adjust ../ to ../../ for non-README files",
+      input: "See [guide](../docs/intro).",
+      file: "user-guide/getting-started.md",
+      expectedContains: ["](../../docs/intro)"],
+      expectedNotContains: ["](../docs/intro)"],
+    },
+    {
+      name: "should adjust ./ to ../ for non-README files",
+      input: "See [local](./file).",
+      file: "tutorials/basic.md",
+      expectedContains: ["](../file)"],
+      expectedNotContains: ["](./file)"],
+    },
+    {
+      name: "should adjust both ./ and ../ for non-README files",
+      input: "See [guide](../docs/intro) and [local](./file).",
+      file: "actions/mutate.md",
+      expectedContains: ["](../../docs/intro)", "](../file)"],
+      expectedNotContains: ["](../docs/intro)", "](./file)"],
+    },
+    {
+      name: "should NOT adjust relative links in nested README.md",
+      input: "See [guide](../intro) and [local](./setup).",
+      file: "user-guide/README.md",
+      expectedContains: ["](../intro)", "](./setup)"],
+      expectedNotContains: ["](../../intro)", "](../setup)"],
+    },
+  ];
+
+  it.each(testCases)("$name", ({ input, file, expectedContains, expectedNotContains }) => {
+    const result = processContentLinks(input, file);
+
+    expectedContains.forEach(expected => {
+      expect(result).toContain(expected);
+    });
+
+    expectedNotContains.forEach(notExpected => {
+      expect(result).not.toContain(notExpected);
+    });
   });
 });

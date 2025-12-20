@@ -4,9 +4,22 @@ import * as fs from "node:fs/promises";
 import * as util from "node:util";
 import * as child_process from "node:child_process";
 import { glob } from "glob";
-import { heredoc } from "./heredoc.mjs";
-import { discoverVersions, findCurrentVersion } from "./version-discovery.mjs";
-import { generateNetlifyRedirects, getStableVersions } from "./redirects-generator.mjs";
+import { heredoc } from "./lib/heredoc.mjs";
+import { discoverVersions, findCurrentVersion } from "./lib/version-discovery.mjs";
+import { generateNetlifyRedirects, getStableVersions } from "./lib/redirects-generator.mjs";
+import { fixImagePaths } from "./lib/fix-image-paths.mjs";
+import { transformContent } from "./lib/transform-content.mjs";
+import { processContentLinks } from "./lib/process-content-links.mjs";
+import { ROOT_MD_MAPPINGS } from "./lib/root-mappings.mjs";
+import { generateFileMetadata } from "./lib/file-metadata.mjs";
+import { generateFrontMatter } from "./lib/frontmatter.mjs";
+import {
+  extractExampleTitle,
+  removeHeading,
+  generateExampleSlug,
+  escapeYamlString,
+  generateExampleSourceUrl,
+} from "./lib/examples-processing.mjs";
 
 const exec = util.promisify(child_process.exec);
 
@@ -14,6 +27,7 @@ program
   .version("0.0.0", "-v, --version")
   .requiredOption("-c, --core <path>", "path to core project folder")
   .requiredOption("-s, --site <path>", "path to docs site folder")
+  .requiredOption("-e, --examples <path>", "path to pepr-excellent-examples repository")
   .option("-n, --no-dist", "do not generate /dist output")
   .parse();
 const opts = program.opts();
@@ -36,95 +50,6 @@ async function executeWithErrorHandling(label, func) {
     }
   }
 }
-
-// Converts all _images and resources references to /assets/
-function fixImagePaths(content) {
-  return (
-    content
-      // Handle any relative path to _images (../../_images/, ../../../_images/, etc.)
-      .replace(/(\.\.\/)+_images\/([\w-]+\.(png|svg))/g, "/assets/$2")
-      // Handle direct _images references
-      .replace(/_images\/([\w-]+\.(png|svg))/g, "/assets/$1")
-      // Handle resources paths - supports numbered prefixes (e.g., 030_create-pepr-operator)
-      // for backward compatibility with old git tags (v1.0.2, v0.55.6)
-      // Once these old versions are retired, this can be removed.
-      .replace(/resources\/(?:\d+_)?create-pepr-operator\/(light|dark)\.png/g, "/assets/$1.png")
-  );
-}
-
-// Helper to remove HTML comments repeatedly until none remain
-function removeHtmlComments(input) {
-  let prev;
-  do {
-    prev = input;
-    input = input.replace(/<!--([\s\S]*?)-->/g, "");
-  } while (input !== prev);
-  return input;
-}
-
-// Content transformation pipeline - all transformations in one place
-const transformContent = content => {
-  // 1. Fix image paths
-  let result = fixImagePaths(content);
-
-  // 2. Convert video links (only bare URLs, not those already in video tags)
-  result = result.replace(
-    /(?<!src=")https[\S]*\.mp4(?!")/g,
-    url => `<video class="td-content" controls src="${url}"></video>`,
-  );
-
-  // 3. Process markdown links
-  const ROOT_FILE_MAPPINGS = {
-    "code-of-conduct.md": "code-of-conduct.md",
-    "security.md": "security.md",
-    "support.md": "support.md",
-  };
-
-  result = result.replace(/\]\(([^)]+)\)/g, (match, url) => {
-    // Skip external URLs
-    if (url.startsWith("http")) return match;
-
-    let parts = url.split("/");
-
-    // Handle root-level files that get copied to subdirectories
-    if (parts[0] === ".." && parts[1] === ".." && parts[2]) {
-      const fileName = parts[2].toLowerCase();
-      if (ROOT_FILE_MAPPINGS[fileName]) {
-        parts = [".", ROOT_FILE_MAPPINGS[fileName]];
-      }
-    }
-
-    // Remove README.md from end
-    if (parts[parts.length - 1] === "README.md") parts.pop();
-
-    // Handle _images paths
-    if (parts[0]?.startsWith("_images")) parts[0] = "__images";
-
-    // Strip docs/ prefix (handle ./docs/, /docs/, or docs/)
-    if (parts[0] === "." && parts[1] === "docs") {
-      parts.splice(0, 2);
-    } else if (parts[0] === "" && parts[1] === "docs") {
-      parts.splice(0, 2);
-      parts.unshift(""); // Maintain leading slash
-    } else if (parts[0] === "docs") {
-      parts.shift();
-    }
-
-    // Strip .md extension from last part
-    const lastIdx = parts.length - 1;
-    if (parts[lastIdx]?.endsWith(".md")) {
-      parts[lastIdx] = parts[lastIdx].slice(0, -3);
-    }
-
-    return `](${parts.join("/").toLowerCase()})`;
-  });
-
-  // 4. Escape MDX content
-  return removeHtmlComments(result)
-    .replaceAll(/\*\*@param\b/g, "**\\@param")
-    .replace(/<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>/g, "&lt;$1&gt;")
-    .replace(/<([^>]*[@!][^>]*)>/g, "&lt;$1&gt;");
-};
 
 // Efficient content processing pipeline with parallel file processing
 async function processAllContent(contentDir) {
@@ -321,12 +246,6 @@ async function copyRepoResources(core, tmp, version) {
   });
 }
 
-// Map root markdown files from the core repo to their destination in the docs
-const ROOT_MD_MAPPINGS = [
-  { sources: ["SECURITY.md"], target: "community/security.md" },
-  { sources: ["CODE-OF-CONDUCT.md"], target: "contribute/code-of-conduct.md" },
-  { sources: ["SUPPORT.md"], target: "community/support.md" },
-];
 
 // Process root level markdown files (community files)
 const processRootMarkdownFiles = async (core, verdir) => {
@@ -359,127 +278,13 @@ const processRootMarkdownFiles = async (core, verdir) => {
 };
 
 // Determine source path for a file (handles special community files).
-const getSourcePath = (file, coredocs, verdir) =>
-  ["community/security.md", "contribute/code-of-conduct.md", "community/support.md"].some(cf =>
-    file.endsWith(cf),
-  )
-    ? `${verdir}/${file}`
-    : `${coredocs}/${file}`;
-
-// Directory restructuring rules for organizing content into logical sections
-const PATH_MAPPINGS = {
-  structure: { "pepr-tutorials": "tutorials", "user-guide/actions": "actions" },
-  singleFile: {
-    "best-practices": "reference/best-practices.md",
-    "module-examples": "reference/module-examples.md",
-    faq: "reference/faq.md",
-    roadmap: "roadmap.md",
-  },
+// Needed for backward compatibility with old git tags (v1.0.2, v0.55.6)
+const getSourcePath = (file, coredocs, verdir) => {
+  // Derive the list of root markdown file targets from ROOT_MD_MAPPINGS to avoid duplication
+  const rootMarkdownTargets = ROOT_MD_MAPPINGS.map(m => m.target);
+  return rootMarkdownTargets.some(cf => file.endsWith(cf)) ? `${verdir}/${file}` : `${coredocs}/${file}`;
 };
 
-// Generate new file path for a source file
-const generateFileMetadata = file => {
-  const [dir, filename] = [path.dirname(file), path.basename(file)];
-  const parts = dir.split("/");
-  const parent = parts.pop();
-  const ancestors = parts.join("/");
-
-  // Strip numbered prefixes from directory parts (e.g., 010_user-guide -> user-guide)
-  // Needed for backward compatibility with old git tags (v1.0.2, v0.55.6) that still use numbered prefixes
-  // Once these old versions are retired, this prefix stripping can be removed
-  const cleanParent = parent.replace(/^\d+_/, "");
-  const cleanAncestors = ancestors
-    .split("/")
-    .map(p => p.replace(/^\d+_/, ""))
-    .join("/");
-
-  let rawdir = cleanAncestors ? `${cleanAncestors}/${cleanParent}` : cleanParent;
-
-  // Apply structure mappings
-  let newdir = Object.entries(PATH_MAPPINGS.structure).reduce(
-    (dir, [old, new_]) => (dir.startsWith(old) ? dir.replace(old, new_) : dir),
-    rawdir,
-  );
-
-  // Process filename - strip numbered prefix (e.g., 070_roadmap.md -> roadmap.md)
-  // Needed for backward compatibility with old git tags (v1.0.2, v0.55.6)
-  let newfile = filename.replace(/^\d+_/, "");
-  if (newfile === "README.md") {
-    newfile = "index.md";
-  }
-
-  // Handle single file mappings
-  if (newfile === "index.md" && PATH_MAPPINGS.singleFile[rawdir]) {
-    [newdir, newfile] = ["", PATH_MAPPINGS.singleFile[rawdir]];
-  }
-
-  return { newfile: newdir && newdir !== "." ? `${newdir}/${newfile}` : newfile };
-};
-
-// Generate Starlight front matter for a file
-const generateFrontMatter = (content, newfile, version, originalFile = "") => {
-  const heading = content.match(/#[\s]+(.*)/);
-  const isReadme =
-    originalFile.endsWith("README.md") || newfile.endsWith("/README.md") || newfile === "README.md";
-  const title = isReadme ? "Overview" : heading[1].replaceAll(/[`:]/g, "");
-
-  const slug =
-    version !== "latest"
-      ? `\nslug: ${version.replace(/^v(\d+\.\d+)\.\d+$/, "v$1")}${
-          newfile
-            .replace(/\.md$/, "")
-            .replace(/\/index$/, "")
-            .replace(/^\/+|\/+$/g, "")
-            ? `/${newfile
-                .replace(/\.md$/, "")
-                .replace(/\/index$/, "")
-                .replace(/^\/+|\/+$/g, "")}`
-            : ""
-        }`
-      : "";
-
-  const sidebarLabel = isReadme ? "\nsidebar:\n  label: Overview" : "";
-
-  return {
-    front: `---\ntitle: ${title}\ndescription: ${title}${slug}${sidebarLabel}\n---`,
-    contentWithoutHeading: content.replaceAll(heading[0], ""),
-  };
-};
-
-// Content link transformations
-// Note: /pepr-tutorials/ mapping is for backward compatibility with v0.55.6
-// Once v0.55.6 is retired, the pepr-tutorials mapping can be removed
-const LINK_MAPPINGS = {
-  "](/pepr-tutorials/": "](/tutorials/",
-  "](/best-practices/": "](/reference/best-practices/",
-  "](/module-examples/": "](/reference/module-examples/",
-  "](/faq/": "](/reference/faq/",
-  "](/user-guide/actions/": "](/actions/",
-};
-
-// Apply content transformations and link fixes
-const processContentLinks = (content, file) => {
-  let result = transformContent(content);
-
-  // Adjust relative links for non-README files
-  if (path.basename(file) !== "README.md") {
-    result = result.replaceAll("](../", "](../../").replaceAll("](./", "](../");
-  }
-
-  // Apply all link mappings and cleanup
-  result = Object.entries(LINK_MAPPINGS).reduce(
-    (acc, [old, new_]) => acc.replaceAll(old, new_),
-    result,
-  );
-
-  // Strip .md extension only from internal links (not external URLs)
-  // Match ](non-http-url.md) and ](non-http-url.md#anchor)
-  result = result.replace(/\]\((?!https?:\/\/)([^)]+)\.md(#[^)]+)?\)/g, (match, url, anchor) => {
-    return `](${url}${anchor || "/"})`;
-  });
-
-  return result;
-};
 
 // Process a single source file
 const processSingleSourceFile = async (file, coredocs, verdir) => {
@@ -610,16 +415,137 @@ await executeWithErrorHandling(`Set current version alias`, async log => {
   }
 });
 
+// Process pepr-excellent-examples
+await executeWithErrorHandling(`Process pepr-excellent-examples`, async log => {
+  console.log("Processing pepr-excellent-examples repository...");
+
+  const examplesRepo = path.resolve(opts.examples);
+  const examplesDir = `${RUN.tmp}/content/latest/examples`;
+
+  // Ensure examples directory exists
+  await fs.mkdir(examplesDir, { recursive: true });
+
+  // Find all hello-pepr-* directories
+  const exampleDirs = await glob(`${examplesRepo}/hello-pepr-*`, { onlyDirectories: true });
+
+  console.log(`Found ${exampleDirs.length} example directories`);
+
+  // Process each example directory
+  await Promise.all(
+    exampleDirs.map(async exampleDir => {
+      const exampleName = path.basename(exampleDir);
+      const readmePath = path.join(exampleDir, "README.md");
+
+      // Check if README exists
+      try {
+        await fs.access(readmePath);
+      } catch {
+        console.warn(`No README.md found in ${exampleName}, skipping`);
+        return;
+      }
+
+      // Read and transform content
+      let content = await fs.readFile(readmePath, "utf8");
+
+      // Extract and clean title
+      const title = extractExampleTitle(content, exampleName);
+
+      // Remove the first heading if it exists (we'll use frontmatter title)
+      content = removeHeading(content);
+
+      // Transform content (fix paths, links, etc.)
+      content = transformContent(content);
+
+      // Create a clean slug from the example name
+      const slug = generateExampleSlug(exampleName);
+
+      // GitHub source URL
+      const sourceUrl = generateExampleSourceUrl(exampleName);
+
+      // Generate frontmatter (quote values to handle special YAML characters like colons)
+      const frontmatter = heredoc`
+        ---
+        title: "${escapeYamlString(title)}"
+        description: "${escapeYamlString(title)}"
+        ---
+      `;
+
+      // Add source link at the top of content
+      const sourceLink = `\n\n> **Source:** [${exampleName}](${sourceUrl})\n\n`;
+
+      // Write the processed file
+      const outputPath = path.join(examplesDir, `${slug}.md`);
+      await fs.writeFile(outputPath, frontmatter + sourceLink + content, "utf8");
+
+      log.push(["processed", `${exampleName} -> examples/${slug}.md`]);
+    }),
+  );
+
+  log.push(["total", `${exampleDirs.length} examples processed`]);
+});
+
+// Copy examples to all version directories (examples are not versioned)
+await executeWithErrorHandling(`Copy examples to all versions`, async log => {
+  const latestExamplesDir = `${RUN.tmp}/content/latest/examples`;
+
+  // Check if examples directory exists
+  try {
+    await fs.access(latestExamplesDir);
+  } catch {
+    log.push(["skipped", "no examples directory found"]);
+    return;
+  }
+
+  const stableVersions = getStableVersions(RUN.versions);
+
+  await Promise.all(
+    stableVersions.map(async version => {
+      const versionExamplesDir = `${RUN.tmp}/content/${version}/examples`;
+      await fs.mkdir(versionExamplesDir, { recursive: true });
+
+      // Get all example files
+      const exampleFiles = await fs.readdir(latestExamplesDir);
+
+      // Copy each file and add version-specific slug
+      await Promise.all(
+        exampleFiles.map(async file => {
+          const sourcePath = path.join(latestExamplesDir, file);
+          const destPath = path.join(versionExamplesDir, file);
+
+          // Read the file content
+          const content = await fs.readFile(sourcePath, "utf8");
+
+          // Extract frontmatter and add slug for versioned docs
+          const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n/);
+          if (frontmatterMatch) {
+            const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, "v$1");
+            const slug = `${versionMajMin}/examples/${file.replace(/\.md$/, "")}`;
+            const newFrontmatter = `---\n${frontmatterMatch[1]}\nslug: ${slug}\n---\n`;
+            const newContent = content.replace(/^---\n[\s\S]*?\n---\n/, newFrontmatter);
+            await fs.writeFile(destPath, newContent, "utf8");
+          } else {
+            // No frontmatter, just copy as-is
+            await fs.copyFile(sourcePath, destPath);
+          }
+        }),
+      );
+
+      log.push(["copied", `examples -> ${version}/examples (with slugs)`]);
+    }),
+  );
+});
+
 // Starlight sidebar configuration template
 const STARLIGHT_SIDEBAR_CONFIG = {
   sidebar: [
     { label: "User Guide", autogenerate: { directory: "user-guide" } },
     { label: "Actions", autogenerate: { directory: "actions" } },
-    { label: "Tutorials", autogenerate: { directory: "tutorials" } },
-    { label: "Reference", autogenerate: { directory: "reference" } },
-    { label: "Community and Support", autogenerate: { directory: "community" } },
-    { label: "Contribute", autogenerate: { directory: "contribute" } },
-    { label: "Roadmap for Pepr", slug: "roadmap" },
+    { label: "Tutorials", collapsed: true, autogenerate: { directory: "tutorials" } },
+    { label: "Reference", collapsed: true, autogenerate: { directory: "reference" } },
+    { label: "Excellent Examples", collapsed: true, autogenerate: { directory: "examples" } },
+    { label: "Community and Support", collapsed: true, autogenerate: { directory: "community" } },
+    { label: "Contribute", collapsed: true, autogenerate: { directory: "contribute" } },
+    { label: "Roadmap for Pepr", link: "roadmap" },
   ],
 };
 
