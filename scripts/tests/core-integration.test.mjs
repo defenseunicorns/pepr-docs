@@ -33,7 +33,7 @@ describe("CORE Integration Tests", () => {
 
   describe("File Discovery and Routing Logic", () => {
     it("should exclude root README.md but include nested READMEs when filtering source files", async () => {
-      const testFiles = ["README.md", "010_user-guide/README.md", "getting-started.md"];
+      const testFiles = ["README.md", "user-guide/README.md", "getting-started.md"];
 
       for (const file of testFiles) {
         const filePath = path.join(docsDir, file);
@@ -48,7 +48,7 @@ describe("CORE Integration Tests", () => {
         .filter(f => !(f === "README.md"));
 
       expect(filtered).not.toContain("README.md");
-      expect(filtered).toContain("010_user-guide/README.md");
+      expect(filtered).toContain("user-guide/README.md");
       expect(filtered).toContain("getting-started.md");
     });
   });
@@ -58,7 +58,7 @@ describe("CORE Integration Tests", () => {
       const securityMapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes("SECURITY.md"));
 
       expect(securityMapping).toBeDefined();
-      expect(securityMapping.target).toBe("090_community/security.md");
+      expect(securityMapping.target).toBe("community/security.md");
       expect(securityMapping.target).toContain("community/");
     });
 
@@ -66,7 +66,7 @@ describe("CORE Integration Tests", () => {
       const conductMapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes("CODE-OF-CONDUCT.md"));
 
       expect(conductMapping).toBeDefined();
-      expect(conductMapping.target).toBe("100_contribute/code-of-conduct.md");
+      expect(conductMapping.target).toBe("contribute/code-of-conduct.md");
       expect(conductMapping.target).toContain("contribute/");
     });
 
@@ -74,7 +74,7 @@ describe("CORE Integration Tests", () => {
       const supportMapping = ROOT_MD_MAPPINGS.find(m => m.sources.includes("SUPPORT.md"));
 
       expect(supportMapping).toBeDefined();
-      expect(supportMapping.target).toBe("090_community/support.md");
+      expect(supportMapping.target).toBe("community/support.md");
       expect(supportMapping.target).toContain("community/");
     });
 

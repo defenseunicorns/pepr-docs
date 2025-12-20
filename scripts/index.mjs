@@ -248,7 +248,7 @@ async function copyRepoResources(core, tmp, version) {
 
 
 // Process root level markdown files (community files)
-const processRootMarkdownFiles = async (core, version) => {
+const processRootMarkdownFiles = async (core, verdir) => {
   const processedFiles = [];
 
   await executeWithErrorHandling("Process root level markdown files", async () => {
@@ -263,8 +263,9 @@ const processRootMarkdownFiles = async (core, version) => {
             .then(() => true)
             .catch(() => false)
         ) {
-          await fs.mkdir(path.dirname(target), { recursive: true });
-          await fs.copyFile(srcPath, target);
+          const targetPath = `${verdir}/${target}`;
+          await fs.mkdir(path.dirname(targetPath), { recursive: true });
+          await fs.copyFile(srcPath, targetPath);
           processedFiles.push(target);
           found = true;
           break; // Stop checking other variants once we find one
@@ -278,16 +279,16 @@ const processRootMarkdownFiles = async (core, version) => {
 
 // Determine source path for a file (handles special community files).
 // Needed for backward compatibility with old git tags (v1.0.2, v0.55.6)
-const getSourcePath = (file, coredocs) => {
+const getSourcePath = (file, coredocs, verdir) => {
   // Derive the list of root markdown file targets from ROOT_MD_MAPPINGS to avoid duplication
   const rootMarkdownTargets = ROOT_MD_MAPPINGS.map(m => m.target);
-  return rootMarkdownTargets.some(cf => file.endsWith(cf)) ? file : `${coredocs}/${file}`;
+  return rootMarkdownTargets.some(cf => file.endsWith(cf)) ? `${verdir}/${file}` : `${coredocs}/${file}`;
 };
 
 
 // Process a single source file
 const processSingleSourceFile = async (file, coredocs, verdir) => {
-  const src = getSourcePath(file, coredocs);
+  const src = getSourcePath(file, coredocs, verdir);
   const content = await fs.readFile(src, "utf8");
   const { newfile } = generateFileMetadata(file);
   const { front, contentWithoutHeading } = generateFrontMatter(content, newfile, RUN.version, file);
@@ -344,7 +345,7 @@ for (const version of RUN.versions) {
   await copyRepoResources(RUN.core, RUN.tmp, RUN.version);
 
   // Process root markdown files and add them to source files list
-  const rootMarkdownFiles = await processRootMarkdownFiles(RUN.core, RUN.version);
+  const rootMarkdownFiles = await processRootMarkdownFiles(RUN.core, RUN.verdir);
   if (!RUN.srcmds) RUN.srcmds = [];
   if (rootMarkdownFiles && Array.isArray(rootMarkdownFiles)) {
     RUN.srcmds.push(...rootMarkdownFiles);

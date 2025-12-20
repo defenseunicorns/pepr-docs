@@ -73,6 +73,10 @@ export default defineConfig({
       ],
       sidebar: [
         {
+          label: "Start Here",
+          slug: "",
+        },
+        {
           label: "User Guide",
           autogenerate: { directory: "user-guide" },
         },
