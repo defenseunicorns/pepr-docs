@@ -5,6 +5,7 @@ import starlightVersions from "starlight-versions";
 import starlightLlmsTxt from "starlight-llms-txt";
 import tailwindcss from "@tailwindcss/vite";
 import { getStarlightVersions } from "./scripts/lib/version-discovery.mjs";
+import { generateExamplesSidebarItems } from "./scripts/lib/generate-examples-sidebar.mjs";
 import starlightGitHubAlerts from "starlight-github-alerts";
 import starlightContextualMenu from "starlight-contextual-menu";
 import starlightImageZoom from "starlight-image-zoom";
@@ -24,6 +25,8 @@ if (coreRepoPath) {
   console.warn("No core repository path provided (CORE or PEPR_CORE_PATH environment variable)");
   console.warn("Using empty versions array - build will include only latest content");
 }
+
+const examplesSidebarItems = generateExamplesSidebarItems();
 
 // https://astro.build/config
 export default defineConfig({
@@ -97,7 +100,7 @@ export default defineConfig({
         {
           label: "Excellent Examples",
           collapsed: true,
-          autogenerate: { directory: "examples" },
+          items: examplesSidebarItems,
         },
         {
           label: "Community and Support",

@@ -1,13 +1,42 @@
-// Extract and clean title from example README
-export const extractExampleTitle = (content, exampleName) => {
+// Extract category and title from example README
+// Returns: { category: "actions", categoryLabel: "Actions", title: "Mutate" }
+// If H1 is "Category: Title" -> category folder is created
+// If H1 is just "Title" (no colon) -> stays unnested
+export const extractExampleCategory = (content, exampleName) => {
   const headingMatch = content.match(/^#\s+(.+)$/m);
-  let title = headingMatch
+  const fullTitle = headingMatch
     ? headingMatch[1]
     : exampleName.replace(/^hello-pepr-/, "").replace(/-/g, " ");
 
-  // Remove "Hello Pepr " prefix from title (case-insensitive)
-  title = title.replace(/^hello\s+pepr\s+/i, "");
+  // Check if title has a category prefix (e.g., "Action: Mutate")
+  const categoryMatch = fullTitle.match(/^([^:]+):\s*(.+)$/);
 
+  if (categoryMatch) {
+    const categoryLabel = categoryMatch[1].trim();
+    const title = categoryMatch[2].trim();
+
+    // Keep category as lowercase with spaces preserved
+    // Directory conversion happens when the path is created
+    const category = categoryLabel.toLowerCase();
+
+    return {
+      category,
+      categoryLabel,
+      title,
+    };
+  }
+
+  // No colon found - this example stays unnested
+  return {
+    category: "other",
+    categoryLabel: "Other",
+    title: fullTitle,
+  };
+};
+
+// Extract and clean title from example README
+export const extractExampleTitle = (content, exampleName) => {
+  const { title } = extractExampleCategory(content, exampleName);
   return title;
 };
 
@@ -22,6 +51,11 @@ export const removeHeading = content => {
 
 // Generate slug from example name
 export const generateExampleSlug = exampleName => {
+  // Handle base hello-pepr directory
+  if (exampleName === "hello-pepr") {
+    return "module";
+  }
+  // Handle hello-pepr-* directories
   return exampleName.replace(/^hello-pepr-/, "");
 };
 

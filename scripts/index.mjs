@@ -13,8 +13,9 @@ import { processContentLinks } from "./lib/process-content-links.mjs";
 import { ROOT_MD_MAPPINGS } from "./lib/root-mappings.mjs";
 import { generateFileMetadata } from "./lib/file-metadata.mjs";
 import { generateFrontMatter } from "./lib/frontmatter.mjs";
+import { generateExamplesSidebarItems } from "./lib/generate-examples-sidebar.mjs";
 import {
-  extractExampleTitle,
+  extractExampleCategory,
   removeHeading,
   generateExampleSlug,
   escapeYamlString,
@@ -246,7 +247,6 @@ async function copyRepoResources(core, tmp, version) {
   });
 }
 
-
 // Process root level markdown files (community files)
 const processRootMarkdownFiles = async (core, verdir) => {
   const processedFiles = [];
@@ -282,9 +282,10 @@ const processRootMarkdownFiles = async (core, verdir) => {
 const getSourcePath = (file, coredocs, verdir) => {
   // Derive the list of root markdown file targets from ROOT_MD_MAPPINGS to avoid duplication
   const rootMarkdownTargets = ROOT_MD_MAPPINGS.map(m => m.target);
-  return rootMarkdownTargets.some(cf => file.endsWith(cf)) ? `${verdir}/${file}` : `${coredocs}/${file}`;
+  return rootMarkdownTargets.some(cf => file.endsWith(cf))
+    ? `${verdir}/${file}`
+    : `${coredocs}/${file}`;
 };
-
 
 // Process a single source file
 const processSingleSourceFile = async (file, coredocs, verdir) => {
@@ -422,21 +423,17 @@ await executeWithErrorHandling(`Process pepr-excellent-examples`, async log => {
   const examplesRepo = path.resolve(opts.examples);
   const examplesDir = `${RUN.tmp}/content/latest/examples`;
 
-  // Ensure examples directory exists
   await fs.mkdir(examplesDir, { recursive: true });
 
-  // Find all hello-pepr-* directories
-  const exampleDirs = await glob(`${examplesRepo}/hello-pepr-*`, { onlyDirectories: true });
+  const exampleDirs = await glob(`${examplesRepo}/hello-pepr{,-*}`, { onlyDirectories: true });
 
   console.log(`Found ${exampleDirs.length} example directories`);
 
-  // Process each example directory
   await Promise.all(
     exampleDirs.map(async exampleDir => {
       const exampleName = path.basename(exampleDir);
       const readmePath = path.join(exampleDir, "README.md");
 
-      // Check if README exists
       try {
         await fs.access(readmePath);
       } catch {
@@ -444,25 +441,17 @@ await executeWithErrorHandling(`Process pepr-excellent-examples`, async log => {
         return;
       }
 
-      // Read and transform content
       let content = await fs.readFile(readmePath, "utf8");
 
-      // Extract and clean title
-      const title = extractExampleTitle(content, exampleName);
+      const { category, title } = extractExampleCategory(content, exampleName);
 
-      // Remove the first heading if it exists (we'll use frontmatter title)
       content = removeHeading(content);
-
-      // Transform content (fix paths, links, etc.)
       content = transformContent(content);
 
-      // Create a clean slug from the example name
       const slug = generateExampleSlug(exampleName);
 
-      // GitHub source URL
       const sourceUrl = generateExampleSourceUrl(exampleName);
 
-      // Generate frontmatter (quote values to handle special YAML characters like colons)
       const frontmatter = heredoc`
         ---
         title: "${escapeYamlString(title)}"
@@ -470,25 +459,72 @@ await executeWithErrorHandling(`Process pepr-excellent-examples`, async log => {
         ---
       `;
 
-      // Add source link at the top of content
       const sourceLink = `\n\n> **Source:** [${exampleName}](${sourceUrl})\n\n`;
 
-      // Write the processed file
-      const outputPath = path.join(examplesDir, `${slug}.md`);
-      await fs.writeFile(outputPath, frontmatter + sourceLink + content, "utf8");
+      let outputPath;
+      if (category === "other") {
+        outputPath = path.join(examplesDir, `${slug}.md`);
+        log.push(["processed", `${exampleName} -> examples/${slug}.md`]);
+      } else {
+        const categoryDirName = category.replace(/\s+/g, "-");
+        const categoryDir = path.join(examplesDir, categoryDirName);
+        await fs.mkdir(categoryDir, { recursive: true });
+        outputPath = path.join(categoryDir, `${slug}.md`);
+        log.push(["processed", `${exampleName} -> examples/${categoryDirName}/${slug}.md`]);
+      }
 
-      log.push(["processed", `${exampleName} -> examples/${slug}.md`]);
+      await fs.writeFile(outputPath, frontmatter + sourceLink + content, "utf8");
     }),
   );
 
   log.push(["total", `${exampleDirs.length} examples processed`]);
+
+  // Generate dynamic sidebar configuration based on discovered directories
+  RUN.examplesSidebarItems = generateExamplesSidebarItems(examplesDir);
+  log.push(["sidebar", `${RUN.examplesSidebarItems.length} items generated`]);
 });
 
 // Copy examples to all version directories (examples are not versioned)
+// Recursively copy examples directory, updating slugs for versioned content
+async function copyExamplesRecursively(sourceDir, destDir, version, relativePath = "") {
+  const entries = await fs.readdir(sourceDir, { withFileTypes: true });
+
+  await Promise.all(
+    entries.map(async entry => {
+      const sourcePath = path.join(sourceDir, entry.name);
+      const destPath = path.join(destDir, entry.name);
+
+      if (entry.isDirectory()) {
+        // Recursively copy subdirectory
+        await fs.mkdir(destPath, { recursive: true });
+        const newRelativePath = relativePath ? `${relativePath}/${entry.name}` : entry.name;
+        await copyExamplesRecursively(sourcePath, destPath, version, newRelativePath);
+      } else if (entry.name.endsWith(".md")) {
+        // Copy and update markdown file with version-specific slug
+        const content = await fs.readFile(sourcePath, "utf8");
+        const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n/);
+
+        if (frontmatterMatch) {
+          const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, "v$1");
+          const fileSlug = entry.name.replace(/\.md$/, "");
+          const fullSlug = relativePath
+            ? `${versionMajMin}/examples/${relativePath}/${fileSlug}`
+            : `${versionMajMin}/examples/${fileSlug}`;
+
+          const newFrontmatter = `---\n${frontmatterMatch[1]}\nslug: ${fullSlug}\n---\n`;
+          const newContent = content.replace(/^---\n[\s\S]*?\n---\n/, newFrontmatter);
+          await fs.writeFile(destPath, newContent, "utf8");
+        } else {
+          await fs.copyFile(sourcePath, destPath);
+        }
+      }
+    }),
+  );
+}
+
 await executeWithErrorHandling(`Copy examples to all versions`, async log => {
   const latestExamplesDir = `${RUN.tmp}/content/latest/examples`;
 
-  // Check if examples directory exists
   try {
     await fs.access(latestExamplesDir);
   } catch {
@@ -503,51 +539,34 @@ await executeWithErrorHandling(`Copy examples to all versions`, async log => {
       const versionExamplesDir = `${RUN.tmp}/content/${version}/examples`;
       await fs.mkdir(versionExamplesDir, { recursive: true });
 
-      // Get all example files
-      const exampleFiles = await fs.readdir(latestExamplesDir);
+      // Recursively copy entire examples directory structure
+      await copyExamplesRecursively(latestExamplesDir, versionExamplesDir, version);
 
-      // Copy each file and add version-specific slug
-      await Promise.all(
-        exampleFiles.map(async file => {
-          const sourcePath = path.join(latestExamplesDir, file);
-          const destPath = path.join(versionExamplesDir, file);
-
-          // Read the file content
-          const content = await fs.readFile(sourcePath, "utf8");
-
-          // Extract frontmatter and add slug for versioned docs
-          const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n/);
-          if (frontmatterMatch) {
-            const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, "v$1");
-            const slug = `${versionMajMin}/examples/${file.replace(/\.md$/, "")}`;
-            const newFrontmatter = `---\n${frontmatterMatch[1]}\nslug: ${slug}\n---\n`;
-            const newContent = content.replace(/^---\n[\s\S]*?\n---\n/, newFrontmatter);
-            await fs.writeFile(destPath, newContent, "utf8");
-          } else {
-            // No frontmatter, just copy as-is
-            await fs.copyFile(sourcePath, destPath);
-          }
-        }),
-      );
-
-      log.push(["copied", `examples -> ${version}/examples (with slugs)`]);
+      log.push(["copied", `examples -> ${version}/examples (with nested structure and slugs)`]);
     }),
   );
 });
 
-// Starlight sidebar configuration template
-const STARLIGHT_SIDEBAR_CONFIG = {
-  sidebar: [
-    { label: "User Guide", autogenerate: { directory: "user-guide" } },
-    { label: "Actions", autogenerate: { directory: "actions" } },
-    { label: "Tutorials", collapsed: true, autogenerate: { directory: "tutorials" } },
-    { label: "Reference", collapsed: true, autogenerate: { directory: "reference" } },
-    { label: "Excellent Examples", collapsed: true, autogenerate: { directory: "examples" } },
-    { label: "Community and Support", collapsed: true, autogenerate: { directory: "community" } },
-    { label: "Contribute", collapsed: true, autogenerate: { directory: "contribute" } },
-    { label: "Roadmap for Pepr", link: "roadmap" },
-  ],
-};
+// Generate Starlight sidebar configuration with dynamic examples
+function generateStarlightSidebarConfig(examplesItems) {
+  return {
+    sidebar: [
+      { label: "Start Here", slug: "" },
+      { label: "User Guide", autogenerate: { directory: "user-guide" } },
+      { label: "Actions", autogenerate: { directory: "actions" } },
+      { label: "Tutorials", collapsed: true, autogenerate: { directory: "tutorials" } },
+      { label: "Reference", collapsed: true, autogenerate: { directory: "reference" } },
+      {
+        label: "Excellent Examples",
+        collapsed: true,
+        items: examplesItems,
+      },
+      { label: "Community and Support", collapsed: true, autogenerate: { directory: "community" } },
+      { label: "Contribute", collapsed: true, autogenerate: { directory: "contribute" } },
+      { label: "Roadmap for Pepr", link: "roadmap" },
+    ],
+  };
+}
 
 // Check if a path exists and is accessible
 const pathExists = async path =>
@@ -673,6 +692,9 @@ await executeWithErrorHandling(`Generate version configuration files`, async log
   await fs.rm(versionsDir, { recursive: true, force: true });
   await fs.mkdir(versionsDir, { recursive: true });
 
+  // Generate sidebar config with dynamic examples items
+  const sidebarConfig = generateStarlightSidebarConfig(RUN.examplesSidebarItems || []);
+
   for (const version of stableVersions) {
     const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, "v$1");
     const versionContentPath = `${RUN.tmp}/content/${version}`;
@@ -680,7 +702,7 @@ await executeWithErrorHandling(`Generate version configuration files`, async log
     if (await hasMarkdownContent(versionContentPath)) {
       await fs.writeFile(
         `${versionsDir}/${versionMajMin}.json`,
-        JSON.stringify(STARLIGHT_SIDEBAR_CONFIG, null, 2),
+        JSON.stringify(sidebarConfig, null, 2),
       );
       log.push(["generated", `${versionMajMin}.json`]);
     } else {
