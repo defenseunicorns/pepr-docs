@@ -14,7 +14,6 @@ const MANUAL_REDIRECTS = {
   "/contribute": "/contribute/contributor-guide",
   "/metrics-endpoints": "/metric",
   "/pepr-tutorials/": "/tutorials/",
-  "*/examples/*": "/examples/:splat",
 };
 
 async function fetchGitTags(coreRepoPath) {
