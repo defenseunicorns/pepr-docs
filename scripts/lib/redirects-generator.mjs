@@ -105,6 +105,7 @@ export function generateExampleRedirects(activeVersions) {
   const stableVersions = activeVersions.filter(
     v => v !== "latest" && semver.valid(v) && semver.prerelease(v) === null,
   );
+
   const activeMajorMinors = [
     ...new Set(stableVersions.map(v => v.replace(/^v(\d+\.\d+)\.\d+$/, "v$1"))),
   ];
@@ -112,14 +113,18 @@ export function generateExampleRedirects(activeVersions) {
   const lines = [
     ...sectionHeader(
       "Example Redirects",
-      "Redirect versioned examples to unversioned (examples are not version-specific)",
+      "Force redirect versioned examples to unversioned (even if pages exist)",
     ),
   ];
+
   let count = 0;
 
   for (const majmin of activeMajorMinors) {
+    // exact path
+    lines.push(`/${majmin}/examples  /examples  301`);
+    // nested paths
     lines.push(`/${majmin}/examples/*  /examples/:splat  301`);
-    count++;
+    count += 2;
   }
 
   return { lines, count };

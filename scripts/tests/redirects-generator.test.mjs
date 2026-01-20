@@ -167,14 +167,14 @@ describe("Unit Tests - Helper Functions", () => {
       const result = generateExampleRedirects(activeVersions);
 
       const v054Lines = result.lines.filter(line => line.includes("/v0.54/examples"));
-      expect(v054Lines.length).toBe(1);
+      expect(v054Lines.length).toBe(2);
     });
 
     it("should count redirects correctly", () => {
       const activeVersions = ["v0.54.0", "v0.55.0", "latest"];
       const result = generateExampleRedirects(activeVersions);
 
-      expect(result.count).toBe(2);
+      expect(result.count).toBe(4);
     });
 
     it("should include section header", () => {
