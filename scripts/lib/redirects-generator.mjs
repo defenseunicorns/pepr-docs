@@ -14,6 +14,7 @@ const MANUAL_REDIRECTS = {
   "/contribute": "/contribute/contributor-guide",
   "/metrics-endpoints": "/metric",
   "/pepr-tutorials/": "/tutorials/",
+  "*/examples/*": "/examples/:splat",
 };
 
 async function fetchGitTags(coreRepoPath) {
@@ -101,6 +102,30 @@ export function generateRetiredVersionRedirects(retiredVersions, allTags) {
   return { lines, count };
 }
 
+export function generateExampleRedirects(activeVersions) {
+  const stableVersions = activeVersions.filter(
+    v => v !== "latest" && semver.valid(v) && semver.prerelease(v) === null,
+  );
+  const activeMajorMinors = [
+    ...new Set(stableVersions.map(v => v.replace(/^v(\d+\.\d+)\.\d+$/, "v$1"))),
+  ];
+
+  const lines = [
+    ...sectionHeader(
+      "Example Redirects",
+      "Redirect versioned examples to unversioned (examples are not version-specific)",
+    ),
+  ];
+  let count = 0;
+
+  for (const majmin of activeMajorMinors) {
+    lines.push(`/${majmin}/examples/*  /examples/:splat  301`);
+    count++;
+  }
+
+  return { lines, count };
+}
+
 export async function generateNetlifyRedirects({
   coreRepoPath,
   retiredVersions,
@@ -115,17 +140,25 @@ export async function generateNetlifyRedirects({
     "",
   ];
   const manual = generateManualRedirects();
+  const examples = generateExampleRedirects(activeVersions);
   const automatic = generatePatchToMinorRedirects(activeVersions, allTags);
   const retired = generateRetiredVersionRedirects(retiredVersions, allTags);
 
-  const allLines = [...header, ...manual.lines, ...automatic.lines, ...retired.lines];
+  const allLines = [
+    ...header,
+    ...manual.lines,
+    ...examples.lines,
+    ...automatic.lines,
+    ...retired.lines,
+  ];
   await fs.writeFile(outputPath, allLines.join("\n") + "\n");
 
   return {
-    totalRules: retired.count + manual.count + automatic.count,
+    totalRules: retired.count + manual.count + automatic.count + examples.count,
     retiredCount: retired.count,
     manualCount: manual.count,
     patchCount: automatic.count,
+    examplesCount: examples.count,
   };
 }
 

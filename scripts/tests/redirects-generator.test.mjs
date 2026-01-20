@@ -7,6 +7,7 @@ import {
   generateManualRedirects,
   generatePatchToMinorRedirects,
   generateRetiredVersionRedirects,
+  generateExampleRedirects,
   getStableVersions,
 } from "../lib/redirects-generator.mjs";
 
@@ -51,7 +52,7 @@ describe("Unit Tests - Helper Functions", () => {
       const redirectLines = result.lines.filter(line => !line.startsWith("#") && line.trim());
       expect(redirectLines.length).toBeGreaterThan(0);
       redirectLines.forEach(line => {
-        expect(line).toMatch(/\s+301$/); 
+        expect(line).toMatch(/\s+301$/);
       });
     });
 
@@ -133,7 +134,54 @@ describe("Unit Tests - Helper Functions", () => {
       const allTags = ["v0.53.0", "v0.53.1"];
       const result = generateRetiredVersionRedirects(retiredVersions, allTags);
 
-      expect(result.count).toBe(3); 
+      expect(result.count).toBe(3);
+    });
+  });
+
+  describe("generateExampleRedirects - versioned examples to unversioned", () => {
+    it("should generate redirects from versioned examples to unversioned", () => {
+      const activeVersions = ["v0.54.0", "v0.55.0", "latest"];
+      const result = generateExampleRedirects(activeVersions);
+
+      expect(result.lines).toContain("/v0.54/examples/*  /examples/:splat  301");
+      expect(result.lines).toContain("/v0.55/examples/*  /examples/:splat  301");
+    });
+
+    it("should filter out prerelease versions", () => {
+      const activeVersions = ["v0.54.0", "v0.55.0-beta.1", "latest"];
+      const result = generateExampleRedirects(activeVersions);
+
+      expect(result.lines.some(line => line.includes("v0.55"))).toBe(false);
+      expect(result.lines.some(line => line.includes("v0.54"))).toBe(true);
+    });
+
+    it("should filter out 'latest'", () => {
+      const activeVersions = ["v0.54.0", "latest"];
+      const result = generateExampleRedirects(activeVersions);
+
+      expect(result.lines.some(line => line.includes("/latest/examples"))).toBe(false);
+    });
+
+    it("should deduplicate major.minor versions", () => {
+      const activeVersions = ["v0.54.0", "v0.54.1", "v0.54.2"];
+      const result = generateExampleRedirects(activeVersions);
+
+      const v054Lines = result.lines.filter(line => line.includes("/v0.54/examples"));
+      expect(v054Lines.length).toBe(1);
+    });
+
+    it("should count redirects correctly", () => {
+      const activeVersions = ["v0.54.0", "v0.55.0", "latest"];
+      const result = generateExampleRedirects(activeVersions);
+
+      expect(result.count).toBe(2);
+    });
+
+    it("should include section header", () => {
+      const activeVersions = ["v0.54.0"];
+      const result = generateExampleRedirects(activeVersions);
+
+      expect(result.lines.some(line => line.includes("Example Redirects"))).toBe(true);
     });
   });
 });
@@ -199,6 +247,7 @@ describe("Integration Tests - Full Pipeline", () => {
     expect(content).toContain("# Retired Version Redirects");
     expect(content).toContain("# Manual Redirects");
     expect(content).toContain("# Automatic Patch-to-Minor Redirects");
+    expect(content).toContain("# Example Redirects");
     expect(content).toContain("DO NOT EDIT MANUALLY");
   });
 
@@ -216,8 +265,9 @@ describe("Integration Tests - Full Pipeline", () => {
     expect(results).toHaveProperty("retiredCount");
     expect(results).toHaveProperty("manualCount");
     expect(results).toHaveProperty("patchCount");
+    expect(results).toHaveProperty("examplesCount");
     expect(results.totalRules).toBe(
-      results.retiredCount + results.manualCount + results.patchCount,
+      results.retiredCount + results.manualCount + results.patchCount + results.examplesCount,
     );
   });
 
