@@ -52,7 +52,7 @@
     "husky": "^9.1.7",
     "linkinator": "^7.5.3",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4",
+    "prettier": "^3.8.0",
     "prettier-plugin-astro": "^0.14.1",
     "semver": "^7.5.4",
     "vitest": "^4.0.17",
