@@ -14,6 +14,7 @@ on:
 
 env:
   CORE: ./core
+  EXAMPLES: ./examples
   DOCS: ./docs
 
 jobs:
@@ -25,6 +26,11 @@ jobs:
           repository: defenseunicorns/pepr
           path: ${{ env.CORE }}
           fetch-depth: 0
+
+      - uses: actions/checkout@v6
+        with:
+          repository: defenseunicorns/pepr-excellent-examples
+          path: ${{ env.EXAMPLES }}
 
       - uses: actions/checkout@v6
         with:
@@ -44,12 +50,14 @@ jobs:
       - name: Build docs
         run: |
           CORE=$(realpath ${{ env.CORE }})
+          EXAMPLES=$(realpath ${{ env.EXAMPLES }})
           cd ${{ env.DOCS }}
-          CORE="$CORE" npm run build
+          CORE="$CORE" EXAMPLES="$EXAMPLES" npm run build
 
       - name: Run unit tests
         run: |
           CORE=$(realpath ${{ env.CORE }})
+          EXAMPLES=$(realpath ${{ env.EXAMPLES }})
           cd ${{ env.DOCS }}
           CORE="$CORE" npx vitest run scripts/tests/
 

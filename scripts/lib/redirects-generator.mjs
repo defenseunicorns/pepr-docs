@@ -37,7 +37,7 @@ function matchesMajorMinor(version, majmin) {
   return match && match[1] === majmin;
 }
 
-function generateManualRedirects() {
+export function generateManualRedirects() {
   const lines = [...sectionHeader("Manual Redirects", "Specific path redirects and fixes")];
   let count = 0;
 
@@ -51,7 +51,7 @@ function generateManualRedirects() {
   return { lines, count };
 }
 
-function generatePatchToMinorRedirects(activeVersions, allTags) {
+export function generatePatchToMinorRedirects(activeVersions, allTags) {
   const stableVersions = activeVersions.filter(v => semver.prerelease(v) === null);
   const activeMajorMinors = [
     ...new Set(stableVersions.map(v => v.replace(/^v(\d+\.\d+)\.\d+$/, "v$1"))),
@@ -81,7 +81,7 @@ function generatePatchToMinorRedirects(activeVersions, allTags) {
   return { lines, count };
 }
 
-function generateRetiredVersionRedirects(retiredVersions, allTags) {
+export function generateRetiredVersionRedirects(retiredVersions, allTags) {
   const lines = [
     ...sectionHeader("Retired Version Redirects", "Redirect old documentation versions to root"),
   ];
@@ -101,6 +101,35 @@ function generateRetiredVersionRedirects(retiredVersions, allTags) {
   return { lines, count };
 }
 
+export function generateExampleRedirects(activeVersions) {
+  const stableVersions = activeVersions.filter(
+    v => v !== "latest" && semver.valid(v) && semver.prerelease(v) === null,
+  );
+
+  const activeMajorMinors = [
+    ...new Set(stableVersions.map(v => v.replace(/^v(\d+\.\d+)\.\d+$/, "v$1"))),
+  ];
+
+  const lines = [
+    ...sectionHeader(
+      "Example Redirects",
+      "Force redirect versioned examples to unversioned (even if pages exist)",
+    ),
+  ];
+
+  let count = 0;
+
+  for (const majmin of activeMajorMinors) {
+    // exact path
+    lines.push(`/${majmin}/examples  /examples  301`);
+    // nested paths
+    lines.push(`/${majmin}/examples/*  /examples/:splat  301`);
+    count += 2;
+  }
+
+  return { lines, count };
+}
+
 export async function generateNetlifyRedirects({
   coreRepoPath,
   retiredVersions,
@@ -115,17 +144,25 @@ export async function generateNetlifyRedirects({
     "",
   ];
   const manual = generateManualRedirects();
+  const examples = generateExampleRedirects(activeVersions);
   const automatic = generatePatchToMinorRedirects(activeVersions, allTags);
   const retired = generateRetiredVersionRedirects(retiredVersions, allTags);
 
-  const allLines = [...header, ...manual.lines, ...automatic.lines, ...retired.lines];
+  const allLines = [
+    ...header,
+    ...manual.lines,
+    ...examples.lines,
+    ...automatic.lines,
+    ...retired.lines,
+  ];
   await fs.writeFile(outputPath, allLines.join("\n") + "\n");
 
   return {
-    totalRules: retired.count + manual.count + automatic.count,
+    totalRules: retired.count + manual.count + automatic.count + examples.count,
     retiredCount: retired.count,
     manualCount: manual.count,
     patchCount: automatic.count,
+    examplesCount: examples.count,
   };
 }
 

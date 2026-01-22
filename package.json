@@ -18,11 +18,9 @@
     "prepare": "husky",
     "preview": "node --env-file=.env node_modules/.bin/astro preview",
     "start": "node --env-file=.env node_modules/.bin/astro dev",
-    "test": "vitest run scripts/tests/ && npm run linkcheck",
-    "test:e2e": "VITEST_RUN_E2E=true vitest run scripts/tests/e2e-*.test.mjs",
-    "test:integration": "vitest run --reporter=verbose scripts/tests/*integration*.test.mjs",
-    "test:integration:watch": "vitest scripts/tests/*integration*.test.mjs",
-    "test:watch": "vitest"
+    "test": "node --env-file=.env ./node_modules/.bin/vitest run scripts/tests/ && npm run linkcheck",
+    "test:coverage": "node --env-file=.env ./node_modules/.bin/vitest run scripts/tests/ --coverage",
+    "test:watch": "node --env-file=.env ./node_modules/.bin/vitest"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.37.2",
@@ -42,12 +40,15 @@
   },
   "optionalDependencies": {
     "@pagefind/linux-x64": "^1.4.0",
+    "@rollup/rollup-linux-x64-gnu": "*",
     "@tailwindcss/oxide-linux-x64-gnu": "*",
     "lightningcss-linux-x64-gnu": "*",
     "pagefind": "^1.2.0"
   },
   "devDependencies": {
+    "@astrojs/sitemap": "^3.6.0",
     "@defenseunicorns/eslint-config": "^1.1.2",
+    "@vitest/coverage-v8": "^4.0.16",
     "esbuild": "^0.27.2",
     "husky": "^9.1.7",
     "linkinator": "^7.5.3",
