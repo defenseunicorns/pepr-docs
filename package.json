@@ -23,10 +23,10 @@
     "test:watch": "node --env-file=.env ./node_modules/.bin/vitest"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.37.2",
+    "@astrojs/starlight": "^0.37.3",
     "@astrojs/starlight-tailwind": "^4.0.1",
     "@tailwindcss/vite": "^4.1.18",
-    "astro": "^5.16.9",
+    "astro": "^5.16.14",
     "commander": "^14.0.2",
     "glob": "^13.0.0",
     "starlight-contextual-menu": "^0.1.5",
