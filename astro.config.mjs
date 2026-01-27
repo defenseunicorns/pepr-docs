@@ -81,10 +81,12 @@ export default defineConfig({
         },
         {
           label: "User Guide",
+          collapsed: true,
           autogenerate: { directory: "user-guide" },
         },
         {
           label: "Actions",
+          collapsed: true,
           autogenerate: { directory: "actions" },
         },
         {
