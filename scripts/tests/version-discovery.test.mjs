@@ -85,9 +85,9 @@ describe("Integration Tests - Git Operations", () => {
   let coreRepoPath;
 
   beforeAll(() => {
-    coreRepoPath = process.env.CORE || process.env.PEPR_CORE_PATH;
+    coreRepoPath = process.env.CORE;
     if (!coreRepoPath) {
-      throw new Error("CORE or PEPR_CORE_PATH environment variable must be set");
+      throw new Error("CORE environment variable must be set");
     }
   });
 
