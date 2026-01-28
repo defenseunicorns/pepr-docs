@@ -10,7 +10,7 @@ import starlightGitHubAlerts from "starlight-github-alerts";
 import starlightContextualMenu from "starlight-contextual-menu";
 import starlightImageZoom from "starlight-image-zoom";
 
-const coreRepoPath = process.env.CORE || process.env.PEPR_CORE_PATH;
+const coreRepoPath = process.env.CORE;
 let dynamicVersions = [];
 
 if (coreRepoPath) {
@@ -22,7 +22,7 @@ if (coreRepoPath) {
     console.warn("Using empty versions array - build will include only latest content");
   }
 } else {
-  console.warn("No core repository path provided (CORE or PEPR_CORE_PATH environment variable)");
+  console.warn("No core repository path provided (CORE environment variable)");
   console.warn("Using empty versions array - build will include only latest content");
 }
 
