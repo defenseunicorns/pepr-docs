@@ -48,7 +48,7 @@
   "devDependencies": {
     "@astrojs/sitemap": "^3.7.0",
     "@defenseunicorns/eslint-config": "^1.1.2",
-    "@vitest/coverage-v8": "^4.0.16",
+    "@vitest/coverage-v8": "^4.0.18",
     "esbuild": "^0.27.2",
     "husky": "^9.1.7",
     "linkinator": "^7.5.3",
