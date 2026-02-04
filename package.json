@@ -6,9 +6,9 @@
     "scripts"
   ],
   "scripts": {
-    "astro": "node --env-file=.env node_modules/.bin/astro",
+    "astro": "astro",
     "build": "bash scripts/build.sh",
-    "dev": "node --env-file=.env node_modules/.bin/astro dev",
+    "dev": "astro dev",
     "format:check": "npm run format:code && npm run format:markdown && npm run format:prettier -- --check",
     "format:code": "eslint .",
     "format:fix": "npm run format:code -- --fix && npm run format:markdown -- --fix && npm run format:prettier -- --write",
@@ -16,11 +16,11 @@
     "format:prettier": "prettier .",
     "linkcheck": "bash .github/workflows/scripts/linkcheck.sh",
     "prepare": "husky",
-    "preview": "node --env-file=.env node_modules/.bin/astro preview",
-    "start": "node --env-file=.env node_modules/.bin/astro dev",
-    "test": "node --env-file=.env ./node_modules/.bin/vitest run scripts/tests/ && npm run linkcheck",
-    "test:coverage": "node --env-file=.env ./node_modules/.bin/vitest run scripts/tests/ --coverage",
-    "test:watch": "node --env-file=.env ./node_modules/.bin/vitest"
+    "preview": "astro preview",
+    "start": "astro dev",
+    "test": "vitest run scripts/tests/ && npm run linkcheck",
+    "test:coverage": "vitest run scripts/tests/ --coverage",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.37.4",
@@ -49,6 +49,7 @@
     "@astrojs/sitemap": "^3.7.0",
     "@defenseunicorns/eslint-config": "^1.1.2",
     "@vitest/coverage-v8": "^4.0.18",
+    "dotenv": "^17.2.3",
     "esbuild": "^0.27.2",
     "husky": "^9.1.7",
     "linkinator": "^7.5.3",
