@@ -16,7 +16,6 @@ import { generateFrontMatter } from "./lib/frontmatter.mjs";
 import { generateExamplesSidebarItems } from "./lib/generate-examples-sidebar.mjs";
 import {
   extractExampleCategory,
-  removeHeading,
   generateExampleSlug,
   escapeYamlString,
   generateExampleSourceUrl,
@@ -292,8 +291,8 @@ const processSingleSourceFile = async (file, coredocs, verdir) => {
   const src = getSourcePath(file, coredocs, verdir);
   const content = await fs.readFile(src, "utf8");
   const { newfile } = generateFileMetadata(file);
-  const { front, contentWithoutHeading } = generateFrontMatter(content, newfile, RUN.version, file);
-  const processedContent = processContentLinks([front, contentWithoutHeading].join("\n"), file);
+  const { front, content: body } = generateFrontMatter(content, newfile, RUN.version, file);
+  const processedContent = processContentLinks([front, body].join("\n"), file);
 
   await fs.mkdir(`${verdir}/${path.dirname(newfile)}`, { recursive: true });
   await fs.writeFile(`${verdir}/${newfile}`, processedContent, "utf8");
@@ -314,8 +313,7 @@ const writeVersionLandingPage = async (version, verdir, core) => {
 		`;
 
     let idxBody = await fs.readFile(`${core}/README.md`, "utf8");
-    const headings = idxBody.match(/#[\s]+(.*)/);
-    idxBody = idxBody.replaceAll(headings[0], "").replaceAll("](./docs/", "](./");
+    idxBody = idxBody.replaceAll("](./docs/", "](./");
 
     idxBody = transformContent(idxBody).replaceAll(".md)", "/");
 
@@ -445,7 +443,6 @@ await executeWithErrorHandling(`Process pepr-excellent-examples`, async log => {
 
       const { category, title } = extractExampleCategory(content, exampleName);
 
-      content = removeHeading(content);
       content = transformContent(content);
 
       const slug = generateExampleSlug(exampleName);
@@ -473,7 +470,7 @@ await executeWithErrorHandling(`Process pepr-excellent-examples`, async log => {
         log.push(["processed", `${exampleName} -> examples/${categoryDirName}/${slug}.md`]);
       }
 
-      await fs.writeFile(outputPath, frontmatter + sourceLink + content, "utf8");
+      await fs.writeFile(outputPath, frontmatter + content + sourceLink, "utf8");
     }),
   );
 

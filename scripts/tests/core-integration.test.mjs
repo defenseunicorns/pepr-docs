@@ -160,8 +160,8 @@ describe("CORE Integration Tests", () => {
       expect(fileResult.newfile).toBe("user-guide/getting-started.md");
       expect(frontmatterResult.front).toContain("title: Getting Started");
       expect(frontmatterResult.front).toContain("description: Getting Started");
-      expect(frontmatterResult.contentWithoutHeading).toContain("This is a comprehensive guide...");
-      expect(frontmatterResult.contentWithoutHeading).not.toContain("# Getting Started");
+      expect(frontmatterResult.content).toContain("This is a comprehensive guide...");
+      expect(frontmatterResult.content).toContain("# Getting Started");
     });
 
     it.each([
@@ -184,9 +184,7 @@ describe("CORE Integration Tests", () => {
       },
     );
 
-    it.each([
-      ["020_actions/mutate.md", "# Mutate\n\nContent...", "Mutate"],
-    ])(
+    it.each([["020_actions/mutate.md", "# Mutate\n\nContent...", "Mutate"]])(
       "should use heading title without sidebar for regular files: %s",
       (inputPath, sourceContent, expectedTitle) => {
         const fileResult = generateFileMetadata(inputPath);

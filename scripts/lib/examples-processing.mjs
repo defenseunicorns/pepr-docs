@@ -34,21 +34,6 @@ export const extractExampleCategory = (content, exampleName) => {
   };
 };
 
-// Extract and clean title from example README
-export const extractExampleTitle = (content, exampleName) => {
-  const { title } = extractExampleCategory(content, exampleName);
-  return title;
-};
-
-// Remove the first heading from content
-export const removeHeading = content => {
-  const headingMatch = content.match(/^#\s+.+$/m);
-  if (headingMatch) {
-    return content.replace(/^#\s+.+$/m, "").trim();
-  }
-  return content;
-};
-
 // Generate slug from example name
 export const generateExampleSlug = exampleName => {
   // Handle base hello-pepr directory
