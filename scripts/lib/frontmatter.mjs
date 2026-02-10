@@ -29,6 +29,6 @@ export const generateFrontMatter = (content, newfile, version, originalFile = ""
 
   return {
     front: `---\ntitle: ${title}\ndescription: ${title}${slug}${sidebarLabel}\n---`,
-    contentWithoutHeading: content.replaceAll(heading[0], ""),
+    content,
   };
 };

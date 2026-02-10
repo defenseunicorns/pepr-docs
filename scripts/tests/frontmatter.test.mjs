@@ -15,8 +15,8 @@ describe("frontmatter", () => {
       expect(result.front).toContain("title: Getting Started");
       expect(result.front).toContain("description: Getting Started");
       expect(result.front).not.toContain("slug:");
-      expect(result.contentWithoutHeading).not.toContain("# Getting Started");
-      expect(result.contentWithoutHeading).toContain("This is the guide...");
+      expect(result.content).toContain("# Getting Started");
+      expect(result.content).toContain("This is the guide...");
     });
 
     it("should generate frontmatter for versioned content with slug", () => {
@@ -113,16 +113,6 @@ describe("frontmatter", () => {
 
       expect(result.front).toContain("title: Overview");
       expect(result.front).toContain("sidebar:");
-    });
-
-    it("should remove heading from content", () => {
-      const content = "# Getting Started\n\nLine 1\nLine 2";
-      const newfile = "guide.md";
-
-      const result = generateFrontMatter(content, newfile, "latest");
-
-      expect(result.contentWithoutHeading).toBe("\n\nLine 1\nLine 2");
-      expect(result.contentWithoutHeading).not.toContain("# Getting Started");
     });
 
     it("should throw clear error when content has no heading", () => {
