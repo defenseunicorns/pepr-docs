@@ -549,8 +549,8 @@ function generateStarlightSidebarConfig(examplesItems) {
   return {
     sidebar: [
       { label: "Start Here", slug: "" },
-      { label: "User Guide", autogenerate: { directory: "user-guide" } },
-      { label: "Actions", autogenerate: { directory: "actions" } },
+      { label: "User Guide", collapsed: true, autogenerate: { directory: "user-guide" } },
+      { label: "Actions", collapsed: true, autogenerate: { directory: "actions" } },
       { label: "Tutorials", collapsed: true, autogenerate: { directory: "tutorials" } },
       { label: "Reference", collapsed: true, autogenerate: { directory: "reference" } },
       {
