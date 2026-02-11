@@ -28,7 +28,7 @@
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.17.1",
     "commander": "^14.0.3",
-    "glob": "^13.0.1",
+    "glob": "^13.0.2",
     "starlight-contextual-menu": "^0.1.5",
     "starlight-github-alerts": "^0.1.1",
     "starlight-image-zoom": "^0.13.2",
