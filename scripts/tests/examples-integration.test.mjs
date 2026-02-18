@@ -6,7 +6,6 @@ import { glob } from "glob";
 import { generateExamplesSidebarItems } from "../lib/generate-examples-sidebar.mjs";
 import {
   extractExampleCategory,
-  removeHeading,
   generateExampleSlug,
   escapeYamlString,
   generateExampleSourceUrl,
@@ -126,23 +125,6 @@ describe("EXAMPLES Integration Tests", () => {
         expect(result.category).toBe(testCase.expectedCategory);
         expect(result.title).toBe(testCase.expectedTitle);
       }
-    });
-  });
-
-  describe("Heading Removal", () => {
-    it("should remove H1 heading from content", () => {
-      const readmeContent = "# Full Test Example\n\nThis is the content...";
-      const contentWithoutHeading = removeHeading(readmeContent);
-
-      expect(contentWithoutHeading).toBe("This is the content...");
-      expect(contentWithoutHeading).not.toContain("# Full Test Example");
-    });
-
-    it("should preserve content when no heading exists", () => {
-      const readmeContent = "This example has no heading.\n\nJust content.";
-      const contentWithoutHeading = removeHeading(readmeContent);
-
-      expect(contentWithoutHeading).toBe("This example has no heading.\n\nJust content.");
     });
   });
 
@@ -314,12 +296,11 @@ This is a complete example that mutates resources.
 `;
 
       const { category, title } = extractExampleCategory(readmeContent, exampleName);
-      const content = removeHeading(readmeContent);
       const slug = generateExampleSlug(exampleName);
       const sourceUrl = generateExampleSourceUrl(exampleName);
       const sourceLink = `\n\n> **Source:** [${exampleName}](${sourceUrl})\n\n`;
       const frontmatter = `---\ntitle: "${escapeYamlString(title)}"\ndescription: "${escapeYamlString(title)}"\n---\n`;
-      const finalContent = frontmatter + sourceLink + content;
+      const finalContent = frontmatter + readmeContent + sourceLink;
 
       expect(category).toBe("action");
       expect(title).toBe("Mutate");
@@ -329,7 +310,7 @@ This is a complete example that mutates resources.
       expect(finalContent).toContain("> **Source:**");
       expect(finalContent).toContain("[hello-pepr-mutate]");
       expect(finalContent).toContain("This is a complete example that mutates resources.");
-      expect(finalContent).not.toContain("# Action: Mutate");
+      expect(finalContent).toContain("# Action: Mutate");
     });
 
     it("should transform unnested example correctly", () => {
@@ -337,11 +318,11 @@ This is a complete example that mutates resources.
       const readmeContent = "# Alias\n\nThis example shows alias usage.";
 
       const { category, title } = extractExampleCategory(readmeContent, exampleName);
-      const content = removeHeading(readmeContent);
 
       expect(category).toBe("other");
       expect(title).toBe("Alias");
-      expect(content).toBe("This example shows alias usage.");
+      expect(readmeContent).toContain("# Alias");
+      expect(readmeContent).toContain("This example shows alias usage.");
     });
   });
 });
