@@ -81,14 +81,11 @@ describe("Unit Tests - Helper Functions", () => {
   });
 });
 
-describe("Integration Tests - Git Operations", () => {
+describe.skipIf(!process.env.CORE)("Integration Tests - Git Operations", () => {
   let coreRepoPath;
 
   beforeAll(() => {
     coreRepoPath = process.env.CORE;
-    if (!coreRepoPath) {
-      throw new Error("CORE environment variable must be set");
-    }
   });
 
   describe("discoverVersions - version discovery and categorization", () => {

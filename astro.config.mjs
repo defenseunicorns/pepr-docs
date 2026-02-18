@@ -1,4 +1,5 @@
-import "dotenv/config";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import sitemap from "@astrojs/sitemap";
@@ -11,7 +12,8 @@ import starlightGitHubAlerts from "starlight-github-alerts";
 import starlightContextualMenu from "starlight-contextual-menu";
 import starlightImageZoom from "starlight-image-zoom";
 
-const coreRepoPath = process.env.CORE;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const coreRepoPath = process.env.CORE || resolve(__dirname, ".repos", "pepr");
 let dynamicVersions = [];
 
 if (coreRepoPath) {

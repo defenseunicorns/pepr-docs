@@ -1,29 +1,38 @@
 #!/bin/bash
 set -e
 
-# In CI, use CORE and EXAMPLES env vars directly (set by workflow)
-# Locally, load from .env file if it exists
-if [ -z "$CI" ] && [ -f .env ]; then
-  set -a
-  source .env
-  set +a
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+CACHE_DIR="$REPO_ROOT/.repos"
+
+PEPR_CORE_REPO="https://github.com/defenseunicorns/pepr.git"
+PEPR_EXAMPLES_REPO="https://github.com/defenseunicorns/pepr-excellent-examples.git"
+
+# Clone or update the pepr repository in .repos/
+if [ -z "$CORE" ]; then
+  mkdir -p "$CACHE_DIR"
+  if [ -d "$CACHE_DIR/pepr/.git" ]; then
+    echo "Updating cached pepr clone..."
+    git -C "$CACHE_DIR/pepr" fetch --tags --quiet
+    git -C "$CACHE_DIR/pepr" pull --quiet
+  else
+    echo "Cloning pepr repository (first-time setup)..."
+    git clone "$PEPR_CORE_REPO" "$CACHE_DIR/pepr"
+  fi
+  CORE="$CACHE_DIR/pepr"
 fi
 
-# Check if required environment variables are set
-if [ -z "$CORE" ] || [ -z "$EXAMPLES" ]; then
-  echo "Error: Required environment variables not set"
-  echo ""
-  [ -z "$CORE" ] && echo "  Missing: CORE"
-  [ -z "$EXAMPLES" ] && echo "  Missing: EXAMPLES"
-  echo ""
-  echo "Please create a .env file with:"
-  echo "  CORE=/path/to/pepr"
-  echo "  EXAMPLES=/path/to/pepr-excellent-examples"
-  echo ""
-  echo "Or set the environment variables directly:"
-  echo "  export CORE=/path/to/pepr"
-  echo "  export EXAMPLES=/path/to/pepr-excellent-examples"
-  exit 1
+# Clone or update the pepr-excellent-examples repository in .repos/
+if [ -z "$EXAMPLES" ]; then
+  mkdir -p "$CACHE_DIR"
+  if [ -d "$CACHE_DIR/pepr-excellent-examples/.git" ]; then
+    echo "Updating cached pepr-excellent-examples clone..."
+    git -C "$CACHE_DIR/pepr-excellent-examples" pull --quiet
+  else
+    echo "Cloning pepr-excellent-examples repository (first-time setup)..."
+    git clone --depth 1 "$PEPR_EXAMPLES_REPO" "$CACHE_DIR/pepr-excellent-examples"
+  fi
+  EXAMPLES="$CACHE_DIR/pepr-excellent-examples"
 fi
 
 CORE=$(realpath "$CORE")
