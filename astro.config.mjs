@@ -1,19 +1,16 @@
-import { fileURLToPath } from "node:url";
-import { dirname, resolve } from "node:path";
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import sitemap from "@astrojs/sitemap";
 import starlightVersions from "starlight-versions";
 import starlightLlmsTxt from "starlight-llms-txt";
 import tailwindcss from "@tailwindcss/vite";
-import { getStarlightVersions } from "./scripts/lib/version-discovery.mjs";
+import { getStarlightVersions, resolveCorePath } from "./scripts/lib/version-discovery.mjs";
 import { generateExamplesSidebarItems } from "./scripts/lib/generate-examples-sidebar.mjs";
 import starlightGitHubAlerts from "starlight-github-alerts";
 import starlightContextualMenu from "starlight-contextual-menu";
 import starlightImageZoom from "starlight-image-zoom";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const coreRepoPath = process.env.CORE || resolve(__dirname, ".repos", "pepr");
+const coreRepoPath = resolveCorePath();
 let dynamicVersions = [];
 
 if (coreRepoPath) {

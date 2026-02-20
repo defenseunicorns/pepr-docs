@@ -4,8 +4,11 @@ import {
   getStarlightVersions,
   findCurrentVersion,
   majmin,
+  resolveCorePath,
 } from "../lib/version-discovery.mjs";
 import * as semver from "semver";
+
+const corePath = resolveCorePath();
 
 describe("Unit Tests - Helper Functions", () => {
   describe("majmin - major.minor extraction logic", () => {
@@ -81,11 +84,16 @@ describe("Unit Tests - Helper Functions", () => {
   });
 });
 
-describe.skipIf(!process.env.CORE)("Integration Tests - Git Operations", () => {
+describe("Integration Tests - Git Operations", () => {
   let coreRepoPath;
 
   beforeAll(() => {
-    coreRepoPath = process.env.CORE;
+    coreRepoPath = resolveCorePath();
+    if (!coreRepoPath) {
+      throw new Error(
+        "Core repository not found. Run 'npm run build' first to clone it to .repos/pepr",
+      );
+    }
   });
 
   describe("discoverVersions - version discovery and categorization", () => {
