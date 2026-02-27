@@ -4,10 +4,10 @@ dist/
 # Dependencies / NPM packages
 node_modules/
 
-# Environment variables (local configuration)
-.env
+# Cached repository clones (auto-cloned by build.sh)
+.repos/
 
-# Temporary clone of core repo during build
+# Temporary build working directory
 tmp/
 
 # Keep the directories but ignore all their contents except .gitkeep

@@ -121,10 +121,6 @@ await executeWithErrorHandling(`Clean tmp dir`, async log => {
   log.push(["tmp", RUN.tmp]);
 });
 
-await executeWithErrorHandling(`Copy site src to tmp dir`, async () => {
-  await fs.cp(RUN.site, RUN.tmp, { recursive: true });
-});
-
 await executeWithErrorHandling(`Search core repo versions`, async log => {
   const { versions, retired } = await discoverVersions(RUN.core, RUN.cutoff);
 

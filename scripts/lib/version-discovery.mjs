@@ -2,8 +2,24 @@ import * as semver from "semver";
 import * as util from "node:util";
 import * as child_process from "node:child_process";
 import * as fs from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const execFile = util.promisify(child_process.execFile);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const defaultCorePath = resolve(__dirname, "../../.repos/pepr");
+
+/**
+ * Resolve the core repository path.
+ * Uses CORE env var if set, otherwise falls back to .repos/pepr.
+ * @returns {string|null} - Path to core repo, or null if not available
+ */
+export function resolveCorePath() {
+  if (process.env.CORE) return process.env.CORE;
+  if (existsSync(defaultCorePath)) return defaultCorePath;
+  return null;
+}
 
 export function majmin(version) {
   return `${semver.major(version)}.${semver.minor(version)}`;

@@ -17,54 +17,21 @@ then built into a versioned site using [Starlight](https://starlight.astro.build
 
 - Node.js (v18 or later)
 - npm
-- Access to the Pepr core repository
 
 ### Setup
 
-1. Clone this repository:
+1. Clone this repository and install dependencies:
 
 ```bash
-    git clone https://github.com/defenseunicorns/pepr-docs.git
-    cd pepr-docs
-    npm install
-```
-
-2. Clone the Pepr core repository (adjacent to pepr-docs):
-
-```bash
-cd ..
-git clone https://github.com/defenseunicorns/pepr.git
-```
-
-3. Clone the Pepr Excellent Examples repository (adjacent to pepr-docs):
-
-```bash
-cd ..
-git clone https://github.com/defenseunicorns/pepr-excellent-examples.git
+git clone https://github.com/defenseunicorns/pepr-docs.git
 cd pepr-docs
-```
-
-4. Create a `.env` file to configure the repository paths:
-
-```bash
-# Create .env file with paths to Pepr core and examples repos
-# If repositories are siblings:
-cat > .env << EOF
-CORE=../pepr
-EXAMPLES=../pepr-excellent-examples
-EOF
-
-# Or if repositories are in different locations:
-cat > .env << EOF
-CORE=/path/to/pepr
-EXAMPLES=/path/to/pepr-excellent-examples
-EOF
+npm install
 ```
 
 ### Build and Run Locally
 
 ```bash
-# Build the site (generates content from core repo and builds site)
+# Build the site (generates content from Pepr core repo and Pepr Excellent Examples rep then builds site)
 npm run build
 
 # Start development server
@@ -87,14 +54,16 @@ npm run preview
 ```text
 pepr-docs/
 ├── scripts/                 # Build system source code
+│   ├── build.sh             # Build entry point (clones repos, runs index.mjs)
 │   ├── index.mjs            # Main build orchestrator
-│   ├── redirects-generator.mjs
+│   ├── lib/                 # Build system libraries
 │   └── tests/               # Test suite
 ├── src/                     # Site source
 │   ├── content/docs/        # Documentation content (generated, gitignored)
 │   ├── components/          # Astro components
 │   ├── pages/               # Custom pages
 │   └── styles/              # Stylesheets
+├── .repos/                  # Cloned source repositories (generated, gitignored)
 ├── public/                  # Static assets
 ├── site-docs/               # Documentation site documentation
 │   ├── ARCHITECTURE.md      # Build system architecture

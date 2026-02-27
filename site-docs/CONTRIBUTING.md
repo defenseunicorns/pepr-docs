@@ -6,33 +6,12 @@ Thank you for contributing to the Pepr documentation! This guide will help you g
 
 ### Setup
 
-1. Clone the docs repository and install deps:
+1. Clone the docs repository and install dependencies:
 
 ```bash
 git clone https://github.com/defenseunicorns/pepr-docs.git
 cd pepr-docs
 npm install
-```
-
-2. Clone the core repository and install deps:
-
-```bash
-cd ..
-git clone https://github.com/defenseunicorns/pepr.git
-cd pepr
-npm install
-cd ../pepr-docs
-```
-
-3. Create a `.env` file to configure the core repository path:
-
-```bash
-# Create .env file with path to Pepr core repo
-# If pepr and pepr-docs are siblings:
-echo 'CORE=../pepr' > .env
-
-# If pepr is in a different location:
-echo 'CORE=/path/to/pepr' > .env
 ```
 
 ## Development Workflow

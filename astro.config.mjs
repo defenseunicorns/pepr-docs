@@ -4,27 +4,22 @@ import sitemap from "@astrojs/sitemap";
 import starlightVersions from "starlight-versions";
 import starlightLlmsTxt from "starlight-llms-txt";
 import tailwindcss from "@tailwindcss/vite";
-import { getStarlightVersions } from "./scripts/lib/version-discovery.mjs";
+import { getStarlightVersions, resolveCorePath } from "./scripts/lib/version-discovery.mjs";
 import { generateExamplesSidebarItems } from "./scripts/lib/generate-examples-sidebar.mjs";
 import starlightGitHubAlerts from "starlight-github-alerts";
 import starlightContextualMenu from "starlight-contextual-menu";
 import starlightImageZoom from "starlight-image-zoom";
 
-const coreRepoPath = process.env.CORE;
-let dynamicVersions = [];
+const coreRepoPath = resolveCorePath();
+let dynamicVersions;
 
-if (coreRepoPath) {
-  try {
-    dynamicVersions = await getStarlightVersions(coreRepoPath, 2);
-    console.log("dynamicVersions =", dynamicVersions);
-  } catch (error) {
-    console.warn("Could not discover versions dynamically:", error.message);
-    console.warn("Using empty versions array - build will include only latest content");
-  }
-} else {
-  console.warn("No core repository path provided (CORE environment variable)");
-  console.warn("Using empty versions array - build will include only latest content");
+if (!coreRepoPath) {
+  throw new Error(
+    "Core repository not found at '.repos/pepr'. Run 'npm run build' first to generate content.",
+  );
 }
+
+dynamicVersions = await getStarlightVersions(coreRepoPath, 2);
 
 const examplesSidebarItems = generateExamplesSidebarItems();
 

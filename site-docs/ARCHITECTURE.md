@@ -22,9 +22,9 @@ The build orchestration system is located in the `scripts/` workspace directory 
 **Key files:**
 
 - `index.mjs` - Main build orchestrator
-- `version-discovery.mjs` - Discovers and manages versions from git tags
-- `redirects-generator.mjs` - Generates Netlify redirect rules
-- `heredoc.mjs` - Utilities for processing heredoc-style content
+- `lib/version-discovery.mjs` - Discovers and manages versions from git tags
+- `lib/redirects-generator.mjs` - Generates Netlify redirect rules
+- `lib/heredoc.mjs` - Utilities for processing heredoc-style content
 - `tests/` - Unit and integration tests for build scripts
 
 ### 2. Documentation Framework (Starlight)
@@ -100,8 +100,9 @@ The main entry point that coordinates the entire build process.
 
 - `--core`: Path to the Pepr core repository (for git tags)
 - `--site`: Path to the documentation content directory
+- `--examples`: Path to the pepr-excellent-examples repository
 
-### 4. Redirect Generator (`scripts/redirects-generator.mjs`)
+### 4. Redirect Generator (`scripts/lib/redirects-generator.mjs`)
 
 Generating Netlify redirect rules.
 
@@ -113,6 +114,14 @@ Generating Netlify redirect rules.
 
 → See [REDIRECTS.md](./REDIRECTS.md#how-it-works) for detailed explanation of redirect types and examples.
 
+## Key Directories
+
+| Directory | Purpose | Persists? |
+| --------- | ------- | --------- |
+| `.repos/` | Cached clones of source repos. Also used by `astro.config.mjs` for version discovery at dev time. | Yes (gitignored) |
+| `tmp/` | Intermediate processing area. Content from `.repos/` is processed and written here, then copied to `src/content/docs/`. | No (cleaned up) |
+| `src/content/docs/` | Generated content consumed by Astro. Required before running `npm run dev`. | Yes (gitignored) |
+
 ## Workflow
 
 ### Build Process
@@ -120,11 +129,12 @@ Generating Netlify redirect rules.
 ```text
 1. Parse Arguments
    ├─ --core: Path to Pepr core repository
-   └─ --site: Path to documentation content
+   ├─ --site: Path to documentation content
+   └─ --examples: Path to pepr-excellent-examples repository
    ↓
-2. Clone Core Repository to tmp/ Directory
-   ├─ Creates temporary tmp directory (gitignored)
-   └─ Clones specified core repo for git tag access
+2. Clone Repositories to .repos/ Directory
+   ├─ Clones pepr core repo to .repos/pepr (gitignored)
+   └─ Clones pepr-excellent-examples to .repos/pepr-excellent-examples (gitignored)
    ↓
 3. Fetch Git Tags (from core repo clone)
    ├─ Gets all version tags (e.g., v0.54.0, v0.55.1)
@@ -169,7 +179,8 @@ Generating Netlify redirect rules.
    ↓
 3. Netlify Build & Deployment
    ├─ Clones the repository
-   ├─ Clones Pepr core repository to tmp/
+   ├─ Clones Pepr core repository to .repos/pepr
+   ├─ Clones pepr-excellent-examples to .repos/pepr-excellent-examples
    ├─ Runs full build process (npm run build)
    ├─ Generates versioned documentation
    ├─ Creates static site in dist/
@@ -183,53 +194,55 @@ Generating Netlify redirect rules.
 ## Data Flow
 
 ```text
-┌─────────────────────────┐
-│  Pepr Core Repository   │
-│  (External Source)      │
-└───────────┬─────────────┘
-            │
-            ↓ (clone to tmp/)
-┌───────────────────────────────────────┐
-│         tmp/ Directory                │
-│  ┌──────────────┐  ┌────────────────┐│
-│  │  Git Tags    │  │  Docs (*.md)   ││
-│  │  (versions)  │  │  (content)     ││
-│  └──────┬───────┘  └────────┬───────┘│
-└─────────┼──────────────────┼─────────┘
-          │                  │
-          ↓                  ↓
-┌─────────────────┐  ┌──────────────────────┐
-│  Version Info   │  │  Extract & Transform │
-│  - Active       │  │  Documentation       │
-│  - Retired      │  └──────────┬───────────┘
-└────────┬────────┘             │
-         │                      ↓
-         │           ┌──────────────────────┐
-         │           │  src/content/docs/   │
-         │           │  ├─ v0.54/           │
-         │           │  └─ v0.55/           │
-         │           └──────────────────────┘
-         │
-         ↓
-┌────────────────────────┐
-│  Redirect Generator    │
-├────────────────────────┤
-│  1. Manual Redirects   │
-│  2. Patch-to-Minor     │
-│  3. Retired Versions   │
-└──────────┬─────────────┘
-           │
-           ↓
-┌──────────────────────┐
-│  public/_redirects   │
-│  (Netlify format)    │
-└──────────────────────┘
-           │
-           ↓
-┌──────────────────────┐
-│  Astro Build         │
-│  → dist/             │
-└──────────────────────┘
+┌─────────────────────────┐     ┌─────────────────────────────┐
+│  Pepr Core Repository   │     │  pepr-excellent-examples    │
+│  (External Source)      │     │  (External Source)          │
+└───────────┬─────────────┘     └──────────────┬──────────────┘
+            │                                  │
+            └──────────────┬───────────────────┘
+                           ↓ (clone to .repos/)
+          ┌────────────────────────────────────────────┐
+          │               .repos/ Directory            │
+          │  ┌──────────────┐  ┌──────────────────────┐│
+          │  │  Git Tags    │  │  Docs & Examples     ││
+          │  │  (versions)  │  │  (*.md content)      ││
+          │  └──────┬───────┘  └──────────┬───────────┘│
+          └─────────┼────────────────────┼─────────────┘
+                    │                    │
+                    ↓                    ↓
+          ┌─────────────────┐  ┌──────────────────────┐
+          │  Version Info   │  │  Extract & Transform │
+          │  - Active       │  │  Documentation       │
+          │  - Retired      │  └──────────┬───────────┘
+          └────────┬────────┘             │
+                   │                      ↓
+                   │           ┌──────────────────────┐
+                   │           │  src/content/docs/   │
+                   │           │  ├─ v1.0/            │
+                   │           │  ├─ v1.1/            │
+                   │           │  └─ examples/        │
+                   │           └──────────────────────┘
+                   │
+                   ↓
+          ┌────────────────────────┐
+          │  Redirect Generator    │
+          ├────────────────────────┤
+          │  1. Manual Redirects   │
+          │  2. Patch-to-Minor     │
+          │  3. Retired Versions   │
+          └──────────┬─────────────┘
+                     │
+                     ↓
+          ┌──────────────────────┐
+          │  public/_redirects   │
+          │  (Netlify format)    │
+          └──────────────────────┘
+                     │
+                     ↓
+          ┌──────────────────────┐
+          │  Astro Build         │
+          │  → dist/             │
+          └──────────────────────┘
 ```
 
 ## Version Management
@@ -260,10 +273,11 @@ New Release → Active Version → Retired Version
 scripts/
 ├── build.sh                          # Build entry point (bash)
 ├── index.mjs                         # Main build orchestrator (Node.js)
-├── version-discovery.mjs             # Version management
-├── redirects-generator.mjs           # Redirect generation
-├── heredoc.mjs                       # Content processing utilities
-├── package.json                      # Build scripts workspace config
+├── lib/
+│   ├── version-discovery.mjs         # Version management
+│   ├── redirects-generator.mjs       # Redirect generation
+│   ├── generate-examples-sidebar.mjs # Examples sidebar generation
+│   └── heredoc.mjs                   # Content processing utilities
 └── tests/
     └── *.test.mjs                    # Test suite
 

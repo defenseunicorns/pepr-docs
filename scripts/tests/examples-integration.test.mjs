@@ -235,11 +235,12 @@ describe("EXAMPLES Integration Tests", () => {
       expect(items[1].link).toBe("examples/load-test");
     });
 
-    it("should return empty array when directory does not exist", () => {
+    it("should throw an error when directory does not exist", () => {
       const nonExistentDir = path.join(testDir, "does-not-exist");
-      const items = generateExamplesSidebarItems(nonExistentDir);
 
-      expect(items).toEqual([]);
+      expect(() => generateExamplesSidebarItems(nonExistentDir)).toThrow(
+        "Run 'npm run build' first to generate content.",
+      );
     });
 
     it("should sort directories and files alphabetically", async () => {
