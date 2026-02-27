@@ -11,20 +11,15 @@ import starlightContextualMenu from "starlight-contextual-menu";
 import starlightImageZoom from "starlight-image-zoom";
 
 const coreRepoPath = resolveCorePath();
-let dynamicVersions = [];
+let dynamicVersions;
 
-if (coreRepoPath) {
-  try {
-    dynamicVersions = await getStarlightVersions(coreRepoPath, 2);
-    console.log("dynamicVersions =", dynamicVersions);
-  } catch (error) {
-    console.warn("Could not discover versions dynamically:", error.message);
-    console.warn("Using empty versions array - build will include only latest content");
-  }
-} else {
-  console.warn("No core repository path provided (CORE environment variable)");
-  console.warn("Using empty versions array - build will include only latest content");
+if (!coreRepoPath) {
+  throw new Error(
+    "Core repository not found at '.repos/pepr'. Run 'npm run build' first to generate content.",
+  );
 }
+
+dynamicVersions = await getStarlightVersions(coreRepoPath, 2);
 
 const examplesSidebarItems = generateExamplesSidebarItems();
 

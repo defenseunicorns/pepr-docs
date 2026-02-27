@@ -31,7 +31,7 @@ npm install
 ### Build and Run Locally
 
 ```bash
-# Build the site (generates content from core repo and builds site)
+# Build the site (generates content from Pepr core repo and Pepr Excellent Examples rep then builds site)
 npm run build
 
 # Start development server
@@ -54,14 +54,16 @@ npm run preview
 ```text
 pepr-docs/
 ├── scripts/                 # Build system source code
+│   ├── build.sh             # Build entry point (clones repos, runs index.mjs)
 │   ├── index.mjs            # Main build orchestrator
-│   ├── redirects-generator.mjs
+│   ├── lib/                 # Build system libraries
 │   └── tests/               # Test suite
 ├── src/                     # Site source
 │   ├── content/docs/        # Documentation content (generated, gitignored)
 │   ├── components/          # Astro components
 │   ├── pages/               # Custom pages
 │   └── styles/              # Stylesheets
+├── .repos/                  # Cloned source repositories (generated, gitignored)
 ├── public/                  # Static assets
 ├── site-docs/               # Documentation site documentation
 │   ├── ARCHITECTURE.md      # Build system architecture
