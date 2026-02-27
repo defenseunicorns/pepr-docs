@@ -91,7 +91,7 @@ describe("Integration Tests - Git Operations", () => {
     coreRepoPath = resolveCorePath();
     if (!coreRepoPath) {
       throw new Error(
-        "Core repository not found. Run 'npm run build' first to clone it to .repos/pepr",
+        "Pepr and/or Pepr-excellent-examples repositories not found. Run 'npm run build' first to clone it to .repos/ by default."
       );
     }
   });
