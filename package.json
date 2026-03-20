@@ -24,9 +24,9 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.38.1",
-    "@astrojs/starlight-tailwind": "^4.0.1",
+    "@astrojs/starlight-tailwind": "^5.0.0",
     "@tailwindcss/vite": "^4.2.1",
-    "astro": "^5.18.0",
+    "astro": "^6.0.7",
     "commander": "^14.0.3",
     "glob": "^13.0.6",
     "starlight-contextual-menu": "^0.1.5",
