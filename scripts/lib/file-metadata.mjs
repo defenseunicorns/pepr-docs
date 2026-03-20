@@ -18,16 +18,7 @@ export const generateFileMetadata = file => {
   const parent = parts.pop();
   const ancestors = parts.join("/");
 
-  // Strip numbered prefixes from directory parts (e.g., 010_user-guide -> user-guide)
-  // Needed for backward compatibility with old git tags (v1.0.2, v0.55.6) that still use numbered prefixes
-  // Once these old versions are retired, this prefix stripping can be removed
-  const cleanParent = parent.replace(/^\d+_/, "");
-  const cleanAncestors = ancestors
-    .split("/")
-    .map(p => p.replace(/^\d+_/, ""))
-    .join("/");
-
-  let rawdir = cleanAncestors ? `${cleanAncestors}/${cleanParent}` : cleanParent;
+  let rawdir = ancestors ? `${ancestors}/${parent}` : parent;
 
   // Apply structure mappings
   let newdir = Object.entries(PATH_MAPPINGS.structure).reduce(
@@ -35,9 +26,7 @@ export const generateFileMetadata = file => {
     rawdir,
   );
 
-  // Process filename - strip numbered prefix (e.g., 070_roadmap.md -> roadmap.md)
-  // Needed for backward compatibility with old git tags (v1.0.2, v0.55.6)
-  let newfile = filename.replace(/^\d+_/, "");
+  let newfile = filename;
   if (newfile === "README.md") {
     newfile = "index.md";
   }

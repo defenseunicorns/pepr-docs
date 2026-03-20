@@ -272,10 +272,9 @@ const processRootMarkdownFiles = async (core, verdir) => {
   return processedFiles;
 };
 
-// Determine source path for a file (handles special community files).
-// Needed for backward compatibility with old git tags (v1.0.2, v0.55.6)
+// Determine source path for a file — root markdown files (community, contribute) are
+// written to verdir by processRootMarkdownFiles, so they must be read from there.
 const getSourcePath = (file, coredocs, verdir) => {
-  // Derive the list of root markdown file targets from ROOT_MD_MAPPINGS to avoid duplication
   const rootMarkdownTargets = ROOT_MD_MAPPINGS.map(m => m.target);
   return rootMarkdownTargets.some(cf => file.endsWith(cf))
     ? `${verdir}/${file}`
@@ -602,35 +601,6 @@ const copyImagesFromVersion = async (version, publicDir) => {
   return false;
 };
 
-// Helper function to copy resources from a version
-// Path needed for backward compatibility for versions 1.0.2 and below
-const copyResourcesFromVersion = async (version, siteRoot) => {
-  const resourcesPath = `${RUN.tmp}/static/${version}/040_pepr-tutorials/resources`;
-  if (await pathExists(resourcesPath)) {
-    console.log(`Copying resources from ${resourcesPath} to src directories`);
-    await fs.mkdir(`${siteRoot}/src/content/docs/resources`, { recursive: true });
-
-    const resourceSubdirs = await fs.readdir(resourcesPath, { withFileTypes: true });
-    const directoriesOnly = resourceSubdirs.filter(dirent => dirent.isDirectory());
-
-    await Promise.all(
-      directoriesOnly.map(async dirent => {
-        try {
-          const srcDir = path.join(resourcesPath, dirent.name);
-          const dstDir = path.join(`${siteRoot}/src/content/docs/resources`, dirent.name);
-          await fs.cp(srcDir, dstDir, { recursive: true });
-          console.log(`Copied ${srcDir} -> ${dstDir}`);
-        } catch (e) {
-          console.warn(`Failed to copy resource directory ${dirent.name}: ${e.message}`);
-        }
-      }),
-    );
-    console.log(`Copied ${directoriesOnly.length} resource directories from version ${version}`);
-    return true;
-  }
-  return false;
-};
-
 // Helper function to execute Astro build and handle dist copying
 const executeBuild = async (siteRoot, targetDist) => {
   console.log(`Building Starlight site from directory: ${siteRoot}`);
@@ -751,9 +721,8 @@ if (opts.dist) {
     let assetsCopied = false;
     for (const version of RUN.versions) {
       const imagesCopied = await copyImagesFromVersion(version, publicDir);
-      const resourcesCopied = await copyResourcesFromVersion(version, siteRoot);
 
-      if (imagesCopied || resourcesCopied) {
+      if (imagesCopied) {
         console.log(`Assets copied from version: ${version}`);
         assetsCopied = true;
         break;

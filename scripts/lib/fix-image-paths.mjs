@@ -10,9 +10,7 @@ export function fixImagePaths(content) {
       .replace(/(\.\.\/)+_images\/([\w-]+\.(png|svg))/g, "/assets/$2")
       // Handle direct _images references
       .replace(/_images\/([\w-]+\.(png|svg))/g, "/assets/$1")
-      // Handle resources paths - supports numbered prefixes (e.g., 030_create-pepr-operator)
-      // for backward compatibility with old git tags (v1.0.2, v0.55.6)
-      // Once these old versions are retired, this can be removed.
-      .replace(/resources\/(?:\d+_)?create-pepr-operator\/(light|dark)\.png/g, "/assets/$1.png")
+      // Handle resources paths for create-pepr-operator tutorial
+      .replace(/resources\/create-pepr-operator\/(light|dark)\.png/g, "/assets/$1.png")
   );
 }
