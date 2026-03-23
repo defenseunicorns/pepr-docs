@@ -38,12 +38,6 @@ describe("processContentLinks - .md extension removal", () => {
 describe("processContentLinks - link mapping transformations", () => {
   const testCases = [
     {
-      name: "should transform pepr-tutorials to tutorials",
-      input: "See [tutorial](](/pepr-tutorials/intro.md).",
-      file: "index.md",
-      expected: "](/tutorials/intro)",
-    },
-    {
       name: "should transform best-practices to reference/best-practices",
       input: "Read [guide](](/best-practices/security.md).",
       file: "index.md",

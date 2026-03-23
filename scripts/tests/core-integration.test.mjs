@@ -89,28 +89,12 @@ describe("CORE Integration Tests", () => {
   });
 
   describe("File Processing with Metadata", () => {
-    it("should strip numbered prefixes from directories", () => {
-      const inputPath = "010_user-guide/getting-started.md";
-
-      const result = generateFileMetadata(inputPath);
-
-      expect(result.newfile).toBe("user-guide/getting-started.md");
-    });
-
     it("should convert README.md to index.md", () => {
-      const inputPath = "010_user-guide/README.md";
+      const inputPath = "user-guide/README.md";
 
       const result = generateFileMetadata(inputPath);
 
       expect(result.newfile).toBe("user-guide/index.md");
-    });
-
-    it("should apply path structure mappings", async () => {
-      const inputPath = "040_pepr-tutorials/getting-started.md";
-
-      const result = generateFileMetadata(inputPath);
-
-      expect(result.newfile).toBe("tutorials/getting-started.md");
     });
   });
 
@@ -139,7 +123,7 @@ describe("CORE Integration Tests", () => {
     it("should generate Overview title for README files with sidebar label", async () => {
       const content = "# User Guide\n\nOverview content...";
       const newfile = "user-guide/index.md";
-      const originalFile = "010_user-guide/README.md";
+      const originalFile = "user-guide/README.md";
 
       const result = generateFrontMatter(content, newfile, "latest", originalFile);
 
@@ -150,8 +134,8 @@ describe("CORE Integration Tests", () => {
   });
 
   describe("Content Transformation Pipeline", () => {
-    it("should transform numbered paths and generate frontmatter in one pipeline", () => {
-      const inputPath = "010_user-guide/070_getting-started.md";
+    it("should transform paths and generate frontmatter in one pipeline", () => {
+      const inputPath = "user-guide/getting-started.md";
       const sourceContent = "# Getting Started\n\nThis is a comprehensive guide...";
 
       const fileResult = generateFileMetadata(inputPath);
@@ -165,8 +149,8 @@ describe("CORE Integration Tests", () => {
     });
 
     it.each([
-      ["010_user-guide/README.md", "# User Guide\n\nContent...", "Overview"],
-      ["040_tutorials/README.md", "# Tutorials\n\nContent...", "Overview"],
+      ["user-guide/README.md", "# User Guide\n\nContent...", "Overview"],
+      ["tutorials/README.md", "# Tutorials\n\nContent...", "Overview"],
     ])(
       "should generate Overview title with sidebar label for README files: %s",
       (inputPath, sourceContent, expectedTitle) => {
@@ -184,7 +168,7 @@ describe("CORE Integration Tests", () => {
       },
     );
 
-    it.each([["020_actions/mutate.md", "# Mutate\n\nContent...", "Mutate"]])(
+    it.each([["actions/mutate.md", "# Mutate\n\nContent...", "Mutate"]])(
       "should use heading title without sidebar for regular files: %s",
       (inputPath, sourceContent, expectedTitle) => {
         const fileResult = generateFileMetadata(inputPath);

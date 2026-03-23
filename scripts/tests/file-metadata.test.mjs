@@ -3,21 +3,6 @@ import { generateFileMetadata, PATH_MAPPINGS } from "../lib/file-metadata.mjs";
 
 describe("file-metadata", () => {
   describe("generateFileMetadata", () => {
-    it("should strip numbered prefixes from directories", () => {
-      const result = generateFileMetadata("user-guide/getting-started.md");
-      expect(result.newfile).toBe("user-guide/getting-started.md");
-    });
-
-    it("should strip numbered prefixes from nested directories", () => {
-      const result = generateFileMetadata("user-guide/advanced/config.md");
-      expect(result.newfile).toBe("user-guide/advanced/config.md");
-    });
-
-    it("should strip numbered prefixes from filenames", () => {
-      const result = generateFileMetadata("user-guide/070_getting-started.md");
-      expect(result.newfile).toBe("user-guide/getting-started.md");
-    });
-
     it("should convert README.md to index.md", () => {
       const result = generateFileMetadata("user-guide/README.md");
       expect(result.newfile).toBe("user-guide/index.md");

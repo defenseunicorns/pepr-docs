@@ -2,10 +2,7 @@ import * as path from "node:path";
 import { transformContent } from "./transform-content.mjs";
 
 // Content link transformations
-// Note: /pepr-tutorials/ mapping is for backward compatibility with v0.55.6
-// Once v0.55.6 is retired, the pepr-tutorials mapping can be removed
 const LINK_MAPPINGS = {
-  "](/pepr-tutorials/": "](/tutorials/",
   "](/best-practices/": "](/reference/best-practices/",
   "](/module-examples/": "](/reference/module-examples/",
   "](/faq/": "](/reference/faq/",

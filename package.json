@@ -12,7 +12,7 @@
     "format:check": "npm run format:code && npm run format:markdown && npm run format:prettier -- --check",
     "format:code": "eslint .",
     "format:fix": "npm run format:code -- --fix && npm run format:markdown -- --fix && npm run format:prettier -- --write",
-    "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore tmp --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore scripts --ignore 090_community --ignore 100_contribute \"**/*.{md,mdx}\"",
+    "format:markdown": "npx -y markdownlint-cli --ignore node_modules --ignore dist --ignore tmp --ignore .astro --ignore src/content/docs --ignore src/content/versions --ignore scripts \"**/*.{md,mdx}\"",
     "format:prettier": "prettier .",
     "linkcheck": "bash .github/workflows/scripts/linkcheck.sh",
     "prepare": "husky",
