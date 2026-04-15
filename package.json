@@ -46,9 +46,9 @@
     "pagefind": "^1.2.0"
   },
   "devDependencies": {
-    "@astrojs/sitemap": "^3.7.1",
+    "@astrojs/sitemap": "^3.7.2",
     "@defenseunicorns/eslint-config": "^1.2.0",
-    "@vitest/coverage-v8": "^4.1.0",
+    "@vitest/coverage-v8": "^4.1.2",
     "esbuild": "^0.27.3",
     "husky": "^9.1.7",
     "linkinator": "^7.6.1",
