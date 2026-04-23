@@ -310,7 +310,12 @@ const writeVersionLandingPage = async (version, verdir, core) => {
     let idxBody = await fs.readFile(`${core}/README.md`, "utf8");
     idxBody = idxBody.replaceAll("](./docs/", "](./");
 
-    idxBody = transformContent(idxBody).replaceAll(".md)", "/");
+    idxBody = transformContent(idxBody)
+      .replaceAll(".md)", "/")
+      // Remap root community files to their correct docs site paths (from ROOT_MD_MAPPINGS)
+      .replaceAll("](./code-of-conduct)", "](./contribute/code-of-conduct)")
+      .replaceAll("](./security)", "](./community/security)")
+      .replaceAll("](./support)", "](./community/support)");
 
     await fs.writeFile(idxMd, [idxFront, idxBody].join("\n"), "utf8");
     log.push(["dst", idxMd]);
