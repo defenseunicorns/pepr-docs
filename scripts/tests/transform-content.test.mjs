@@ -7,7 +7,9 @@ describe("transformContent", () => {
       const content = "Check out this video: https://example.com/demo.mp4";
       const result = transformContent(content);
 
-      expect(result).toContain('<video class="td-content" controls src="https://example.com/demo.mp4"></video>');
+      expect(result).toContain(
+        '<video class="td-content" controls src="https://example.com/demo.mp4"></video>',
+      );
     });
 
     it("should not convert .mp4 URLs already in src attributes", () => {
@@ -18,7 +20,8 @@ describe("transformContent", () => {
     });
 
     it("should handle multiple video URLs", () => {
-      const content = "Video 1: https://example.com/demo1.mp4\nVideo 2: https://example.com/demo2.mp4";
+      const content =
+        "Video 1: https://example.com/demo1.mp4\nVideo 2: https://example.com/demo2.mp4";
       const result = transformContent(content);
 
       expect(result).toContain('src="https://example.com/demo1.mp4"');
@@ -41,8 +44,16 @@ describe("transformContent", () => {
       it.each([
         ["../../security.md", "[Security](../../security.md)", "[Security](./security)"],
         ["../../support.md", "[Support](../../support.md)", "[Support](./support)"],
-        ["../../code-of-conduct.md", "[Code](../../code-of-conduct.md)", "[Code](./code-of-conduct)"],
-        ["../../OTHER_FILE.md (unmatched)", "[Other](../../OTHER_FILE.md)", "[Other](../../other_file)"],
+        [
+          "../../code-of-conduct.md",
+          "[Code](../../code-of-conduct.md)",
+          "[Code](./code-of-conduct)",
+        ],
+        [
+          "../../OTHER_FILE.md (unmatched)",
+          "[Other](../../OTHER_FILE.md)",
+          "[Other](../../other_file)",
+        ],
       ])("should process %s", (description, input, expected) => {
         const result = transformContent(input);
         expect(result).toBe(expected);
@@ -51,7 +62,11 @@ describe("transformContent", () => {
 
     describe("README.md Removal", () => {
       it.each([
-        ["./getting-started/README.md", "[Guide](./getting-started/README.md)", "[Guide](./getting-started)"],
+        [
+          "./getting-started/README.md",
+          "[Guide](./getting-started/README.md)",
+          "[Guide](./getting-started)",
+        ],
         ["./docs/guide/README.md", "[Docs](./docs/guide/README.md)", "[Docs](guide)"],
       ])("should remove README.md from %s", (path, input, expected) => {
         const result = transformContent(input);
@@ -173,7 +188,11 @@ describe("transformContent", () => {
     it.each([
       ["_images/diagram.png", "![Diagram](_images/diagram.png)", "/assets/diagram.png"],
       ["../_images/diagram.svg", "![Diagram](../_images/diagram.svg)", "/assets/diagram.svg"],
-      ["resources/create-pepr-operator/light.png", "![Diagram](resources/create-pepr-operator/light.png)", "/assets/light.png"],
+      [
+        "resources/create-pepr-operator/light.png",
+        "![Diagram](resources/create-pepr-operator/light.png)",
+        "/assets/light.png",
+      ],
     ])("should fix %s to /assets/", (path, input, expectedPath) => {
       const result = transformContent(input);
       expect(result).toContain(expectedPath);
@@ -199,7 +218,9 @@ Contact **@param** <user@example.com>
       const result = transformContent(content);
 
       // Video transformation
-      expect(result).toContain('<video class="td-content" controls src="https://example.com/demo.mp4"></video>');
+      expect(result).toContain(
+        '<video class="td-content" controls src="https://example.com/demo.mp4"></video>',
+      );
 
       // Link transformations
       expect(result).toContain("[the docs](getting-started)");
