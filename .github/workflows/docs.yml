@@ -49,6 +49,11 @@ jobs:
           repository: defenseunicorns/pepr-docs
           path: ${{ env.DOCS }}
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
       - name: Build the docs
         run: |
           CORE=$(realpath ${{ env.CORE }})
