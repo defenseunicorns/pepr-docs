@@ -312,7 +312,7 @@ const writeVersionLandingPage = async (version, verdir, core) => {
 
     idxBody = transformContent(idxBody)
       .replaceAll(".md)", "/")
-      // Remap root community files to their correct docs site paths (from ROOT_MD_MAPPINGS)
+      // Remap root community files to their correct doc-site paths (from ROOT_MD_MAPPINGS)
       .replaceAll("](./code-of-conduct)", "](./contribute/code-of-conduct)")
       .replaceAll("](./security)", "](./community/security)")
       .replaceAll("](./support)", "](./community/support)");
