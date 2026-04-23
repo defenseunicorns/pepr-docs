@@ -11,6 +11,7 @@ export default [
       "src/content/docs",
       "src/content/versions",
       "site",
+      ".repos",
     ],
   },
 ];

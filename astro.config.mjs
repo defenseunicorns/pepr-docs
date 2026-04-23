@@ -7,7 +7,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { getStarlightVersions, resolveCorePath } from "./scripts/lib/version-discovery.mjs";
 import { generateExamplesSidebarItems } from "./scripts/lib/generate-examples-sidebar.mjs";
 import starlightGitHubAlerts from "starlight-github-alerts";
-import starlightContextualMenu from "starlight-contextual-menu";
 import starlightImageZoom from "starlight-image-zoom";
 
 const coreRepoPath = resolveCorePath();
@@ -34,9 +33,6 @@ export default defineConfig({
         starlightLlmsTxt(),
         starlightGitHubAlerts(),
         starlightImageZoom(),
-        starlightContextualMenu({
-          actions: ["copy", "view", "chatgpt", "claude", "grok"],
-        }),
         starlightVersions({
           versions: dynamicVersions,
           current: { label: "Latest" },
