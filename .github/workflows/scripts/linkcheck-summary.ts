@@ -86,5 +86,3 @@ if (exitCode !== 0) {
 
 // Write out
 writeFileSync(outputFile, output, { flag: "a" });
-
-if (exitCode !== 0) process.exit(1);
