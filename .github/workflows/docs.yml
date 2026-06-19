@@ -33,18 +33,18 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.3
         with:
           repository: defenseunicorns/pepr
           path: ${{ env.CORE }}
           fetch-depth: 0 # pull history to get version tags
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.3
         with:
           repository: defenseunicorns/pepr-excellent-examples
           path: ${{ env.EXAMPLES }}
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.3
         with:
           repository: defenseunicorns/pepr-docs
           path: ${{ env.DOCS }}
