@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+const markdownLabelCache = new Map();
+
 function toTitleCase(value) {
   return value
     .split("-")
@@ -8,13 +10,54 @@ function toTitleCase(value) {
     .join(" ");
 }
 
-function createLinkItem(baseSlug, fileName) {
-  const fileSlug = fileName.replace(/\.md$/, "");
+function stripYamlScalar(value) {
+  const trimmed = value.trim();
+
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1);
+  }
+
+  return trimmed;
+}
+
+function readMarkdownLabel(filePath) {
+  if (markdownLabelCache.has(filePath)) {
+    return markdownLabelCache.get(filePath);
+  }
+
+  const content = fs.readFileSync(filePath, "utf8");
+  const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
+
+  if (frontmatterMatch) {
+    const frontmatter = frontmatterMatch[1];
+    const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
+
+    if (titleMatch) {
+      const title = stripYamlScalar(titleMatch[1]);
+      markdownLabelCache.set(filePath, title);
+      return title;
+    }
+  }
+
+  const headingMatch = content.match(/^#\s+(.+)$/m);
+  if (headingMatch) {
+    const label = headingMatch[1].replaceAll(/[`:]/g, "");
+    markdownLabelCache.set(filePath, label);
+    return label;
+  }
+
+  throw new Error(`Missing title or heading in '${filePath}'.`);
+}
+
+function createLinkItem(baseSlug, filePath) {
+  const fileSlug = path.basename(filePath, ".md");
   const slug = fileSlug === "index" ? baseSlug : `${baseSlug}/${fileSlug}`;
-  const labelSource = fileSlug === "index" ? path.basename(baseSlug) : fileSlug;
 
   return {
-    label: toTitleCase(labelSource),
+    label: readMarkdownLabel(filePath),
     link: slug,
   };
 }
@@ -51,10 +94,11 @@ function generateSidebarItemsForDir(dir, baseSlug) {
   }
 
   for (const file of files) {
+    const filePath = path.join(dir, file);
     if (file === "index.md") {
-      items.unshift(createLinkItem(baseSlug, file));
+      items.unshift(createLinkItem(baseSlug, filePath));
     } else {
-      items.push(createLinkItem(baseSlug, file));
+      items.push(createLinkItem(baseSlug, filePath));
     }
   }
 
