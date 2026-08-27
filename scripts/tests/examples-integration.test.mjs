@@ -193,6 +193,8 @@ describe("EXAMPLES Integration Tests", () => {
       await fs.mkdir(examplesDir, { recursive: true });
       await fs.mkdir(path.join(examplesDir, "actions"), { recursive: true });
       await fs.mkdir(path.join(examplesDir, "filters"), { recursive: true });
+      await fs.writeFile(path.join(examplesDir, "actions", "alpha.md"), "# Alpha");
+      await fs.writeFile(path.join(examplesDir, "filters", "beta.md"), "# Beta");
       await fs.writeFile(path.join(examplesDir, "alias.md"), "# Alias");
       await fs.writeFile(path.join(examplesDir, "hooks.md"), "# Hooks");
 
@@ -200,9 +202,11 @@ describe("EXAMPLES Integration Tests", () => {
 
       expect(items.length).toBe(4);
       expect(items[0].label).toBe("Actions");
-      expect(items[0].autogenerate).toEqual({ directory: "examples/actions" });
+      expect(items[0].items[0].label).toBe("Alpha");
+      expect(items[0].items[0].link).toBe("examples/actions/alpha");
       expect(items[1].label).toBe("Filters");
-      expect(items[1].autogenerate).toEqual({ directory: "examples/filters" });
+      expect(items[1].items[0].label).toBe("Beta");
+      expect(items[1].items[0].link).toBe("examples/filters/beta");
       expect(items[2].label).toBe("Alias");
       expect(items[2].link).toBe("examples/alias");
       expect(items[3].label).toBe("Hooks");
@@ -214,11 +218,20 @@ describe("EXAMPLES Integration Tests", () => {
       await fs.mkdir(examplesDir, { recursive: true });
       await fs.mkdir(path.join(examplesDir, "my-custom-category"), { recursive: true });
       await fs.mkdir(path.join(examplesDir, "pepr-config"), { recursive: true });
+      await fs.writeFile(
+        path.join(examplesDir, "my-custom-category", "example-one.md"),
+        "# Example One",
+      );
+      await fs.writeFile(path.join(examplesDir, "pepr-config", "example-two.md"), "# Example Two");
 
       const items = generateExamplesSidebarItems(examplesDir);
 
       expect(items[0].label).toBe("My Custom Category");
+      expect(items[0].items[0].label).toBe("Example One");
+      expect(items[0].items[0].link).toBe("examples/my-custom-category/example-one");
       expect(items[1].label).toBe("Pepr Config");
+      expect(items[1].items[0].label).toBe("Example Two");
+      expect(items[1].items[0].link).toBe("examples/pepr-config/example-two");
     });
 
     it("should convert file names to proper labels", async () => {
@@ -239,7 +252,7 @@ describe("EXAMPLES Integration Tests", () => {
       const nonExistentDir = path.join(testDir, "does-not-exist");
 
       expect(() => generateExamplesSidebarItems(nonExistentDir)).toThrow(
-        "Run 'npm run build' first to generate content.",
+        `Directory not found at '${nonExistentDir}'.`,
       );
     });
 
@@ -248,6 +261,8 @@ describe("EXAMPLES Integration Tests", () => {
       await fs.mkdir(examplesDir, { recursive: true });
       await fs.mkdir(path.join(examplesDir, "zebra"), { recursive: true });
       await fs.mkdir(path.join(examplesDir, "alpha"), { recursive: true });
+      await fs.writeFile(path.join(examplesDir, "zebra", "zebra.md"), "# Zebra");
+      await fs.writeFile(path.join(examplesDir, "alpha", "alpha.md"), "# Alpha");
       await fs.writeFile(path.join(examplesDir, "zulu.md"), "# Zulu");
       await fs.writeFile(path.join(examplesDir, "bravo.md"), "# Bravo");
 
@@ -256,7 +271,9 @@ describe("EXAMPLES Integration Tests", () => {
       expect(items[0].label).toBe("Alpha");
       expect(items[1].label).toBe("Zebra");
       expect(items[2].label).toBe("Bravo");
+      expect(items[2].link).toBe("examples/bravo");
       expect(items[3].label).toBe("Zulu");
+      expect(items[3].link).toBe("examples/zulu");
     });
   });
 

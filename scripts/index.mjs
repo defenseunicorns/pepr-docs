@@ -13,7 +13,10 @@ import { processContentLinks } from "./lib/process-content-links.mjs";
 import { ROOT_MD_MAPPINGS } from "./lib/root-mappings.mjs";
 import { generateFileMetadata } from "./lib/file-metadata.mjs";
 import { generateFrontMatter } from "./lib/frontmatter.mjs";
-import { generateExamplesSidebarItems } from "./lib/generate-examples-sidebar.mjs";
+import {
+  generateExamplesSidebarItems,
+  generateSidebarItems,
+} from "./lib/generate-examples-sidebar.mjs";
 import {
   extractExampleCategory,
   generateExampleSlug,
@@ -544,22 +547,46 @@ await executeWithErrorHandling(`Copy examples to all versions`, async log => {
   );
 });
 
-// Generate Starlight sidebar configuration with dynamic examples
-function generateStarlightSidebarConfig(examplesItems) {
+// Generate Starlight sidebar configuration with explicit sidebar items
+function generateStarlightSidebarConfig(contentPath, examplesItems) {
   return {
     sidebar: [
       { label: "Start Here", slug: "" },
-      { label: "User Guide", collapsed: true, autogenerate: { directory: "user-guide" } },
-      { label: "Actions", collapsed: true, autogenerate: { directory: "actions" } },
-      { label: "Tutorials", collapsed: true, autogenerate: { directory: "tutorials" } },
-      { label: "Reference", collapsed: true, autogenerate: { directory: "reference" } },
+      {
+        label: "User Guide",
+        collapsed: true,
+        items: generateSidebarItems(`${contentPath}/user-guide`, "user-guide"),
+      },
+      {
+        label: "Actions",
+        collapsed: true,
+        items: generateSidebarItems(`${contentPath}/actions`, "actions"),
+      },
+      {
+        label: "Tutorials",
+        collapsed: true,
+        items: generateSidebarItems(`${contentPath}/tutorials`, "tutorials"),
+      },
+      {
+        label: "Reference",
+        collapsed: true,
+        items: generateSidebarItems(`${contentPath}/reference`, "reference"),
+      },
       {
         label: "Excellent Examples",
         collapsed: true,
         items: examplesItems,
       },
-      { label: "Community and Support", collapsed: true, autogenerate: { directory: "community" } },
-      { label: "Contribute", collapsed: true, autogenerate: { directory: "contribute" } },
+      {
+        label: "Community and Support",
+        collapsed: true,
+        items: generateSidebarItems(`${contentPath}/community`, "community"),
+      },
+      {
+        label: "Contribute",
+        collapsed: true,
+        items: generateSidebarItems(`${contentPath}/contribute`, "contribute"),
+      },
       { label: "Roadmap for Pepr", link: "roadmap" },
     ],
   };
@@ -660,14 +687,15 @@ await executeWithErrorHandling(`Generate version configuration files`, async log
   await fs.rm(versionsDir, { recursive: true, force: true });
   await fs.mkdir(versionsDir, { recursive: true });
 
-  // Generate sidebar config with dynamic examples items
-  const sidebarConfig = generateStarlightSidebarConfig(RUN.examplesSidebarItems || []);
-
   for (const version of stableVersions) {
     const versionMajMin = version.replace(/^v(\d+\.\d+)\.\d+$/, "v$1");
     const versionContentPath = `${RUN.tmp}/content/${version}`;
 
     if (await hasMarkdownContent(versionContentPath)) {
+      const sidebarConfig = generateStarlightSidebarConfig(
+        versionContentPath,
+        RUN.examplesSidebarItems || [],
+      );
       await fs.writeFile(
         `${versionsDir}/${versionMajMin}.json`,
         JSON.stringify(sidebarConfig, null, 2),
