@@ -5,7 +5,10 @@ import starlightVersions from "starlight-versions";
 import starlightLlmsTxt from "starlight-llms-txt";
 import tailwindcss from "@tailwindcss/vite";
 import { getStarlightVersions, resolveCorePath } from "./scripts/lib/version-discovery.mjs";
-import { generateExamplesSidebarItems } from "./scripts/lib/generate-examples-sidebar.mjs";
+import {
+  generateExamplesSidebarItems,
+  generateSidebarItems,
+} from "./scripts/lib/generate-examples-sidebar.mjs";
 import starlightGitHubAlerts from "starlight-github-alerts";
 import starlightImageZoom from "starlight-image-zoom";
 
@@ -21,6 +24,12 @@ if (!coreRepoPath) {
 dynamicVersions = await getStarlightVersions(coreRepoPath, 2);
 
 const examplesSidebarItems = generateExamplesSidebarItems();
+const userGuideSidebarItems = generateSidebarItems("./src/content/docs/user-guide", "user-guide");
+const actionsSidebarItems = generateSidebarItems("./src/content/docs/actions", "actions");
+const tutorialsSidebarItems = generateSidebarItems("./src/content/docs/tutorials", "tutorials");
+const referenceSidebarItems = generateSidebarItems("./src/content/docs/reference", "reference");
+const communitySidebarItems = generateSidebarItems("./src/content/docs/community", "community");
+const contributeSidebarItems = generateSidebarItems("./src/content/docs/contribute", "contribute");
 
 // https://astro.build/config
 export default defineConfig({
@@ -74,22 +83,22 @@ export default defineConfig({
         {
           label: "User Guide",
           collapsed: true,
-          autogenerate: { directory: "user-guide" },
+          items: userGuideSidebarItems,
         },
         {
           label: "Actions",
           collapsed: true,
-          autogenerate: { directory: "actions" },
+          items: actionsSidebarItems,
         },
         {
           label: "Tutorials",
           collapsed: true,
-          autogenerate: { directory: "tutorials" },
+          items: tutorialsSidebarItems,
         },
         {
           label: "Reference",
           collapsed: true,
-          autogenerate: { directory: "reference" },
+          items: referenceSidebarItems,
         },
         {
           label: "Excellent Examples",
@@ -99,12 +108,12 @@ export default defineConfig({
         {
           label: "Community and Support",
           collapsed: true,
-          autogenerate: { directory: "community" },
+          items: communitySidebarItems,
         },
         {
           label: "Contribute",
           collapsed: true,
-          autogenerate: { directory: "contribute" },
+          items: contributeSidebarItems,
         },
         {
           label: "Roadmap for Pepr",
