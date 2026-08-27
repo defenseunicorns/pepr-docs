@@ -10,7 +10,6 @@ import {
   generateSidebarItems,
 } from "./scripts/lib/generate-examples-sidebar.mjs";
 import starlightGitHubAlerts from "starlight-github-alerts";
-import starlightImageZoom from "starlight-image-zoom";
 
 const coreRepoPath = resolveCorePath();
 let dynamicVersions;
@@ -41,7 +40,6 @@ export default defineConfig({
       plugins: [
         starlightLlmsTxt(),
         starlightGitHubAlerts(),
-        starlightImageZoom(),
         starlightVersions({
           versions: dynamicVersions,
           current: { label: "Latest" },
