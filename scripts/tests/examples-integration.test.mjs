@@ -237,8 +237,14 @@ describe("EXAMPLES Integration Tests", () => {
     it("should convert file names to proper labels", async () => {
       const examplesDir = path.join(testDir, "file-label-test");
       await fs.mkdir(examplesDir, { recursive: true });
-      await fs.writeFile(path.join(examplesDir, "generic-kind.md"), "# Generic Kind");
-      await fs.writeFile(path.join(examplesDir, "load-test.md"), "# Load Test");
+      await fs.writeFile(
+        path.join(examplesDir, "generic-kind.md"),
+        `---\ntitle: Generic Kind\ndescription: Generic Kind\n---\n# generic-kind\n`,
+      );
+      await fs.writeFile(
+        path.join(examplesDir, "load-test.md"),
+        `---\ntitle: Load Test\ndescription: Load Test\n---\n# load-test\n`,
+      );
 
       const items = generateExamplesSidebarItems(examplesDir);
 
@@ -246,6 +252,29 @@ describe("EXAMPLES Integration Tests", () => {
       expect(items[0].link).toBe("examples/generic-kind");
       expect(items[1].label).toBe("Load Test");
       expect(items[1].link).toBe("examples/load-test");
+    });
+
+    it("should preserve exact titles from markdown frontmatter", async () => {
+      const examplesDir = path.join(testDir, "acronym-label-test");
+      await fs.mkdir(examplesDir, { recursive: true });
+      await fs.writeFile(
+        path.join(examplesDir, "pepr-cli.md"),
+        `---\ntitle: Pepr CLI\ndescription: Pepr CLI\n---\n# pepr-cli\n`,
+      );
+      await fs.writeFile(
+        path.join(examplesDir, "sdk.md"),
+        `---\ntitle: SDK\ndescription: SDK\n---\n# sdk\n`,
+      );
+      await fs.writeFile(
+        path.join(examplesDir, "rbac.md"),
+        `---\ntitle: RBAC Permissions\ndescription: RBAC Permissions\n---\n# rbac\n`,
+      );
+
+      const items = generateExamplesSidebarItems(examplesDir);
+
+      expect(items.find(item => item.link === "examples/pepr-cli").label).toBe("Pepr CLI");
+      expect(items.find(item => item.link === "examples/sdk").label).toBe("SDK");
+      expect(items.find(item => item.link === "examples/rbac").label).toBe("RBAC Permissions");
     });
 
     it("should throw an error when directory does not exist", () => {
