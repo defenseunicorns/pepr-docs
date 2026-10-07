@@ -47,13 +47,13 @@
   "devDependencies": {
     "@astrojs/sitemap": "^3.7.4",
     "@defenseunicorns/eslint-config": "^1.2.0",
-    "@vitest/coverage-v8": "^5.0.1",
+    "@vitest/coverage-v8": "^5.0.2",
     "esbuild": "^0.28.2",
     "husky": "^9.1.7",
     "linkinator": "^8.1.0",
-    "lint-staged": "^17.5.1",
+    "lint-staged": "^17.6.0",
     "prettier": "^3.9.7",
-    "prettier-plugin-astro": "^1.0.0",
+    "prettier-plugin-astro": "^1.1.0",
     "semver": "^7.8.5",
     "vitest": "^5.0.1",
     "yaml": "^2.9.1"
