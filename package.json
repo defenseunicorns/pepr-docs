@@ -23,10 +23,10 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.42.1",
+    "@astrojs/starlight": "^0.42.4",
     "@astrojs/starlight-tailwind": "^5.0.0",
     "@tailwindcss/vite": "^4.3.3",
-    "astro": "^7.3.2",
+    "astro": "^7.3.5",
     "commander": "^15.0.0",
     "glob": "^13.0.6",
     "starlight-github-alerts": "^0.4.0",
