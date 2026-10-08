@@ -29,7 +29,7 @@
     "astro": "^7.3.5",
     "commander": "^15.0.0",
     "glob": "^13.0.6",
-    "starlight-github-alerts": "^0.4.0",
+    "starlight-github-alerts": "^0.5.0",
     "starlight-image-zoom": "^0.16.0",
     "starlight-links-validator": "^0.26.0",
     "starlight-llms-txt": "^0.12.0",
