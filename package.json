@@ -23,26 +23,26 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.42.7",
+    "@astrojs/starlight": "^0.42.8",
     "@astrojs/starlight-tailwind": "^5.0.0",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.4.4",
     "commander": "^15.0.0",
-    "glob": "^14.0.2",
+    "glob": "^14.0.3",
     "starlight-github-alerts": "^0.5.0",
     "starlight-image-zoom": "^0.16.2",
     "starlight-links-validator": "^0.27.0",
     "starlight-llms-txt": "^0.12.0",
-    "starlight-versions": "^0.10.1",
+    "starlight-versions": "^0.10.2",
     "tailwindcss": "^4.1.13",
-    "vanilla-cookieconsent": "^3.1.0"
+    "vanilla-cookieconsent": "^3.2.1"
   },
   "optionalDependencies": {
-    "@pagefind/linux-x64": "^1.5.2",
+    "@pagefind/linux-x64": "^1.6.0",
     "@rollup/rollup-linux-x64-gnu": "*",
     "@tailwindcss/oxide-linux-x64-gnu": "*",
     "lightningcss-linux-x64-gnu": "*",
-    "pagefind": "^1.5.2"
+    "pagefind": "^1.6.0"
   },
   "devDependencies": {
     "@astrojs/sitemap": "^3.7.4",
